@@ -10,7 +10,9 @@ Sie sollten ungefähr die gleiche Benutzeroberfläche bzw. GUI (Graphical User I
 knitr::include_graphics("Bilder/GUI.png", dpi = 300)
 ```
 
-Wir empfehlen eindrücklich vor Beginn einer intensiven Nutzung mit RStudio die folgenden Punkte im Menü unter `Preferences`bzw. `Global Options` zu deaktivieren. 
+## Optionen
+
+Wir empfehlen eindrücklich vor Beginn einer intensiven Nutzung mit RStudio die folgenden Punkte in den Optionen unter `Preferences`bzw. `Global Options` zu deaktivieren. 
 
 1. Restore .RData into workspace at startup (deaktivieren)
 2. Save workspace to .RData on exit (Never)
@@ -25,26 +27,101 @@ Sofern Sie Interesse an einer Änderungen der grafischen Darstellung von RStudio
 
 ## Die Konsole
 
-Die *R Konsole* ist praktisch das Herzstück der Benutzeroberfläche und ermöglicht geschriebenen `Code` direkt oder über das *R Script* interpretieren zu lassen. Das `>` Zeichen ist die R Prompt (das Aufforderungszeichen). 
+Die R Konsole ist praktisch das Herzstück der Benutzeroberfläche und ermöglicht geschriebenen Code direkt oder über das `R Script` interpretieren zu lassen. Das `>` Zeichen ist die R Prompt (das Aufforderungszeichen). 
 
-```{r, echo=F, fig.align='center'}
+```{r, echo=F, fig.align='center', out.width="100%"}
 knitr::include_graphics("Bilder/Konsole.png", dpi = 300)
 ```
 
 Die Konsole kann gerne auch als Übungsfeld für die ersten Eingaben genutzt werden, z.B. als Taschenrechner.
 
-Input:
-```{r, results='hide'}
+```{r}
 2+3
-2^2
-sqrt(16)
 ```
 
-Output:
-```{r, echo=F, collapse=T}
-2+3
-2^2
-sqrt(16)
+## Das Environment und History
+
+Im Reiter `Enironment` finden wir die Funktion `Global Environment` (drop-down menu). In diesem Bereich werden alle **Objekte**, also Variablen und Datensätze, die wir zuvor angelegt haben, gespeichert. Auch selbstgeschriebene Funktionen werden hier hinterlegt.
+
+```{r, echo=F, fig.align='center', out.width="100%"}
+knitr::include_graphics("Bilder/Environment.png", dpi = 300)
 ```
+
+Unter dem Reiter `History` finden Sie alle Befehle, die Sie bisher ausgeführt haben. Mit einem Doppelklick werden diese automatisch in die Konsole kopiert. Damit können sie einfach modifiziert und/oder erneut ausgebenen werden.
+
+**Tipp:** Die History lässt sich auch direkt über die Testenbefehle `cmd`+ `up` auf macOS bzw. `ctrl`+ `up` bei Windows in der Konsole abrufen.
+
+## Files 
+
+Unter dem Reiter **Files** können Sie auf Ihre Datenstruktur zugreifen und damit ein **Arbeitsverzeichnis (working directory)** festlegen (siehe Bild). 
+
+Die Festlegung eines Arbeitsverzeichnis erleichtert in Folge das Einlesen von weiteren Datenobjekten (z.B. Datensätzen), sofern nicht in einem `RProject` gearbeitet wird.
+
+```{r, echo=F, fig.align='center', out.width="100%"}
+knitr::include_graphics("Bilder/Files.png", dpi = 300)
+```
+
+## Packages 
+
+R stellt uns über *base R* schon eine ganze Reihe nützlicher Funktionen zur Verfügung. Dieser bewegen sich jedoch auf sehr abstarktem Niveau und würden bei ausschließlicher Nutzung viele Analyseschritte sehr aufwendig machen. Folgend greifen wir auf die versprochenen Packages bzw. Ökosysteme zurück, um unsere Funktionsbibliothek deutlich zu erweitern. Packages lassen sich mit dem folgenden Befehl in der Konsole sehr leicht installieren. 
+
+```{}
+install.packages("tidyverse")
+```
+
+Damit haben wir alle Packages und Funktion aus dem tidyverse installiert.
+
+Nun wollen wir noch strengejacke und easystats installieren.
+
+```{}
+install.packages("strengejacke")
+```
+
+Das Ökosystem easystats ist gegenwärtig noch in der Testphase und damit nur über Github zu laden. Hierfür brauchen wir zwei Schritte. Zum einen installieren wir das Package remotes, um auf Github zugreifen zu können und dann easystats.
+
+```{}
+install.packages("remotes")
+remotes::install_github("easystats/easystats")
+```
+
+Gratulation, damit haben wir die wichtigsten Packages installiert!
+
+Nun müssen wir sie nur noch aktivieren. Dafür nutzen wir den Befehl `library`, um auf unsere Funktionsbibliothek zuzugreifen.
+
+```{}
+library(tidyverse)
+library(strengejacke)
+library("easystats")
+```
+
+**Wichtig!** Das Package easystats muss beim Aufruf in Anführungszeichen geschrieben werden.
+
+Als Alternative können wir Packages auch über den Reiter `Packages` installieren und aktivieren.
+
+```{r, echo=F, fig.align='center', out.width="100%"}
+knitr::include_graphics("Bilder/Packages.png", dpi = 300)
+```
+
+**Updates** lassen sich über den folgenden Befehl machen:
+
+```{}
+update.packages()
+```
+
+bzw.
+
+```{}
+update.pachakes(ask = F)
+
+```
+
+## Help
+
+Selbst wenn man täglich mit R arbeitet, ist es (fast) unmöglich, sich alle Funktionen zu merken. R hat ein sehr gutes, eingebautes Hilfesystem, welches aber für Anfänger nicht ganz leicht verständlich ist. Dies ist im Bereich `Help` zugänglich:
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Help.png", dpi = 300)
+```
+
 
 
