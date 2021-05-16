@@ -156,7 +156,118 @@ Nachteil:
 
 *Wir werden im Kapitel über Datentransformation einen neuen Operator kennenlernen, welcher eine sehr elegante Lösung für dieses Problem bietet.*
 
-## Datentypen 
+## Objekte und Datentypen 
+
+In R kann alles als Objekt in Variable gespeichert werden.
+
+Anmerkung: Objekte sind nicht gleich Variablen, da Objekte nicht gespeichert werden *müssen*. Ein Objekt wird erst dann zur Variable, wenn es eine Bezeichnung über `<-` erhält und damit gespeichert wird. 
+
+* Einzelne Werte / Mehrere Werte (z.B. ein Datensatz mit Rohdaten)
+* Tabellen
+* Statistische Modelle
+* Ergebnisse statitischer Analysen
+* Funktionen, etc. 
+
+In R gibt es eine Vielzahl von verschiedenen Objekttypen. Die grundlegenden Objekttypen (und deren Gemeinsamkeit mit SPSS-Datentypen) sind:
+
+### Vektoren
+
+* Vektoren → ordinale/metrische Variablen
+  * numeric (Zahlen)
+  * character (Buchstaben)
+  * logical (Richtig oder Falsch)
+  
+Beispiel
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Numerischer Verktor (numeric vector) 
+x <- c(1, 2, 3, 4, 5) 
+x
+
+# Buchstaben Vektor (character vector) 
+y <- c("Peter", "Yusuf", "Sarah", "Aayana")
+y
+
+# Logischer Vektor (logical vector)
+z <- c(TRUE, FALSE, T, F, NA) # TRUE/FALSE können mit T/F abgekürzt werden
+z
+```
+
+Vektoren stellen die fundamentalen Datentypen dar. Alle weiteren Datentypen bauen auf diesen auf. 
+
+**Wichtig!** Vektoren müssen aus denselben Elementen bestehen, d.h. wir können nicht logical und character Vektoren mischen. Sie bilden damit die `atomare Struktur` in R.
+
+* **numeric vector:** Die häufigste Datenform in R. Numerische Vektoren lassen sich zudem weiter unterteilen, in `integer` (ganze Zahlen) und `double` (reele Zahlen - Kommazahlen). Zahlen werden in R praktisch immer als `double` abgelegt (auch die ganzen Zahlen) und müssen somit nie für Berechungen gewandelt werden. 
+
+* **character vector:** Die Elemente dieses Typs bestehen aus Zeichen, welche von Anführungszeichen umgeben werden (entweder ' oder " ).
+
+  Anmerkung: Anführungszeichen dienen in R zur Kennzeichnung von nicht numerischen Werten. Wir müssen also alle Worte in jedem Kontext in Anführungszeichen schreiben.
+
+* **logical vector:** Die Elemente dieses Typs können nur 3 Werte annehmen:`TRUE`, `FALSE` oder `NA`.
+
+  Anmerkung: `NA` steht für fehlende Werte.
+
+Vektoren haben folgend drei Eigenschaften:
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modus bzw. Struktur (mode) - Was ist es?
+typeof(x)
+
+# Länge - Wie viele Elemente?
+length(x)
+
+# Attribute - Zusätzliche Informationen (Metadaten)
+attributes(x) # x wurden bewusst keine Informationen zugeordnet, da wir einen anderen Zugang du Metadaten lernen werden
+
+# ------ Zusatz ------
+# Objektbestimmung
+class(x)
+```
+
+Nun wollen wir auf die einzelnen Elemente in den Vektoren zugreifen. Wir können die einzelnen Elemente eines Vektor mit `[]` auswählen (`subsetting`):
+
+```{r, echo=T, collapse=T, comment="#>"}
+zahlenreihe <- c(1, 2.5, 3, 4, 5.77, 6, 7)
+buchstabenreihe <- c("A", "B", "C", "D", "E")
+
+# Das erste Element
+zahlenreihe[1]
+buchstabenreihe[1]
+
+# das fünfte Element
+zahlenreihe[5]
+buchstabenreihe[5]
+
+# Das letzte Element
+zahlenreihe[length(zahlenreihe)]
+buchstabenreihe[length(buchstabenreihe)]
+
+# Mit - (Minus) können wir gezielt Elemente ausschließen
+zahlenreihe[-4]
+buchstabenreihe[-4]
+
+# Wir können auch Sequenzen auswählen
+zahlenreihe[2:5]
+buchstabenreihe[2:5]
+
+# Wir können auch gezielt mehrere Elemente ausschließen oder auswählen
+zahlenreihe[-c(1, 4)]
+buchstabenreihe[-c(1, 4)]
+
+zahlenreihe[c(1, 2, 5)]
+buchstabenreihe[c(1, 2, 5)]
+```
+
+### Faktoren
+
+Bisher haben wir `numeric`, `logical` und `character` Vektoren kennengelernt. Ein weiterer Objekttyp wird benötigt, um kategoriale Daten oder Gruppierungsvariablen darzustellen. Dieser Objekttyp wird `factor` genannt. 
+
+* Faktoren  → nominale/ordinale Variablen
+  * nominale Variable
+  * Kategorien des Faktors = levels (kann zahlen oder Buchstaben enthalten)
+
+Ein `factor` ist ein Vektor von natürlichen Zahlen (integer vector), der mit zusätzlicher Information (Metadaten) versehen ist. Diese attributes sind die Objektklasse factor und die Faktorstufen levels. Am besten wir illustrieren dies mit einem Beispiel.
+
 
 
 

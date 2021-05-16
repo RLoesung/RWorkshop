@@ -173,7 +173,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.2.1" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#verschachtelung-von-funktionen"><i class="fa fa-check"></i><b>2.2.1</b> Verschachtelung von Funktionen</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#datentypen"><i class="fa fa-check"></i><b>2.3</b> Datentypen</a></li>
+<li class="chapter" data-level="2.3" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#objekte-und-datentypen"><i class="fa fa-check"></i><b>2.3</b> Objekte und Datentypen</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#vektoren"><i class="fa fa-check"></i><b>2.3.1</b> Vektoren</a></li>
+<li class="chapter" data-level="2.3.2" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#faktoren"><i class="fa fa-check"></i><b>2.3.2</b> Faktoren</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -318,9 +322,127 @@ each: jedes Element wird n-mal wiederholt</li>
 <p><em>Wir werden im Kapitel über Datentransformation einen neuen Operator kennenlernen, welcher eine sehr elegante Lösung für dieses Problem bietet.</em></p>
 </div>
 </div>
-<div id="datentypen" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Datentypen</h2>
+<div id="objekte-und-datentypen" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Objekte und Datentypen</h2>
+<p>In R kann alles als Objekt in Variable gespeichert werden.</p>
+<p>Anmerkung: Objekte sind nicht gleich Variablen, da Objekte nicht gespeichert werden <em>müssen</em>. Ein Objekt wird erst dann zur Variable, wenn es eine Bezeichnung über <code>&lt;-</code> erhält und damit gespeichert wird.</p>
+<ul>
+<li>Einzelne Werte / Mehrere Werte (z.B. ein Datensatz mit Rohdaten)</li>
+<li>Tabellen</li>
+<li>Statistische Modelle</li>
+<li>Ergebnisse statitischer Analysen</li>
+<li>Funktionen, etc.</li>
+</ul>
+<p>In R gibt es eine Vielzahl von verschiedenen Objekttypen. Die grundlegenden Objekttypen (und deren Gemeinsamkeit mit SPSS-Datentypen) sind:</p>
+<div id="vektoren" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Vektoren</h3>
+<ul>
+<li>Vektoren → ordinale/metrische Variablen
+<ul>
+<li>numeric (Zahlen)</li>
+<li>character (Buchstaben)</li>
+<li>logical (Richtig oder Falsch)</li>
+</ul></li>
+</ul>
+<p>Beispiel</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="programmiersprache-r.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Numerischer Verktor (numeric vector) </span></span>
+<span id="cb26-2"><a href="programmiersprache-r.html#cb26-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>) </span>
+<span id="cb26-3"><a href="programmiersprache-r.html#cb26-3" aria-hidden="true" tabindex="-1"></a>x</span>
+<span id="cb26-4"><a href="programmiersprache-r.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3 4 5</span></span>
+<span id="cb26-5"><a href="programmiersprache-r.html#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="programmiersprache-r.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Buchstaben Vektor (character vector) </span></span>
+<span id="cb26-7"><a href="programmiersprache-r.html#cb26-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Peter&quot;</span>, <span class="st">&quot;Yusuf&quot;</span>, <span class="st">&quot;Sarah&quot;</span>, <span class="st">&quot;Aayana&quot;</span>)</span>
+<span id="cb26-8"><a href="programmiersprache-r.html#cb26-8" aria-hidden="true" tabindex="-1"></a>y</span>
+<span id="cb26-9"><a href="programmiersprache-r.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Peter&quot;  &quot;Yusuf&quot;  &quot;Sarah&quot;  &quot;Aayana&quot;</span></span>
+<span id="cb26-10"><a href="programmiersprache-r.html#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="programmiersprache-r.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Logischer Vektor (logical vector)</span></span>
+<span id="cb26-12"><a href="programmiersprache-r.html#cb26-12" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, T, F, <span class="cn">NA</span>) <span class="co"># TRUE/FALSE können mit T/F abgekürzt werden</span></span>
+<span id="cb26-13"><a href="programmiersprache-r.html#cb26-13" aria-hidden="true" tabindex="-1"></a>z</span>
+<span id="cb26-14"><a href="programmiersprache-r.html#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  TRUE FALSE  TRUE FALSE    NA</span></span></code></pre></div>
+<p>Vektoren stellen die fundamentalen Datentypen dar. Alle weiteren Datentypen bauen auf diesen auf.</p>
+<p><strong>Wichtig!</strong> Vektoren müssen aus denselben Elementen bestehen, d.h. wir können nicht logical und character Vektoren mischen. Sie bilden damit die <code>atomare Struktur</code> in R.</p>
+<ul>
+<li><p><strong>numeric vector:</strong> Die häufigste Datenform in R. Numerische Vektoren lassen sich zudem weiter unterteilen, in <code>integer</code> (ganze Zahlen) und <code>double</code> (reele Zahlen - Kommazahlen). Zahlen werden in R praktisch immer als <code>double</code> abgelegt (auch die ganzen Zahlen) und müssen somit nie für Berechungen gewandelt werden.</p></li>
+<li><p><strong>character vector:</strong> Die Elemente dieses Typs bestehen aus Zeichen, welche von Anführungszeichen umgeben werden (entweder ’ oder " ).</p>
+<p>Anmerkung: Anführungszeichen dienen in R zur Kennzeichnung von nicht numerischen Werten. Wir müssen also alle Worte in jedem Kontext in Anführungszeichen schreiben.</p></li>
+<li><p><strong>logical vector:</strong> Die Elemente dieses Typs können nur 3 Werte annehmen:<code>TRUE</code>, <code>FALSE</code> oder <code>NA</code>.</p>
+<p>Anmerkung: <code>NA</code> steht für fehlende Werte.</p></li>
+</ul>
+<p>Vektoren haben folgend drei Eigenschaften:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="programmiersprache-r.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modus bzw. Struktur (mode) - Was ist es?</span></span>
+<span id="cb27-2"><a href="programmiersprache-r.html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(x)</span>
+<span id="cb27-3"><a href="programmiersprache-r.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;double&quot;</span></span>
+<span id="cb27-4"><a href="programmiersprache-r.html#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="programmiersprache-r.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Länge - Wie viele Elemente?</span></span>
+<span id="cb27-6"><a href="programmiersprache-r.html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(x)</span>
+<span id="cb27-7"><a href="programmiersprache-r.html#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span>
+<span id="cb27-8"><a href="programmiersprache-r.html#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="programmiersprache-r.html#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Attribute - Zusätzliche Informationen (Metadaten)</span></span>
+<span id="cb27-10"><a href="programmiersprache-r.html#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">attributes</span>(x) <span class="co"># x wurden bewusst keine Informationen zugeordnet, da wir einen anderen Zugang du Metadaten lernen werden</span></span>
+<span id="cb27-11"><a href="programmiersprache-r.html#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb27-12"><a href="programmiersprache-r.html#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="programmiersprache-r.html#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ------ Zusatz ------</span></span>
+<span id="cb27-14"><a href="programmiersprache-r.html#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Objektbestimmung</span></span>
+<span id="cb27-15"><a href="programmiersprache-r.html#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(x)</span>
+<span id="cb27-16"><a href="programmiersprache-r.html#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;numeric&quot;</span></span></code></pre></div>
+<p>Nun wollen wir auf die einzelnen Elemente in den Vektoren zugreifen. Wir können die einzelnen Elemente eines Vektor mit <code>[]</code> auswählen (<code>subsetting</code>):</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="programmiersprache-r.html#cb28-1" aria-hidden="true" tabindex="-1"></a>zahlenreihe <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">2.5</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">5.77</span>, <span class="dv">6</span>, <span class="dv">7</span>)</span>
+<span id="cb28-2"><a href="programmiersprache-r.html#cb28-2" aria-hidden="true" tabindex="-1"></a>buchstabenreihe <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>, <span class="st">&quot;E&quot;</span>)</span>
+<span id="cb28-3"><a href="programmiersprache-r.html#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="programmiersprache-r.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Das erste Element</span></span>
+<span id="cb28-5"><a href="programmiersprache-r.html#cb28-5" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="dv">1</span>]</span>
+<span id="cb28-6"><a href="programmiersprache-r.html#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb28-7"><a href="programmiersprache-r.html#cb28-7" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="dv">1</span>]</span>
+<span id="cb28-8"><a href="programmiersprache-r.html#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;A&quot;</span></span>
+<span id="cb28-9"><a href="programmiersprache-r.html#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="programmiersprache-r.html#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># das fünfte Element</span></span>
+<span id="cb28-11"><a href="programmiersprache-r.html#cb28-11" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="dv">5</span>]</span>
+<span id="cb28-12"><a href="programmiersprache-r.html#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.77</span></span>
+<span id="cb28-13"><a href="programmiersprache-r.html#cb28-13" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="dv">5</span>]</span>
+<span id="cb28-14"><a href="programmiersprache-r.html#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;E&quot;</span></span>
+<span id="cb28-15"><a href="programmiersprache-r.html#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="programmiersprache-r.html#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Das letzte Element</span></span>
+<span id="cb28-17"><a href="programmiersprache-r.html#cb28-17" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="fu">length</span>(zahlenreihe)]</span>
+<span id="cb28-18"><a href="programmiersprache-r.html#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 7</span></span>
+<span id="cb28-19"><a href="programmiersprache-r.html#cb28-19" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="fu">length</span>(buchstabenreihe)]</span>
+<span id="cb28-20"><a href="programmiersprache-r.html#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;E&quot;</span></span>
+<span id="cb28-21"><a href="programmiersprache-r.html#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="programmiersprache-r.html#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Mit - (Minus) können wir gezielt Elemente ausschließen</span></span>
+<span id="cb28-23"><a href="programmiersprache-r.html#cb28-23" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="sc">-</span><span class="dv">4</span>]</span>
+<span id="cb28-24"><a href="programmiersprache-r.html#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.00 2.50 3.00 5.77 6.00 7.00</span></span>
+<span id="cb28-25"><a href="programmiersprache-r.html#cb28-25" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="sc">-</span><span class="dv">4</span>]</span>
+<span id="cb28-26"><a href="programmiersprache-r.html#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;E&quot;</span></span>
+<span id="cb28-27"><a href="programmiersprache-r.html#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-28"><a href="programmiersprache-r.html#cb28-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Wir können auch Sequenzen auswählen</span></span>
+<span id="cb28-29"><a href="programmiersprache-r.html#cb28-29" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb28-30"><a href="programmiersprache-r.html#cb28-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2.50 3.00 4.00 5.77</span></span>
+<span id="cb28-31"><a href="programmiersprache-r.html#cb28-31" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb28-32"><a href="programmiersprache-r.html#cb28-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;</span></span>
+<span id="cb28-33"><a href="programmiersprache-r.html#cb28-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-34"><a href="programmiersprache-r.html#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Wir können auch gezielt mehrere Elemente ausschließen oder auswählen</span></span>
+<span id="cb28-35"><a href="programmiersprache-r.html#cb28-35" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>)]</span>
+<span id="cb28-36"><a href="programmiersprache-r.html#cb28-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2.50 3.00 5.77 6.00 7.00</span></span>
+<span id="cb28-37"><a href="programmiersprache-r.html#cb28-37" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>)]</span>
+<span id="cb28-38"><a href="programmiersprache-r.html#cb28-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;B&quot; &quot;C&quot; &quot;E&quot;</span></span>
+<span id="cb28-39"><a href="programmiersprache-r.html#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-40"><a href="programmiersprache-r.html#cb28-40" aria-hidden="true" tabindex="-1"></a>zahlenreihe[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>)]</span>
+<span id="cb28-41"><a href="programmiersprache-r.html#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.00 2.50 5.77</span></span>
+<span id="cb28-42"><a href="programmiersprache-r.html#cb28-42" aria-hidden="true" tabindex="-1"></a>buchstabenreihe[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>)]</span>
+<span id="cb28-43"><a href="programmiersprache-r.html#cb28-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;A&quot; &quot;B&quot; &quot;E&quot;</span></span></code></pre></div>
+</div>
+<div id="faktoren" class="section level3" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Faktoren</h3>
+<p>Bisher haben wir <code>numeric</code>, <code>logical</code> und <code>character</code> Vektoren kennengelernt. Ein weiterer Objekttyp wird benötigt, um kategoriale Daten oder Gruppierungsvariablen darzustellen. Dieser Objekttyp wird <code>factor</code> genannt.</p>
+<ul>
+<li>Faktoren → nominale/ordinale Variablen
+<ul>
+<li>nominale Variable</li>
+<li>Kategorien des Faktors = levels (kann zahlen oder Buchstaben enthalten)</li>
+</ul></li>
+</ul>
+<p>Ein <code>factor</code> ist ein Vektor von natürlichen Zahlen (integer vector), der mit zusätzlicher Information (Metadaten) versehen ist. Diese attributes sind die Objektklasse factor und die Faktorstufen levels. Am besten wir illustrieren dies mit einem Beispiel.</p>
 
+</div>
 </div>
 </div>
             </section>
