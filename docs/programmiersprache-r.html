@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2021-05-15" />
+<meta name="date" content="2021-05-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -169,7 +169,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="2.1.1" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#variablennamen"><i class="fa fa-check"></i><b>2.1.1</b> Variablennamen</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>2.2</b> Funktionen aufrufen</a></li>
+<li class="chapter" data-level="2.2" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#funktionen-aufrufen"><i class="fa fa-check"></i><b>2.2</b> Funktionen aufrufen</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="programmiersprache-r.html"><a href="programmiersprache-r.html#verschachtelung-von-funktionen"><i class="fa fa-check"></i><b>2.2.1</b> Verschachtelung von Funktionen</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -199,11 +202,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Zur Kontrolle können wir <code>x</code> mit den folgenden Befehlen aufrufen.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="programmiersprache-r.html#cb18-1" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div>
 <pre><code>## [1] 8</code></pre>
-<p>oder</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="programmiersprache-r.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(x)</span></code></pre></div>
-<pre><code>## [1] 8</code></pre>
 <p>Man kann auch gleich bei der Definition der Variablen die Zuweisung in Klammern schreiben und das Resultat wird gleichzeitig in der Konsole angezeigt:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="programmiersprache-r.html#cb22-1" aria-hidden="true" tabindex="-1"></a>(x <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="programmiersprache-r.html#cb20-1" aria-hidden="true" tabindex="-1"></a>(x <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="dv">4</span>)</span></code></pre></div>
 <pre><code>## [1] 8</code></pre>
 <p><strong>Tipp:</strong> Sollten Sie aus anderen Programmiersprachen schon Kenntnisse mitbringen und <code>=</code> als Zuweisungsoperator kennen, empfehlen wir dennoch eindringlich mit <code>&lt;-</code> zu arbeiten. Funktionen in R arbeiten bei der Zuweisung von Argumenten mit dem Zuweisungsoperator <code>=</code>. Folglich ist die Verwendung von <code>&lt;-</code> nicht nur besser zu lesen, sie kann auch Fehler vorbeugen.</p>
 <div id="variablennamen" class="section level3" number="2.1.1">
@@ -231,7 +231,92 @@ efa 1</code></pre>
 </div>
 <div id="funktionen-aufrufen" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Funktionen aufrufen</h2>
+<blockquote>
+<p>“Everything that exists is an object. Everything that happens is a function call.”</p>
+<p>–John Chambers</p>
+</blockquote>
+<p>Objekte haben wir schon in ihrer einfachsten Form als Variable kennengelernt. Nun wollen wir uns den Funktionen (function calls) in R zuwenden.</p>
+<p>Wir wollen uns eine Funktion an einem fiktionalen Beispiel einmal ansehen. Unsere Funktion sieht wie folgt aus:</p>
+<pre><code>functionName(arg1 = Daten, arg2 = option1, arg3)</code></pre>
+<p>In einem ersten Schritt sehen wir uns an, welchen Namen die Funktion trägt. Unsere Funktion heißt functionName. Wir können leider nicht direkt aus dem Namen erschließen, welche Auswirkung unser <em>function call</em> haben wird. In so einem Fall würde ein Blick in <code>Help</code> (<code>?functionName</code>) sicher Abhilfe schaffen, wenngleich wir in unserem Beispiel leider keine Dokumentation nutzen können.</p>
+<p>So sehen wir uns in einem zweiten Schritt die <em>Argumente</em> unserer Funktion an. Wie wir sehen können, besitzt unsere Funktion drei Argumente: <code>arg1</code>, <code>arg2</code> und <code>arg3</code>. Die Argumente werden mit spezifischen Werten über <code>=</code> bestückt. In unserem Beispiel benötigt das erste Argument Daten und das zweite Argument einen spezifischen Wert aus einer Auswahl an möglichen Werten - diese werden immer vom Entwickler der Funktion in der Dokumentation angegeben. Das dritte Argument wird als “default” abgerufen, also über eine Voreinstellung der Entwicklers geladen. Argumente die mit “default” arbeiten sind aber keinesfalls fest. Sie können immer auch durch andere Werte ersetzt werden. Argumente arbeiten immer dann mit “default,” wenn die Grundeinstellung des Arguments die häufigste Nutzungsform ist und man nicht bei jedem <em>function call</em> die Wertzuweisung von neuem machen will.</p>
+<p><strong>Tipp:</strong> Wollen wir alle verfügbaren Argumente in einer Funktion sehen, drücken wir <code>Tab</code>.</p>
+<p><strong>Wichtig!</strong> Eine Funktion kann beliebig viele Argumente besitzen.</p>
+<p>Um uns einer “großen” Funktion zu nähern, müssen wir zu Beginn einige Grundfunktionen kennenlernen.</p>
+<ul>
+<li><code>c()</code> &gt; Combine: kreiert einen Vektor (Zahlenfolge)</li>
+<li><code>seq(from, to, by)</code> &gt; Generiert eine Sequenz an Zahlen</li>
+<li><code>:</code> &gt; Colon Operator: generiert eine reguläre Sequenz (Sequenz in Einerschritten)</li>
+<li><code>rep(x, times, each)</code> &gt; Wiederholt x
+times: Sequent wird n-mal widerholt
+each: jedes Element wird n-mal wiederholt</li>
+<li><code>head(x, n = 6)</code> &gt; Zeigt die n ersten Elemente von x an</li>
+<li><code>tail(x, n = 6)</code> &gt; Zeigt die n letzten Elemente von x an</li>
+<li><code>print(x)</code> &gt; Gibt Werte eines Objekts aus (vor allem bei großen Objekten wichtig)</li>
+<li><code>round(x, digits)</code> &gt; Rundung von Zahlen</li>
+</ul>
+<p>z.B.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="programmiersprache-r.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
+<span id="cb24-2"><a href="programmiersprache-r.html#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3 4 5</span></span>
+<span id="cb24-3"><a href="programmiersprache-r.html#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="programmiersprache-r.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="dv">10</span>, <span class="at">by =</span> <span class="dv">2</span>)</span>
+<span id="cb24-5"><a href="programmiersprache-r.html#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 3 5 7 9</span></span>
+<span id="cb24-6"><a href="programmiersprache-r.html#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="programmiersprache-r.html#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb24-8"><a href="programmiersprache-r.html#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3 4 5</span></span>
+<span id="cb24-9"><a href="programmiersprache-r.html#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="programmiersprache-r.html#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">times =</span> <span class="dv">5</span>, <span class="at">each =</span> <span class="dv">3</span>)</span>
+<span id="cb24-11"><a href="programmiersprache-r.html#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</span></span>
+<span id="cb24-12"><a href="programmiersprache-r.html#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="programmiersprache-r.html#cb24-13" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>)</span>
+<span id="cb24-14"><a href="programmiersprache-r.html#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="programmiersprache-r.html#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="at">x =</span> x, <span class="at">n =</span> <span class="dv">6</span>)</span>
+<span id="cb24-16"><a href="programmiersprache-r.html#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 3 4 5 6</span></span>
+<span id="cb24-17"><a href="programmiersprache-r.html#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="programmiersprache-r.html#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(<span class="at">x =</span> x, <span class="at">n =</span> <span class="dv">4</span>)</span>
+<span id="cb24-19"><a href="programmiersprache-r.html#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  7  8  9 10</span></span>
+<span id="cb24-20"><a href="programmiersprache-r.html#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="programmiersprache-r.html#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="at">x =</span> x)</span>
+<span id="cb24-22"><a href="programmiersprache-r.html#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
+<span id="cb24-23"><a href="programmiersprache-r.html#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-24"><a href="programmiersprache-r.html#cb24-24" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.222</span>, <span class="fl">2.333</span>, <span class="fl">3.444</span>)</span>
+<span id="cb24-25"><a href="programmiersprache-r.html#cb24-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-26"><a href="programmiersprache-r.html#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="at">x =</span> y, <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb24-27"><a href="programmiersprache-r.html#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.2 2.3 3.4</span></span></code></pre></div>
+<p>Wir wollen uns die Variable <code>y</code> aus unserem Beispiel etwas genauer ansehen. y enthält durch das Aufrufen der Funktion <code>c()</code> einer Reihe an Zahlen (1.222 bis 3.444). y enthält also Zahlen mit drei Nachkommastellen, die wir mit der Funktion <code>round()</code> auf eine Nachkommastelle gerundet werden sollen. Das Argument <code>digits</code> beschreibt damit die Rundungszahl nach dem Komma. Folglich löst der Wert 1 eine Rundung der Nachkommastellen auf eine Nachkommastelle aus. Der Wert im Argument <code>digits</code> kann damit theoretisch von 0 bis ∞ variieren.</p>
+<div id="verschachtelung-von-funktionen" class="section level3" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Verschachtelung von Funktionen</h3>
+<p>Zudem können wir beliebig viele Funktion ineinander verschachteln, d.h. wir können den Output einer Funktion einer weiteren Funktion als Input übergeben.</p>
+<p>Wir bilden zuerst einen Vektor, runden die Zahlen und lassen uns dann nur die ersten drei Zahlen ausgeben.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="programmiersprache-r.html#cb25-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
+<span id="cb25-2"><a href="programmiersprache-r.html#cb25-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="at">x =</span> x, <span class="at">digits =</span> <span class="dv">1</span>)</span>
+<span id="cb25-3"><a href="programmiersprache-r.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="at">x =</span> x, <span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb25-4"><a href="programmiersprache-r.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span>
+<span id="cb25-5"><a href="programmiersprache-r.html#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="programmiersprache-r.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Jetzt in einer verschachtelten Funktion</span></span>
+<span id="cb25-7"><a href="programmiersprache-r.html#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="programmiersprache-r.html#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="at">x =</span> <span class="fu">round</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>), <span class="at">digits =</span> <span class="dv">1</span>), <span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb25-9"><a href="programmiersprache-r.html#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span>
+<span id="cb25-10"><a href="programmiersprache-r.html#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="programmiersprache-r.html#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co"># In Kurz</span></span>
+<span id="cb25-12"><a href="programmiersprache-r.html#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="programmiersprache-r.html#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">round</span>(<span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>), <span class="at">digits =</span> <span class="dv">1</span>), <span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb25-14"><a href="programmiersprache-r.html#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
+<p>Die Funktionen werden immer in der Reihenfolge <em>von innen nach außen</em> ausgeführt. In unserem Beispiel also erst <code>c()</code>, dann <code>round()</code> und dann <code>head()</code>. Jede Funktion gibt ihren Wert an die nächste Funktion weiter.</p>
+<p><strong>Anmerkung:</strong> Die Funktion <code>head()</code> enthält zwei Argumente mit “default”-Werten: keepnums und addrownums. Beide bekommen automatisch den Wert <code>NULL</code> und müssen damit nicht ausgeschrieben werden. Sie werden für unsere Anwendung der Funktion auch nicht gebraucht und damit nicht angepasst.</p>
+<p>Vorteile von verschachtelten Funktionen:</p>
+<ul>
+<li>Es können unendlich viele Funktionen verschachtelt werden.</li>
+<li>Wir müssen Argumente nicht ausschreiben, solange sie eindeutig von der Funktion erkannt werden können. So gibt es in allen genutzten Funktionen mit <code>x =</code> nur eine Schnittstelle für die Dateneingabe.</li>
+<li>Weiterhin können wir so unseren Code in eine Kette von Befehlen verwandeln, die nur einen Output (ein Objekt) ausgibt. Die Objektstruktur wird damit übersichtlicher.</li>
+</ul>
+<p>Nachteil:</p>
+<ul>
+<li>Wenn wir mehrere Funktionen ineinander verschachteln, kann unser Code schnell unlesbar werden. Natürlich könnten wir die einzelnen Zwischenschritte speichern, wie im Beispiel weiter oben, aber dann definieren wir eine Menge Variablen, welche wir vielleicht gar nicht benötigen.</li>
+</ul>
+<p><em>Wir werden im Kapitel über Datentransformation einen neuen Operator kennenlernen, welcher eine sehr elegante Lösung für dieses Problem bietet.</em></p>
 
+</div>
 </div>
 </div>
             </section>

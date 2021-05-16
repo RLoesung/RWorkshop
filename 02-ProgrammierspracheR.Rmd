@@ -18,12 +18,6 @@ Zur Kontrolle können wir `x` mit den folgenden Befehlen aufrufen.
 x
 ```
 
-oder 
-
-```{r, echo=T}
-print(x)
-```
-
 Man kann auch gleich bei der Definition der Variablen die Zuweisung in Klammern schreiben und das Resultat wird gleichzeitig in der Konsole angezeigt:
 
 ```{r, echo=T}
@@ -67,6 +61,102 @@ efa 1
 
 ## Funktionen  aufrufen
 
+> "Everything that exists is an object. Everything that happens is a function call".
+>
+>--John Chambers
+
+Objekte haben wir schon in ihrer einfachsten Form als Variable kennengelernt. Nun wollen wir uns den Funktionen (function calls) in R zuwenden. 
+
+Wir wollen uns eine Funktion an einem fiktionalen Beispiel einmal ansehen. Unsere Funktion sieht wie folgt aus:
+
+```{}
+functionName(arg1 = Daten, arg2 = option1, arg3)
+```
+
+In einem ersten Schritt sehen wir uns an, welchen Namen die Funktion trägt. Unsere Funktion heißt functionName. Wir können leider nicht direkt aus dem Namen erschließen, welche Auswirkung unser *function call* haben wird. In so einem Fall würde ein Blick in `Help` (`?functionName`) sicher Abhilfe schaffen, wenngleich wir in unserem Beispiel leider keine Dokumentation nutzen können. 
+
+So sehen wir uns in einem zweiten Schritt die *Argumente* unserer Funktion an. Wie wir sehen können, besitzt unsere Funktion drei Argumente: `arg1`, `arg2` und `arg3`. Die Argumente werden mit spezifischen Werten über `=` bestückt. In unserem Beispiel benötigt das erste Argument Daten und das zweite Argument einen spezifischen Wert aus einer Auswahl an möglichen Werten - diese werden immer vom Entwickler der Funktion in der Dokumentation angegeben. Das dritte Argument wird als "default" abgerufen, also über eine Voreinstellung der Entwicklers geladen. Argumente die mit "default" arbeiten sind aber keinesfalls fest. Sie können immer auch durch andere Werte ersetzt werden. Argumente arbeiten immer dann mit "default", wenn die Grundeinstellung des Arguments die häufigste Nutzungsform ist und man nicht bei jedem *function call* die Wertzuweisung von neuem machen will. 
+
+**Tipp:** Wollen wir alle verfügbaren Argumente in einer Funktion sehen, drücken wir `Tab`.
+
+**Wichtig!** Eine Funktion kann beliebig viele Argumente besitzen.
+
+Um uns einer "großen" Funktion zu nähern, müssen wir zu Beginn einige Grundfunktionen kennenlernen.
+
+* `c()` > Combine: kreiert einen Vektor (Zahlenfolge)
+* `seq(from, to, by)` > Generiert eine Sequenz an Zahlen
+* `:` > Colon Operator: generiert eine reguläre Sequenz (Sequenz in Einerschritten)
+* `rep(x, times, each)` > Wiederholt x 
+                          times: Sequent wird n-mal widerholt
+                          each: jedes Element wird n-mal wiederholt
+* `head(x, n = 6)` > Zeigt die n ersten Elemente von x an
+* `tail(x, n = 6)` > Zeigt die n letzten Elemente von x an
+* `print(x)` > Gibt Werte eines Objekts aus (vor allem bei großen Objekten wichtig)
+* `round(x, digits)` > Rundung von Zahlen
+
+z.B.
+
+```{r, echo=T, collapse=T, comment="#>"}
+c(1, 2, 3, 4, 5)
+
+seq(from = 1, to = 10, by = 2)
+
+1:5
+
+rep(x = 2, times = 5, each = 3)
+
+x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+head(x = x, n = 6)
+
+tail(x = x, n = 4)
+
+print(x = x)
+
+y <- c(1.222, 2.333, 3.444)
+
+round(x = y, digits = 1)
+```
+
+Wir wollen uns die Variable `y` aus unserem Beispiel etwas genauer ansehen. y enthält durch das Aufrufen der Funktion `c()` einer Reihe an Zahlen (1.222 bis 3.444). y enthält also Zahlen mit drei Nachkommastellen, die wir mit der Funktion `round()` auf eine Nachkommastelle gerundet werden sollen. Das Argument `digits` beschreibt damit die Rundungszahl nach dem Komma. Folglich löst der Wert 1 eine Rundung der Nachkommastellen auf eine Nachkommastelle aus. Der Wert im Argument `digits` kann damit theoretisch von 0 bis ∞ variieren. 
+
+### Verschachtelung von Funktionen
+
+Zudem können wir beliebig viele Funktion ineinander verschachteln, d.h. wir können den Output einer Funktion einer weiteren Funktion als Input übergeben. 
+
+Wir bilden zuerst einen Vektor, runden die Zahlen und lassen uns dann nur die ersten drei Zahlen ausgeben.
+
+```{r, echo=T, collapse=T, comment="#>"}
+x <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+x <- round(x = x, digits = 1)
+head(x = x, n = 3)
+
+# Jetzt in einer verschachtelten Funktion
+
+head(x = round(x = c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+
+# In Kurz
+
+head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+```
+
+Die Funktionen werden immer in der Reihenfolge *von innen nach außen* ausgeführt. In unserem Beispiel also erst `c()`, dann `round()` und dann `head()`. Jede Funktion gibt ihren Wert an die nächste Funktion weiter. 
+
+**Anmerkung:** Die Funktion `head()` enthält zwei Argumente mit "default"-Werten: keepnums und addrownums. Beide bekommen automatisch den Wert `NULL` und müssen damit nicht ausgeschrieben werden. Sie werden für unsere Anwendung der Funktion auch nicht gebraucht und damit nicht angepasst. 
+
+Vorteile von verschachtelten Funktionen:
+
+* Es können unendlich viele Funktionen verschachtelt werden. 
+* Wir müssen Argumente nicht ausschreiben, solange sie eindeutig von der Funktion erkannt werden können. So gibt es in allen genutzten Funktionen mit `x =` nur eine Schnittstelle für die Dateneingabe. 
+* Weiterhin können wir so unseren Code in eine Kette von Befehlen verwandeln, die nur einen Output (ein Objekt) ausgibt. Die Objektstruktur wird damit übersichtlicher. 
+
+Nachteil:
+
+* Wenn wir mehrere Funktionen ineinander verschachteln, kann unser Code schnell unlesbar werden. Natürlich könnten wir die einzelnen Zwischenschritte speichern, wie im Beispiel weiter oben, aber dann definieren wir eine Menge Variablen, welche wir vielleicht gar nicht benötigen.
+
+*Wir werden im Kapitel über Datentransformation einen neuen Operator kennenlernen, welcher eine sehr elegante Lösung für dieses Problem bietet.*
+
+## Datentypen 
 
 
 
