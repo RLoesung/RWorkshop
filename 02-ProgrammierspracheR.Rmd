@@ -7,7 +7,7 @@ In diesem Kapitel wollen wir R als Programmierspache kennenlernen.
 In einem ersten Schritt wollen wir eine Rechnung (einen Wert) in einer Variable speichern.
 
 ```{r, echo=T, collapse=T, comment="#>"}
-x <- 2*4
+var1 <- 2*4
 ```
 
 Unsere Variable mit dem Namen `x` (immer links in der Zeile) wird über den Zuweisungspfeil `<-` (Tastenkürzel: `option` + `-`) mit dem Ergebnis aus `2*4 (8)` definiert.
@@ -15,13 +15,13 @@ Unsere Variable mit dem Namen `x` (immer links in der Zeile) wird über den Zuwe
 Zur Kontrolle können wir `x` mit den folgenden Befehlen aufrufen.
 
 ```{r, echo=T, collapse=T, comment="#>"}
-x
+var1
 ```
 
 Man kann auch gleich bei der Definition der Variablen die Zuweisung in Klammern schreiben und das Resultat wird gleichzeitig in der Konsole angezeigt.
 
 ```{r, echo=T, collapse=T, comment="#>"}
-(x <- 2*4)
+(var1 <- 2*4)
 ```
 
 **Tipp:** Sollten Sie aus anderen Programmiersprachen schon Kenntnisse mitbringen und `=` als Zuweisungsoperator kennen, empfehlen wir dennoch eindringlich mit `<-` zu arbeiten. Funktionen in R arbeiten bei der Zuweisung von Argumenten mit dem Zuweisungsoperator `=`. Folglich ist die Verwendung von `<-` nicht nur besser zu lesen, sie kann auch Fehler vorbeugen.
@@ -105,7 +105,7 @@ seq(from = 1, to = 10, by = 2)
 
 rep(x = 2, times = 5, each = 3)
 
-x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+var1 <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 head(x = x, n = 6)
 
@@ -113,9 +113,9 @@ tail(x = x, n = 4)
 
 print(x = x)
 
-y <- c(1.222, 2.333, 3.444)
+var2 <- c(1.222, 2.333, 3.444)
 
-round(x = y, digits = 1)
+round(x = var2, digits = 1)
 ```
 
 Wir wollen uns die Variable `y` etwas genauer ansehen. y enthält durch das Aufrufen der Funktion `c()` eine Reihe von Zahlen (1.222 bis 3.444) mit drei Nachkommastellen. Diese Zahlen wollen wir mit der Funktion `round()` auf eine Nachkommastelle runden. Das Argument `digits` beschreibt damit die Rundungszahl nach dem Komma. `digits = 1` löst eine Rundung der Nachkommastellen auf die erste Nachkommastelle aus. Der Wert im Argument `digits` kann damit theoretisch von 0 bis ∞ variieren. 
@@ -128,9 +128,9 @@ Wir bilden zuerst einen Vektor, runden die Zahlen und lassen uns dann nur die er
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Mehrere Funktionen hintereinander
-x <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-x <- round(x = x, digits = 1)
-head(x = x, n = 3)
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+var1 <- round(x = var1, digits = 1)
+head(x = var1, n = 3)
 
 # jetzt in einer verschachtelten Funktion
 head(x = round(x = c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
@@ -178,16 +178,16 @@ Beispiel
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Numerischer Verktor (numeric vector) 
-x <- c(1, 2, 3, 4, 5) 
-x
+var1 <- c(1, 2, 3, 4, 5) 
+var1
 
 # Buchstaben Vektor (character vector) 
-y <- c("Peter", "Yusuf", "Sarah", "Aayana")
-y
+var2 <- c("Peter", "Yusuf", "Sarah", "Aayana")
+var2
 
 # Logischer Vektor (logical vector)
-z <- c(TRUE, FALSE, NA) 
-z
+var3 <- c(TRUE, FALSE, NA) 
+var3
 ```
 
 **Tipp:** TRUE bzw. FALSE können mit T bzw. F abgekürzt werden.
@@ -200,7 +200,7 @@ Vektoren stellen die fundamentalen Datentypen dar. Alle weiteren Datentypen baue
 
 * **character vector:** Die Elemente dieses Typs bestehen aus Zeichen, welche von Anführungszeichen umgeben werden (entweder ' oder " ). Sie werden auch *strings* genannt.
 
-  Anmerkung: Anführungszeichen dienen in R zur Kennzeichnung von nicht numerischen Werten. Wir müssen also **alle** Worte in jedem Kontext in Anführungszeichen schreiben.
+  Anmerkung: Anführungszeichen dienen in R zur Kennzeichnung von nicht numerischen Werten. Wir müssen also **alle** natürlichen Worte in jedem Kontext in Anführungszeichen schreiben.
 
 * **logical vector:** Die Elemente dieses Typs können nur 3 Werte annehmen:`TRUE`, `FALSE` oder `NA`. Logische Vektoren lassen sich auch numerisch übersetzen in `TRUE = 1` und `FALSE = 0`, damit werden sie auch als `integer` abgelegt. Das wird vor allem bei der Datenselektion relevant.
 
@@ -210,18 +210,18 @@ Vektoren haben folgend drei Eigenschaften:
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Modus bzw. Struktur (mode) - Was ist es?
-typeof(x)
+typeof(var1)
 
 # Länge - Wie viele Elemente?
-length(x)
+length(var1)
 
 # Attribute (optional) - Zusätzliche Informationen (Metadaten)
-attributes(x) # x wurden noch keine attribute zugeordnet
+attributes(var1) # x wurden noch keine attribute zugeordnet
 
 # ------ Zusatz ------
 
 # Objektbestimmung
-class(x)
+class(var1)
 ```
 
 Nun wollen wir auf die einzelnen Elemente in den Vektoren zugreifen (indizieren). Wir können die einzelnen Elemente eines Vektor mit `[]` anwählen (`subsetting`).
@@ -331,7 +331,7 @@ Mit der Funktion `factor()` lassen sich alle Faktorstufen frei ordnen, solange w
 # Unsere Refrenzkategorie ist gegenwärtig "Mann"
 levels(sexf)
 
-# Wir ändern die Refrenkategorie folgend auf "Frau"
+# Wir ändern die Refrenkategorie durch die neue Auflistung unserer level auf "Frau"
 sexf <- factor(sexf, levels = c("Frau", "Mann", "Div"))
 levels(sexf)
 ```
@@ -371,6 +371,10 @@ datensatz
 ```
 
 Unser `datensatz` ist damit ein Datensatz mit zwei Variablen (`sex` und `alter`) und sechs Fällen (rows). Dieser wird uns entsprechend im `Environment` angezeigt.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Datensatz.png")
+```
 
 Ein Datensatz hat die Attribute `names()`, `colnames()` und `rownames()`  (`names()` und `colnames()` bedeuten dasselbe).
 
@@ -434,10 +438,96 @@ datensatz$alter[4:length(datensatz$alter)]
 datensatz[c("sex", "alter")]
 ```
 
-
-*Damit haben wir die wichtigsten Objekte und Datentypen kennengelernt! Nun können Sie entweder im nächsten Kapitel mit dem Einlesen von Datensätzen und der Datentransformation weitermachen, oder Sie vertiefen Ihr wissen zu Datentypen über die folgenden Absätze zu Listen und Matrizen, sowie den Regeln der Vektorisierung in R.*
-
 ### Listen (list)
 
-In Arbeit!
+* Listen → in SPSS nicht vorhanden
+  * Kombination mehrerer Objekte
+  * Listen können beliebige Objekte enthalten, auch Objekte verschiedenen Typs.
+  * Im Unterschied zu Datensätzen können auch Objekte unterschiedlicher Länge gespeichert werden.
+
+Ein weiterer Datentyp ist `list`. Während Datensätze schon aus verschiedenen Vektoren bestehen können, lassen sich diese in Listen auch in **verschiedenen Längen** ablegen. Die meisten Objekte die wir im Verlauf unserer R Anwendung kennenlernen werden, sind damit Listen (z.B. die Ergebnisse eines Regressionsmodells werden als Liste gespeichert). Wir müssen aber nur mit ihnen umgehen können und sie verstehen. Wir werden sie praktisch nie selbst erstellen müssen.
+
+In einem ersten Schritt wollen wir dennoch mit der Funktion `list()` eine Liste definieren. So können wir schrittweise verstehen, welche Eigenschaften Listen besitzen.
+
+```{r, echo=T, collapse=T, comment="#>"}
+list1 <- list(1:3, "a", c(1.22, 2, 3.44, 4, 5), c(TRUE, FALSE, FALSE))
+list1
+```
+
+Wir haben mit der Variable `list1` eine Liste erstellt, die als Elemente einen `numeric` Vektor mit einer Zahlenreihe, einen `character` Vektor mit der Länge 1 (L1), einen `numeric`Vektor mit Kommazahlen und einen `logical` Vektor speichert.
+
+Listen können wie Vektoren indiziert werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Erstes Element in der Liste (erster Vektor)
+list1[1]
+
+# Zweites Element (zweiter Vektor)
+list1[2]
+
+# Drittes Element (dritter Vektor)
+list1[3]
+```
+
+Häufig sind die Elemente in einer Liste als Variablen benannt und können entsprechend wie in einem Datensatz über `$` abgerufen werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+list2 <- list(var1 = c(1, 2, 3),
+              var2 = c("a", "b", "c", "d"),
+              var3 = c(TRUE, FALSE),
+              var4 = seq(from = 1, to = 100, by = 5))
+
+# Ganze Liste abrufen
+list2
+
+# Aufruf der ersten Variable mit ihrem Namen var1
+list2$var1
+
+# Aufruf der zweiten Variable mit ihrem Namen var2
+list2$var2
+
+# Objektbestimmung
+typeof(list2)
+```
+
+Im `Environment` gibt sich folgende Datenstruktur.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Liste.png")
+```
+
+**Wichtig!** Elemente in Listen können unendlich "gestapelt" werden und folgend mit einer Verschränkung des `[]` Operator "entpackt" werden. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+list3 <- list(list1 = list1,
+              list2 = list(var1 = c(1, 2, 3, 4, 5), 
+                           var2 = "a"),
+              var1 = 1:100)
+
+list3
+
+# Liste1 aus Liste3 entpacken
+list3$list1
+
+#bzw
+
+list3[1]
+
+# var1 aus liste1 in liste3 entpacken
+list3$list1[1]
+
+# var2 aus liste2 in liste3 entpacken
+list3$list2$var2
+
+# Erster Wert aus var1 in list1 über list3 entpacken
+list3$list1[[1]][1]
+```
+
+### Weitere Datentypen
+
+R kennt noch zwei weitere Datentypen (Matrizen und Arrays), die wir in diesem Kurs ausklammern werden. Sofern interesse besteht, verweisen wir auf das Buch von Hadley Wickham: [Advanced R](https://adv-r.hadley.nz/index.html). 
+
+
+
+
 
