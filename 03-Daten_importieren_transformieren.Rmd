@@ -1,7 +1,62 @@
 # Daten importieren und transformieren
 
-In deisem Kapitel wollen wir lernen, wie man Datensätze in R importiert und die Daten richtig transformiert.
+In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätzen in den geläufigen Datenstrurkturen kennenlernen, um in einem zweiten Schritt die Daten nach unseren Vorstellungen zu modifizieren.
+
+### Vorbereitung {-}
+
+Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt über Gesis unter: [Allbus2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. 
+
+**Anmerkung:** Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.
+
+Folgend erstellen wir ein Projekt in RStudio (siehe  1.8.1). Sobald der Projektordner erstellt wurde, schieben wir unseren Datensatz in den Projektordner. Durch die Festlegung unseres Arbeitsverzeichnises im Projektordner, kann R direkt auf den Datensatz zugreifen. Der Reiter `Files` sollte entsprechend so aussehen:
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Files2.png")
+```
+
+Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Packete: tidyverse, strengejacke und easystats (siehe 1.6).
+
+Voila! Nun können wir den Datensatz einlesen.
 
 ## Datensatz importieren
+
+Durch das Packet *sjlabelled* aus dem Packat *strengejacke* können wir drei verschiedene Dateiformate einlesen. 
+
+* .sav > SPSS
+* .dta > Stata
+* .sas > SAS
+
+Da wir den Allbus 2018 in .sav vorliegen haben, benutzen wir die folgende Funktion.
+
+```{r, include=F}
+library(strengejacke)
+library(tidyverse)
+```
+
+```{}
+allbus2018 <- read_spss("ALLB2018.sav")
+```
+
+Sollten unsere Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.
+
+```{}
+# Stata
+allbus2018 <- read_stata("Datensatz.dta")
+
+# SAS
+allbus2018 <- read_sas("Datensatz.sas")
+```
+
+Sofern wir uns die Spezifikation des Dateiformats in der Funktion sparen wollen, können wir auch `read_data()` nutzen.
+
+**Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete `haven`, `readxl` und `readr` an. 
+
+
+
+
+
+
+
+
 
 
