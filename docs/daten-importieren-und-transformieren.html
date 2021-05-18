@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2021-05-17" />
+<meta name="date" content="2021-05-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -185,6 +185,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.1" data-path="daten-importieren-und-transformieren.html"><a href="daten-importieren-und-transformieren.html#vorbereitung"><i class="fa fa-check"></i><b>3.1</b> Vorbereitung</a></li>
 <li class="chapter" data-level="3.2" data-path="daten-importieren-und-transformieren.html"><a href="daten-importieren-und-transformieren.html#datensatz-importieren"><i class="fa fa-check"></i><b>3.2</b> Datensatz importieren</a></li>
+<li class="chapter" data-level="3.3" data-path="daten-importieren-und-transformieren.html"><a href="daten-importieren-und-transformieren.html#daten-transformieren"><i class="fa fa-check"></i><b>3.3</b> Daten transformieren</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="daten-importieren-und-transformieren.html"><a href="daten-importieren-und-transformieren.html#erster-blick-auf-den-datensatz"><i class="fa fa-check"></i><b>3.3.1</b> Erster Blick auf den Datensatz</a></li>
+<li class="chapter" data-level="3.3.2" data-path="daten-importieren-und-transformieren.html"><a href="daten-importieren-und-transformieren.html#datenmanipulation"><i class="fa fa-check"></i><b>3.3.2</b> Datenmanipulation</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -206,6 +211,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="daten-importieren-und-transformieren" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Daten importieren und transformieren</h1>
 <p>In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätzen in den geläufigen Datenstrurkturen kennenlernen, um in einem zweiten Schritt die Daten nach unseren Vorstellungen zu modifizieren.</p>
+<p><strong>Tipp:</strong> Zur Erstellung eigener Datensätze empfehlen wir das Kapitel <a href="https://methodenlehre.github.io/einfuehrung-in-R/datensätze.html#datensätze-selber-erstellen">Datensätze selber erstellen</a> von Andrew Ellis und Boris Mayer.</p>
 <div id="vorbereitung" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Vorbereitung</h2>
 <p>Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt über Gesis unter: <a href="https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018">Allbus 2018</a> herunterladen.</p>
@@ -224,16 +230,146 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>.sas &gt; SAS</li>
 </ul>
 <p>Da wir den Allbus 2018 in .sav vorliegen haben, benutzen wir die folgende Funktion.</p>
-<pre><code>allbus2018 &lt;- read_spss(&quot;ALLB2018.sav&quot;)</code></pre>
+<pre><code># SPSS
+allbus2018 &lt;- read_spss(&quot;ALLB2018.sav&quot;)</code></pre>
+<p><strong>Wichtig!</strong> Mit der Funktion <code>read_spss</code> über das Packet sjlabelled werden alle fehlenden Werte zu <code>NA</code> konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir das Packet <code>haven</code> über die Funktion <code>read_spss</code> und dem Argument <code>user_na = TRUE</code> zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse <code>labelled_spss</code> gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch <code>unlabel()</code> aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als <code>NA</code> makiert werden (<code>set_na()</code> aus sjlabelled). <em>Dazu aber später mehr!</em></p>
 <p>Sollten unsere Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.</p>
 <pre><code># Stata
 allbus2018 &lt;- read_stata(&quot;Datensatz.dta&quot;)
 
 # SAS
 allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
-<p>Sofern wir uns die Spezifikation des Dateiformats in der Funktion sparen wollen, können wir auch <code>read_data()</code> nutzen.</p>
+<p><strong>Tipp:</strong> Sofern wir uns die Spezifikation des Dateiformats in der Funktion sparen wollen, können wir auch <code>read_data()</code> nutzen.</p>
 <p><strong>Anmerkung:</strong> Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete <code>haven</code>, <code>readxl</code> und <code>readr</code> an.</p>
+<p>Die Funktion <code>read_spss</code> besitzt drei für uns “relevante” Argumente. <code>?read_spss</code>.</p>
+<ul>
+<li><code>atomic.to.fac</code> &gt; <code>TRUE</code> = Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.</li>
+<li><code>drop.labels</code> &gt; <code>TRUE</code> = Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch <code>read_spss()</code> über das sjlabelled wurden ohnehin alle vormalig fehlenden Werte als <code>NA</code> markiert. So können wir die überflüssigen Merkmale einfach löschen.</li>
+<li><code>verbose</code> &gt; <code>TRUE</code> = Es wird beim Laden der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.</li>
+</ul>
+<p>Damit empfehlen wir das Argument <code>dop.labels</code> mit <code>TRUE bzw. T</code> zu aktivieren.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="daten-importieren-und-transformieren.html#cb43-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">&quot;ALLB2018.sav&quot;</span>, <span class="at">drop.labels =</span> T)</span>
+<span id="cb43-2"><a href="daten-importieren-und-transformieren.html#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="daten-importieren-und-transformieren.html#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Noch schnell den Allbus zum tibble machen</span></span>
+<span id="cb43-4"><a href="daten-importieren-und-transformieren.html#cb43-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(allbus2018)</span></code></pre></div>
+<p>Hervorragend! Damit haben wir erfolgreich unsere Daten in R importiert.</p>
+<p>Wollen wir Datensätze im SPSS-Format speichern, nutzen wir:</p>
+<pre><code>write_spss(allbus2018, path = &quot;allbus2018t&quot;)</code></pre>
+<p>Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument <code>path</code> einen neuen Speicherort definieren.</p>
+</div>
+<div id="daten-transformieren" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Daten transformieren</h2>
+<p>Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Packeten aus dem <em>tidyverse</em> und <em>strengejacke</em>, um Daten umfänglich nutzen zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die “tidyverse-Methode,” an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens darstellt.</p>
+<p>Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im <em>long</em>-Format. Der Allbus 2018 liegt im diesem Format vor, wenngleich nicht alle Datensätze, aber zumindest die meisten Datensätze dieses Format besitzen. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im <em>wide</em>-Format bearbeiten wollen, empfehlen wir das Kapitel <a href="https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr">Reshaping: tidyr</a> von Andrew Ellis und Boris Mayer.</p>
+<div id="erster-blick-auf-den-datensatz" class="section level3" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Erster Blick auf den Datensatz</h3>
+</div>
+<div id="datenmanipulation" class="section level3" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Datenmanipulation</h3>
+<p>Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem <code>dplyr</code>-Packet aus dem tidyverse und dem Packet <code>sjmisc</code> aus <code>strengejacke</code> arbeiten. Die folgende Auswahl kann nur einen Überblick über die “wichtigsten” Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Packet</th>
+<th align="left">Funktion</th>
+<th align="left">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">filter()</td>
+<td align="left">Umbenennen von Variablen</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">select()</td>
+<td align="left">Selektieren von Variablen</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">rename()</td>
+<td align="left">Umbenennen von Variablen</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">mutate()</td>
+<td align="left">Erstellen und verändern von vorhandenen Variablen</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">arrange()</td>
+<td align="left">Sortiert Datensatz nach bestimmter Variable</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">group_by()</td>
+<td align="left">Erstellt Gruppierung über Merkmale von Variablen</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">summarize()</td>
+<td align="left">Daten zusammenfassen</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">distinct()</td>
+<td align="left">Selektion einzigartiger Werte in Vektor</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
+<td align="left">case_when()</td>
+<td align="left">Vektorisierter if_else Befehl</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">rec()</td>
+<td align="left">Rekodierung von Variablen</td>
+</tr>
+<tr class="odd">
+<td align="left">sjmisc</td>
+<td align="left">std()</td>
+<td align="left">Z-Standardisierung von Variablen</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">center()</td>
+<td align="left">Zentrierung von Variablen am Mittelwert</td>
+</tr>
+<tr class="odd">
+<td align="left">sjmisc</td>
+<td align="left">split_var()</td>
+<td align="left">Aufspaltung von Variablen in gleich große Gruppen</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">group_var()</td>
+<td align="left">Aufspaltung von Variablen in Gruppen nach Spannweite</td>
+</tr>
+<tr class="odd">
+<td align="left">sjmisc</td>
+<td align="left">row_count()</td>
+<td align="left">Zählung von Zeilenwerten</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">col_count()</td>
+<td align="left">Zählung von Spaltenweten</td>
+</tr>
+<tr class="odd">
+<td align="left">sjmisc</td>
+<td align="left">row_sums()</td>
+<td align="left">Summe der Zeilenwerte</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">row_means()</td>
+<td align="left">Mittelwert der Zeilenwerte</td>
+</tr>
+</tbody>
+</table>
 
+</div>
 </div>
 </div>
             </section>

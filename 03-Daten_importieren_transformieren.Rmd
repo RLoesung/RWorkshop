@@ -2,6 +2,8 @@
 
 In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätzen in den geläufigen Datenstrurkturen kennenlernen, um in einem zweiten Schritt die Daten nach unseren Vorstellungen zu modifizieren.
 
+**Tipp:** Zur Erstellung eigener Datensätze empfehlen wir das Kapitel [Datensätze selber erstellen](https://methodenlehre.github.io/einfuehrung-in-R/datensätze.html#datensätze-selber-erstellen) von Andrew Ellis und Boris Mayer.
+
 ## Vorbereitung 
 
 Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt über Gesis unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. 
@@ -34,8 +36,11 @@ library(tidyverse)
 ```
 
 ```{}
+# SPSS
 allbus2018 <- read_spss("ALLB2018.sav")
 ```
+
+**Wichtig!** Mit der Funktion `read_spss` über das Packet sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir das Packet `haven` über die Funktion `read_spss` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
 
 Sollten unsere Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.
 
@@ -47,11 +52,71 @@ allbus2018 <- read_stata("Datensatz.dta")
 allbus2018 <- read_sas("Datensatz.sas")
 ```
 
-Sofern wir uns die Spezifikation des Dateiformats in der Funktion sparen wollen, können wir auch `read_data()` nutzen.
+**Tipp:** Sofern wir uns die Spezifikation des Dateiformats in der Funktion sparen wollen, können wir auch `read_data()` nutzen.
 
 **Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete `haven`, `readxl` und `readr` an. 
 
+Die Funktion `read_spss` besitzt drei für uns "relevante" Argumente. `?read_spss`.
 
+* `atomic.to.fac` > `TRUE` = Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
+* `drop.labels` > `TRUE` = Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das sjlabelled wurden ohnehin alle vormalig fehlenden Werte als `NA` markiert. So können wir die überflüssigen Merkmale einfach löschen. 
+* `verbose` > `TRUE` = Es wird beim Laden der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
+
+Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
+
+```{r, echo=T, collapse=T, comment="#>"}
+allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T)
+
+# Noch schnell den Allbus zum tibble machen
+allbus2018 <- tibble(allbus2018)
+```
+
+Hervorragend! Damit haben wir erfolgreich unsere Daten in R importiert.
+
+Wollen wir Datensätze im SPSS-Format speichern, nutzen wir:
+
+```{}
+write_spss(allbus2018, path = "allbus2018t")
+```
+
+Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument `path` einen neuen Speicherort definieren.
+
+## Daten transformieren
+
+Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Packeten aus dem *tidyverse* und *strengejacke*, um Daten umfänglich nutzen zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die "tidyverse-Methode", an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens darstellt. 
+
+Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. Der Allbus 2018 liegt im diesem Format vor, wenngleich nicht alle Datensätze, aber zumindest die meisten Datensätze dieses Format besitzen. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format bearbeiten wollen, empfehlen wir das  Kapitel [Reshaping: tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
+
+### Erster Blick auf den Datensatz
+
+
+
+
+### Datenmanipulation
+
+Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem `dplyr`-Packet aus dem tidyverse und dem Packet `sjmisc` aus `strengejacke` arbeiten. Die folgende Auswahl kann nur einen Überblick über die "wichtigsten" Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).
+
+
+| Packet         | Funktion     | Verwendung                |
+| :------------- | :----------- | :------------------------ |
+| dplyr          | filter()     | Umbenennen von Variablen  |
+| dplyr          | select()     | Selektieren von Variablen |
+| dplyr          | rename()     | Umbenennen von Variablen  |
+| dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
+| dplyr          | arrange()    | Sortiert Datensatz nach bestimmter Variable |
+| dplyr          | group_by()   | Erstellt Gruppierung über Merkmale von Variablen |
+| dplyr          | summarize()  | Daten zusammenfassen  |
+| dplyr          | distinct()   | Selektion einzigartiger Werte in Vektor |
+| dplyr          | case_when()  | Vektorisierter if_else Befehl  |
+| sjmisc         | rec()        | Rekodierung von Variablen  |
+| sjmisc         | std()        | Z-Standardisierung von Variablen  |
+| sjmisc         | center()     | Zentrierung von Variablen am Mittelwert  |
+| sjmisc         | split_var()  | Aufspaltung von Variablen in gleich große Gruppen |
+| sjmisc         | group_var()  | Aufspaltung von Variablen in Gruppen nach Spannweite  |
+| sjmisc         | row_count()  | Zählung von Zeilenwerten  |
+| sjmisc         | col_count()  | Zählung von Spaltenweten  |
+| sjmisc         | row_sums()   | Summe der Zeilenwerte |
+| sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
 
 
 
