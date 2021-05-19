@@ -122,7 +122,7 @@ Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil
 
 In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
 
-Hierfür gibt es in R eine "ganz einfache" Lösung, da sich Sequenzen von Funktionen in `Pipes` abbilden lassen. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
+Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
 
 ```{r, include=F}
 library(magrittr)
@@ -133,9 +133,9 @@ install.packages("magrittr")
 library(magrittr)
 ```
 
-Um schnell auf den `%>%` Operator zugreifen zu können, bietet sich das Tastenkürzel `cmd bzw. strg` + `up` + `M` an.
+**Tipp:** Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel `cmd bzw. strg` + `up` + `M` an.
 
-Wir greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier wollten wir den Vektor `c(1.11, 1.22, 1.33, 1.44, 1.55)` in var1 runden. So sind wir beim letzten mal verfahren:
+Um einen ersten Einstieg zu schaffen, greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier haben wir den Vektor `c(1.11, 1.22, 1.33, 1.44, 1.55)`, welcher in var1 gespeichert wurde, gerundet. 
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Vektor speichern in var1
@@ -145,7 +145,7 @@ var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
 round(var1, digits = 1)
 ```
 
-In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch jetzt schon eine `Pipe` bilden. 
+In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch schon jetzt eine `Pipe` zu Demonstrationszwecken bilden. 
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Vektor speichern in var1
@@ -156,9 +156,9 @@ var1 %>%
   round(digits = 1)
 ```
 
-Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der `Pipe` also Funktionen nicht mehr als `f(x)` sondern als `x %>% f() bzw. x %>% f`. 
+Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der `Pipe` also Funktionen nicht mehr als `f(x)` sondern als `x %>% f() bzw. x %>% f`. Wir reihen also unsere Funktionen aneinander, wir verschachteln sie nicht mehr.
 
-Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt offenkundig. 
+Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt dieses Vorgehens ersichtlich. 
 
 Wir rufen zusätzlich mit `head()` die ersten drei Elemente unseres Vektors auf.
 
@@ -175,7 +175,7 @@ var1 %>%
   head(n = 3)
 ```
 
-Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion.
+Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der `Pipe` hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.
 
 In Kürze: 
 
@@ -199,7 +199,7 @@ var1 %>%
   head(x = ., n = 3)
 ```
 
-Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Werthülle einsetzen. 
+Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Wertcontainer einsetzen. 
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Vektor speichern in var1
@@ -211,7 +211,7 @@ var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
   head(x = ., n = 3)
 ```
 
-**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können. 
+**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. `x = Daten (Datensatz oder Variablen)`. 
 
 In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzeitig auch das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
 
@@ -240,13 +240,13 @@ ds1 %$%
 
 Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können. 
 
-In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
+In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
 
 #### Der %T>% Operator {-}
 
 Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
 
-Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen übermittelt.
+Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen "weitergegeben".
 
 ```{r, echo=T, collapse=T, comment="#>"}
 var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
@@ -257,13 +257,13 @@ var1 %>%
   head(n = 3) 
 ```
 
-So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente unseres Vektors ausgeben lassen.
+So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von unserem gerundeten Vektor ausgeben lassen.
 
 Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
 
 ### Datensätze restrukturieren 
 
-R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:
+R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die restrukturierten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
@@ -279,6 +279,7 @@ Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendu
 **Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben.
 
 #### `Select()` {-}
+
 
 
 #### `Filter()` {-}

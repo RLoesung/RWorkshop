@@ -286,18 +286,18 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <div id="pipe-operatoren" class="section level3" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Pipe Operatoren</h3>
 <p>In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code.</p>
-<p>Hierfür gibt es in R eine “ganz einfache” Lösung, da sich Sequenzen von Funktionen in <code>Pipes</code> abbilden lassen. Eine <code>Pipe</code> zeigt sich immer durch den <code>%&gt;%</code> Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet <em>magrittr</em> laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (<code>%$%</code> und <code>%T&gt;%</code>), die uns nur über das Laden von magrittr zur Verfügung gestellt werden.</p>
+<p>Hierfür gibt es in R eine “ganz einfache” Lösung - <code>Pipes</code>. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine <code>Pipe</code> zeigt sich immer durch den <code>%&gt;%</code> Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet <em>magrittr</em> laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (<code>%$%</code> und <code>%T&gt;%</code>), die uns nur über das Laden von magrittr zur Verfügung gestellt werden.</p>
 <pre><code>install.packages(&quot;magrittr&quot;)
 library(magrittr)</code></pre>
-<p>Um schnell auf den <code>%&gt;%</code> Operator zugreifen zu können, bietet sich das Tastenkürzel <code>cmd bzw. strg</code> + <code>up</code> + <code>M</code> an.</p>
-<p>Wir greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier wollten wir den Vektor <code>c(1.11, 1.22, 1.33, 1.44, 1.55)</code> in var1 runden. So sind wir beim letzten mal verfahren:</p>
+<p><strong>Tipp:</strong> Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel <code>cmd bzw. strg</code> + <code>up</code> + <code>M</code> an.</p>
+<p>Um einen ersten Einstieg zu schaffen, greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier haben wir den Vektor <code>c(1.11, 1.22, 1.33, 1.44, 1.55)</code>, welcher in var1 gespeichert wurde, gerundet.</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="datenverarbeitung.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb49-2"><a href="datenverarbeitung.html#cb49-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb49-3"><a href="datenverarbeitung.html#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-4"><a href="datenverarbeitung.html#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden</span></span>
 <span id="cb49-5"><a href="datenverarbeitung.html#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(var1, <span class="at">digits =</span> <span class="dv">1</span>)</span>
 <span id="cb49-6"><a href="datenverarbeitung.html#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3 1.4 1.6</span></span></code></pre></div>
-<p>In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch jetzt schon eine <code>Pipe</code> bilden.</p>
+<p>In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch schon jetzt eine <code>Pipe</code> zu Demonstrationszwecken bilden.</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="datenverarbeitung.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb50-2"><a href="datenverarbeitung.html#cb50-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb50-3"><a href="datenverarbeitung.html#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -305,8 +305,8 @@ library(magrittr)</code></pre>
 <span id="cb50-5"><a href="datenverarbeitung.html#cb50-5" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
 <span id="cb50-6"><a href="datenverarbeitung.html#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">1</span>)</span>
 <span id="cb50-7"><a href="datenverarbeitung.html#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3 1.4 1.6</span></span></code></pre></div>
-<p>Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der <code>Pipe</code> also Funktionen nicht mehr als <code>f(x)</code> sondern als <code>x %&gt;% f() bzw. x %&gt;% f</code>.</p>
-<p>Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt offenkundig.</p>
+<p>Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der <code>Pipe</code> also Funktionen nicht mehr als <code>f(x)</code> sondern als <code>x %&gt;% f() bzw. x %&gt;% f</code>. Wir reihen also unsere Funktionen aneinander, wir verschachteln sie nicht mehr.</p>
+<p>Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt dieses Vorgehens ersichtlich.</p>
 <p>Wir rufen zusätzlich mit <code>head()</code> die ersten drei Elemente unseres Vektors auf.</p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="datenverarbeitung.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb51-2"><a href="datenverarbeitung.html#cb51-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
@@ -320,7 +320,7 @@ library(magrittr)</code></pre>
 <span id="cb51-10"><a href="datenverarbeitung.html#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb51-11"><a href="datenverarbeitung.html#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb51-12"><a href="datenverarbeitung.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p>Wie wir sehen können, wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion.</p>
+<p>Wie wir sehen können, wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der <code>Pipe</code> hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.</p>
 <p>In Kürze:</p>
 <ol style="list-style-type: decimal">
 <li>Der Vektor aus var1 wird also an die Funktion <code>round()</code> weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: <code>c(1.1, 1.2, 1.3, 1.4, 1.6)</code>.</li>
@@ -340,7 +340,7 @@ library(magrittr)</code></pre>
 <span id="cb52-6"><a href="datenverarbeitung.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">x =</span> ., <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb52-7"><a href="datenverarbeitung.html#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">x =</span> ., <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb52-8"><a href="datenverarbeitung.html#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p>Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Werthülle einsetzen.</p>
+<p>Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Wertcontainer einsetzen.</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="datenverarbeitung.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb53-2"><a href="datenverarbeitung.html#cb53-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb53-3"><a href="datenverarbeitung.html#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -349,7 +349,7 @@ library(magrittr)</code></pre>
 <span id="cb53-6"><a href="datenverarbeitung.html#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(var1, <span class="at">digits =</span> .) <span class="sc">%&gt;%</span> </span>
 <span id="cb53-7"><a href="datenverarbeitung.html#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">x =</span> ., <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb53-8"><a href="datenverarbeitung.html#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p><strong>Wichtig!</strong> Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können.</p>
+<p><strong>Wichtig!</strong> Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. <code>x = Daten (Datensatz oder Variablen)</code>.</p>
 <p>In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzeitig auch das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.</p>
 <p><strong>Anmerkung:</strong> Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.</p>
 <p><code>Pipes</code> sollten nicht genutzt werden, wenn</p>
@@ -371,12 +371,12 @@ library(magrittr)</code></pre>
 <span id="cb54-8"><a href="datenverarbeitung.html#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ts.plot</span>(var1)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <p>Der <code>%$%</code> Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können.</p>
-<p>In unserem Beispiel benötigt die Funktion <code>ts.plot</code>, als Grafik für Zeitachsenmessungen, eine Variable als Input. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den <code>%$%</code> Operator, um auf Variablenebene operieren zu können.</p>
+<p>In unserem Beispiel benötigt die Funktion <code>ts.plot</code>, als Grafik für Zeitachsenmessungen, eine Variable als Input - <code>x = Variable</code>. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den <code>%$%</code> Operator, um auf Variablenebene operieren zu können.</p>
 </div>
 <div id="der-t-operator" class="section level4 unnumbered">
 <h4>Der %T&gt;% Operator</h4>
 <p>Dieser Operator ermöglicht es eine <code>Pipe</code> auch bei Funktionen ohne “inhaltlichen” Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen “inhaltlichen” Output, brauchen wir den <code>%T&gt;%</code> Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion “weitergegeben.”</p>
-<p>Es wird also immer auf den linken Wert neben dem <code>%T&gt;%</code> Operator zugegriffen und dieser an alle folgenden Funktionen übermittelt.</p>
+<p>Es wird also immer auf den linken Wert neben dem <code>%T&gt;%</code> Operator zugegriffen und dieser an alle folgenden Funktionen “weitergegeben.”</p>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="datenverarbeitung.html#cb55-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb55-2"><a href="datenverarbeitung.html#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-3"><a href="datenverarbeitung.html#cb55-3" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
@@ -385,13 +385,13 @@ library(magrittr)</code></pre>
 <span id="cb55-6"><a href="datenverarbeitung.html#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>) </span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 <pre><code>#&gt; [1] 1.11 1.22 1.33</code></pre>
-<p>So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente unseres Vektors ausgeben lassen.</p>
+<p>So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von unserem gerundeten Vektor ausgeben lassen.</p>
 <p>Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.</p>
 </div>
 </div>
 <div id="datensätze-restrukturieren" class="section level3" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Datensätze restrukturieren</h3>
-<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:</p>
+<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die restrukturierten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:</p>
 <table>
 <thead>
 <tr class="header">
