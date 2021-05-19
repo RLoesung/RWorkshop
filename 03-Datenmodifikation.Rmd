@@ -10,6 +10,8 @@ Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialw
 
 **Anmerkung:** Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.
 
+Wir wollen unserem Anspruch einer zielgerichteten und forschungspraktischen Anwendung von R auch während der Bearbeitung des Allbus 2018, als Datengrundlage, gerecht werden. So greifen wir auf vergangene Forschungspublikationen zurück. Diese erlauben uns eine Orientierungslinie für kommende Beispiele zu ziehen.
+
 Folgend erstellen wir ein Projekt in RStudio (siehe  1.8.1). Sobald der Projektordner erstellt wurde, schieben wir unseren Datensatz in den Projektordner. Durch die Festlegung unseres Arbeitsverzeichnises im Projektordner, kann R direkt auf den Datensatz zugreifen. Der Reiter `Files` sollte entsprechend so aussehen:
 
 ```{r, echo=F, fig.align='center', out.width="75%"}
@@ -213,7 +215,7 @@ var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
 
 **Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. `x = Daten (Datensatz oder Variablen)`. 
 
-In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzeitig auch das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
+In den meisten Fällen ist auch das Objekt, welches übergeben wird, gleichzeitig das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
 
 **Anmerkung:** Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
 
@@ -225,7 +227,9 @@ In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzei
 
 #### Der %$% Operatoren {-}
 
-Für Funktionen, die auf Variablenebene arbeiten, gibt es den `%$%` Operator. 
+Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateninput erlauben, gibt es den `%$%` Operator. 
+
+**Wichtig!** Wir brauchen diesen Operator aber nur für ganz wenige Funktionen. Die meisten Funktionen die auf Variablenebene arbeiten, besitzen gleichzeitig auch als erstes Argument eine Datensatz-Schnittstelle - `x = Datensatz`. Sie greifen dann über das zweite Argument auf die Variablen in diesem Datensatz zu.  
 
 ```{r, echo=T, collapse=T, comment="#>", message=T}
 # Vektoren in Datensatz speichern
@@ -238,7 +242,7 @@ ds1 %$%
   ts.plot(var1)
 ```
 
-Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können. 
+Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
 
 In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
 
@@ -263,22 +267,27 @@ Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beg
 
 ### Datensätze restrukturieren 
 
-R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die restrukturierten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:
+**Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben. 
+
+Gemäß unseres forschungspraktischen Anspruchs stammen die kommenden Variablen aus einer Untersuchung politischen Wissens (Moosdorf 2020) in Bearbeitung des Allbus 2018.
+
+R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten (gezielt aufgebaute eigene Datensätze). So wollen wir in einem ersten Schritt lernen, wie wir Datensätze grob restrukturieren und anschließend die Daten in einem neuen Datensatz speichern können. Unser Ziel ist es also einen eigenen, auf unsere Bedürfnisse zugeschnittenen, Datensatz zu erzeugen. Hierfür benötigen wir die folgenden Funktionen:
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
 | dplyr          | select()     | Selektieren von Variablen |
 | dplyr          | filter()     | Filtern nach  Fällen mit spezifischer Ausprägung |
 | dplyr          | arrange()    | Sortiert Datensatz nach bestimmter Variable |
-| dplyr          | distinct()   | Auswahl einzigartiger Werte |
 
 Das dplyr Package stellt Funktionen für alle diese Aufgaben zur Verfügung (und noch viele mehr, wir betrachten hier nur eine kleine Auswahl). dplyr besteht sozusagen aus Verben (Funktionen) für all diese Operationen, und diese Funktionen können - je nach Bedarf - auf sehr elegante Weise zusammengesetzt werden.
 
 Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendung an. Wir verwenden immer den `%>%` Operator. Der Input Datensatz ist dabei immer als erstes Argument der Funktion zu verstehen.
 
-**Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben.
-
 #### `Select()` {-}
+
+Mit der Funktion `select()` lassen sich Variablen aus einem Datensatz gezielt auswählen. 
+
+**Beispielcode:**
 
 
 
@@ -286,7 +295,7 @@ Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendu
 
 Mit der Funktion `filter()` können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.
 
-Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den logischen Operatoren in R beschäftigen.
+Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den `logischen Operatoren` in R beschäftigen.
 
 ```{}
 <                Kleiner
@@ -300,9 +309,11 @@ x | y            x ODER y
 x & y            x UND y
 ```
 
-Als Beispiel filtern wie alle Befragten nach ihrer Staatangehörigkeit. Im Datensatz werden nur Fälle mit der deutschen Staatsangehörigkeit belassen.
+Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnelle verstanden sein.
 
-**Code:**
+Wir wollen uns ein paar Beispielen mit der Variable ... widmen.
+
+**Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
 allbus2018 %>% 
@@ -326,6 +337,7 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
 | dplyr          | group_by()   | Erstellt Gruppen (Teilmengen) |
 | dplyr          | summarize()  | Daten zusammenfassen  |
+| dplyr          | distinct()   | Auswahl einzigartiger Werte |
 | dplyr          | case_when()  | Vektorisierter if-Befehl  |
 | sjmisc         | rec()        | Rekodierung von Variablen  |
 | sjmisc         | std()        | Z-Standardisierung von Variablen  |
@@ -339,7 +351,9 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 
 
 
+**Referenz:**
 
+Moosdorf, D. (2020): Kritik an sozialer Ungleichheit – Macht politisches Wissen den Unterschied?. In Tausendpfund, M. & B. Westle (Hrsg.), Politisches Wissen in Deutschland: Empirische Analysen mit dem ALLBUS 2018 (S. 165–197). Wiesbaden: Springer VS. https://doi.org/10.1007/978-3-658-30492-8_6.
 
 
 
