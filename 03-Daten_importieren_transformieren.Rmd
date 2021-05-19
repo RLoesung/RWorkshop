@@ -6,7 +6,7 @@ In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätz
 
 ## Vorbereitung 
 
-Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt über Gesis unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. 
+Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. 
 
 **Anmerkung:** Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.
 
@@ -58,16 +58,16 @@ allbus2018 <- read_sas("Datensatz.sas")
 
 Die Funktion `read_spss` besitzt drei für uns "relevante" Argumente. `?read_spss`.
 
-* `atomic.to.fac` > `TRUE` = Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
-* `drop.labels` > `TRUE` = Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das sjlabelled wurden ohnehin alle vormalig fehlenden Werte als `NA` markiert. So können wir die überflüssigen Merkmale einfach löschen. 
-* `verbose` > `TRUE` = Es wird beim Laden der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
+* `atomic.to.fac` = `TRUE` > Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
+* `drop.labels` = `TRUE` > Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das sjlabelled wurden ohnehin alle vormalig fehlenden Werte als `NA` markiert. So können wir die überflüssigen Merkmale einfach löschen. 
+* `verbose` = `TRUE` > Es wird beim Laden der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
 
 Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
 
 ```{r, echo=T, collapse=T, comment="#>"}
 allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T)
 
-# Noch schnell den Allbus zum tibble machen
+# Noch schnell den Allbus zum tibble transformieren
 allbus2018 <- tibble(allbus2018)
 ```
 
@@ -76,20 +76,24 @@ Hervorragend! Damit haben wir erfolgreich unsere Daten in R importiert.
 Wollen wir Datensätze im SPSS-Format speichern, nutzen wir:
 
 ```{}
-write_spss(allbus2018, path = "allbus2018t")
+write_spss(allbus2018, path = "allbus2018")
 ```
 
 Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument `path` einen neuen Speicherort definieren.
 
-## Daten transformieren
+## Daten transformieren und modifizieren
 
 Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Packeten aus dem *tidyverse* und *strengejacke*, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die "tidyverse-Methode", an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens darstellt. 
 
-Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. Der Allbus 2018 liegt im diesem Format vor, wenngleich nicht alle Datensätze, aber zumindest die meisten Datensätze dieses Format besitzen. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format in ein *long*-Format transformieren wollen, empfehlen wir das Kapitel: [Reshaping tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
+Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. Der Allbus 2018 liegt im diesem Format vor. Es muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format in ein *long*-Format transformieren wollen, empfehlen wir das Kapitel: [Reshaping tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
 
 ### Erster Blick auf den Datensatz
 
 
+
+
+
+### Datentransformation
 
 
 ### Datenmanipulation
