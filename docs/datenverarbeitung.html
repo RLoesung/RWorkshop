@@ -189,8 +189,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#transformation-und-manipulation-von-daten"><i class="fa fa-check"></i><b>3.3</b> Transformation und Manipulation von Daten</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#erster-blick-auf-den-datensatz"><i class="fa fa-check"></i><b>3.3.1</b> Erster Blick auf den Datensatz</a></li>
-<li class="chapter" data-level="3.3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensätze-restrukturieren"><i class="fa fa-check"></i><b>3.3.2</b> Datensätze restrukturieren</a></li>
-<li class="chapter" data-level="3.3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operator"><i class="fa fa-check"></i><b>3.3.3</b> Pipe Operator</a></li>
+<li class="chapter" data-level="3.3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operator"><i class="fa fa-check"></i><b>3.3.2</b> Pipe Operator</a></li>
+<li class="chapter" data-level="3.3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensätze-restrukturieren"><i class="fa fa-check"></i><b>3.3.3</b> Datensätze restrukturieren</a></li>
 <li class="chapter" data-level="3.3.4" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-transformieren"><i class="fa fa-check"></i><b>3.3.4</b> Daten transformieren</a></li>
 <li class="chapter" data-level="3.3.5" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-manipulieren"><i class="fa fa-check"></i><b>3.3.5</b> Daten manipulieren</a></li>
 </ul></li>
@@ -244,7 +244,7 @@ allbus2018 &lt;- read_stata(&quot;Datensatz.dta&quot;)
 # SAS
 allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <p><strong>Anmerkung:</strong> Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete <code>haven</code>, <code>readxl</code> und <code>readr</code> an.</p>
-<p>Die Funktion <code>read_spss</code> besitzt drei für uns relevante Argumente. Einen Überblick über die möglichen Argumente finden Sie unter: <code>?read_spss</code>.</p>
+<p>Die Funktion <code>read_spss</code> besitzt drei für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: <code>?read_spss</code>.</p>
 <ul>
 <li><code>atomic.to.fac</code> = <code>TRUE</code> &gt; Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.</li>
 <li><code>drop.labels</code> = <code>TRUE</code> &gt; Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch <code>read_spss()</code> über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu <code>NA</code> konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen.</li>
@@ -281,9 +281,13 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <span id="cb47-6"><a href="datenverarbeitung.html#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-7"><a href="datenverarbeitung.html#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Ganzer Datensatz</span></span>
 <span id="cb47-8"><a href="datenverarbeitung.html#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(allbus2018)</span></code></pre></div>
+<p>Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen.</p>
 </div>
-<div id="datensätze-restrukturieren" class="section level3" number="3.3.2">
-<h3><span class="header-section-number">3.3.2</span> Datensätze restrukturieren</h3>
+<div id="pipe-operator" class="section level3" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Pipe Operator</h3>
+</div>
+<div id="datensätze-restrukturieren" class="section level3" number="3.3.3">
+<h3><span class="header-section-number">3.3.3</span> Datensätze restrukturieren</h3>
 <p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgende Funktionen:</p>
 <table>
 <thead>
@@ -297,7 +301,7 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <tr class="odd">
 <td align="left">dplyr</td>
 <td align="left">filter()</td>
-<td align="left">Umbenennen von Variablen</td>
+<td align="left">Filtern nach Fällen mit spezifischer Ausprägung</td>
 </tr>
 <tr class="even">
 <td align="left">dplyr</td>
@@ -306,24 +310,16 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">dplyr</td>
-<td align="left">rename()</td>
-<td align="left">Umbenennen von Variablen</td>
-</tr>
-<tr class="even">
-<td align="left">dplyr</td>
-<td align="left">mutate()</td>
-<td align="left">Erstellen und verändern von vorhandenen Variablen</td>
-</tr>
-<tr class="odd">
-<td align="left">dplyr</td>
 <td align="left">arrange()</td>
 <td align="left">Sortiert Datensatz nach bestimmter Variable</td>
 </tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">distinct()</td>
+<td align="left">Auswahl einzigartiger Werte</td>
+</tr>
 </tbody>
 </table>
-</div>
-<div id="pipe-operator" class="section level3" number="3.3.3">
-<h3><span class="header-section-number">3.3.3</span> Pipe Operator</h3>
 </div>
 <div id="daten-transformieren" class="section level3" number="3.3.4">
 <h3><span class="header-section-number">3.3.4</span> Daten transformieren</h3>
@@ -347,6 +343,16 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">dplyr</td>
+<td align="left">rename()</td>
+<td align="left">Umbenennen von Variablen</td>
+</tr>
+<tr class="even">
+<td align="left">dplyr</td>
+<td align="left">mutate()</td>
+<td align="left">Erstellen und verändern von vorhandenen Variablen</td>
+</tr>
+<tr class="odd">
+<td align="left">dplyr</td>
 <td align="left">group_by()</td>
 <td align="left">Erstellt Gruppen (Teilmengen)</td>
 </tr>
@@ -357,55 +363,50 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 </tr>
 <tr class="odd">
 <td align="left">dplyr</td>
-<td align="left">distinct()</td>
-<td align="left">Auswahl einzigartiger Werte</td>
+<td align="left">case_when()</td>
+<td align="left">Vektorisierter if-Befehl</td>
 </tr>
 <tr class="even">
-<td align="left">dplyr</td>
-<td align="left">case_when()</td>
-<td align="left">Vektorisierter if_else Befehl</td>
-</tr>
-<tr class="odd">
 <td align="left">sjmisc</td>
 <td align="left">rec()</td>
 <td align="left">Rekodierung von Variablen</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">sjmisc</td>
 <td align="left">std()</td>
 <td align="left">Z-Standardisierung von Variablen</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">sjmisc</td>
 <td align="left">center()</td>
 <td align="left">Zentrierung von Variablen am Mittelwert</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">sjmisc</td>
 <td align="left">split_var()</td>
 <td align="left">Aufspaltung von Variablen in n Gruppen</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">sjmisc</td>
 <td align="left">group_var()</td>
 <td align="left">Aufspaltung von Variablen in Gruppen gleicher Spannweite</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">sjmisc</td>
 <td align="left">row_count()</td>
 <td align="left">Zählung von Zeilenwerten</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">sjmisc</td>
 <td align="left">col_count()</td>
 <td align="left">Zählung von Spaltenweten</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">sjmisc</td>
 <td align="left">row_sums()</td>
 <td align="left">Summe der Zeilenwerte</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">sjmisc</td>
 <td align="left">row_means()</td>
 <td align="left">Mittelwert der Zeilenwerte</td>

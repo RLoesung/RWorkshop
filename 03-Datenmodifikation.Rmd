@@ -54,7 +54,7 @@ allbus2018 <- read_sas("Datensatz.sas")
 
 **Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete `haven`, `readxl` und `readr` an. 
 
-Die Funktion `read_spss` besitzt drei für uns relevante Argumente. Einen Überblick über die möglichen Argumente finden Sie unter: `?read_spss`.
+Die Funktion `read_spss` besitzt drei für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: `?read_spss`.
 
 * `atomic.to.fac` = `TRUE` > Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
 * `drop.labels` = `TRUE` > Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu `NA` konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen. 
@@ -116,6 +116,11 @@ tail(allbus2018, n = 5)
 print(allbus2018)
 ```
 
+Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen. 
+
+### Pipe Operator
+
+
 
 
 ### Datensätze restrukturieren 
@@ -124,17 +129,12 @@ R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
-| dplyr          | filter()     | Umbenennen von Variablen  |
+| dplyr          | filter()     | Filtern nach  Fällen mit spezifischer Ausprägung |
 | dplyr          | select()     | Selektieren von Variablen |
-| dplyr          | rename()     | Umbenennen von Variablen  |
-| dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
 | dplyr          | arrange()    | Sortiert Datensatz nach bestimmter Variable |
+| dplyr          | distinct()   | Auswahl einzigartiger Werte |
 
 
-
-
-
-### Pipe Operator
 
 ### Daten transformieren
 
@@ -146,10 +146,11 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
+| dplyr          | rename()     | Umbenennen von Variablen  |
+| dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
 | dplyr          | group_by()   | Erstellt Gruppen (Teilmengen) |
 | dplyr          | summarize()  | Daten zusammenfassen  |
-| dplyr          | distinct()   | Auswahl einzigartiger Werte |
-| dplyr          | case_when()  | Vektorisierter if_else Befehl  |
+| dplyr          | case_when()  | Vektorisierter if-Befehl  |
 | sjmisc         | rec()        | Rekodierung von Variablen  |
 | sjmisc         | std()        | Z-Standardisierung von Variablen  |
 | sjmisc         | center()     | Zentrierung von Variablen am Mittelwert  |
