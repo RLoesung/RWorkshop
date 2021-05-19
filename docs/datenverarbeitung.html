@@ -263,16 +263,16 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <div id="transformation-und-manipulation-von-daten" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Transformation und Manipulation von Daten</h2>
 <p>Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen <em>tidyverse</em> und <em>strengejacke</em>, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die “tidyverse-Methode,” an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht.</p>
-<p>Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im <em>long</em>-Format. Der Allbus 2018 liegt im diesem Format vor. Dennoch muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im <em>wide</em>-Format in ein <em>long</em>-Format transformieren wollen, empfehlen wir das Kapitel: <a href="https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr">Reshaping tidyr</a> von Andrew Ellis und Boris Mayer.</p>
+<p>Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im <em>long</em>-Format. Der Allbus 2018 liegt im diesem Format vor. Dennoch muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im <em>wide</em>-Format in ein <em>long</em>-Format transformieren wollen, empfehlen wir das Kapitel: <a href="https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr">Reshaping: tidyr</a> von Andrew Ellis und Boris Mayer.</p>
 <div id="erster-blick-auf-den-datensatz" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Erster Blick auf den Datensatz</h3>
-<p>Nachdem wir unseren Datensatz eingelesen haben, wollen wir uns zu Beginn einen Überblick über die vorhandenen Daten schaffen.</p>
-<p>Mit <code>view()</code> können wir den ganzen Datensatz als extra Fenster aufrufen.</p>
+<p>Nachdem wir unseren Datensatz eingelesen haben, wollen wir uns zu Beginn einen Überblick über die vorhandenen Daten verschaffen.</p>
+<p>Mit <code>view()</code> können wir den ganzen Datensatz als zusätzliches Fenster öffnen.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="datenverarbeitung.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(allbus2018)</span></code></pre></div>
 <p>Über den Befehl <code>view_df()</code> wird uns eine HTML-Version unseres Datensatzes im <code>Viewer</code> angezeigt.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="datenverarbeitung.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view_df</span>(allbus2018)</span></code></pre></div>
-<p>Der große Vorteil der zweiten Darstellung liegt offensichtlich in der reduzierten Übersichtlichkeit. So können wir über die Spalte <code>ID</code> ablesen, welchen Wert unsere Variablen im Spaltenvektor des Datensatzes innehaben. Wir können entsprechend Variablen über diesen indizieren. Zudem wird uns über <code>Name</code> die Variablenbezeichnung, über <code>Label</code> die Variablenbeschriftung und über <code>Values</code> die Ausprägungsmerkmale bzw. Spannweite, sowie über <code>Value Labels</code> die Merkmalsbeschriftung ausgegeben.</p>
-<p>Weiterhin können wir über unsere zuvor erlernten “Grundfunktion” einen Ausschnitt des Datensatzes generieren.</p>
+<p>Der große Vorteil der zweiten Abbildung liegt offensichtlich in der reduzierten Darstellung. So können wir über die Spalte <code>ID</code> ablesen, welchen Wert unsere Variablen im Spaltenvektor des Datensatzes innehaben. Wir können entsprechend Variablen über diesen indizieren. Zudem wird uns die Variablenbezeichnung über <code>Name</code>, die Variablenbeschriftung über <code>Label</code> und die Ausprägungsmerkmale bzw. Spannweite über <code>Values</code>, sowie die Merkmalsbeschriftung über <code>Value Labels</code> ausgegeben.</p>
+<p>Weiterhin können wir über unsere zuvor erlernten “Grundfunktionen” einen Ausschnitt des Datensatzes generieren.</p>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="datenverarbeitung.html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ersten 3 Fälle</span></span>
 <span id="cb47-2"><a href="datenverarbeitung.html#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(allbus2018, <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb47-3"><a href="datenverarbeitung.html#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -284,7 +284,7 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 </div>
 <div id="datensätze-restrukturieren" class="section level3" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Datensätze restrukturieren</h3>
-<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Daten in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgende Funktionen:</p>
+<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgende Funktionen:</p>
 <table>
 <thead>
 <tr class="header">
