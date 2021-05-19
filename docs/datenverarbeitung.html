@@ -290,7 +290,7 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <pre><code>install.packages(&quot;magrittr&quot;)
 library(magrittr)</code></pre>
 <p>Um schnell auf den <code>%&gt;%</code> Operator zugreifen zu können, bietet sich das Tastenkürzel <code>cmd bzw. strg</code> + <code>up</code> + <code>M</code> an.</p>
-<p>Wir greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier wollten wir den Vektor <code>c(1.11, 1.22, 1.33, 1.44, 1.55)</code> in der Variable var1 runden. So sind wir beim letzten mal verfahren:</p>
+<p>Wir greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier wollten wir den Vektor <code>c(1.11, 1.22, 1.33, 1.44, 1.55)</code> in var1 runden. So sind wir beim letzten mal verfahren:</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="datenverarbeitung.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb49-2"><a href="datenverarbeitung.html#cb49-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb49-3"><a href="datenverarbeitung.html#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -315,16 +315,16 @@ library(magrittr)</code></pre>
 <span id="cb51-5"><a href="datenverarbeitung.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">round</span>(var1, <span class="at">digits =</span> <span class="dv">1</span>), <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb51-6"><a href="datenverarbeitung.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span>
 <span id="cb51-7"><a href="datenverarbeitung.html#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="datenverarbeitung.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen in der Pipe</span></span>
+<span id="cb51-8"><a href="datenverarbeitung.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen - Pipe</span></span>
 <span id="cb51-9"><a href="datenverarbeitung.html#cb51-9" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
 <span id="cb51-10"><a href="datenverarbeitung.html#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb51-11"><a href="datenverarbeitung.html#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb51-12"><a href="datenverarbeitung.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p>Wie wir sehen können wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion. In Kürze: Der Vektor aus var1 wird also an die Funktion <code>round()</code> weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: <code>c(1.1, 1.2, 1.3, 1.4, 1.6)</code>. Im nächsten Schritt wird dieser Output an <code>head()</code> übergeben. In <code>head()</code> rufen wir nur die ersten drei Elemente ab, also <code>c(1.1, 1.2, 1.3)</code>. Wir können diesen Prozess auch mit dem Platzhalter-Operator <code>.</code> veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.</p>
+<p>Wie wir sehen können, wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion. In Kürze: Der Vektor aus var1 wird also an die Funktion <code>round()</code> weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: <code>c(1.1, 1.2, 1.3, 1.4, 1.6)</code>. Im nächsten Schritt wird dieser Output an <code>head()</code> übergeben. In <code>head()</code> rufen wir nur die ersten drei Elemente ab, also <code>c(1.1, 1.2, 1.3)</code>. Wir können diesen Prozess auch mit dem Platzhalter-Operator <code>.</code> veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="datenverarbeitung.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb52-2"><a href="datenverarbeitung.html#cb52-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb52-3"><a href="datenverarbeitung.html#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-4"><a href="datenverarbeitung.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen in der Pipe</span></span>
+<span id="cb52-4"><a href="datenverarbeitung.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen - Pipe</span></span>
 <span id="cb52-5"><a href="datenverarbeitung.html#cb52-5" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
 <span id="cb52-6"><a href="datenverarbeitung.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(., <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb52-7"><a href="datenverarbeitung.html#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(., <span class="at">n =</span> <span class="dv">3</span>)</span>
@@ -333,7 +333,7 @@ library(magrittr)</code></pre>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="datenverarbeitung.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb53-2"><a href="datenverarbeitung.html#cb53-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb53-3"><a href="datenverarbeitung.html#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-4"><a href="datenverarbeitung.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen in der Pipe</span></span>
+<span id="cb53-4"><a href="datenverarbeitung.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen - Pipe</span></span>
 <span id="cb53-5"><a href="datenverarbeitung.html#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">%&gt;%</span> </span>
 <span id="cb53-6"><a href="datenverarbeitung.html#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(var1, <span class="at">digits =</span> .) <span class="sc">%&gt;%</span> </span>
 <span id="cb53-7"><a href="datenverarbeitung.html#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
@@ -345,6 +345,9 @@ library(magrittr)</code></pre>
 <li>mehrere Inputs oder Outputs benötigt werden,</li>
 <li>eine komplexe Objektstruktur das Ziel ist.</li>
 </ol>
+<div id="weitere-pipe-operatoren" class="section level4" number="3.3.2.1">
+<h4><span class="header-section-number">3.3.2.1</span> Weitere Pipe Operatoren</h4>
+</div>
 </div>
 <div id="datensätze-restrukturieren" class="section level3" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Datensätze restrukturieren</h3>
