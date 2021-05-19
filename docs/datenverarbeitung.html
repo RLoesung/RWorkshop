@@ -189,7 +189,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#transformation-und-manipulation-von-daten"><i class="fa fa-check"></i><b>3.3</b> Transformation und Manipulation von Daten</a>
 <ul>
 <li class="chapter" data-level="3.3.1" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#erster-blick-auf-den-datensatz"><i class="fa fa-check"></i><b>3.3.1</b> Erster Blick auf den Datensatz</a></li>
-<li class="chapter" data-level="3.3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operator"><i class="fa fa-check"></i><b>3.3.2</b> Pipe Operator</a></li>
+<li class="chapter" data-level="3.3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operatoren"><i class="fa fa-check"></i><b>3.3.2</b> Pipe Operatoren</a></li>
 <li class="chapter" data-level="3.3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensätze-restrukturieren"><i class="fa fa-check"></i><b>3.3.3</b> Datensätze restrukturieren</a></li>
 <li class="chapter" data-level="3.3.4" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-transformieren"><i class="fa fa-check"></i><b>3.3.4</b> Daten transformieren</a></li>
 <li class="chapter" data-level="3.3.5" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-manipulieren"><i class="fa fa-check"></i><b>3.3.5</b> Daten manipulieren</a></li>
@@ -283,10 +283,10 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <span id="cb47-8"><a href="datenverarbeitung.html#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(allbus2018)</span></code></pre></div>
 <p>Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen.</p>
 </div>
-<div id="pipe-operator" class="section level3" number="3.3.2">
-<h3><span class="header-section-number">3.3.2</span> Pipe Operator</h3>
+<div id="pipe-operatoren" class="section level3" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Pipe Operatoren</h3>
 <p>In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code.</p>
-<p>Hierfür gibt es in R eine “ganz einfache” Lösung, da sich Sequenzen von Funktionen in <code>Pipes</code> abbilden lassen. Eine <code>Pipe</code> zeigt sich immer durch den <code>%&gt;%</code> Operator an. Um auf diesen Zugreifen zu können, müssen wir eig. das Packet <em>magrittr</em> laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (<code>%$%</code> und <code>%T&gt;%</code>), die uns nur über das Laden von magrittr zur Verfügung gestellt werden.</p>
+<p>Hierfür gibt es in R eine “ganz einfache” Lösung, da sich Sequenzen von Funktionen in <code>Pipes</code> abbilden lassen. Eine <code>Pipe</code> zeigt sich immer durch den <code>%&gt;%</code> Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet <em>magrittr</em> laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (<code>%$%</code> und <code>%T&gt;%</code>), die uns nur über das Laden von magrittr zur Verfügung gestellt werden.</p>
 <pre><code>install.packages(&quot;magrittr&quot;)
 library(magrittr)</code></pre>
 <p>Um schnell auf den <code>%&gt;%</code> Operator zugreifen zu können, bietet sich das Tastenkürzel <code>cmd bzw. strg</code> + <code>up</code> + <code>M</code> an.</p>
@@ -320,14 +320,25 @@ library(magrittr)</code></pre>
 <span id="cb51-10"><a href="datenverarbeitung.html#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb51-11"><a href="datenverarbeitung.html#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb51-12"><a href="datenverarbeitung.html#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p>Wie wir sehen können, wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion. In Kürze: Der Vektor aus var1 wird also an die Funktion <code>round()</code> weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: <code>c(1.1, 1.2, 1.3, 1.4, 1.6)</code>. Im nächsten Schritt wird dieser Output an <code>head()</code> übergeben. In <code>head()</code> rufen wir nur die ersten drei Elemente ab, also <code>c(1.1, 1.2, 1.3)</code>. Wir können diesen Prozess auch mit dem Platzhalter-Operator <code>.</code> veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.</p>
+<p>Wie wir sehen können, wird der Vektor var1 durch die Funktionen “weitergegeben.” Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von “innen nach außen.” Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion.</p>
+<p>In Kürze:</p>
+<ol style="list-style-type: decimal">
+<li>Der Vektor aus var1 wird also an die Funktion <code>round()</code> weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: <code>c(1.1, 1.2, 1.3, 1.4, 1.6)</code>.</li>
+<li>Im nächsten Schritt wird dieser Output an <code>head()</code> übergeben. In <code>head()</code> rufen wir nur die ersten drei Elemente ab, also <code>c(1.1, 1.2, 1.3)</code>.</li>
+</ol>
+<p><strong>Vorteile:</strong></p>
+<ul>
+<li>Unser Code ist lesbarer</li>
+<li>Wir müssen keine unnötigen Variablen definieren</li>
+</ul>
+<p>Wir können diesen Prozess auch mit dem Platzhalter-Operator <code>.</code> veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="datenverarbeitung.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
 <span id="cb52-2"><a href="datenverarbeitung.html#cb52-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
 <span id="cb52-3"><a href="datenverarbeitung.html#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-4"><a href="datenverarbeitung.html#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen - Pipe</span></span>
 <span id="cb52-5"><a href="datenverarbeitung.html#cb52-5" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
-<span id="cb52-6"><a href="datenverarbeitung.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(., <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-7"><a href="datenverarbeitung.html#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(., <span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb52-6"><a href="datenverarbeitung.html#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">x =</span> ., <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-7"><a href="datenverarbeitung.html#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">x =</span> ., <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb52-8"><a href="datenverarbeitung.html#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
 <p>Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Werthülle einsetzen.</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="datenverarbeitung.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor speichern in var1</span></span>
@@ -336,22 +347,51 @@ library(magrittr)</code></pre>
 <span id="cb53-4"><a href="datenverarbeitung.html#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># var1 runden und die ersten drei Elemente abrufen - Pipe</span></span>
 <span id="cb53-5"><a href="datenverarbeitung.html#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">%&gt;%</span> </span>
 <span id="cb53-6"><a href="datenverarbeitung.html#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(var1, <span class="at">digits =</span> .) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-7"><a href="datenverarbeitung.html#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb53-7"><a href="datenverarbeitung.html#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">x =</span> ., <span class="at">n =</span> <span class="dv">3</span>)</span>
 <span id="cb53-8"><a href="datenverarbeitung.html#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.1 1.2 1.3</span></span></code></pre></div>
-<p>Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.</p>
+<p><strong>Wichtig!</strong> Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können.</p>
+<p>In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzeitig auch das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.</p>
+<p><strong>Anmerkung:</strong> Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.</p>
 <p><code>Pipes</code> sollten nicht genutzt werden, wenn</p>
 <ol style="list-style-type: decimal">
 <li>die <code>Pipe</code> länger als 10 Schritte wäre,</li>
 <li>mehrere Inputs oder Outputs benötigt werden,</li>
 <li>eine komplexe Objektstruktur das Ziel ist.</li>
 </ol>
-<div id="weitere-pipe-operatoren" class="section level4" number="3.3.2.1">
-<h4><span class="header-section-number">3.3.2.1</span> Weitere Pipe Operatoren</h4>
+<div id="der-operatoren" class="section level4 unnumbered">
+<h4>Der %$% Operatoren</h4>
+<p>Für Funktionen, die auf Variablenebene arbeiten, gibt es den <code>%$%</code> Operator.</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="datenverarbeitung.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektoren in Datensatz speichern</span></span>
+<span id="cb54-2"><a href="datenverarbeitung.html#cb54-2" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb54-3"><a href="datenverarbeitung.html#cb54-3" aria-hidden="true" tabindex="-1"></a>var2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">4</span>)</span>
+<span id="cb54-4"><a href="datenverarbeitung.html#cb54-4" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(var1, var2)</span>
+<span id="cb54-5"><a href="datenverarbeitung.html#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="datenverarbeitung.html#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Mit dem %$% Operator</span></span>
+<span id="cb54-7"><a href="datenverarbeitung.html#cb54-7" aria-hidden="true" tabindex="-1"></a>ds1 <span class="sc">%$%</span></span>
+<span id="cb54-8"><a href="datenverarbeitung.html#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ts.plot</span>(var1)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<p>Der <code>%$%</code> Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können.</p>
+<p>In unserem Beispiel benötigt die Funktion <code>ts.plot</code>, als Grafik für Zeitachsenmessungen, eine Variable als Input. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den <code>%$%</code> Operator, um auf Variablenebene operieren zu können.</p>
+</div>
+<div id="der-t-operator" class="section level4 unnumbered">
+<h4>Der %T&gt;% Operator</h4>
+<p>Dieser Operator ermöglicht es eine <code>Pipe</code> auch bei Funktionen ohne “inhaltlichen” Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen “inhaltlichen” Output, brauchen wir den <code>%T&gt;%</code> Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion “weitergegeben.”</p>
+<p>Es wird also immer auf den linken Wert neben dem <code>%T&gt;%</code> Operator zugegriffen und dieser an alle folgenden Funktionen übermittelt.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="datenverarbeitung.html#cb55-1" aria-hidden="true" tabindex="-1"></a>var1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span>)</span>
+<span id="cb55-2"><a href="datenverarbeitung.html#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="datenverarbeitung.html#cb55-3" aria-hidden="true" tabindex="-1"></a>var1 <span class="sc">%&gt;%</span> </span>
+<span id="cb55-4"><a href="datenverarbeitung.html#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">%T&gt;%</span></span>
+<span id="cb55-5"><a href="datenverarbeitung.html#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb55-6"><a href="datenverarbeitung.html#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>) </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
+<pre><code>#&gt; [1] 1.11 1.22 1.33</code></pre>
+<p>So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente unseres Vektors ausgeben lassen.</p>
+<p>Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.</p>
 </div>
 </div>
 <div id="datensätze-restrukturieren" class="section level3" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Datensätze restrukturieren</h3>
-<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgende Funktionen:</p>
+<p>R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:</p>
 <table>
 <thead>
 <tr class="header">
@@ -363,13 +403,13 @@ library(magrittr)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">dplyr</td>
-<td align="left">filter()</td>
-<td align="left">Filtern nach Fällen mit spezifischer Ausprägung</td>
+<td align="left">select()</td>
+<td align="left">Selektieren von Variablen</td>
 </tr>
 <tr class="even">
 <td align="left">dplyr</td>
-<td align="left">select()</td>
-<td align="left">Selektieren von Variablen</td>
+<td align="left">filter()</td>
+<td align="left">Filtern nach Fällen mit spezifischer Ausprägung</td>
 </tr>
 <tr class="odd">
 <td align="left">dplyr</td>
@@ -383,6 +423,61 @@ library(magrittr)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>Das dplyr Package stellt Funktionen für alle diese Aufgaben zur Verfügung (und noch viele mehr, wir betrachten hier nur eine kleine Auswahl). dplyr besteht sozusagen aus Verben (Funktionen) für all diese Operationen, und diese Funktionen können - je nach Bedarf - auf sehr elegante Weise zusammengesetzt werden.</p>
+<p>Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendung an. Wir verwenden immer den <code>%&gt;%</code> Operator. Der Input Datensatz ist dabei immer als erstes Argument der Funktion zu verstehen.</p>
+<p><strong>Anmerkung:</strong> Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben.</p>
+<div id="select" class="section level4 unnumbered">
+<h4><code>Select()</code></h4>
+</div>
+<div id="filter" class="section level4 unnumbered">
+<h4><code>Filter()</code></h4>
+<p>Mit der Funktion <code>filter()</code> können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.</p>
+<p>Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den logischen Operatoren in R beschäftigen.</p>
+<pre><code>&lt;                Kleiner
+&lt;=               Kleiner gleich
+&gt;                Grösser
+&gt;=               Grösser gleich
+==               Gleich (testet auf Äquivalenz)
+!=               Ungleich
+!x               Nicht x (Verneinung)
+x | y            x ODER y
+x &amp; y            x UND y</code></pre>
+<p>Als Beispiel filtern wie alle Befragten nach ihrer Staatangehörigkeit. Im Datensatz werden nur Fälle mit der deutschen Staatsangehörigkeit belassen.</p>
+<p><strong>Code:</strong></p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="datenverarbeitung.html#cb58-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb58-2"><a href="datenverarbeitung.html#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(german <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb58-3"><a href="datenverarbeitung.html#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,218 x 708</span></span>
+<span id="cb58-4"><a href="datenverarbeitung.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    za_nr doi      version   respid eastwest german  ep01  ep03  ep04  ep06  lm01</span></span>
+<span id="cb58-5"><a href="datenverarbeitung.html#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb58-6"><a href="datenverarbeitung.html#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  5270 doi:10.… 2.0.0 (2…      1        1      1     1     2     2     3     6</span></span>
+<span id="cb58-7"><a href="datenverarbeitung.html#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  5270 doi:10.… 2.0.0 (2…      2        2      1     2     4     3     3     7</span></span>
+<span id="cb58-8"><a href="datenverarbeitung.html#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  5270 doi:10.… 2.0.0 (2…      3        1      1     2     2     3     2     2</span></span>
+<span id="cb58-9"><a href="datenverarbeitung.html#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  5270 doi:10.… 2.0.0 (2…      4        2      1     2     2     3     3     7</span></span>
+<span id="cb58-10"><a href="datenverarbeitung.html#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  5270 doi:10.… 2.0.0 (2…      5        2      1     3     2     3     2     7</span></span>
+<span id="cb58-11"><a href="datenverarbeitung.html#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  5270 doi:10.… 2.0.0 (2…      6        1      1     1     3     3     2     3</span></span>
+<span id="cb58-12"><a href="datenverarbeitung.html#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  5270 doi:10.… 2.0.0 (2…      7        1      1     3     2     3     3     7</span></span>
+<span id="cb58-13"><a href="datenverarbeitung.html#cb58-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  5270 doi:10.… 2.0.0 (2…      8        1      1     2     3     3     2     2</span></span>
+<span id="cb58-14"><a href="datenverarbeitung.html#cb58-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  5270 doi:10.… 2.0.0 (2…      9        1      1     1     2     4     3     3</span></span>
+<span id="cb58-15"><a href="datenverarbeitung.html#cb58-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  5270 doi:10.… 2.0.0 (2…     10        2      1     2     2     2     3     7</span></span>
+<span id="cb58-16"><a href="datenverarbeitung.html#cb58-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,208 more rows, and 697 more variables: lm02 &lt;dbl&gt;, lm19 &lt;dbl&gt;,</span></span>
+<span id="cb58-17"><a href="datenverarbeitung.html#cb58-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   lm20 &lt;dbl&gt;, lm21 &lt;dbl&gt;, lm22 &lt;dbl&gt;, lm14 &lt;dbl&gt;, lm23 &lt;dbl&gt;, lm24 &lt;dbl&gt;,</span></span>
+<span id="cb58-18"><a href="datenverarbeitung.html#cb58-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa09 &lt;dbl&gt;, pa10 &lt;dbl&gt;, pa11 &lt;dbl&gt;, pa12 &lt;dbl&gt;, pa13 &lt;dbl&gt;, pa14 &lt;dbl&gt;,</span></span>
+<span id="cb58-19"><a href="datenverarbeitung.html#cb58-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa15 &lt;dbl&gt;, pa16 &lt;dbl&gt;, pa17 &lt;dbl&gt;, pa08a &lt;dbl&gt;, pa18 &lt;dbl&gt;, pa19 &lt;dbl&gt;,</span></span>
+<span id="cb58-20"><a href="datenverarbeitung.html#cb58-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp06 &lt;dbl&gt;, pp07 &lt;dbl&gt;, pp08 &lt;dbl&gt;, pp09 &lt;dbl&gt;, pp10 &lt;dbl&gt;, pp12 &lt;dbl&gt;,</span></span>
+<span id="cb58-21"><a href="datenverarbeitung.html#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp17 &lt;dbl&gt;, pp18 &lt;dbl&gt;, pp19 &lt;dbl&gt;, pp20 &lt;dbl&gt;, pp22 &lt;dbl&gt;, pp60 &lt;dbl&gt;,</span></span>
+<span id="cb58-22"><a href="datenverarbeitung.html#cb58-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp23 &lt;dbl&gt;, pp61 &lt;dbl&gt;, pp62 &lt;dbl&gt;, pp24 &lt;dbl&gt;, pp25 &lt;dbl&gt;, pp26 &lt;dbl&gt;,</span></span>
+<span id="cb58-23"><a href="datenverarbeitung.html#cb58-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp27 &lt;dbl&gt;, pp28 &lt;dbl&gt;, pp30 &lt;dbl&gt;, pp35 &lt;dbl&gt;, pp36 &lt;dbl&gt;, pp37 &lt;dbl&gt;,</span></span>
+<span id="cb58-24"><a href="datenverarbeitung.html#cb58-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp38 &lt;dbl&gt;, pp40 &lt;dbl&gt;, pp70 &lt;dbl&gt;, pp41 &lt;dbl&gt;, pp71 &lt;dbl&gt;, pp72 &lt;dbl&gt;,</span></span>
+<span id="cb58-25"><a href="datenverarbeitung.html#cb58-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa20 &lt;dbl&gt;, pa03 &lt;dbl&gt;, pa04 &lt;dbl&gt;, pt01 &lt;dbl&gt;, pt02 &lt;dbl&gt;, pt03 &lt;dbl&gt;,</span></span>
+<span id="cb58-26"><a href="datenverarbeitung.html#cb58-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pt04 &lt;dbl&gt;, pt08 &lt;dbl&gt;, pt09 &lt;dbl&gt;, pt10 &lt;dbl&gt;, pt11 &lt;dbl&gt;, pt12 &lt;dbl&gt;,</span></span>
+<span id="cb58-27"><a href="datenverarbeitung.html#cb58-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pt14 &lt;dbl&gt;, pt15 &lt;dbl&gt;, pt19 &lt;dbl&gt;, pt20 &lt;dbl&gt;, pa21 &lt;dbl&gt;, pd11 &lt;dbl&gt;,</span></span>
+<span id="cb58-28"><a href="datenverarbeitung.html#cb58-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pe01 &lt;dbl&gt;, pe02 &lt;dbl&gt;, pe04 &lt;dbl&gt;, pe05 &lt;dbl&gt;, pe06 &lt;dbl&gt;, pe07 &lt;dbl&gt;,</span></span>
+<span id="cb58-29"><a href="datenverarbeitung.html#cb58-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pe08 &lt;dbl&gt;, pe10 &lt;dbl&gt;, pe09 &lt;dbl&gt;, pe11 &lt;dbl&gt;, pe12 &lt;dbl&gt;, pe13 &lt;dbl&gt;,</span></span>
+<span id="cb58-30"><a href="datenverarbeitung.html#cb58-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pd12 &lt;dbl&gt;, ps03 &lt;dbl&gt;, ps01 &lt;dbl&gt;, im19 &lt;dbl&gt;, im20 &lt;dbl&gt;, im21 &lt;dbl&gt;,</span></span>
+<span id="cb58-31"><a href="datenverarbeitung.html#cb58-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   im01 &lt;dbl&gt;, pa02a &lt;dbl&gt;, va01 &lt;dbl&gt;, va02 &lt;dbl&gt;, va03 &lt;dbl&gt;, va04 &lt;dbl&gt;,</span></span>
+<span id="cb58-32"><a href="datenverarbeitung.html#cb58-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   ingle &lt;dbl&gt;, pa01 &lt;dbl&gt;, pa22 &lt;dbl&gt;, pa23 &lt;dbl&gt;, pa24 &lt;dbl&gt;, pa25 &lt;dbl&gt;,</span></span>
+<span id="cb58-33"><a href="datenverarbeitung.html#cb58-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa26 &lt;dbl&gt;, pa27 &lt;dbl&gt;, …</span></span></code></pre></div>
+</div>
 </div>
 <div id="daten-transformieren" class="section level3" number="3.3.4">
 <h3><span class="header-section-number">3.3.4</span> Daten transformieren</h3>

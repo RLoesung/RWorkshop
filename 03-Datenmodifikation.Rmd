@@ -118,11 +118,11 @@ print(allbus2018)
 
 Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen. 
 
-### Pipe Operator
+### Pipe Operatoren
 
 In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
 
-Hierfür gibt es in R eine "ganz einfache" Lösung, da sich Sequenzen von Funktionen in `Pipes` abbilden lassen. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen Zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
+Hierfür gibt es in R eine "ganz einfache" Lösung, da sich Sequenzen von Funktionen in `Pipes` abbilden lassen. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
 
 ```{r, include=F}
 library(magrittr)
@@ -175,7 +175,19 @@ var1 %>%
   head(n = 3)
 ```
 
-Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion. In Kürze: Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. Wir können diesen Prozess auch mit dem Platzhalter-Operator `.` veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.
+Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der Pipe hingegen, erzeugen wir eine Übergabe von Funktion zu Funktion.
+
+In Kürze: 
+
+1. Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. 
+2. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. 
+
+**Vorteile:**
+
+* Unser Code ist lesbarer
+* Wir müssen keine unnötigen Variablen definieren
+
+Wir können diesen Prozess auch mit dem Platzhalter-Operator `.` veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Vektor speichern in var1
@@ -183,8 +195,8 @@ var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
 
 # var1 runden und die ersten drei Elemente abrufen - Pipe
 var1 %>% 
-  round(., digits = 1) %>% 
-  head(., n = 3)
+  round(x = ., digits = 1) %>% 
+  head(x = ., n = 3)
 ```
 
 Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Werthülle einsetzen. 
@@ -196,10 +208,14 @@ var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
 # var1 runden und die ersten drei Elemente abrufen - Pipe
 1 %>% 
   round(var1, digits = .) %>% 
-  head(n = 3)
+  head(x = ., n = 3)
 ```
 
-Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
+**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können. 
+
+In den meisten Fällen ist jedoch das Objekt, welches übergeben wird, gleichzeitig auch das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
+
+**Anmerkung:** Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
 
 `Pipes` sollten nicht genutzt werden, wenn
 
@@ -207,23 +223,92 @@ Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein
 2. mehrere Inputs oder Outputs benötigt werden,
 3. eine komplexe Objektstruktur das Ziel ist.
 
+#### Der %$% Operatoren {-}
 
-#### Weitere Pipe Operatoren
+Für Funktionen, die auf Variablenebene arbeiten, gibt es den `%$%` Operator. 
 
+```{r, echo=T, collapse=T, comment="#>", message=T}
+# Vektoren in Datensatz speichern
+var1 <- c(1, 1, 2, 2, 2, 3, 3, 3, 3)
+var2 <- c(8, 9, 1, 1, 2, 3, 4, 5, 4)
+ds1 <- tibble(var1, var2)
 
+# Mit dem %$% Operator
+ds1 %$%
+  ts.plot(var1)
+```
 
+Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können. 
+
+In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
+
+#### Der %T>% Operator {-}
+
+Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
+
+Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen übermittelt.
+
+```{r, echo=T, collapse=T, comment="#>"}
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+var1 %>% 
+  round(digits = 2) %T>%
+  plot() %>% 
+  head(n = 3) 
+```
+
+So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente unseres Vektors ausgeben lassen.
+
+Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
 
 ### Datensätze restrukturieren 
 
-R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgende Funktionen:
+R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten. So wollen wir im ersten Schritt lernen, wie wir die für uns relevanten Daten in einem neuen Datensatz speichern können. Hierfür benötigen wir die folgenden Funktionen:
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
-| dplyr          | filter()     | Filtern nach  Fällen mit spezifischer Ausprägung |
 | dplyr          | select()     | Selektieren von Variablen |
+| dplyr          | filter()     | Filtern nach  Fällen mit spezifischer Ausprägung |
 | dplyr          | arrange()    | Sortiert Datensatz nach bestimmter Variable |
 | dplyr          | distinct()   | Auswahl einzigartiger Werte |
 
+Das dplyr Package stellt Funktionen für alle diese Aufgaben zur Verfügung (und noch viele mehr, wir betrachten hier nur eine kleine Auswahl). dplyr besteht sozusagen aus Verben (Funktionen) für all diese Operationen, und diese Funktionen können - je nach Bedarf - auf sehr elegante Weise zusammengesetzt werden.
+
+Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendung an. Wir verwenden immer den `%>%` Operator. Der Input Datensatz ist dabei immer als erstes Argument der Funktion zu verstehen.
+
+**Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben.
+
+#### `Select()` {-}
+
+
+#### `Filter()` {-}
+
+Mit der Funktion `filter()` können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.
+
+Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den logischen Operatoren in R beschäftigen.
+
+```{}
+<                Kleiner
+<=               Kleiner gleich
+>                Grösser
+>=               Grösser gleich
+==               Gleich (testet auf Äquivalenz)
+!=               Ungleich
+!x               Nicht x (Verneinung)
+x | y            x ODER y
+x & y            x UND y
+```
+
+Als Beispiel filtern wie alle Befragten nach ihrer Staatangehörigkeit. Im Datensatz werden nur Fälle mit der deutschen Staatsangehörigkeit belassen.
+
+**Code:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+allbus2018 %>% 
+  filter(german == 1)
+
+
+```
 
 
 ### Daten transformieren
