@@ -124,6 +124,8 @@ In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werde
 
 Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
 
+### `%>% Operator` {-}
+
 **Anmerkung:** Der `%>%` Operator gehört zu den `infix operators`.
 
 ```{r, include=F}
@@ -225,7 +227,7 @@ In den meisten Fällen ist auch das Objekt, welches übergeben wird, gleichzeiti
 2. mehrere Inputs oder Outputs benötigt werden,
 3. eine komplexe Objektstruktur das Ziel ist.
 
-#### Der %$% Operatoren {-}
+### `%$% Operator` {-}
 
 Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateninput erlauben, gibt es den `%$%` Operator. 
 
@@ -246,7 +248,7 @@ ds1 %$%
   ts.plot(var1)
 ```
 
-#### Der %T>% Operator {-}
+### `%T>% Operator` {-}
 
 Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
 
@@ -265,7 +267,7 @@ So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von uns
 
 Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
 
-## Datensätze restrukturieren 
+## Datensatz restrukturieren 
 
 **Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben. 
 
@@ -285,7 +287,7 @@ Das dplyr Package stellt Funktionen für alle diese Aufgaben zur Verfügung (und
 
 Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendung an. Wir verwenden immer den `%>%` Operator. Der Input Datensatz ist dabei immer als erstes Argument der Funktion zu verstehen.
 
-#### `Select()` {-}
+### `Select()` {-}
 
 Mit der Funktion `select()` lassen sich Variablen aus einem Datensatz gezielt auswählen. 
 
@@ -304,25 +306,25 @@ Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `va
 **Beispielcode:**
 ```{r, echo=T, collapse=T, comment="#>"}
 # Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds1 speichern
-ds <- allbus2018 %>% 
+ds1 <- allbus2018 %>% 
   select(im19)
 
-ds
+ds1
 
 # Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) 
 # in ds1 speichern
-ds <- allbus2018 %>% 
+ds1 <- allbus2018 %>% 
   select(im19, im20)
 
-ds
+ds1
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Befürwortung von Ungleichheit (im20) aus ds1 löschen
-ds <- ds %>% 
+ds2 <- ds1 %>% 
   select(-im20)
 
-ds
+ds2
 
 # Auswahl von Einstellung zum Leistungsprinzip (im19) 
 # über Befürwortung von Ungleichheit (im20)
@@ -346,7 +348,7 @@ ds
 
 **Anmerkung:** Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
 
-#### `Filter()` {-}
+### `Filter()` {-}
 
 Mit der Funktion `filter()` können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.
 
@@ -419,7 +421,7 @@ ds <- allbus2018 %>%
 ds
 ```
 
-#### `Arrange()` {-}
+### `Arrange()` {-}
 
 Mit `arrange()` können wir Beobachtungen sortieren, entweder in aufsteigender oder in absteigender Reihenfolge.
 
@@ -457,31 +459,299 @@ ds <- allbus2018 %>%
 ds
 ```
 
-## Daten transformieren
+## Daten konvertieren 
+
+So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
+
+**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der "klassischen" Funktionen alle Beschriftungen unseres Datensatzes entfernen würde.
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
-| Daten konvertieren:                                                     |
-| sjlabelled     | to_factor()         | Konvertiert Variable in Faktor |
+| sjlabelled     | to_factor()         | Konvertiert Variable in Faktor mit numerischen `levels` |
+| sjlabelled     | to_label()          | Konvertiert Variable in Faktor mit beschrifteten `levels` |
 | sjlabelled     | to_numeric()        | Konvertiert Variable in numerischen Vektor |
-| sjlabelled     | to_label()          | Ersetzt Levels mit Ausprägungsmerkmalen als Faktor* |
-| sjlabelled     | to_character()      | Bildet Faktor mit `character` Vektor |
+| sjlabelled     | to_character()      | Konvertiert Variable in `character` Vektor |
 | sjmisc         | numeric_to_factor() | Konvertiert Variablen mit n Ausprägungsmerkmalen zu Faktor |
-| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
-| sjlabelled     | set_na()            | Transformiert Ausprägungsmerkmale zu `NA` |
-| sjmisc         | replace_na()        | Transformiert `NA` zu gültigem Ausprägungsmerkmal |
 | sjlabelled     | unlabel()           | Konvertiert `labelled class` in `atomare Struktur` |
-| Datenbeschriftung:                                                   |
+
+### `To_factor()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_factor(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_factor(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht unbearbeitet
+class(allbus2018$sex)
+
+# Geschlecht in Faktor mit numerischen levels konvertieren (Äquivalent zu factor())
+# Sinnvoll bei Variablen mit mehr als zwei Ausprägungsmerkmalen
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+attributes(ds1$sex)
+```
+
+### `To_label()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_label(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_label(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in Faktor mit beschrifteten levels konvertieren
+# Sinvoll bei binären Ausprägungsmerkmalen
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_label(sex)
+
+attributes(ds$sex)
+```
+
+### `To_numeric()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_numeric(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_numeric(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in Faktor 
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+# Geschlecht wieder in numerischen Vektor konvertieren
+
+ds <- ds %>% 
+  select(sex) %>% 
+  to_numeric(sex)
+
+class(ds$sex)
+```
+
+### `To_character()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_character(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_character(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in character Vektor konvertieren
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_character(sex)
+
+class(ds$sex)
+
+# Folge: Alle numerischen Ausprägungsmerkmale wurden in ihre Beschriftung umgewandelt
+str(ds$sex)
+```
+
+### `Numeric_to_factor()` {-}
+
+Diese Funktion ermöglicht es uns alle Variablen eines Datensatzes anzuwählen und diese zu einem Faktor zu konvertieren. Wir müssen lediglich eine Maximalgrenze (n) als gewünschten Grenzwert zur Umwandlung angeben. Hat eine Variable weniger oder gleich viele Ausprägungsmerkmale wird sie konvertiert.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz als Ausgangspunkt 
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01)
+
+class(ds$im19)
+
+# Alle Variablen haben nur bis zu vier Ausprägungsmerkmale
+# Wir können sie entsprechend zu Faktoren konvertieren
+# ACHTUNG: Diese Funktion ändert den Datentyp unseres Datensatzes! 
+# Wir geben also zusätzliche die Funktion tibble() an
+
+ds <- ds %>% 
+  numeric_to_factor(n = 4) %>% 
+  tibble()
+
+class(ds$im19)
+```
+
+**Wichtig!** Die Funktion `numeric_to_factor()` hat die gleiche Wirkung wie die Funktion `to_label()`. Wir sparen uns lediglich den Aufwand jede Variable einzeln anzuwählen. 
+
+### `Unlabel()` {-}
+
+Mit dieser Funktion können wir Variablen konvertieren, die als `labelled class` gespeichert wurden. Durch das Einlesen unseres Datensatzes über `read_spss()` werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über `haven` mit der Funktion `read_sav()` laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine `atomare Struktur` umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Packeten vorbeugen.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz laden und vorbereiten
+library(haven)
+
+allbus2018_haven <- read_sav("ALLB2018.sav")
+
+ds <- allbus2018_haven %>% 
+  select(age, im19:im21, id01, german, sex)
+
+# Beispiel
+class(ds$age)
+
+# Wir konvertieren alle Variablen
+# ACHTUNG: Diese Funktion ändert den Datentyp unseres Datensatzes! 
+# Wir geben also zusätzliche die Funktion tibble() an
+
+ds <- ds %>% 
+  unlabel() %>% 
+  tibble()
+
+class(ds$age)
+```
+
+```{r, include=F}
+detach("package:haven", unload = TRUE)
+```
+
+## Referenzkategorien
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
+
+Die Verwendung der Funktion `rev_lvl()` aus *sjmisc* hat den großen Vorteil, dass unser Faktor praktisch rekodiert wird und damit alle Beschriftungen richtig zugewiesen werden. 
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+rev_lvl(datensatz, variable1, lvl = 3)
+
+# Mit Pipe
+datensatz %>% 
+  ref_lvl(variable1, lvl = 3)
+```
+
+Wir ändern mit der Funktion `ref_lvl()` die Referenzkategorie von `variable1` auf das Ausprägungsmerkmal `3`.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht als Faktor
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+# Unsere Refrenzkategorie ist gegenwärtig "Mann"
+attributes(ds$sex)
+
+# Wir ändern die Refrenkategorie folgend auf "Frau"
+
+ds <- ds %>% 
+  ref_lvl(sex, lvl = 2)
+
+attributes(ds$sex)
+```
+
+## Daten beschriften
+
+Zuletzt wollen wir lernen, wie wir Beschriftungen abrufen und verändern können. 
+
+Grundständig kennt R keine beschrifteten Daten. Erst durch den zunehmenden Einfluss sozialwisschenschaftlicher Anwendungsbedürfnisse und der bevorzugten Datenformate (.sav, .dta, .sas) halten Datenbeschriftungen auch in die R-Umgebung Einzug. 
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
 | sjlabelled     | get_label()         | Ruft Variablenbeschriftung ab |
-| sjlabelled     | get_labels()        | Ruft Wertbeschriftung von Ausprägungsmerkmalen ab |
+| sjlabelled     | get_labels()        | Ruft Beschriftung von Ausprägungsmerkmalen ab |
 | sjlabelled     | remove_all_labels() | Entfernt alle Beschriftungen |
-| sjlabelled     | set_label()         | Variable neubeschriften |
-| sjlabelled     | set_labels()        | Ausprägungsmerkmale neubeschriften |
-| sjlabelled     | drop_labels()       | Alle "unbesetzten" Ausprägungsmerkmale löschen |
+| sjlabelled     | var_labels()         | Variable neubeschriften |
+| sjlabelled     | val_labels()        | Ausprägungsmerkmale neubeschriften |
+| sjlabelled     | drop_labels()       | Alle "unbesetzten" Ausprägungsmerkmale löschen |*
 
-*Entspricht dem Ergebnis der Funktion `factor()`, sofern nicht über `read_spss` Daten importiert wurden.
+*Die Funktion `drop_labels()` ist äquivalent zum Argument `drop.labels = T` in der Funktion `read_spss()`. Sofern Sie ihre Daten mit `read_sav()` eingelesen haben, können Sie diesen Befehl nach der Bearbeitung ihres Datensatzes zur Löschung überflüssiger Merkmalsausprägungen nutzen.
 
+Für dieses Kapitel verzichten wir auf eine Darstellung der `Syntax`, da die Funktionen individuell angepasst werden müssen.
 
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vorbereitung Datensatz
+
+ds <- allbus2018 %>% 
+  select(age, im19:im21, id01, german, sex)
+
+# Abrufen der Variablenbeschriftung 
+get_label(ds$im19)
+
+# Abrufen der Beschriftungen von Ausprägungsmerkmalen
+get_labels(ds$im19)
+
+# Löschen aller Beschriftungen
+ds <- ds %>% 
+  remove_all_labels()
+
+get_label(ds$im19)
+get_labels(ds$im19)
+
+# Variablenbeschriftung neu definieren
+
+ds <- ds %>% 
+  var_labels(im19 = "Leistungsprinzip",
+             im20 = "Befürwortung von Ungleichheit")
+
+ds %>% 
+  get_label(im19, im20)
+
+# Merkmalsausprägungen neu definieren
+
+ds <- ds %>% 
+  val_labels(im19 = c("Erste Stufe", "Zweite Stufe", "Dritte Stufe", "Vierte Stufe"),
+             im20 = c("Erste Stufe", "Zweite Stufe", "Dritte Stufe", "Vierte Stufe"))
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+
+ds %>% 
+  select(im19, im20) %>% 
+  view_df()
+```
 
 ## Daten manipulieren
 
@@ -507,10 +777,43 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
 
 
+## Fehlende Werte
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjlabelled     | set_na()            | Transformiert Ausprägungsmerkmale zu `NA` |
+
+Mit der Funktion `set_na()` wollen wir lernen, wie wir einzelne oder mehrere Ausprägungsmerkmale in `NA` konvertieren können.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+set_na(datensatz, variable1, na = c(1, 3))
+
+# Mit Pipe
+datensatz %>% 
+  set_na(variable1, na = c(1, 3))
+```
+
+Mit haben mit der Funktion `set_na()` in `variable1` die Ausprägungsmerkmale `1` und `3` als `NA` definiert. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Definition der Altersspanne 61 bis 99 als NA
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  set_na(age, na = 61:99)
+
+view_df(ds)
+```
+
 
 **Referenz:**
 
-Moosdorf, D. (2020): Kritik an sozialer Ungleichheit – Macht politisches Wissen den Unterschied?. In Tausendpfund, M. & B. Westle (Hrsg.), Politisches Wissen in Deutschland: Empirische Analysen mit dem ALLBUS 2018 (S. 165–197). Wiesbaden: Springer VS. https://doi.org/10.1007/978-3-658-30492-8_6.
+**Moosdorf, D. (2020):** Kritik an sozialer Ungleichheit – Macht politisches Wissen den Unterschied?. In Tausendpfund, M. & B. Westle (Hrsg.), Politisches Wissen in Deutschland: Empirische Analysen mit dem ALLBUS 2018 (S. 165–197). Wiesbaden: Springer VS. https://doi.org/10.1007/978-3-658-30492-8_6.
 
 
 
