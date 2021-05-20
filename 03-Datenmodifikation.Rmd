@@ -4,9 +4,13 @@ In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätz
 
 **Tipp:** Zur Erstellung eigener Datensätze empfehlen wir das Kapitel [Datensätze selber erstellen](https://methodenlehre.github.io/einfuehrung-in-R/datensätze.html#datensätze-selber-erstellen) von Andrew Ellis und Boris Mayer.
 
+Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen *tidyverse* und *strengejacke*, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die "tidyverse-Methode", an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht. 
+
+Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format in ein *long*-Format transformieren wollen, empfehlen wir das Kapitel: [Reshaping: tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
+
 ## Vorbereitung 
 
-Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. 
+Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. Der Allbus 2018 liegt gleich im *long*-Format vor. 
 
 **Anmerkung:** Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.
 
@@ -81,13 +85,7 @@ write_spss(allbus2018, path = "allbus2018")
 
 Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument `path` einen neuen Speicherort definieren. 
 
-## Transformation und Manipulation von Daten
-
-Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen *tidyverse* und *strengejacke*, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die "tidyverse-Methode", an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht. 
-
-Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. Der Allbus 2018 liegt im diesem Format vor. Dennoch muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format in ein *long*-Format transformieren wollen, empfehlen wir das Kapitel: [Reshaping: tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
-
-### Erster Blick auf den Datensatz
+## Erster Blick auf den Datensatz
 
 Nachdem wir unseren Datensatz eingelesen haben, wollen wir uns zu Beginn einen Überblick über die vorhandenen Daten verschaffen. 
 
@@ -120,11 +118,13 @@ print(allbus2018)
 
 Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen. 
 
-### Pipe Operatoren
+## Pipe Operatoren
 
 In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
 
 Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
+
+**Anmerkung:** Der `%>%` Operator gehört zu den `infix operators`.
 
 ```{r, include=F}
 library(magrittr)
@@ -265,7 +265,7 @@ So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von uns
 
 Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
 
-### Datensätze restrukturieren 
+## Datensätze restrukturieren 
 
 **Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben. 
 
@@ -303,35 +303,54 @@ Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `va
 
 **Beispielcode:**
 ```{r, echo=T, collapse=T, comment="#>"}
-# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz `ds1`
+# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds1 speichern
 ds1 <- allbus2018 %>% 
   select(im19)
 
 ds1
 
-# Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit - (im20)
-ds2 <- allbus2018 %>% 
+# Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) 
+# in ds1 speichern
+ds1 <- allbus2018 %>% 
   select(im19, im20)
 
-ds2
+ds1
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Löschen von Befürwortung von Ungleichheit (im20)
-ds2 <- ds2 %>% 
+# Befürwortung von Ungleichheit (im20) aus ds1 löschen
+ds1 <- ds1 %>% 
   select(-im20)
 
-ds2
+ds1
 
-# Einbezug aller 
+# Auswahl von Einstellung zum Leistungsprinzip (im19) 
+# über Befürwortung von Ungleichheit (im20)
+# bis Einstellung zu sozialer Ungleichheit auf Makroebene (im21) und Mikroebene (id01)
+# in ds1 speichern
 
+ds1 <- allbus2018 %>% 
+  select(im19:im21, id01)
+
+ds1
 ```
 
+Wir können über `select()` auch die Reihenfolge unseres Spaltenvektors gezielt bestimmen.
 
+```{r, echo=T, collapse=T, comment="#>"}
+ds1 <- allbus2018 %>% 
+  select(id01, im19, im20, im21)
+
+ds1
+```
+
+**Anmerkung:** Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
 
 #### `Filter()` {-}
 
 Mit der Funktion `filter()` können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.
+
+**Tipp:** Wir kennen diesen Befehl aus SPSS als `select if`.
 
 Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den `logischen Operatoren` in R beschäftigen.
 
@@ -342,29 +361,62 @@ Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den `logi
 >=               Grösser gleich
 ==               Gleich (testet auf Äquivalenz)
 !=               Ungleich
-!x               Nicht x (Verneinung)
 x | y            x ODER y
 x & y            x UND y
+xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)
+%in%             Merkmale in einem Vektor
 ```
 
 Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.
 
-Wir wollen uns ein paar Beispielen mit der Variable ... widmen.
+**Syntax:**
+
+```{}
+# Ohne Pipe
+filter(datensatz, variable1 == 1)
+
+# Mit Pipe
+filter(datensatz, variable1 = 1)
+```
+
+Mit dem Befehl `filter()` wurden nur die Fälle des Datensatzes `datensatz` mit der Ausprägung `1` der Variable `variable1` übernommen. 
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-allbus2018 %>% 
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit NUR der 
+# deutschen Staatsbürgerschaft
+
+ds1 <- allbus2018 %>% 
+  select(im19:im21, id01, german) %>% 
   filter(german == 1)
 
+ds1
 
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
+# deutschen Staatsbürgerschaft (auch mit weiteren)
+
+ds1 <- allbus2018 %>% 
+  select(im19:im21, id01, german) %>% 
+  filter(german %in% 1:2)
+
+ds1
+
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
+# deutschen Staatsbürgerschaft (auch mit weiteren) und weiblichem Geschlecht
+
+ds1 <- allbus2018 %>% 
+  select(im19:im21, id01, german, sex) %>% 
+  filter(german %in% 1:2 & sex == 2)
+
+ds1
 ```
 
 
-### Daten transformieren
+## Daten transformieren
 
 
-### Daten manipulieren
+## Daten manipulieren
 
 Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem `dplyr`-Packet aus dem tidyverse und dem Packet `sjmisc` aus `strengejacke` arbeiten. Die folgende Auswahl kann nur einen Überblick über die "wichtigsten" Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).
 

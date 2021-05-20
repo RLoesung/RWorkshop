@@ -186,14 +186,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.1" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#vorbereitung"><i class="fa fa-check"></i><b>3.1</b> Vorbereitung</a></li>
 <li class="chapter" data-level="3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensatz-importieren"><i class="fa fa-check"></i><b>3.2</b> Datensatz importieren</a></li>
-<li class="chapter" data-level="3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#transformation-und-manipulation-von-daten"><i class="fa fa-check"></i><b>3.3</b> Transformation und Manipulation von Daten</a>
-<ul>
-<li class="chapter" data-level="3.3.1" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#erster-blick-auf-den-datensatz"><i class="fa fa-check"></i><b>3.3.1</b> Erster Blick auf den Datensatz</a></li>
-<li class="chapter" data-level="3.3.2" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operatoren"><i class="fa fa-check"></i><b>3.3.2</b> Pipe Operatoren</a></li>
-<li class="chapter" data-level="3.3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensätze-restrukturieren"><i class="fa fa-check"></i><b>3.3.3</b> Datensätze restrukturieren</a></li>
-<li class="chapter" data-level="3.3.4" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-transformieren"><i class="fa fa-check"></i><b>3.3.4</b> Daten transformieren</a></li>
-<li class="chapter" data-level="3.3.5" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-manipulieren"><i class="fa fa-check"></i><b>3.3.5</b> Daten manipulieren</a></li>
-</ul></li>
+<li class="chapter" data-level="3.3" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#erster-blick-auf-den-datensatz"><i class="fa fa-check"></i><b>3.3</b> Erster Blick auf den Datensatz</a></li>
+<li class="chapter" data-level="3.4" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#pipe-operatoren"><i class="fa fa-check"></i><b>3.4</b> Pipe Operatoren</a></li>
+<li class="chapter" data-level="3.5" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#datensätze-restrukturieren"><i class="fa fa-check"></i><b>3.5</b> Datensätze restrukturieren</a></li>
+<li class="chapter" data-level="3.6" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-transformieren"><i class="fa fa-check"></i><b>3.6</b> Daten transformieren</a></li>
+<li class="chapter" data-level="3.7" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-manipulieren"><i class="fa fa-check"></i><b>3.7</b> Daten manipulieren</a></li>
 </ul></li>
 </ul>
 
@@ -216,9 +213,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">3</span> Datenverarbeitung</h1>
 <p>In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätzen in den geläufigen Datenstrurkturen kennenlernen, um in einem zweiten Schritt die Daten nach unseren Vorstellungen zu modifizieren.</p>
 <p><strong>Tipp:</strong> Zur Erstellung eigener Datensätze empfehlen wir das Kapitel <a href="https://methodenlehre.github.io/einfuehrung-in-R/datensätze.html#datensätze-selber-erstellen">Datensätze selber erstellen</a> von Andrew Ellis und Boris Mayer.</p>
+<p>Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen <em>tidyverse</em> und <em>strengejacke</em>, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die “tidyverse-Methode,” an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht.</p>
+<p>Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im <em>long</em>-Format. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im <em>wide</em>-Format in ein <em>long</em>-Format transformieren wollen, empfehlen wir das Kapitel: <a href="https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr">Reshaping: tidyr</a> von Andrew Ellis und Boris Mayer.</p>
 <div id="vorbereitung" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Vorbereitung</h2>
-<p>Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: <a href="https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018">Allbus 2018</a> herunterladen.</p>
+<p>Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: <a href="https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018">Allbus 2018</a> herunterladen. Der Allbus 2018 liegt gleich im <em>long</em>-Format vor.</p>
 <p><strong>Anmerkung:</strong> Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.</p>
 <p>Wir wollen unserem Anspruch einer zielgerichteten und forschungspraktischen Anwendung von R auch während der Bearbeitung des Allbus 2018, als Datengrundlage, gerecht werden. So greifen wir auf vergangene Forschungspublikationen zurück. Diese erlauben uns eine Orientierungslinie für kommende Beispiele zu ziehen.</p>
 <p>Folgend erstellen wir ein Projekt in RStudio (siehe 1.8.1). Sobald der Projektordner erstellt wurde, schieben wir unseren Datensatz in den Projektordner. Durch die Festlegung unseres Arbeitsverzeichnises im Projektordner, kann R direkt auf den Datensatz zugreifen. Der Reiter <code>Files</code> sollte entsprechend so aussehen:</p>
@@ -261,12 +260,8 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <pre><code>write_spss(allbus2018, path = &quot;allbus2018&quot;)</code></pre>
 <p>Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument <code>path</code> einen neuen Speicherort definieren.</p>
 </div>
-<div id="transformation-und-manipulation-von-daten" class="section level2" number="3.3">
-<h2><span class="header-section-number">3.3</span> Transformation und Manipulation von Daten</h2>
-<p>Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen <em>tidyverse</em> und <em>strengejacke</em>, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die “tidyverse-Methode,” an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht.</p>
-<p>Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im <em>long</em>-Format. Der Allbus 2018 liegt im diesem Format vor. Dennoch muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im <em>wide</em>-Format in ein <em>long</em>-Format transformieren wollen, empfehlen wir das Kapitel: <a href="https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr">Reshaping: tidyr</a> von Andrew Ellis und Boris Mayer.</p>
-<div id="erster-blick-auf-den-datensatz" class="section level3" number="3.3.1">
-<h3><span class="header-section-number">3.3.1</span> Erster Blick auf den Datensatz</h3>
+<div id="erster-blick-auf-den-datensatz" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Erster Blick auf den Datensatz</h2>
 <p>Nachdem wir unseren Datensatz eingelesen haben, wollen wir uns zu Beginn einen Überblick über die vorhandenen Daten verschaffen.</p>
 <p>Mit <code>view()</code> können wir den ganzen Datensatz als zusätzliches Fenster öffnen.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="datenverarbeitung.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(allbus2018)</span></code></pre></div>
@@ -284,10 +279,11 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <span id="cb47-8"><a href="datenverarbeitung.html#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(allbus2018)</span></code></pre></div>
 <p>Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen.</p>
 </div>
-<div id="pipe-operatoren" class="section level3" number="3.3.2">
-<h3><span class="header-section-number">3.3.2</span> Pipe Operatoren</h3>
+<div id="pipe-operatoren" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Pipe Operatoren</h2>
 <p>In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code.</p>
 <p>Hierfür gibt es in R eine “ganz einfache” Lösung - <code>Pipes</code>. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine <code>Pipe</code> zeigt sich immer durch den <code>%&gt;%</code> Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet <em>magrittr</em> laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (<code>%$%</code> und <code>%T&gt;%</code>), die uns nur über das Laden von magrittr zur Verfügung gestellt werden.</p>
+<p><strong>Anmerkung:</strong> Der <code>%&gt;%</code> Operator gehört zu den <code>infix operators</code>.</p>
 <pre><code>install.packages(&quot;magrittr&quot;)
 library(magrittr)</code></pre>
 <p><strong>Tipp:</strong> Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel <code>cmd bzw. strg</code> + <code>up</code> + <code>M</code> an.</p>
@@ -391,8 +387,8 @@ library(magrittr)</code></pre>
 <p>Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.</p>
 </div>
 </div>
-<div id="datensätze-restrukturieren" class="section level3" number="3.3.3">
-<h3><span class="header-section-number">3.3.3</span> Datensätze restrukturieren</h3>
+<div id="datensätze-restrukturieren" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Datensätze restrukturieren</h2>
 <p><strong>Anmerkung:</strong> Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben.</p>
 <p>Gemäß unseres forschungspraktischen Anspruchs stammen die kommenden Variablen aus einer Untersuchung politischen Wissens (Moosdorf 2020) in Bearbeitung des Allbus 2018.</p>
 <p><strong>Kurze Erläuterung des Forschungsinhalts</strong></p>
@@ -437,7 +433,7 @@ datensatz %&gt;%
   select(variable1, variable2:variable3, -variable4)</code></pre>
 <p>Mit dem Befehl <code>select()</code> wurden aus dem Datensatz <code>datensatz</code> die Variablen <code>variable1</code>, <code>variable2</code> bis <code>variable3</code> ausgewählt. <code>variable4</code> wurde weggelassen.</p>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="datenverarbeitung.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz `ds1`</span></span>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="datenverarbeitung.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds1 speichern</span></span>
 <span id="cb58-2"><a href="datenverarbeitung.html#cb58-2" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb58-3"><a href="datenverarbeitung.html#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19)</span>
 <span id="cb58-4"><a href="datenverarbeitung.html#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -457,30 +453,31 @@ datensatz %&gt;%
 <span id="cb58-18"><a href="datenverarbeitung.html#cb58-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4</span></span>
 <span id="cb58-19"><a href="datenverarbeitung.html#cb58-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span>
 <span id="cb58-20"><a href="datenverarbeitung.html#cb58-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-21"><a href="datenverarbeitung.html#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit - (im20)</span></span>
-<span id="cb58-22"><a href="datenverarbeitung.html#cb58-22" aria-hidden="true" tabindex="-1"></a>ds2 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb58-23"><a href="datenverarbeitung.html#cb58-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, im20)</span>
-<span id="cb58-24"><a href="datenverarbeitung.html#cb58-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-25"><a href="datenverarbeitung.html#cb58-25" aria-hidden="true" tabindex="-1"></a>ds2</span>
-<span id="cb58-26"><a href="datenverarbeitung.html#cb58-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
-<span id="cb58-27"><a href="datenverarbeitung.html#cb58-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20</span></span>
-<span id="cb58-28"><a href="datenverarbeitung.html#cb58-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb58-29"><a href="datenverarbeitung.html#cb58-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     2</span></span>
-<span id="cb58-30"><a href="datenverarbeitung.html#cb58-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4</span></span>
-<span id="cb58-31"><a href="datenverarbeitung.html#cb58-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2     3</span></span>
-<span id="cb58-32"><a href="datenverarbeitung.html#cb58-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4     2</span></span>
-<span id="cb58-33"><a href="datenverarbeitung.html#cb58-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     4</span></span>
-<span id="cb58-34"><a href="datenverarbeitung.html#cb58-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2     2</span></span>
-<span id="cb58-35"><a href="datenverarbeitung.html#cb58-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     4</span></span>
-<span id="cb58-36"><a href="datenverarbeitung.html#cb58-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4     3</span></span>
-<span id="cb58-37"><a href="datenverarbeitung.html#cb58-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     2</span></span>
-<span id="cb58-38"><a href="datenverarbeitung.html#cb58-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4     3</span></span>
-<span id="cb58-39"><a href="datenverarbeitung.html#cb58-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="datenverarbeitung.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Löschen von Befürwortung von Ungleichheit (im20)</span></span>
-<span id="cb59-2"><a href="datenverarbeitung.html#cb59-2" aria-hidden="true" tabindex="-1"></a>ds2 <span class="ot">&lt;-</span> ds2 <span class="sc">%&gt;%</span> </span>
+<span id="cb58-21"><a href="datenverarbeitung.html#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) </span></span>
+<span id="cb58-22"><a href="datenverarbeitung.html#cb58-22" aria-hidden="true" tabindex="-1"></a><span class="co"># in ds1 speichern</span></span>
+<span id="cb58-23"><a href="datenverarbeitung.html#cb58-23" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb58-24"><a href="datenverarbeitung.html#cb58-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, im20)</span>
+<span id="cb58-25"><a href="datenverarbeitung.html#cb58-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-26"><a href="datenverarbeitung.html#cb58-26" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb58-27"><a href="datenverarbeitung.html#cb58-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
+<span id="cb58-28"><a href="datenverarbeitung.html#cb58-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20</span></span>
+<span id="cb58-29"><a href="datenverarbeitung.html#cb58-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb58-30"><a href="datenverarbeitung.html#cb58-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     2</span></span>
+<span id="cb58-31"><a href="datenverarbeitung.html#cb58-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4</span></span>
+<span id="cb58-32"><a href="datenverarbeitung.html#cb58-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2     3</span></span>
+<span id="cb58-33"><a href="datenverarbeitung.html#cb58-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4     2</span></span>
+<span id="cb58-34"><a href="datenverarbeitung.html#cb58-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     4</span></span>
+<span id="cb58-35"><a href="datenverarbeitung.html#cb58-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2     2</span></span>
+<span id="cb58-36"><a href="datenverarbeitung.html#cb58-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     4</span></span>
+<span id="cb58-37"><a href="datenverarbeitung.html#cb58-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4     3</span></span>
+<span id="cb58-38"><a href="datenverarbeitung.html#cb58-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     2</span></span>
+<span id="cb58-39"><a href="datenverarbeitung.html#cb58-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4     3</span></span>
+<span id="cb58-40"><a href="datenverarbeitung.html#cb58-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="datenverarbeitung.html#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Befürwortung von Ungleichheit (im20) aus ds1 löschen</span></span>
+<span id="cb59-2"><a href="datenverarbeitung.html#cb59-2" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> ds1 <span class="sc">%&gt;%</span> </span>
 <span id="cb59-3"><a href="datenverarbeitung.html#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>im20)</span>
 <span id="cb59-4"><a href="datenverarbeitung.html#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb59-5"><a href="datenverarbeitung.html#cb59-5" aria-hidden="true" tabindex="-1"></a>ds2</span>
+<span id="cb59-5"><a href="datenverarbeitung.html#cb59-5" aria-hidden="true" tabindex="-1"></a>ds1</span>
 <span id="cb59-6"><a href="datenverarbeitung.html#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 1</span></span>
 <span id="cb59-7"><a href="datenverarbeitung.html#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19</span></span>
 <span id="cb59-8"><a href="datenverarbeitung.html#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;</span></span>
@@ -496,11 +493,54 @@ datensatz %&gt;%
 <span id="cb59-18"><a href="datenverarbeitung.html#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4</span></span>
 <span id="cb59-19"><a href="datenverarbeitung.html#cb59-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span>
 <span id="cb59-20"><a href="datenverarbeitung.html#cb59-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb59-21"><a href="datenverarbeitung.html#cb59-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Einbezug aller </span></span></code></pre></div>
+<span id="cb59-21"><a href="datenverarbeitung.html#cb59-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Auswahl von Einstellung zum Leistungsprinzip (im19) </span></span>
+<span id="cb59-22"><a href="datenverarbeitung.html#cb59-22" aria-hidden="true" tabindex="-1"></a><span class="co"># über Befürwortung von Ungleichheit (im20)</span></span>
+<span id="cb59-23"><a href="datenverarbeitung.html#cb59-23" aria-hidden="true" tabindex="-1"></a><span class="co"># bis Einstellung zu sozialer Ungleichheit auf Makroebene (im21) und Mikroebene (id01)</span></span>
+<span id="cb59-24"><a href="datenverarbeitung.html#cb59-24" aria-hidden="true" tabindex="-1"></a><span class="co"># in ds1 speichern</span></span>
+<span id="cb59-25"><a href="datenverarbeitung.html#cb59-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-26"><a href="datenverarbeitung.html#cb59-26" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb59-27"><a href="datenverarbeitung.html#cb59-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01)</span>
+<span id="cb59-28"><a href="datenverarbeitung.html#cb59-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-29"><a href="datenverarbeitung.html#cb59-29" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb59-30"><a href="datenverarbeitung.html#cb59-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 4</span></span>
+<span id="cb59-31"><a href="datenverarbeitung.html#cb59-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20  im21  id01</span></span>
+<span id="cb59-32"><a href="datenverarbeitung.html#cb59-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb59-33"><a href="datenverarbeitung.html#cb59-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     2     3     3</span></span>
+<span id="cb59-34"><a href="datenverarbeitung.html#cb59-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4     4     2</span></span>
+<span id="cb59-35"><a href="datenverarbeitung.html#cb59-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2     3     3     3</span></span>
+<span id="cb59-36"><a href="datenverarbeitung.html#cb59-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4     2     2     3</span></span>
+<span id="cb59-37"><a href="datenverarbeitung.html#cb59-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     4     4     2</span></span>
+<span id="cb59-38"><a href="datenverarbeitung.html#cb59-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2     2     3     3</span></span>
+<span id="cb59-39"><a href="datenverarbeitung.html#cb59-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     4     3     3</span></span>
+<span id="cb59-40"><a href="datenverarbeitung.html#cb59-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4     3     3     2</span></span>
+<span id="cb59-41"><a href="datenverarbeitung.html#cb59-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     2     2     3</span></span>
+<span id="cb59-42"><a href="datenverarbeitung.html#cb59-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4     3     4     3</span></span>
+<span id="cb59-43"><a href="datenverarbeitung.html#cb59-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+<p>Wir können über <code>select()</code> auch die Reihenfolge unseres Spaltenvektors gezielt bestimmen.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="datenverarbeitung.html#cb60-1" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb60-2"><a href="datenverarbeitung.html#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id01, im19, im20, im21)</span>
+<span id="cb60-3"><a href="datenverarbeitung.html#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="datenverarbeitung.html#cb60-4" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb60-5"><a href="datenverarbeitung.html#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 4</span></span>
+<span id="cb60-6"><a href="datenverarbeitung.html#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     id01  im19  im20  im21</span></span>
+<span id="cb60-7"><a href="datenverarbeitung.html#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb60-8"><a href="datenverarbeitung.html#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     3     4     2     3</span></span>
+<span id="cb60-9"><a href="datenverarbeitung.html#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     2     4     4     4</span></span>
+<span id="cb60-10"><a href="datenverarbeitung.html#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     3     2     3     3</span></span>
+<span id="cb60-11"><a href="datenverarbeitung.html#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     3     4     2     2</span></span>
+<span id="cb60-12"><a href="datenverarbeitung.html#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     2     4     4     4</span></span>
+<span id="cb60-13"><a href="datenverarbeitung.html#cb60-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     3     2     2     3</span></span>
+<span id="cb60-14"><a href="datenverarbeitung.html#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     3     4     4     3</span></span>
+<span id="cb60-15"><a href="datenverarbeitung.html#cb60-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     2     4     3     3</span></span>
+<span id="cb60-16"><a href="datenverarbeitung.html#cb60-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     3     2     2</span></span>
+<span id="cb60-17"><a href="datenverarbeitung.html#cb60-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     3     4     3     4</span></span>
+<span id="cb60-18"><a href="datenverarbeitung.html#cb60-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+<p><strong>Anmerkung:</strong> Viele Funktionen des tidyverse, auch <code>select()</code>, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: <a href="https://dplyr.tidyverse.org/reference/select.html">selection helpers</a> und <a href="https://dplyr.tidyverse.org/reference/scoped.html">scoped verbs</a>.</p>
 </div>
 <div id="filter" class="section level4 unnumbered">
 <h4><code>Filter()</code></h4>
 <p>Mit der Funktion <code>filter()</code> können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.</p>
+<p><strong>Tipp:</strong> Wir kennen diesen Befehl aus SPSS als <code>select if</code>.</p>
 <p>Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den <code>logischen Operatoren</code> in R beschäftigen.</p>
 <pre><code>&lt;                Kleiner
 &lt;=               Kleiner gleich
@@ -508,52 +548,94 @@ datensatz %&gt;%
 &gt;=               Grösser gleich
 ==               Gleich (testet auf Äquivalenz)
 !=               Ungleich
-!x               Nicht x (Verneinung)
 x | y            x ODER y
-x &amp; y            x UND y</code></pre>
+x &amp; y            x UND y
+xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)
+%in%             Merkmale in einem Vektor</code></pre>
 <p>Die <code>logischen Operatoren</code> in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.</p>
-<p>Wir wollen uns ein paar Beispielen mit der Variable … widmen.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+filter(datensatz, variable1 == 1)
+
+# Mit Pipe
+filter(datensatz, variable1 = 1)</code></pre>
+<p>Mit dem Befehl <code>filter()</code> wurden nur die Fälle des Datensatzes <code>datensatz</code> mit der Ausprägung <code>1</code> der Variable <code>variable1</code> übernommen.</p>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="datenverarbeitung.html#cb61-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb61-2"><a href="datenverarbeitung.html#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(german <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb61-3"><a href="datenverarbeitung.html#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,218 x 708</span></span>
-<span id="cb61-4"><a href="datenverarbeitung.html#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    za_nr doi      version   respid eastwest german  ep01  ep03  ep04  ep06  lm01</span></span>
-<span id="cb61-5"><a href="datenverarbeitung.html#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb61-6"><a href="datenverarbeitung.html#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  5270 doi:10.… 2.0.0 (2…      1        1      1     1     2     2     3     6</span></span>
-<span id="cb61-7"><a href="datenverarbeitung.html#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  5270 doi:10.… 2.0.0 (2…      2        2      1     2     4     3     3     7</span></span>
-<span id="cb61-8"><a href="datenverarbeitung.html#cb61-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  5270 doi:10.… 2.0.0 (2…      3        1      1     2     2     3     2     2</span></span>
-<span id="cb61-9"><a href="datenverarbeitung.html#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  5270 doi:10.… 2.0.0 (2…      4        2      1     2     2     3     3     7</span></span>
-<span id="cb61-10"><a href="datenverarbeitung.html#cb61-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  5270 doi:10.… 2.0.0 (2…      5        2      1     3     2     3     2     7</span></span>
-<span id="cb61-11"><a href="datenverarbeitung.html#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  5270 doi:10.… 2.0.0 (2…      6        1      1     1     3     3     2     3</span></span>
-<span id="cb61-12"><a href="datenverarbeitung.html#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  5270 doi:10.… 2.0.0 (2…      7        1      1     3     2     3     3     7</span></span>
-<span id="cb61-13"><a href="datenverarbeitung.html#cb61-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  5270 doi:10.… 2.0.0 (2…      8        1      1     2     3     3     2     2</span></span>
-<span id="cb61-14"><a href="datenverarbeitung.html#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  5270 doi:10.… 2.0.0 (2…      9        1      1     1     2     4     3     3</span></span>
-<span id="cb61-15"><a href="datenverarbeitung.html#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  5270 doi:10.… 2.0.0 (2…     10        2      1     2     2     2     3     7</span></span>
-<span id="cb61-16"><a href="datenverarbeitung.html#cb61-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,208 more rows, and 697 more variables: lm02 &lt;dbl&gt;, lm19 &lt;dbl&gt;,</span></span>
-<span id="cb61-17"><a href="datenverarbeitung.html#cb61-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   lm20 &lt;dbl&gt;, lm21 &lt;dbl&gt;, lm22 &lt;dbl&gt;, lm14 &lt;dbl&gt;, lm23 &lt;dbl&gt;, lm24 &lt;dbl&gt;,</span></span>
-<span id="cb61-18"><a href="datenverarbeitung.html#cb61-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa09 &lt;dbl&gt;, pa10 &lt;dbl&gt;, pa11 &lt;dbl&gt;, pa12 &lt;dbl&gt;, pa13 &lt;dbl&gt;, pa14 &lt;dbl&gt;,</span></span>
-<span id="cb61-19"><a href="datenverarbeitung.html#cb61-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa15 &lt;dbl&gt;, pa16 &lt;dbl&gt;, pa17 &lt;dbl&gt;, pa08a &lt;dbl&gt;, pa18 &lt;dbl&gt;, pa19 &lt;dbl&gt;,</span></span>
-<span id="cb61-20"><a href="datenverarbeitung.html#cb61-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp06 &lt;dbl&gt;, pp07 &lt;dbl&gt;, pp08 &lt;dbl&gt;, pp09 &lt;dbl&gt;, pp10 &lt;dbl&gt;, pp12 &lt;dbl&gt;,</span></span>
-<span id="cb61-21"><a href="datenverarbeitung.html#cb61-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp17 &lt;dbl&gt;, pp18 &lt;dbl&gt;, pp19 &lt;dbl&gt;, pp20 &lt;dbl&gt;, pp22 &lt;dbl&gt;, pp60 &lt;dbl&gt;,</span></span>
-<span id="cb61-22"><a href="datenverarbeitung.html#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp23 &lt;dbl&gt;, pp61 &lt;dbl&gt;, pp62 &lt;dbl&gt;, pp24 &lt;dbl&gt;, pp25 &lt;dbl&gt;, pp26 &lt;dbl&gt;,</span></span>
-<span id="cb61-23"><a href="datenverarbeitung.html#cb61-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp27 &lt;dbl&gt;, pp28 &lt;dbl&gt;, pp30 &lt;dbl&gt;, pp35 &lt;dbl&gt;, pp36 &lt;dbl&gt;, pp37 &lt;dbl&gt;,</span></span>
-<span id="cb61-24"><a href="datenverarbeitung.html#cb61-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pp38 &lt;dbl&gt;, pp40 &lt;dbl&gt;, pp70 &lt;dbl&gt;, pp41 &lt;dbl&gt;, pp71 &lt;dbl&gt;, pp72 &lt;dbl&gt;,</span></span>
-<span id="cb61-25"><a href="datenverarbeitung.html#cb61-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa20 &lt;dbl&gt;, pa03 &lt;dbl&gt;, pa04 &lt;dbl&gt;, pt01 &lt;dbl&gt;, pt02 &lt;dbl&gt;, pt03 &lt;dbl&gt;,</span></span>
-<span id="cb61-26"><a href="datenverarbeitung.html#cb61-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pt04 &lt;dbl&gt;, pt08 &lt;dbl&gt;, pt09 &lt;dbl&gt;, pt10 &lt;dbl&gt;, pt11 &lt;dbl&gt;, pt12 &lt;dbl&gt;,</span></span>
-<span id="cb61-27"><a href="datenverarbeitung.html#cb61-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pt14 &lt;dbl&gt;, pt15 &lt;dbl&gt;, pt19 &lt;dbl&gt;, pt20 &lt;dbl&gt;, pa21 &lt;dbl&gt;, pd11 &lt;dbl&gt;,</span></span>
-<span id="cb61-28"><a href="datenverarbeitung.html#cb61-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pe01 &lt;dbl&gt;, pe02 &lt;dbl&gt;, pe04 &lt;dbl&gt;, pe05 &lt;dbl&gt;, pe06 &lt;dbl&gt;, pe07 &lt;dbl&gt;,</span></span>
-<span id="cb61-29"><a href="datenverarbeitung.html#cb61-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pe08 &lt;dbl&gt;, pe10 &lt;dbl&gt;, pe09 &lt;dbl&gt;, pe11 &lt;dbl&gt;, pe12 &lt;dbl&gt;, pe13 &lt;dbl&gt;,</span></span>
-<span id="cb61-30"><a href="datenverarbeitung.html#cb61-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pd12 &lt;dbl&gt;, ps03 &lt;dbl&gt;, ps01 &lt;dbl&gt;, im19 &lt;dbl&gt;, im20 &lt;dbl&gt;, im21 &lt;dbl&gt;,</span></span>
-<span id="cb61-31"><a href="datenverarbeitung.html#cb61-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   im01 &lt;dbl&gt;, pa02a &lt;dbl&gt;, va01 &lt;dbl&gt;, va02 &lt;dbl&gt;, va03 &lt;dbl&gt;, va04 &lt;dbl&gt;,</span></span>
-<span id="cb61-32"><a href="datenverarbeitung.html#cb61-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   ingle &lt;dbl&gt;, pa01 &lt;dbl&gt;, pa22 &lt;dbl&gt;, pa23 &lt;dbl&gt;, pa24 &lt;dbl&gt;, pa25 &lt;dbl&gt;,</span></span>
-<span id="cb61-33"><a href="datenverarbeitung.html#cb61-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   pa26 &lt;dbl&gt;, pa27 &lt;dbl&gt;, …</span></span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="datenverarbeitung.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Auswahl unserer bekannten Variablen gefiltert nach Personen mit NUR der </span></span>
+<span id="cb63-2"><a href="datenverarbeitung.html#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="co"># deutschen Staatsbürgerschaft</span></span>
+<span id="cb63-3"><a href="datenverarbeitung.html#cb63-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-4"><a href="datenverarbeitung.html#cb63-4" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb63-5"><a href="datenverarbeitung.html#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, german) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-6"><a href="datenverarbeitung.html#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(german <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb63-7"><a href="datenverarbeitung.html#cb63-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-8"><a href="datenverarbeitung.html#cb63-8" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb63-9"><a href="datenverarbeitung.html#cb63-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,218 x 5</span></span>
+<span id="cb63-10"><a href="datenverarbeitung.html#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20  im21  id01 german</span></span>
+<span id="cb63-11"><a href="datenverarbeitung.html#cb63-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb63-12"><a href="datenverarbeitung.html#cb63-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     2     3     3      1</span></span>
+<span id="cb63-13"><a href="datenverarbeitung.html#cb63-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4     4     2      1</span></span>
+<span id="cb63-14"><a href="datenverarbeitung.html#cb63-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2     3     3     3      1</span></span>
+<span id="cb63-15"><a href="datenverarbeitung.html#cb63-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4     2     2     3      1</span></span>
+<span id="cb63-16"><a href="datenverarbeitung.html#cb63-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     4     4     2      1</span></span>
+<span id="cb63-17"><a href="datenverarbeitung.html#cb63-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2     2     3     3      1</span></span>
+<span id="cb63-18"><a href="datenverarbeitung.html#cb63-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     4     3     3      1</span></span>
+<span id="cb63-19"><a href="datenverarbeitung.html#cb63-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4     3     3     2      1</span></span>
+<span id="cb63-20"><a href="datenverarbeitung.html#cb63-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     2     2     3      1</span></span>
+<span id="cb63-21"><a href="datenverarbeitung.html#cb63-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4     3     4     3      1</span></span>
+<span id="cb63-22"><a href="datenverarbeitung.html#cb63-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,208 more rows</span></span>
+<span id="cb63-23"><a href="datenverarbeitung.html#cb63-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-24"><a href="datenverarbeitung.html#cb63-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Auswahl unserer bekannten Variablen gefiltert nach Personen mit der </span></span>
+<span id="cb63-25"><a href="datenverarbeitung.html#cb63-25" aria-hidden="true" tabindex="-1"></a><span class="co"># deutschen Staatsbürgerschaft (auch mit weiteren)</span></span>
+<span id="cb63-26"><a href="datenverarbeitung.html#cb63-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-27"><a href="datenverarbeitung.html#cb63-27" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb63-28"><a href="datenverarbeitung.html#cb63-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, german) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-29"><a href="datenverarbeitung.html#cb63-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(german <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb63-30"><a href="datenverarbeitung.html#cb63-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-31"><a href="datenverarbeitung.html#cb63-31" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb63-32"><a href="datenverarbeitung.html#cb63-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,268 x 5</span></span>
+<span id="cb63-33"><a href="datenverarbeitung.html#cb63-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20  im21  id01 german</span></span>
+<span id="cb63-34"><a href="datenverarbeitung.html#cb63-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb63-35"><a href="datenverarbeitung.html#cb63-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     2     3     3      1</span></span>
+<span id="cb63-36"><a href="datenverarbeitung.html#cb63-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4     4     2      1</span></span>
+<span id="cb63-37"><a href="datenverarbeitung.html#cb63-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2     3     3     3      1</span></span>
+<span id="cb63-38"><a href="datenverarbeitung.html#cb63-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4     2     2     3      1</span></span>
+<span id="cb63-39"><a href="datenverarbeitung.html#cb63-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     4     4     2      1</span></span>
+<span id="cb63-40"><a href="datenverarbeitung.html#cb63-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2     2     3     3      1</span></span>
+<span id="cb63-41"><a href="datenverarbeitung.html#cb63-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     4     3     3      1</span></span>
+<span id="cb63-42"><a href="datenverarbeitung.html#cb63-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4     3     3     2      1</span></span>
+<span id="cb63-43"><a href="datenverarbeitung.html#cb63-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     2     2     3      1</span></span>
+<span id="cb63-44"><a href="datenverarbeitung.html#cb63-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4     3     4     3      1</span></span>
+<span id="cb63-45"><a href="datenverarbeitung.html#cb63-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,258 more rows</span></span>
+<span id="cb63-46"><a href="datenverarbeitung.html#cb63-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-47"><a href="datenverarbeitung.html#cb63-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Auswahl unserer bekannten Variablen gefiltert nach Personen mit der </span></span>
+<span id="cb63-48"><a href="datenverarbeitung.html#cb63-48" aria-hidden="true" tabindex="-1"></a><span class="co"># deutschen Staatsbürgerschaft (auch mit weiteren) und weiblichem Geschlecht</span></span>
+<span id="cb63-49"><a href="datenverarbeitung.html#cb63-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-50"><a href="datenverarbeitung.html#cb63-50" aria-hidden="true" tabindex="-1"></a>ds1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb63-51"><a href="datenverarbeitung.html#cb63-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, german, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-52"><a href="datenverarbeitung.html#cb63-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(german <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span> <span class="sc">&amp;</span> sex <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb63-53"><a href="datenverarbeitung.html#cb63-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-54"><a href="datenverarbeitung.html#cb63-54" aria-hidden="true" tabindex="-1"></a>ds1</span>
+<span id="cb63-55"><a href="datenverarbeitung.html#cb63-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1,610 x 6</span></span>
+<span id="cb63-56"><a href="datenverarbeitung.html#cb63-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19  im20  im21  id01 german   sex</span></span>
+<span id="cb63-57"><a href="datenverarbeitung.html#cb63-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb63-58"><a href="datenverarbeitung.html#cb63-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4     4     4     2      1     2</span></span>
+<span id="cb63-59"><a href="datenverarbeitung.html#cb63-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4     4     4     2      1     2</span></span>
+<span id="cb63-60"><a href="datenverarbeitung.html#cb63-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     4     4     3     3      1     2</span></span>
+<span id="cb63-61"><a href="datenverarbeitung.html#cb63-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     3     2     2     3      1     2</span></span>
+<span id="cb63-62"><a href="datenverarbeitung.html#cb63-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4     3     4     3      1     2</span></span>
+<span id="cb63-63"><a href="datenverarbeitung.html#cb63-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2    NA     4     2      1     2</span></span>
+<span id="cb63-64"><a href="datenverarbeitung.html#cb63-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4     2     3     2      1     2</span></span>
+<span id="cb63-65"><a href="datenverarbeitung.html#cb63-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     2     3     4     2      1     2</span></span>
+<span id="cb63-66"><a href="datenverarbeitung.html#cb63-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     2     2     4    NA      1     2</span></span>
+<span id="cb63-67"><a href="datenverarbeitung.html#cb63-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     2     3     3     2      1     2</span></span>
+<span id="cb63-68"><a href="datenverarbeitung.html#cb63-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 1,600 more rows</span></span></code></pre></div>
 </div>
 </div>
-<div id="daten-transformieren" class="section level3" number="3.3.4">
-<h3><span class="header-section-number">3.3.4</span> Daten transformieren</h3>
+<div id="daten-transformieren" class="section level2" number="3.6">
+<h2><span class="header-section-number">3.6</span> Daten transformieren</h2>
 </div>
-<div id="daten-manipulieren" class="section level3" number="3.3.5">
-<h3><span class="header-section-number">3.3.5</span> Daten manipulieren</h3>
+<div id="daten-manipulieren" class="section level2" number="3.7">
+<h2><span class="header-section-number">3.7</span> Daten manipulieren</h2>
 <p>Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem <code>dplyr</code>-Packet aus dem tidyverse und dem Packet <code>sjmisc</code> aus <code>strengejacke</code> arbeiten. Die folgende Auswahl kann nur einen Überblick über die “wichtigsten” Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).</p>
 <table>
 <colgroup>
@@ -649,7 +731,6 @@ x &amp; y            x UND y</code></pre>
 <p><strong>Referenz:</strong></p>
 <p>Moosdorf, D. (2020): Kritik an sozialer Ungleichheit – Macht politisches Wissen den Unterschied?. In Tausendpfund, M. &amp; B. Westle (Hrsg.), Politisches Wissen in Deutschland: Empirische Analysen mit dem ALLBUS 2018 (S. 165–197). Wiesbaden: Springer VS. <a href="https://doi.org/10.1007/978-3-658-30492-8_6" class="uri">https://doi.org/10.1007/978-3-658-30492-8_6</a>.</p>
 
-</div>
 </div>
 </div>
             </section>
