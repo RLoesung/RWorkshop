@@ -179,7 +179,7 @@ var1 %>%
 
 Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der `Pipe` hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.
 
-In Kürze: 
+Der Ablauf der `Pipe` in Kürze: 
 
 1. Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. 
 2. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. 
@@ -231,6 +231,10 @@ Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateni
 
 **Wichtig!** Wir brauchen diesen Operator aber nur für ganz wenige Funktionen. Die meisten Funktionen die auf Variablenebene arbeiten, besitzen gleichzeitig auch als erstes Argument eine Datensatz-Schnittstelle - `x = Datensatz`. Sie greifen dann über das zweite Argument auf die Variablen in diesem Datensatz zu.  
 
+Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
+
+In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
+
 ```{r, echo=T, collapse=T, comment="#>", message=T}
 # Vektoren in Datensatz speichern
 var1 <- c(1, 1, 2, 2, 2, 3, 3, 3, 3)
@@ -241,10 +245,6 @@ ds1 <- tibble(var1, var2)
 ds1 %$%
   ts.plot(var1)
 ```
-
-Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
-
-In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
 
 #### Der %T>% Operator {-}
 
@@ -271,7 +271,9 @@ Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beg
 
 Gemäß unseres forschungspraktischen Anspruchs stammen die kommenden Variablen aus einer Untersuchung politischen Wissens (Moosdorf 2020) in Bearbeitung des Allbus 2018.
 
-R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten (gezielt aufgebaute eigene Datensätze). So wollen wir in einem ersten Schritt lernen, wie wir Datensätze grob restrukturieren und anschließend die Daten in einem neuen Datensatz speichern können. Unser Ziel ist es also einen eigenen, auf unsere Bedürfnisse zugeschnittenen, Datensatz zu erzeugen. Hierfür benötigen wir die folgenden Funktionen:
+**Kurze Erläuterung des Forschungsinhalts**
+
+R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten (gezielt aufgebaute eigene Datensätze). So wollen wir in einem ersten Schritt lernen, wie wir Datensätze grob restrukturieren und anschließend die Daten in einem neuen Datensatz speichern können. Unser Ziel ist es also einen eigenen, auf unsere Bedürfnisse zugeschnittenen, Datensatz zu erzeugen. Hierfür straten wir mit den folgenden Funktionen:
 
 | Packet         | Funktion     | Verwendung                |
 | :------------- | :----------- | :------------------------ |
@@ -287,7 +289,35 @@ Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendu
 
 Mit der Funktion `select()` lassen sich Variablen aus einem Datensatz gezielt auswählen. 
 
+**Syntax:**
+```{}
+# Ohne Pipe
+select(datensatz, variable1, variable2:variable3, -variable4)
+
+# Mit Pipe
+datensatz %>% 
+  select(variable1, variable2:variable3, -variable4)
+```
+
+Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `variable1`, `variable2` bis `variable3` ausgewählt. `variable4` wurde weggelassen.
+
 **Beispielcode:**
+```{r, echo=T, collapse=T, comment="#>"}
+# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz `df1`
+(ds1 <- allbus2018 %>% 
+  select(im19))
+
+# Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit - (im20)
+(ds2 <- allbus2018 %>% 
+  select(im19, im20))
+
+# Löschen von Befürwortung von Ungleichheit (im20)
+(ds2 <- ds2 %>% 
+  select(-im20))
+
+# Einbezug aller 
+  
+```
 
 
 
@@ -309,7 +339,7 @@ x | y            x ODER y
 x & y            x UND y
 ```
 
-Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnelle verstanden sein.
+Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.
 
 Wir wollen uns ein paar Beispielen mit der Variable ... widmen.
 
