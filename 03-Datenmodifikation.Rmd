@@ -304,44 +304,44 @@ Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `va
 **Beispielcode:**
 ```{r, echo=T, collapse=T, comment="#>"}
 # Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds1 speichern
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19)
 
-ds1
+ds
 
 # Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) 
 # in ds1 speichern
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19, im20)
 
-ds1
+ds
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Befürwortung von Ungleichheit (im20) aus ds1 löschen
-ds1 <- ds1 %>% 
+ds <- ds %>% 
   select(-im20)
 
-ds1
+ds
 
 # Auswahl von Einstellung zum Leistungsprinzip (im19) 
 # über Befürwortung von Ungleichheit (im20)
 # bis Einstellung zu sozialer Ungleichheit auf Makroebene (im21) und Mikroebene (id01)
 # in ds1 speichern
 
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19:im21, id01)
 
-ds1
+ds
 ```
 
 Wir können über `select()` auch die Reihenfolge unseres Spaltenvektors gezielt bestimmen.
 
 ```{r, echo=T, collapse=T, comment="#>"}
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(id01, im19, im20, im21)
 
-ds1
+ds
 ```
 
 **Anmerkung:** Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
@@ -364,10 +364,16 @@ Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den `logi
 x | y            x ODER y
 x & y            x UND y
 xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)
-%in%             Merkmale in einem Vektor
 ```
 
 Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.
+
+Zusätzlich brauchen wir noch einen `infix operator`
+
+```{}
+%in%             Merkmale in einem Vektor
+```
+
 
 **Syntax:**
 
@@ -376,7 +382,8 @@ Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eige
 filter(datensatz, variable1 == 1)
 
 # Mit Pipe
-filter(datensatz, variable1 = 1)
+datensatz %>% 
+  filter(variable1 == 1)
 ```
 
 Mit dem Befehl `filter()` wurden nur die Fälle des Datensatzes `datensatz` mit der Ausprägung `1` der Variable `variable1` übernommen. 
@@ -387,33 +394,93 @@ Mit dem Befehl `filter()` wurden nur die Fälle des Datensatzes `datensatz` mit 
 # Auswahl unserer bekannten Variablen gefiltert nach Personen mit NUR der 
 # deutschen Staatsbürgerschaft
 
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19:im21, id01, german) %>% 
   filter(german == 1)
 
-ds1
+ds
 
 # Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
 # deutschen Staatsbürgerschaft (auch mit weiteren)
 
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19:im21, id01, german) %>% 
   filter(german %in% 1:2)
 
-ds1
+ds
 
 # Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
 # deutschen Staatsbürgerschaft (auch mit weiteren) und weiblichem Geschlecht
 
-ds1 <- allbus2018 %>% 
+ds <- allbus2018 %>% 
   select(im19:im21, id01, german, sex) %>% 
-  filter(german %in% 1:2 & sex == 2)
+  filter(german %in% c(1,2) & sex == 2)
 
-ds1
+ds
 ```
 
+#### `Arrange()` {-}
+
+Mit `arrange()` können wir Beobachtungen sortieren, entweder in aufsteigender oder in absteigender Reihenfolge.
+
+**Syntax:** 
+
+```{}
+# aufsteigend
+arrange(datensatz, variable1)
+
+datensatz %>% 
+  arrange(variable1)
+
+# absteigend
+arrange(datensatz, desc(variable1))
+
+datensatz %>% 
+  arrange(desc(variable1))
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Sortieren nach Alter aufsteigend
+ds <- allbus2018 %>% 
+  select(age, im19:im21, id01, german, sex) %>% 
+  arrange(age)
+
+ds
+
+# Sortieren nach Alter absteigend
+ds <- allbus2018 %>% 
+  select(age, im19:im21, id01, german, sex) %>% 
+  arrange(desc(age))
+
+ds
+```
 
 ## Daten transformieren
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| Daten konvertieren:                                                     |
+| sjlabelled     | to_factor()         | Konvertiert Variable in Faktor |
+| sjlabelled     | to_numeric()        | Konvertiert Variable in numerischen Vektor |
+| sjlabelled     | to_label()          | Ersetzt Levels mit Ausprägungsmerkmalen als Faktor* |
+| sjlabelled     | to_character()      | Bildet Faktor mit `character` Vektor |
+| sjmisc         | numeric_to_factor() | Konvertiert Variablen mit n Ausprägungsmerkmalen zu Faktor |
+| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
+| sjlabelled     | set_na()            | Transformiert Ausprägungsmerkmale zu `NA` |
+| sjmisc         | replace_na()        | Transformiert `NA` zu gültigem Ausprägungsmerkmal |
+| sjlabelled     | unlabel()           | Konvertiert `labelled class` in `atomare Struktur` |
+| Datenbeschriftung:                                                   |
+| sjlabelled     | get_label()         | Ruft Variablenbeschriftung ab |
+| sjlabelled     | get_labels()        | Ruft Wertbeschriftung von Ausprägungsmerkmalen ab |
+| sjlabelled     | remove_all_labels() | Entfernt alle Beschriftungen |
+| sjlabelled     | set_label()         | Variable neubeschriften |
+| sjlabelled     | set_labels()        | Ausprägungsmerkmale neubeschriften |
+| sjlabelled     | drop_labels()       | Alle "unbesetzten" Ausprägungsmerkmale löschen |
+
+*Entspricht dem Ergebnis der Funktion `factor()`, sofern nicht über `read_spss` Daten importiert wurden.
+
 
 
 ## Daten manipulieren
