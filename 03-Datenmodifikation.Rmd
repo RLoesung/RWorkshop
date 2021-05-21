@@ -205,7 +205,11 @@ ds <- allbus2018 %>%
 ds
 ```
 
-**Anmerkung:** Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
+**Anmerkung:** 
+
+1. Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
+
+2. Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion `move_columns()` aus dem Packet *sjmisc*. 
 
 ### `Filter()` {-}
 
@@ -229,7 +233,7 @@ xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)
 
 Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.
 
-Zusätzlich brauchen wir noch einen `infix operator`
+Zusätzlich brauchen wir noch einen `infix operator`.
 
 ```{}
 %in%             Merkmale in einem Vektor
@@ -324,7 +328,7 @@ ds
 
 So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
 
-**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind alle dargestellten Funktionen für die Nutzung in einer `Pipe` optimiert. 
+**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würden. Zudem sind alle dargestellten Funktionen für die Nutzung in einer `Pipe` optimiert. 
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
@@ -788,9 +792,11 @@ ds %>%
   get_label(im19, im20)
 ```
 
-### `val_labels()` {-}
+### `Val_labels()` {-}
 
 Die Funktion `val_labels()` erlaubt es uns Ausprägungsmerkmale für eine oder mehrere Variablen neu zu definieren.
+
+**Syntax:**
 
 ```{}
 # Ohne Pipe
@@ -801,6 +807,8 @@ datensatz %>%
   var_labels(variable1 = c("1", "2"),
              variable2 = c("Hallo", "Tschüss"))
 ```
+
+**Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Merkmalsausprägungen neu definieren
@@ -839,8 +847,74 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | sjmisc         | col_count()  | Zählung von Spaltenweten  |
 | sjmisc         | row_sums()   | Summe der Zeilenwerte |
 | sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
-| sjlabelled     | set_na()            | Transformiert Ausprägungsmerkmale zu `NA` |
+| sjlabelled     | set_na()     | Transformiert Ausprägungsmerkmale zu fehlenden Werten |
+| tidyr          | drop_na()    | Alle fehlenden Werte werden gelöscht |
 
+### `Rename()` {-}
+
+Die Funktion `rename()` erlaubt uns eine Neubeschriftung der Variablennamen vorzunehmen.
+
+**Wichtig!** Die nicht umbenannten Variablen verbleiben auch weiterhin im Datensatz.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+rename(datensatz, rename(variableA = variable1))
+
+# Mit Pipe
+datensatz %>% 
+  rename(variableA = variable1)
+```
+
+Mit dem Befehl `rename()` haben wir in unserem Datensatz `ds` die Variable `variable1` in `variableA` umbenannt. Der neue Name muss folgend immer auf der *linken* Seite der Gleichung stehen.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Neubeschriftung der Variablen Geschlecht (sex) und Alter (age)
+
+ds <-  allbus2018 %>% 
+  select(sex, age) %>% 
+  rename(Geschlecht = sex,
+         Alter = age)
+
+ds
+```
+
+### `Mutate()` {-}
+
+Über die Funktion `mutate()` können wir neue Variablen aus schon bestehenden Variablen bilden. Vor allem erlaubt uns dieser Befehl mathematische Operationen an Variablen vorzunehmen. Wir kennen diese Befehl in `SPSS` als `compute`.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+mutate(datensatz, variable1 = variable1*100)
+
+# Mit Pipe
+datensatz %>% 
+  mutate(variable1 = variable1*100)
+```
+
+In unserem Beispiel haben wir `variable1` mit dem Wert `100` multipliziert und das Ergebnis wieder in `variable1` gespeichert.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Berechung des Alters der Befragten aus ihrem Geburtsjahr in neuer Variable (Alter)
+
+ds <-  allbus2018 %>% 
+  select(yborn, age) %>% 
+  mutate(Alter = 2018-yborn)
+
+ds
+
+# Fast ;D
+# Um das korrekte Alter zu ermitteln, müssten wir natürlich noch den Geburtsmonat einbeziehen!
+```
+
+### `Group_by()` {-}
 
 
 

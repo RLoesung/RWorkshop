@@ -217,10 +217,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="datenverarbeitung.html#remove_labels"><code>Remove_labels()</code></a></li>
 <li><a href="datenverarbeitung.html#remove_all_labels"><code>Remove_all_labels()</code></a></li>
 <li><a href="datenverarbeitung.html#var_labels"><code>Var_labels()</code></a></li>
-<li><a href="datenverarbeitung.html#val_labels"><code>val_labels()</code></a></li>
+<li><a href="datenverarbeitung.html#val_labels"><code>Val_labels()</code></a></li>
 </ul></li>
 <li class="chapter" data-level="3.7" data-path="datenverarbeitung.html"><a href="datenverarbeitung.html#daten-manipulieren"><i class="fa fa-check"></i><b>3.7</b> Daten manipulieren</a>
 <ul>
+<li><a href="datenverarbeitung.html#rename"><code>Rename()</code></a></li>
+<li><a href="datenverarbeitung.html#mutate"><code>Mutate()</code></a></li>
+<li><a href="datenverarbeitung.html#group_by"><code>Group_by()</code></a></li>
 <li><a href="datenverarbeitung.html#set_na"><code>Set_na()</code></a></li>
 </ul></li>
 </ul></li>
@@ -470,7 +473,11 @@ datensatz %&gt;%
 <span id="cb59-18"><a href="datenverarbeitung.html#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3     3     2     2</span></span>
 <span id="cb59-19"><a href="datenverarbeitung.html#cb59-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     3     4     3     4</span></span>
 <span id="cb59-20"><a href="datenverarbeitung.html#cb59-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
-<p><strong>Anmerkung:</strong> Viele Funktionen des tidyverse, auch <code>select()</code>, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: <a href="https://dplyr.tidyverse.org/reference/select.html">selection helpers</a> und <a href="https://dplyr.tidyverse.org/reference/scoped.html">scoped verbs</a>.</p>
+<p><strong>Anmerkung:</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Viele Funktionen des tidyverse, auch <code>select()</code>, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: <a href="https://dplyr.tidyverse.org/reference/select.html">selection helpers</a> und <a href="https://dplyr.tidyverse.org/reference/scoped.html">scoped verbs</a>.</p></li>
+<li><p>Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion <code>move_columns()</code> aus dem Packet <em>sjmisc</em>.</p></li>
+</ol>
 </div>
 <div id="filter" class="section level3 unnumbered">
 <h3><code>Filter()</code></h3>
@@ -487,7 +494,7 @@ x | y            x ODER y
 x &amp; y            x UND y
 xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)</code></pre>
 <p>Die <code>logischen Operatoren</code> in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.</p>
-<p>Zusätzlich brauchen wir noch einen <code>infix operator</code></p>
+<p>Zusätzlich brauchen wir noch einen <code>infix operator</code>.</p>
 <pre><code>%in%             Merkmale in einem Vektor</code></pre>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
@@ -631,7 +638,7 @@ datensatz %&gt;%
 <div id="daten-konvertieren" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> Daten konvertieren</h2>
 <p>So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.</p>
-<p><strong>Anmerkung:</strong> Wir benutzen die Packete <em>sjmisc</em> und <em>sjlabelled</em> zur Konvertierung von Datentypen, weil die Anwendung der <code>base R</code> Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind alle dargestellten Funktionen für die Nutzung in einer <code>Pipe</code> optimiert.</p>
+<p><strong>Anmerkung:</strong> Wir benutzen die Packete <em>sjmisc</em> und <em>sjlabelled</em> zur Konvertierung von Datentypen, weil die Anwendung der <code>base R</code> Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würden. Zudem sind alle dargestellten Funktionen für die Nutzung in einer <code>Pipe</code> optimiert.</p>
 <table>
 <colgroup>
 <col width="24%" />
@@ -1150,8 +1157,9 @@ datensatz %&gt;%
 <span id="cb89-12"><a href="datenverarbeitung.html#cb89-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              &quot;Leistungsprinzip&quot; &quot;Befürwortung von Ungleichheit&quot;</span></span></code></pre></div>
 </div>
 <div id="val_labels" class="section level3 unnumbered">
-<h3><code>val_labels()</code></h3>
+<h3><code>Val_labels()</code></h3>
 <p>Die Funktion <code>val_labels()</code> erlaubt es uns Ausprägungsmerkmale für eine oder mehrere Variablen neu zu definieren.</p>
+<p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 var_labels(datensatz, variable1 = c(&quot;1&quot;, &quot;2&quot;))
 
@@ -1159,6 +1167,7 @@ var_labels(datensatz, variable1 = c(&quot;1&quot;, &quot;2&quot;))
 datensatz %&gt;% 
   var_labels(variable1 = c(&quot;1&quot;, &quot;2&quot;),
              variable2 = c(&quot;Hallo&quot;, &quot;Tschüss&quot;))</code></pre>
+<p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="datenverarbeitung.html#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merkmalsausprägungen neu definieren</span></span>
 <span id="cb91-2"><a href="datenverarbeitung.html#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb91-3"><a href="datenverarbeitung.html#cb91-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> ds <span class="sc">%&gt;%</span> </span>
@@ -1326,10 +1335,91 @@ Erste Stufe<br>Zweite Stufe<br>Dritte Stufe<br>Vierte Stufe
 <tr class="even">
 <td align="left">sjlabelled</td>
 <td align="left">set_na()</td>
-<td align="left">Transformiert Ausprägungsmerkmale zu <code>NA</code></td>
+<td align="left">Transformiert Ausprägungsmerkmale zu fehlenden Werten</td>
+</tr>
+<tr class="odd">
+<td align="left">tidyr</td>
+<td align="left">drop_na()</td>
+<td align="left">Alle fehlenden Werte werden gelöscht</td>
 </tr>
 </tbody>
 </table>
+<div id="rename" class="section level3 unnumbered">
+<h3><code>Rename()</code></h3>
+<p>Die Funktion <code>rename()</code> erlaubt uns eine Neubeschriftung der Variablennamen vorzunehmen.</p>
+<p><strong>Wichtig!</strong> Die nicht umbenannten Variablen verbleiben auch weiterhin im Datensatz.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+rename(datensatz, rename(variableA = variable1))
+
+# Mit Pipe
+datensatz %&gt;% 
+  rename(variableA = variable1)</code></pre>
+<p>Mit dem Befehl <code>rename()</code> haben wir in unserem Datensatz <code>ds</code> die Variable <code>variable1</code> in <code>variableA</code> umbenannt. Der neue Name muss folgend immer auf der <em>linken</em> Seite der Gleichung stehen.</p>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="datenverarbeitung.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Neubeschriftung der Variablen Geschlecht (sex) und Alter (age)</span></span>
+<span id="cb93-2"><a href="datenverarbeitung.html#cb93-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-3"><a href="datenverarbeitung.html#cb93-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span>  allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb93-4"><a href="datenverarbeitung.html#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex, age) <span class="sc">%&gt;%</span> </span>
+<span id="cb93-5"><a href="datenverarbeitung.html#cb93-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Geschlecht =</span> sex,</span>
+<span id="cb93-6"><a href="datenverarbeitung.html#cb93-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">Alter =</span> age)</span>
+<span id="cb93-7"><a href="datenverarbeitung.html#cb93-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-8"><a href="datenverarbeitung.html#cb93-8" aria-hidden="true" tabindex="-1"></a>ds</span>
+<span id="cb93-9"><a href="datenverarbeitung.html#cb93-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
+<span id="cb93-10"><a href="datenverarbeitung.html#cb93-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Geschlecht Alter</span></span>
+<span id="cb93-11"><a href="datenverarbeitung.html#cb93-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb93-12"><a href="datenverarbeitung.html#cb93-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1          1    62</span></span>
+<span id="cb93-13"><a href="datenverarbeitung.html#cb93-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2          2    64</span></span>
+<span id="cb93-14"><a href="datenverarbeitung.html#cb93-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3          1    22</span></span>
+<span id="cb93-15"><a href="datenverarbeitung.html#cb93-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4          1    59</span></span>
+<span id="cb93-16"><a href="datenverarbeitung.html#cb93-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5          2    30</span></span>
+<span id="cb93-17"><a href="datenverarbeitung.html#cb93-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6          1    41</span></span>
+<span id="cb93-18"><a href="datenverarbeitung.html#cb93-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7          2    43</span></span>
+<span id="cb93-19"><a href="datenverarbeitung.html#cb93-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8          1    39</span></span>
+<span id="cb93-20"><a href="datenverarbeitung.html#cb93-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9          2    40</span></span>
+<span id="cb93-21"><a href="datenverarbeitung.html#cb93-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10          2    69</span></span>
+<span id="cb93-22"><a href="datenverarbeitung.html#cb93-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+</div>
+<div id="mutate" class="section level3 unnumbered">
+<h3><code>Mutate()</code></h3>
+<p>Über die Funktion <code>mutate()</code> können wir neue Variablen aus schon bestehenden Variablen bilden. Vor allem erlaubt uns dieser Befehl mathematische Operationen an Variablen vorzunehmen. Wir kennen diese Befehl in <code>SPSS</code> als <code>compute</code>.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+mutate(datensatz, variable1 = variable1*100)
+
+# Mit Pipe
+datensatz %&gt;% 
+  mutate(variable1 = variable1*100)</code></pre>
+<p>In unserem Beispiel haben wir <code>variable1</code> mit dem Wert <code>100</code> multipliziert und das Ergebnis wieder in <code>variable1</code> gespeichert.</p>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="datenverarbeitung.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Berechung des Alters der Befragten aus ihrem Geburtsjahr in neuer Variable (Alter)</span></span>
+<span id="cb95-2"><a href="datenverarbeitung.html#cb95-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-3"><a href="datenverarbeitung.html#cb95-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span>  allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb95-4"><a href="datenverarbeitung.html#cb95-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(yborn, age) <span class="sc">%&gt;%</span> </span>
+<span id="cb95-5"><a href="datenverarbeitung.html#cb95-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Alter =</span> <span class="dv">2018</span><span class="sc">-</span>yborn)</span>
+<span id="cb95-6"><a href="datenverarbeitung.html#cb95-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-7"><a href="datenverarbeitung.html#cb95-7" aria-hidden="true" tabindex="-1"></a>ds</span>
+<span id="cb95-8"><a href="datenverarbeitung.html#cb95-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 3</span></span>
+<span id="cb95-9"><a href="datenverarbeitung.html#cb95-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    yborn   age Alter</span></span>
+<span id="cb95-10"><a href="datenverarbeitung.html#cb95-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb95-11"><a href="datenverarbeitung.html#cb95-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1  1956    62    62</span></span>
+<span id="cb95-12"><a href="datenverarbeitung.html#cb95-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2  1953    64    65</span></span>
+<span id="cb95-13"><a href="datenverarbeitung.html#cb95-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3  1995    22    23</span></span>
+<span id="cb95-14"><a href="datenverarbeitung.html#cb95-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4  1959    59    59</span></span>
+<span id="cb95-15"><a href="datenverarbeitung.html#cb95-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5  1987    30    31</span></span>
+<span id="cb95-16"><a href="datenverarbeitung.html#cb95-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6  1976    41    42</span></span>
+<span id="cb95-17"><a href="datenverarbeitung.html#cb95-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7  1975    43    43</span></span>
+<span id="cb95-18"><a href="datenverarbeitung.html#cb95-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8  1979    39    39</span></span>
+<span id="cb95-19"><a href="datenverarbeitung.html#cb95-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9  1977    40    41</span></span>
+<span id="cb95-20"><a href="datenverarbeitung.html#cb95-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  1949    69    69</span></span>
+<span id="cb95-21"><a href="datenverarbeitung.html#cb95-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span>
+<span id="cb95-22"><a href="datenverarbeitung.html#cb95-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-23"><a href="datenverarbeitung.html#cb95-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Fast ;D</span></span>
+<span id="cb95-24"><a href="datenverarbeitung.html#cb95-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Um das korrekte Alter zu ermitteln, müssten wir natürlich noch den Geburtsmonat einbeziehen!</span></span></code></pre></div>
+</div>
+<div id="group_by" class="section level3 unnumbered">
+<h3><code>Group_by()</code></h3>
+</div>
 <div id="set_na" class="section level3 unnumbered">
 <h3><code>Set_na()</code></h3>
 <p>Mit der Funktion <code>set_na()</code> wollen wir lernen, wie wir einzelne oder mehrere Ausprägungsmerkmale in <code>NA</code> konvertieren können.</p>
@@ -1342,13 +1432,13 @@ datensatz %&gt;%
   set_na(variable1, na = c(1, 3))</code></pre>
 <p>Mit haben mit der Funktion <code>set_na()</code> in <code>variable1</code> die Ausprägungsmerkmale <code>1</code> und <code>3</code> als <code>NA</code> definiert.</p>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="datenverarbeitung.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definition der Altersspanne 61 bis 99 als NA</span></span>
-<span id="cb93-2"><a href="datenverarbeitung.html#cb93-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-3"><a href="datenverarbeitung.html#cb93-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb93-4"><a href="datenverarbeitung.html#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age) <span class="sc">%&gt;%</span> </span>
-<span id="cb93-5"><a href="datenverarbeitung.html#cb93-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(age, <span class="at">na =</span> <span class="dv">61</span><span class="sc">:</span><span class="dv">99</span>)</span>
-<span id="cb93-6"><a href="datenverarbeitung.html#cb93-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-7"><a href="datenverarbeitung.html#cb93-7" aria-hidden="true" tabindex="-1"></a><span class="fu">view_df</span>(ds)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="datenverarbeitung.html#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definition der Altersspanne 61 bis 99 als NA</span></span>
+<span id="cb97-2"><a href="datenverarbeitung.html#cb97-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-3"><a href="datenverarbeitung.html#cb97-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb97-4"><a href="datenverarbeitung.html#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb97-5"><a href="datenverarbeitung.html#cb97-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(age, <span class="at">na =</span> <span class="dv">61</span><span class="sc">:</span><span class="dv">99</span>)</span>
+<span id="cb97-6"><a href="datenverarbeitung.html#cb97-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-7"><a href="datenverarbeitung.html#cb97-7" aria-hidden="true" tabindex="-1"></a><span class="fu">view_df</span>(ds)</span></code></pre></div>
 <table style="border-collapse:collapse; border:none;">
 <caption>
 Data frame: ds
