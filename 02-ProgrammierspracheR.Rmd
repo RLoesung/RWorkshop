@@ -532,6 +532,167 @@ list3$list1[[1]][1]
 
 R kennt noch zwei weitere Datentypen (Matrizen und Arrays), die wir in diesem Kurs ausklammern werden. Sofern interesse besteht, verweisen wir auf das Buch von Hadley Wickham: [Advanced R](https://adv-r.hadley.nz/index.html). 
 
+## Pipe Operatoren
+
+In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
+
+Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
+
+```{r, include=F}
+library(magrittr)
+```
+
+```{}
+install.packages("magrittr")
+library(magrittr)
+```
+
+### `%>% Operator` {-}
+
+**Tipp:** Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel `cmd bzw. strg` + `up` + `M` an.
+
+Um einen ersten Einstieg zu schaffen, greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier haben wir den Vektor `c(1.11, 1.22, 1.33, 1.44, 1.55)`, welcher in var1 gespeichert wurde, gerundet. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden
+
+round(var1, digits = 1)
+```
+
+In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch schon jetzt eine `Pipe` zu Demonstrationszwecken bilden. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden
+
+var1 %>% 
+  round(digits = 1)
+```
+
+Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der `Pipe` also Funktionen nicht mehr als `f(x)` sondern als `x %>% f() bzw. x %>% f`. Wir reihen also unsere Funktionen aneinander, wir verschachteln sie nicht mehr.
+
+Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt dieses Vorgehens ersichtlich. 
+
+Wir rufen zusätzlich mit `head()` die ersten drei Elemente unseres Vektors auf.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen
+
+head(round(var1, digits = 1), n = 3)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+var1 %>% 
+  round(digits = 1) %>% 
+  head(n = 3)
+```
+
+Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der `Pipe` hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.
+
+Der Ablauf der `Pipe` in Kürze: 
+
+1. Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. 
+2. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. 
+
+**Vorteile:**
+
+* Unser Code ist lesbarer
+* Wir müssen keine unnötigen Variablen definieren
+
+Wir können diesen Prozess auch mit dem Platzhalter-Operator `.` veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+var1 %>% 
+  round(x = ., digits = 1) %>% 
+  head(x = ., n = 3)
+```
+
+Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Wertcontainer einsetzen. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+1 %>% 
+  round(var1, digits = .) %>% 
+  head(x = ., n = 3)
+```
+
+**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. `x = Daten (Datensatz oder Variablen)`. 
+
+In den meisten Fällen ist auch das Objekt, welches übergeben wird, gleichzeitig das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
+
+**Anmerkung:** Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
+
+`Pipes` sollten nicht genutzt werden, wenn
+
+1. die `Pipe` länger als 10 Schritte wäre,
+2. mehrere Inputs oder Outputs benötigt werden,
+3. eine komplexe Objektstruktur das Ziel ist.
+
+### `%$% Operator` {-}
+
+Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateninput erlauben, gibt es den `%$%` Operator. 
+
+**Wichtig!** Wir brauchen diesen Operator aber nur für ganz wenige Funktionen. Die meisten Funktionen die auf Variablenebene arbeiten, besitzen gleichzeitig auch als erstes Argument eine Datensatz-Schnittstelle - `x = Datensatz`. Sie greifen dann über das zweite Argument auf die Variablen in diesem Datensatz zu.  
+
+Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
+
+In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
+
+```{r, echo=T, collapse=T, comment="#>", message=T}
+# Vektoren in Datensatz speichern
+
+var1 <- c(1, 1, 2, 2, 2, 3, 3, 3, 3)
+var2 <- c(8, 9, 1, 1, 2, 3, 4, 5, 4)
+ds1 <- tibble(var1, var2)
+
+# Mit dem %$% Operator
+
+ds1 %$%
+  ts.plot(var1)
+```
+
+### `%T>% Operator` {-}
+
+Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
+
+Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen "weitergegeben".
+
+```{r, echo=T, collapse=T, comment="#>"}
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+var1 %>% 
+  round(digits = 2) %T>%
+  plot() %>% 
+  head(n = 3) 
+```
+
+So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von unserem gerundeten Vektor ausgeben lassen.
+
+Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
+
+
 
 
 

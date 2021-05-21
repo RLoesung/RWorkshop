@@ -46,7 +46,7 @@ library(tidyverse)
 allbus2018 <- read_spss("ALLB2018.sav")
 ```
 
-**Wichtig!** Mit der Funktion `read_spss()` über das Packet sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir das Packet `haven` über die Funktion `read_sav()` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
+**Wichtig!** Mit der Funktion `read_spss()` über das Packet sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Packet `haven` über die Funktion `read_sav()` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
 
 Sollten Ihre Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.
 
@@ -60,11 +60,12 @@ allbus2018 <- read_sas("Datensatz.sas")
 
 **Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete `haven`, `readxl` und `readr` an. 
 
-Die Funktion `read_spss` besitzt drei für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: `?read_spss`.
+Die Funktion `read_spss` besitzt vier für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: `?read_spss`.
 
 * `atomic.to.fac` = `TRUE` > Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
 * `drop.labels` = `TRUE` > Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu `NA` konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen. 
 * `verbose` = `TRUE` > Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
+* `tag.na` = `TRUE` > Alle fehlenden Werte werden als `tagged_na` markiert. Damit werden sie in allen Berechnungen zwar als `NA` einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus `SPSS` bekannt, jederzeit auf diese mit der Funktion `replace_na()` zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). *Wir hoffen auf eine baldige Anpassung und stehen mit den Entwicklern im Kontakt*.
 
 Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
 
@@ -72,6 +73,7 @@ Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
 allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T)
 
 # Noch schnell den Allbus zum tibble transformieren
+
 allbus2018 <- tibble(allbus2018)
 ```
 
@@ -107,165 +109,19 @@ Weiterhin können wir über unsere zuvor erlernten "Grundfunktionen" einen Aussc
 
 ```{r, echo=T, results='hide', comment="#>"}
 # Ersten 3 Fälle
+
 head(allbus2018, n = 3)
 
 # Letzten 5 Fälle
+
 tail(allbus2018, n = 5)
 
 #Ganzer Datensatz
+
 print(allbus2018)
 ```
 
 Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen. 
-
-## Pipe Operatoren
-
-In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
-
-Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Packet *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
-
-### `%>% Operator` {-}
-
-**Anmerkung:** Der `%>%` Operator gehört zu den `infix operators`.
-
-```{r, include=F}
-library(magrittr)
-```
-
-```{}
-install.packages("magrittr")
-library(magrittr)
-```
-
-**Tipp:** Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel `cmd bzw. strg` + `up` + `M` an.
-
-Um einen ersten Einstieg zu schaffen, greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier haben wir den Vektor `c(1.11, 1.22, 1.33, 1.44, 1.55)`, welcher in var1 gespeichert wurde, gerundet. 
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vektor speichern in var1
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-# var1 runden
-round(var1, digits = 1)
-```
-
-In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch schon jetzt eine `Pipe` zu Demonstrationszwecken bilden. 
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vektor speichern in var1
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-# var1 runden
-var1 %>% 
-  round(digits = 1)
-```
-
-Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der `Pipe` also Funktionen nicht mehr als `f(x)` sondern als `x %>% f() bzw. x %>% f`. Wir reihen also unsere Funktionen aneinander, wir verschachteln sie nicht mehr.
-
-Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt dieses Vorgehens ersichtlich. 
-
-Wir rufen zusätzlich mit `head()` die ersten drei Elemente unseres Vektors auf.
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vektor speichern in var1
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-# var1 runden und die ersten drei Elemente abrufen
-head(round(var1, digits = 1), n = 3)
-
-# var1 runden und die ersten drei Elemente abrufen - Pipe
-var1 %>% 
-  round(digits = 1) %>% 
-  head(n = 3)
-```
-
-Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der `Pipe` hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.
-
-Der Ablauf der `Pipe` in Kürze: 
-
-1. Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. 
-2. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. 
-
-**Vorteile:**
-
-* Unser Code ist lesbarer
-* Wir müssen keine unnötigen Variablen definieren
-
-Wir können diesen Prozess auch mit dem Platzhalter-Operator `.` veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vektor speichern in var1
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-# var1 runden und die ersten drei Elemente abrufen - Pipe
-var1 %>% 
-  round(x = ., digits = 1) %>% 
-  head(x = ., n = 3)
-```
-
-Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Wertcontainer einsetzen. 
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vektor speichern in var1
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-# var1 runden und die ersten drei Elemente abrufen - Pipe
-1 %>% 
-  round(var1, digits = .) %>% 
-  head(x = ., n = 3)
-```
-
-**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. `x = Daten (Datensatz oder Variablen)`. 
-
-In den meisten Fällen ist auch das Objekt, welches übergeben wird, gleichzeitig das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
-
-**Anmerkung:** Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
-
-`Pipes` sollten nicht genutzt werden, wenn
-
-1. die `Pipe` länger als 10 Schritte wäre,
-2. mehrere Inputs oder Outputs benötigt werden,
-3. eine komplexe Objektstruktur das Ziel ist.
-
-### `%$% Operator` {-}
-
-Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateninput erlauben, gibt es den `%$%` Operator. 
-
-**Wichtig!** Wir brauchen diesen Operator aber nur für ganz wenige Funktionen. Die meisten Funktionen die auf Variablenebene arbeiten, besitzen gleichzeitig auch als erstes Argument eine Datensatz-Schnittstelle - `x = Datensatz`. Sie greifen dann über das zweite Argument auf die Variablen in diesem Datensatz zu.  
-
-Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
-
-In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
-
-```{r, echo=T, collapse=T, comment="#>", message=T}
-# Vektoren in Datensatz speichern
-var1 <- c(1, 1, 2, 2, 2, 3, 3, 3, 3)
-var2 <- c(8, 9, 1, 1, 2, 3, 4, 5, 4)
-ds1 <- tibble(var1, var2)
-
-# Mit dem %$% Operator
-ds1 %$%
-  ts.plot(var1)
-```
-
-### `%T>% Operator` {-}
-
-Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
-
-Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen "weitergegeben".
-
-```{r, echo=T, collapse=T, comment="#>"}
-var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
-
-var1 %>% 
-  round(digits = 2) %T>%
-  plot() %>% 
-  head(n = 3) 
-```
-
-So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von unserem gerundeten Vektor ausgeben lassen.
-
-Hervorangend! Jetzt können wir mit der Restrukturierung unseres Datensatzes beginnen.
 
 ## Datensatz restrukturieren 
 
@@ -305,31 +161,32 @@ Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `va
 
 **Beispielcode:**
 ```{r, echo=T, collapse=T, comment="#>"}
-# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds1 speichern
-ds1 <- allbus2018 %>% 
+# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds speichern
+
+ds <- allbus2018 %>% 
   select(im19)
 
-ds1
+ds
 
 # Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) 
-# in ds1 speichern
-ds1 <- allbus2018 %>% 
+# in ds speichern
+
+ds <- allbus2018 %>% 
   select(im19, im20)
 
-ds1
-```
+ds
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Befürwortung von Ungleichheit (im20) aus ds1 löschen
-ds2 <- ds1 %>% 
+# Befürwortung von Ungleichheit (im20) aus ds löschen
+
+ds <- ds %>% 
   select(-im20)
 
-ds2
+ds
 
 # Auswahl von Einstellung zum Leistungsprinzip (im19) 
 # über Befürwortung von Ungleichheit (im20)
 # bis Einstellung zu sozialer Ungleichheit auf Makroebene (im21) und Mikroebene (id01)
-# in ds1 speichern
+# in ds speichern
 
 ds <- allbus2018 %>% 
   select(im19:im21, id01)
@@ -340,6 +197,8 @@ ds
 Wir können über `select()` auch die Reihenfolge unseres Spaltenvektors gezielt bestimmen.
 
 ```{r, echo=T, collapse=T, comment="#>"}
+# Reheinfolge des Datensatz ds anpassen
+
 ds <- allbus2018 %>% 
   select(id01, im19, im20, im21)
 
@@ -445,6 +304,7 @@ datensatz %>%
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Sortieren nach Alter aufsteigend
+
 ds <- allbus2018 %>% 
   select(age, im19:im21, id01, german, sex) %>% 
   arrange(age)
@@ -452,6 +312,7 @@ ds <- allbus2018 %>%
 ds
 
 # Sortieren nach Alter absteigend
+
 ds <- allbus2018 %>% 
   select(age, im19:im21, id01, german, sex) %>% 
   arrange(desc(age))
@@ -463,7 +324,7 @@ ds
 
 So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
 
-**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der "klassischen" Funktionen alle Beschriftungen unseres Datensatzes entfernen würde.
+**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind alle dargestellten Funktionen für die Nutzung in einer `Pipe` optimiert. 
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
@@ -473,8 +334,11 @@ So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
 | sjlabelled     | to_character()      | Konvertiert Variable in `character` Vektor |
 | sjmisc         | numeric_to_factor() | Konvertiert Variablen mit n Ausprägungsmerkmalen zu Faktor |
 | sjlabelled     | unlabel()           | Konvertiert `labelled class` in `atomare Struktur` |
+| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
 
 ### `To_factor()` {-}
+
+Konvertiert einen Vektor in einen Faktor mit numerischen `levels` - äquivalent zur Funktion `factor()`. Sinnvoll bei Variablen mit mehr als zwei Ausprägungsmerkmalen.
 
 **Syntax:**
 
@@ -491,19 +355,21 @@ datensatz %>%
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Geschlecht unbearbeitet
+
 class(allbus2018$sex)
 
-# Geschlecht in Faktor mit numerischen levels konvertieren (Äquivalent zu factor())
-# Sinnvoll bei Variablen mit mehr als zwei Ausprägungsmerkmalen
+# Geschlecht in Faktor mit numerischen levels konvertieren
 
 ds <- allbus2018 %>% 
   select(sex) %>% 
   to_factor(sex)
 
-attributes(ds1$sex)
+attributes(ds$sex)
 ```
 
 ### `To_label()` {-}
+
+Konvertiert einen Vektor in einen Faktor mit beschrifteten `levels`. Sinvoll bei binären Ausprägungsmerkmalen.
 
 **Syntax:**
 
@@ -520,7 +386,6 @@ datensatz %>%
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Geschlecht in Faktor mit beschrifteten levels konvertieren
-# Sinvoll bei binären Ausprägungsmerkmalen
 
 ds <- allbus2018 %>% 
   select(sex) %>% 
@@ -530,6 +395,8 @@ attributes(ds$sex)
 ```
 
 ### `To_numeric()` {-}
+
+Konvertiert einen Faktor oder `character` Vektor in einen numerischen Vektor. 
 
 **Syntax:**
 
@@ -562,6 +429,8 @@ class(ds$sex)
 
 ### `To_character()` {-}
 
+Konvertiert einen numerischen Vektor oder Faktor in einen `character` Vektor.
+
 **Syntax:**
 
 ```{}
@@ -585,6 +454,7 @@ ds <- allbus2018 %>%
 class(ds$sex)
 
 # Folge: Alle numerischen Ausprägungsmerkmale wurden in ihre Beschriftung umgewandelt
+
 str(ds$sex)
 ```
 
@@ -624,6 +494,7 @@ Mit dieser Funktion können wir Variablen konvertieren, die als `labelled class`
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Datensatz laden und vorbereiten
+
 library(haven)
 
 allbus2018_haven <- read_sav("ALLB2018.sav")
@@ -632,6 +503,7 @@ ds <- allbus2018_haven %>%
   select(age, im19:im21, id01, german, sex)
 
 # Beispiel
+
 class(ds$age)
 
 # Wir konvertieren alle Variablen
@@ -649,13 +521,9 @@ class(ds$age)
 detach("package:haven", unload = TRUE)
 ```
 
-## Referenzkategorien
+### `Ref_lvl()` {-}
 
-| Packet         | Funktion            | Verwendung                |
-| :------------- | :------------------ | :------------------------ |
-| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
-
-Die Verwendung der Funktion `rev_lvl()` aus *sjmisc* hat den großen Vorteil, dass unser Faktor praktisch rekodiert wird und damit alle Beschriftungen richtig zugewiesen werden. 
+Die Verwendung der Funktion `rev_lvl()` aus *sjmisc* hat den großen Vorteil, dass unser Faktor im Gegensatz zur Funktion `relevel()` rekodiert wird und damit alle Beschriftungen auch bei numerischen `levels` richtig zugewiesen werden können. 
 
 **Syntax:**
 
@@ -692,53 +560,249 @@ attributes(ds$sex)
 
 ## Daten beschriften
 
-Zuletzt wollen wir lernen, wie wir Beschriftungen abrufen und verändern können. 
-
 Grundständig kennt R keine beschrifteten Daten. Erst durch den zunehmenden Einfluss sozialwisschenschaftlicher Anwendungsbedürfnisse und der bevorzugten Datenformate (.sav, .dta, .sas) halten Datenbeschriftungen auch in die R-Umgebung Einzug. 
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
 | sjlabelled     | get_label()         | Ruft Variablenbeschriftung ab |
 | sjlabelled     | get_labels()        | Ruft Beschriftung von Ausprägungsmerkmalen ab |
+| sjlabelled     | remove_label()      | Entfernt Variablenbeschriftung |
+| sjlabelled     | remove_labels()     | Entfernt Beschriftung von Ausprägungsmerkmalen |
 | sjlabelled     | remove_all_labels() | Entfernt alle Beschriftungen |
-| sjlabelled     | var_labels()         | Variable neubeschriften |
+| sjlabelled     | var_labels()        | Variable neubeschriften |
 | sjlabelled     | val_labels()        | Ausprägungsmerkmale neubeschriften |
 | sjlabelled     | drop_labels()       | Alle "unbesetzten" Ausprägungsmerkmale löschen |*
 
 *Die Funktion `drop_labels()` ist äquivalent zum Argument `drop.labels = T` in der Funktion `read_spss()`. Sofern Sie ihre Daten mit `read_sav()` eingelesen haben, können Sie diesen Befehl nach der Bearbeitung ihres Datensatzes zur Löschung überflüssiger Merkmalsausprägungen nutzen.
 
-Für dieses Kapitel verzichten wir auf eine Darstellung der `Syntax`, da die Funktionen individuell angepasst werden müssen.
+### `Get_label()` {-}
+
+Mit der Funktion `get_label()` können wir Variablenbeschriftungen abrufen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+get_label(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  get_label(variable1)
+```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Vorbereitung Datensatz
+# Variablenbeschriftung Leistungsprinzip (im19) 
+# und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% 
+  get_label(im19, im20)
+```
+
+### `Get_labels()` {-}
+
+Die Funktion `get_labels()` erlaubt uns das Abrufen der Beschriftung von Merkmalsausprägungen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+get_labels(datensatz, variable1)
+
+# Nicht mit Pipe möglich!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Beschriftung der Ausprägungsmerkmale - Leistungsprinzip (im19) 
+
+get_labels(allbus2018$im19)
+```
+
+### `Remove_label()` {-}
+
+Über die Funktion `remove_label()` lassen sich gezielt Variablenbeschriftungen von einzelnen Variablen oder allen Variablen im Datensatz entfernen.
+
+**Syntax:**
+
+```{}
+# Einzelne Variable
+# Ohne Pipe
+remove_label(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>%
+  remove_label(variable1)
+  
+# ---------
+  
+# Ganzer Datensatz
+# Ohne Pipe
+remove_label(datensatz)
+
+# Mit Pipe
+datensatz %>%
+  remove_label()
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung der Variablenbeschriftung - Geschlecht
 
 ds <- allbus2018 %>% 
-  select(age, im19:im21, id01, german, sex)
+  select(sex) %>% 
+  remove_label(sex)
 
-# Abrufen der Variablenbeschriftung 
-get_label(ds$im19)
+# Variablenbeschriftung wurde gelöscht
 
-# Abrufen der Beschriftungen von Ausprägungsmerkmalen
+ds %>% 
+  get_label(sex)
+
+# Löschung aller Variablenbeschriftungen im Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  remove_label()
+
+# Variablenbeschriftungen wurden gelöscht
+
+ds %>% 
+  get_label(im19, im20)
+```
+
+### `Remove_labels()` {-}
+
+Die Funktion `remove_labels()` erlaubt es uns gezielt Beschriftungen der Ausprägungsmerkmale von einzelnen Variablen oder allen Variablen im Datensatz zu löschen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+remove_labels(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>%
+  remove_labels(variable1)
+  
+# ---------
+  
+# Ganzer Datensatz
+# Ohne Pipe
+remove_labels(datensatz)
+
+# Mit Pipe
+datensatz %>%
+  remove_labels()
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung der Variablenbeschriftung - Geschlecht
+
+ds <- allbus2018 %>% 
+  select(im19) %>% 
+  remove_labels(im19, labels = c(1, 2, 3, 4))
+
+# Variablenbeschriftung wurde gelöscht
+
 get_labels(ds$im19)
 
-# Löschen aller Beschriftungen
-ds <- ds %>% 
+# Löschung aller Variablenbeschriftungen im Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  remove_labels(labels = 0:99)
+
+# Variablenbeschriftungen wurden gelöscht
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+```
+
+### `Remove_all_labels()` {-}
+
+Wir können mit der Funktion `remove_all_labels()` **alle** (Variablenbeschriftungen und Beschriftungen von Merkmalsausprägungen) löschen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+remove_all_labels(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  remove_all_labels(variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung aller Beschriftungen in einem Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
   remove_all_labels()
 
-get_label(ds$im19)
-get_labels(ds$im19)
+# Variablenbeschriftungen wurden gelöscht
 
+ds %>% 
+  get_label(im19, im20) 
+
+# Beschriftung von Ausprägungsmerkmalen wurden gelöscht
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+```
+
+### `Var_labels()` {-}
+
+Mit der Funktion `var_labels()` können für von einer oder mehreren Variablen die Variablenbeschriftung neu definieren.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+var_labels(datensatz, variable1 = "Variablenbeschriftung")
+
+# Mit Pipe
+datensatz %>% 
+  var_labels(variable1 = "Variablenbeschriftung")
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
 # Variablenbeschriftung neu definieren
 
 ds <- ds %>% 
   var_labels(im19 = "Leistungsprinzip",
              im20 = "Befürwortung von Ungleichheit")
 
+# Variablenbeschriftungen abrufen
+
 ds %>% 
   get_label(im19, im20)
+```
 
+### `val_labels()` {-}
+
+Die Funktion `val_labels()` erlaubt es uns Ausprägungsmerkmale für eine oder mehrere Variablen neu zu definieren.
+
+```{}
+# Ohne Pipe
+var_labels(datensatz, variable1 = c("1", "2"))
+
+# Mit Pipe
+datensatz %>% 
+  var_labels(variable1 = c("1", "2"),
+             variable2 = c("Hallo", "Tschüss"))
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
 # Merkmalsausprägungen neu definieren
 
 ds <- ds %>% 
@@ -775,13 +839,12 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | sjmisc         | col_count()  | Zählung von Spaltenweten  |
 | sjmisc         | row_sums()   | Summe der Zeilenwerte |
 | sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
-
-
-## Fehlende Werte
-
-| Packet         | Funktion            | Verwendung                |
-| :------------- | :------------------ | :------------------------ |
 | sjlabelled     | set_na()            | Transformiert Ausprägungsmerkmale zu `NA` |
+
+
+
+
+### `Set_na()` {-}
 
 Mit der Funktion `set_na()` wollen wir lernen, wie wir einzelne oder mehrere Ausprägungsmerkmale in `NA` konvertieren können.
 
