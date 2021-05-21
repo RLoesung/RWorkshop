@@ -1093,6 +1093,75 @@ attributes(ds$bildung)
 view_df(ds)
 ```
 
+### `Std()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+std(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  std(datensatz, variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# z-Standardisierung des Leistungsprinzip (im19)
+
+ds <- allbus2018 %>% 
+  select(im19, wghtpew) %>% 
+  std(im19, weights = wghtpew)
+
+ds %>% 
+  select(im19, im19_z)
+```
+
+Suffix erklären!
+
+### `center()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+center(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  center(datensatz, variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Zentrierung des Leistungsprinzip (im19) am Mittelwert
+
+ds <- allbus2018 %>% 
+  select(im19, wghtpew) %>% 
+  center(im19, weights = wghtpew)
+
+ds %>% 
+  select(im19, im19_c)
+```
+
+### `Split_var()` {-}
+
+
+
+
+```{r}
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  mutate(ageGrp = group_var(age, size = 10))
+
+ds
+```
+
+
 
 ### `Set_na()` {-}
 
