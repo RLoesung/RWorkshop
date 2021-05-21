@@ -328,7 +328,7 @@ ds
 
 So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
 
-**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würden. Zudem sind alle dargestellten Funktionen für die Nutzung in einer `Pipe` optimiert. 
+**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die `base R` Funktionen nicht für die Nutzung in einer `Pipe` optimiert. 
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
@@ -764,7 +764,7 @@ get_labels(ds$im20)
 
 ### `Var_labels()` {-}
 
-Mit der Funktion `var_labels()` können für von einer oder mehreren Variablen die Variablenbeschriftung neu definieren.
+Mit der Funktion `var_labels()` können wir von einer oder mehreren Variablen die Variablenbeschriftung neu definieren.
 
 **Syntax:**
 
@@ -835,7 +835,7 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | dplyr          | rename()     | Umbenennen von Variablen  |
 | dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
 | dplyr          | group_by()   | Erstellt Gruppen (Teilmengen) |
-| dplyr          | summarize()  | Daten zusammenfassen  |
+| dplyr          | summarise()  | Daten zusammenfassen  |
 | dplyr          | distinct()   | Auswahl einzigartiger Werte |
 | dplyr          | case_when()  | Vektorisierter if-Befehl  |
 | sjmisc         | rec()        | Rekodierung von Variablen  |
@@ -844,7 +844,7 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | sjmisc         | split_var()  | Aufspaltung von Variablen in n Gruppen |
 | sjmisc         | group_var()  | Aufspaltung von Variablen in Gruppen gleicher Spannweite |
 | sjmisc         | row_count()  | Zählung von Zeilenwerten  |
-| sjmisc         | col_count()  | Zählung von Spaltenweten  |
+| sjmisc         | col_count()  | Zählung von Spaltenwerten  |
 | sjmisc         | row_sums()   | Summe der Zeilenwerte |
 | sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
 | sjlabelled     | set_na()     | Transformiert Ausprägungsmerkmale zu fehlenden Werten |
@@ -890,14 +890,14 @@ ds
 
 ```{}
 # Ohne Pipe
-mutate(datensatz, variable1 = variable1*100)
+mutate(datensatz, variable1 = Berechnung)
 
 # Mit Pipe
 datensatz %>% 
-  mutate(variable1 = variable1*100)
+  mutate(variable1 = Berechnung)
 ```
 
-In unserem Beispiel haben wir `variable1` mit dem Wert `100` multipliziert und das Ergebnis wieder in `variable1` gespeichert.
+Die Funktion `mutate()` erstellt eine neue Variable mit dem Namen `variable1`, in der wir das Ergebnis aus `Berechnung` speichern.
 
 **Beispielcode:**
 
@@ -914,8 +914,184 @@ ds
 # Um das korrekte Alter zu ermitteln, müssten wir natürlich noch den Geburtsmonat einbeziehen!
 ```
 
+Sofern Sie nur die neu gebildeten Variablen in ihrem Datensatz behalten möchten, bietet sich der Befehl `transmute()` als Erweiterung von `mutate()` an.
+
 ### `Group_by()` {-}
 
+Gesetzt den Fall, dass wir bestimmte Operationen nicht auf den ganzen Datensatz anwenden wollen, sondern nur auf Teilgruppen, ist die Funktion `group_by()` die ideale Lösung für uns. Über `group_by()` wird unser Datensatz anhand einer Gruppierungsvariable (mit nominalen Ausprägungsmerkmalen) geteilt. Anschließende Funktionen werden auf jeden Teil angewendet, bevor sich der Datensatz nach Abschluss unserer Operationen über wieder zusammensetzt (split-apply-combine). `group_by()` wird deshalb meistens in Kombination mit anderen Funktionen verwendet. Um nach einer abgeschlossenen Operation die Gruppierung wieder zusammen zu setzen, nutzen wir `ungroup()`. So können wir wieder mit einem ungruppierten Datensatz weiterarbeiten. Unsere Ergebnisse können wir über `mutate()` einer neuen Variable zuweisen und es damit auf alle Fälle in unserem Datensatz übertragen. 
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+group_by(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  group_by(variable1)
+```
+
+Wir spalten also über die Funktion `group_by()` unseren Datensatz in Gruppen nach den Ausprägungsmerkmalen der `variable1`.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Altersdurchschnitt nach Ost und West 
+
+ds <- allbus2018 %>% 
+  select(age, eastwest, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  # Wir werden in Kapitel 4 alles über gewichtete Objekte lernen (z.B. weighted_mean())!
+  mutate(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% 
+  select(eastwest, alterOstWest)
+```
+
+Unter Verwendung von `group_by()` haben wir den Datensatz in zwei separate Teile geteilt und dann den Gruppenmittelwert für Ost- und Westdeutschland errechnet. Da wir unser Ergebnis allen Fällen zuweisen wollten, haben wir eine neue Variable über `mutate()` gebildet. Anschließend haben wir die Teile wieder über `ungroup()` “zusammengesetzt” (d.h. es ist wieder ein Datensatz) und so das Ergebnis allen Fällen zugewiesen. Als Resultat besitzen alle Fälle den Altersdurchschnitt in ihrem Bundesgebiet als neue Variable `alterOstWest`.
+
+### `Summarise()` {-}
+
+Die Funktion `summarise()` ermöglicht es uns Variablen zusammen zu fassen und deskriptive Kennzahlen zu berechnen. Im Gegensatz zu `mutate()` gibt `summarise()` aber nicht den Wert für jede Beobachtung als Output aus, sondern einen Wert für jede Gruppe. `summarise()` wird oft zusammen mit `group_by()` verwendet.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+summarise(datensatz, variable1 = funktion(variable))
+
+# Mit Pipe
+datensatz %>% 
+  summarise(variable1 = funktion(variable))
+```
+
+Mit der Funktion `summarise()` wurde in `variable1` das Ergebnis aus `function(variable)` gespeichert. Hierbei wurde ein neuer Datensatz mit nur der Variable `variable1` gebildet, die als einzigen Wert den Gruppenwert aus `function(variable)` besitzt. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Altersdurchschnitt nach Ost und West 
+
+ds <- allbus2018 %>% 
+  select(age, eastwest, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  summarise(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% 
+  select(eastwest, alterOstWest)
+```
+
+### `Distinct()` {-}
+
+Die Funktion `distinct()` erlaubt uns einzigartige Werte in einem Vektor zu ermitteln.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+distinct(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  distinct(datensatz, variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geburtsjahre
+
+ds <- allbus2018 %>% 
+  select(yborn) %>% 
+  distinct(yborn) %>% 
+  arrange(yborn)
+
+ds
+```
+
+### `Case_when()` {-}
+
+Über die Funktion `case_when()` lassen sich Kombinationen von Ausprägungsmerkmalen in neuen Variablen speichern - (Stw. Kombinationsindex). Der Befehl `if-Befehl` aus `SPSS` kommt diesem sehr nahe.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+case_when(datensatz$variable1 == 1 & datensatz$variable2 == 2 ~ 1,
+          datensatz$variable1 == 2 $ datensatz$variable2 == 1 ~ 2)
+
+# Mit Pipe
+datensatz %>%
+  mutate(variableA = case_when(variable1 == 1 & variable2 == 2 ~ 1,
+                               variable1 == 2 $ variable2 == 1 ~ 2)
+```
+
+Die Funktion `case_when()` erzeugt aus den Ausprägungsmerkmalen `1` und `2` der Variablen `variable1` und `variable2` eine neue Ausprägung `1`. Das gleiche passiert auch in den nachfolgenden Operationen mit verschiedenen Wertpaaren der `variable1` und `variable2`. 
+
+**Anmerkung:** Die Funktion `case_when()` kann innerhalb einer `Pipe` praktisch nicht ohne eine "Speicherfunktion" auskommen. Entsprechend haben wir hier `mutate()` vorangestellt. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Postmaterialismusindex nach Inglehart: Materialisten/Postmaterialisten
+
+ds <- allbus2018 %>%
+  select(va01:va04, ingle) %>%
+  mutate(
+    inglehartIndex = case_when(
+      # Materialisten
+      va01 == 1 & va03 == 2 ~ 4,
+      va01 == 2 & va03 == 1 ~ 4,
+      # Postmaterialisten
+      va02 == 1 & va04 == 2 ~ 1,
+      va02 == 2 & va04 == 1 ~ 1
+    )
+  )
+
+# Vergleich mit dem beigelegten Inglehartindex aus dem Allbus
+# Wir müssten natürlich noch die Mischtypen berechnen!
+
+ds %>% 
+  select(inglehartIndex, ingle) 
+```
+
+### `Rec()` {-}
+
+Nun folgt die wohl wichtigste Funktion in unserem Werkzeugkasten. So vereint die Funktion `rec()` eine Vielzahl von uns bekannten Funktionen z.B. `to_numeric() und to_factor()`, `var_labels() und val_labels()` und schafft darüber hinaus die Möglichkeit zur gezielten Rekodierung von Variablen. Diese Funktion entspricht dem Befehl `recode` aus `SPSS`.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+rec(datensatz, variable1, rec = "1=1 [niedrig]; 2,4=2 [mittel]; 4:max=3 [hoch], else=copy, 99=NA", 
+                          var.label = "Variablenbeschriftung", to.factor = TRUE)
+
+# Mit Pipe
+datensatz %$% 
+  rec(variable1, rec = "1=1 [niedrig]; 2,3=2 [mittel]; 4:max=3 [hoch], else=copy, 99=NA", 
+                 var.label = "Variablenbeschriftung", to.factor = TRUE)
+```
+
+`variable1` aus dem Datensatz `datensatz` wurde rekodiert und in einen Faktor konvertiert. So wurden alle Werte entsprechend neu zugewiesen und mit neuen Beschriftungen versehen. Zudem wurde die Variablenbeschriftung angepasst.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Rekodierung von Bildungsabschlüssen
+
+ds <- allbus2018 %>% 
+  select(educ) %>% 
+  mutate(bildung = rec(educ, rec = "1,2=1 [gering];  3,7=2 [mittel]; 4,5=3 [hoch]",
+                       var.label = "Bildung kategorisiert", to.factor = T))
+
+class(ds$educ)
+
+attributes(ds$bildung)
+
+view_df(ds)
+```
 
 
 ### `Set_na()` {-}
