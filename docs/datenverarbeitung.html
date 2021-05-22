@@ -340,7 +340,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Wir wollen unserem Anspruch einer zielgerichteten und forschungspraktischen Anwendung von R auch während der Bearbeitung des Allbus 2018, als Datengrundlage, gerecht werden. So greifen wir auf vergangene Forschungspublikationen zurück. Diese erlauben uns eine Orientierungslinie für kommende Beispiele zu ziehen.</p>
 <p>Folgend erstellen wir ein Projekt in RStudio (siehe 1.8.1). Sobald der Projektordner erstellt wurde, schieben wir unseren Datensatz in den Projektordner. Durch die Festlegung unseres Arbeitsverzeichnises im Projektordner, kann R direkt auf den Datensatz zugreifen. Der Reiter <code>Files</code> sollte entsprechend so aussehen:</p>
 <p><img src="Bilder/Files2.png" width="75%" style="display: block; margin: auto;" /></p>
-<p>Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Packete: tidyverse, strengejacke und easystats (siehe 1.6).</p>
+<p>Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Pakete: tidyverse, strengejacke und easystats (siehe 1.6).</p>
 <p>Voila! Nun können wir den Datensatz einlesen.</p>
 </div>
 <div id="datensatz-importieren" class="section level2" number="3.2">
@@ -354,20 +354,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Da wir den Allbus 2018 in .sav vorliegen haben, benutzen wir die folgende Funktion.</p>
 <pre><code># SPSS
 allbus2018 &lt;- read_spss(&quot;ALLB2018.sav&quot;)</code></pre>
-<p><strong>Wichtig!</strong> Mit der Funktion <code>read_spss()</code> über das Packet sjlabelled werden alle fehlenden Werte zu <code>NA</code> konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Packet <code>haven</code> über die Funktion <code>read_sav()</code> und dem Argument <code>user_na = TRUE</code> zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse <code>labelled_spss</code> gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch <code>unlabel()</code> aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als <code>NA</code> makiert werden (<code>set_na()</code> aus sjlabelled). <em>Dazu aber später mehr!</em></p>
+<p><strong>Wichtig!</strong> Mit der Funktion <code>read_spss()</code> über das Paket sjlabelled werden alle fehlenden Werte zu <code>NA</code> konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Paket <code>haven</code> über die Funktion <code>read_sav()</code> und dem Argument <code>user_na = TRUE</code> zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse <code>labelled_spss</code> gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Paketen führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch <code>unlabel()</code> aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als <code>NA</code> makiert werden (<code>set_na()</code> aus sjlabelled). <em>Dazu aber später mehr!</em></p>
 <p>Sollten Ihre Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.</p>
 <pre><code># Stata
 allbus2018 &lt;- read_stata(&quot;Datensatz.dta&quot;)
 
 # SAS
 allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
-<p><strong>Anmerkung:</strong> Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete <code>haven</code>, <code>readxl</code> und <code>readr</code> an.</p>
+<p><strong>Anmerkung:</strong> Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Pakete <code>haven</code>, <code>readxl</code> und <code>readr</code> an.</p>
 <p>Die Funktion <code>read_spss</code> besitzt vier für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: <code>?read_spss</code>.</p>
 <ul>
 <li><code>atomic.to.fac</code> = <code>TRUE</code> &gt; Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.</li>
 <li><code>drop.labels</code> = <code>TRUE</code> &gt; Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch <code>read_spss()</code> über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu <code>NA</code> konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen.</li>
 <li><code>verbose</code> = <code>TRUE</code> &gt; Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.</li>
-<li><code>tag.na</code> = <code>TRUE</code> &gt; Alle fehlenden Werte werden als <code>tagged_na</code> markiert. Damit werden sie in allen Berechnungen zwar als <code>NA</code> einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus <code>SPSS</code> bekannt, jederzeit auf diese mit der Funktion <code>replace_na()</code> zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). <em>Wir hoffen auf eine baldige Anpassung und stehen mit den Entwicklern im Kontakt</em>.</li>
+<li><code>tag.na</code> = <code>TRUE</code> &gt; Alle fehlenden Werte werden als <code>tagged_na</code> markiert. Damit werden sie in allen Berechnungen zwar als <code>NA</code> einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus <code>SPSS</code> bekannt, jederzeit auf diese mit der Funktion <code>replace_na()</code> zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). <em>Wir hoffen auf eine baldige Anpassung und stehen mit dem Entwickler im Kontakt</em>.</li>
 </ul>
 <p>Damit empfehlen wir das Argument <code>dop.labels</code> mit <code>TRUE bzw. T</code> zu aktivieren.</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="datenverarbeitung.html#cb52-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">&quot;ALLB2018.sav&quot;</span>, <span class="at">drop.labels =</span> T)</span>
@@ -559,7 +559,7 @@ datensatz %&gt;%
 <p><strong>Anmerkung:</strong></p>
 <ol style="list-style-type: decimal">
 <li><p>Viele Funktionen des tidyverse, auch <code>select()</code>, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: <a href="https://dplyr.tidyverse.org/reference/select.html">selection helpers</a> und <a href="https://dplyr.tidyverse.org/reference/scoped.html">scoped verbs</a>.</p></li>
-<li><p>Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion <code>move_columns()</code> aus dem Packet <em>sjmisc</em>.</p></li>
+<li><p>Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion <code>move_columns()</code> aus dem Paket <em>sjmisc</em>.</p></li>
 </ol>
 </div>
 <div id="filter" class="section level3 unnumbered">
@@ -721,7 +721,7 @@ datensatz %&gt;%
 <div id="daten-konvertieren" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> Daten konvertieren</h2>
 <p>So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.</p>
-<p><strong>Anmerkung:</strong> Wir benutzen die Packete <em>sjmisc</em> und <em>sjlabelled</em> zur Konvertierung von Datentypen, weil die Anwendung der <code>base R</code> Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die <code>base R</code> Funktionen nicht für die Nutzung in einer <code>Pipe</code> optimiert.</p>
+<p><strong>Anmerkung:</strong> Wir benutzen die Pakete <em>sjmisc</em> und <em>sjlabelled</em> zur Konvertierung von Datentypen, weil die Anwendung der <code>base R</code> Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die <code>base R</code> Funktionen nicht für die Nutzung in einer <code>Pipe</code> optimiert.</p>
 <table>
 <colgroup>
 <col width="24%" />
@@ -915,7 +915,7 @@ datensatz %&gt;%
 </div>
 <div id="unlabel" class="section level3 unnumbered">
 <h3><code>Unlabel()</code></h3>
-<p>Mit dieser Funktion können wir Variablen konvertieren, die als <code>labelled class</code> gespeichert wurden. Durch das Einlesen unseres Datensatzes über <code>read_spss()</code> werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über <code>haven</code> mit der Funktion <code>read_sav()</code> laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine <code>atomare Struktur</code> umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Packeten vorbeugen.</p>
+<p>Mit dieser Funktion können wir Variablen konvertieren, die als <code>labelled class</code> gespeichert wurden. Durch das Einlesen unseres Datensatzes über <code>read_spss()</code> werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über <code>haven</code> mit der Funktion <code>read_sav()</code> laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine <code>atomare Struktur</code> umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Paketen vorbeugen.</p>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="datenverarbeitung.html#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz laden und vorbereiten</span></span>
 <span id="cb75-2"><a href="datenverarbeitung.html#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1320,7 +1320,7 @@ Erste Stufe<br>Zweite Stufe<br>Dritte Stufe<br>Vierte Stufe
 </div>
 <div id="daten-manipulieren" class="section level2" number="3.7">
 <h2><span class="header-section-number">3.7</span> Daten manipulieren</h2>
-<p>Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem <code>dplyr</code>-Packet aus dem tidyverse und dem Packet <code>sjmisc</code> aus <code>strengejacke</code> arbeiten. Die folgende Auswahl kann nur einen Überblick über die “wichtigsten” Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).</p>
+<p>Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem <code>dplyr</code>-Paket aus dem tidyverse und dem Paket <code>sjmisc</code> aus <code>strengejacke</code> arbeiten. Die folgende Auswahl kann nur einen Überblick über die “wichtigsten” Funktionen dieser Pakete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Pakete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).</p>
 <table>
 <colgroup>
 <col width="27%" />

@@ -22,7 +22,7 @@ Folgend erstellen wir ein Projekt in RStudio (siehe  1.8.1). Sobald der Projekto
 knitr::include_graphics("Bilder/Files2.png")
 ```
 
-Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Packete: tidyverse, strengejacke und easystats (siehe 1.6).
+Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Pakete: tidyverse, strengejacke und easystats (siehe 1.6).
 
 Voila! Nun können wir den Datensatz einlesen.
 
@@ -46,7 +46,7 @@ library(tidyverse)
 allbus2018 <- read_spss("ALLB2018.sav")
 ```
 
-**Wichtig!** Mit der Funktion `read_spss()` über das Packet sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Packet `haven` über die Funktion `read_sav()` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Packeten führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
+**Wichtig!** Mit der Funktion `read_spss()` über das Paket sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Paket `haven` über die Funktion `read_sav()` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Paketen führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
 
 Sollten Ihre Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.
 
@@ -58,14 +58,14 @@ allbus2018 <- read_stata("Datensatz.dta")
 allbus2018 <- read_sas("Datensatz.sas")
 ```
 
-**Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Packete `haven`, `readxl` und `readr` an. 
+**Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Pakete `haven`, `readxl` und `readr` an. 
 
 Die Funktion `read_spss` besitzt vier für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: `?read_spss`.
 
 * `atomic.to.fac` = `TRUE` > Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
 * `drop.labels` = `TRUE` > Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu `NA` konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen. 
 * `verbose` = `TRUE` > Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
-* `tag.na` = `TRUE` > Alle fehlenden Werte werden als `tagged_na` markiert. Damit werden sie in allen Berechnungen zwar als `NA` einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus `SPSS` bekannt, jederzeit auf diese mit der Funktion `replace_na()` zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). *Wir hoffen auf eine baldige Anpassung und stehen mit den Entwicklern im Kontakt*.
+* `tag.na` = `TRUE` > Alle fehlenden Werte werden als `tagged_na` markiert. Damit werden sie in allen Berechnungen zwar als `NA` einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus `SPSS` bekannt, jederzeit auf diese mit der Funktion `replace_na()` zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). *Wir hoffen auf eine baldige Anpassung und stehen mit dem Entwickler im Kontakt*.
 
 Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
 
@@ -209,7 +209,7 @@ ds
 
 1. Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
 
-2. Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion `move_columns()` aus dem Packet *sjmisc*. 
+2. Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion `move_columns()` aus dem Paket *sjmisc*. 
 
 ### `Filter()` {-}
 
@@ -328,7 +328,7 @@ ds
 
 So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
 
-**Anmerkung:** Wir benutzen die Packete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die `base R` Funktionen nicht für die Nutzung in einer `Pipe` optimiert. 
+**Anmerkung:** Wir benutzen die Pakete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die `base R` Funktionen nicht für die Nutzung in einer `Pipe` optimiert. 
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
@@ -492,7 +492,7 @@ class(ds$im19)
 
 ### `Unlabel()` {-}
 
-Mit dieser Funktion können wir Variablen konvertieren, die als `labelled class` gespeichert wurden. Durch das Einlesen unseres Datensatzes über `read_spss()` werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über `haven` mit der Funktion `read_sav()` laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine `atomare Struktur` umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Packeten vorbeugen.
+Mit dieser Funktion können wir Variablen konvertieren, die als `labelled class` gespeichert wurden. Durch das Einlesen unseres Datensatzes über `read_spss()` werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über `haven` mit der Funktion `read_sav()` laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine `atomare Struktur` umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Paketen vorbeugen.
 
 **Beispielcode:**
 
@@ -822,7 +822,7 @@ ds %>%
 
 ## Daten manipulieren
 
-Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem `dplyr`-Packet aus dem tidyverse und dem Packet `sjmisc` aus `strengejacke` arbeiten. Die folgende Auswahl kann nur einen Überblick über die "wichtigsten" Funktionen dieser Packete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Packete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).
+Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem `dplyr`-Paket aus dem tidyverse und dem Paket `sjmisc` aus `strengejacke` arbeiten. Die folgende Auswahl kann nur einen Überblick über die "wichtigsten" Funktionen dieser Pakete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Pakete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).
 
 
 | Packet         | Funktion     | Verwendung                |
