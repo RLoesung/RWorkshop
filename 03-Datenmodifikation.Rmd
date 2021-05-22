@@ -600,8 +600,7 @@ datensatz %>%
 # Variablenbeschriftung Leistungsprinzip (im19) 
 # und Befürwortung von Ungleichheit (im20)
 
-allbus2018 %>% 
-  get_label(im19, im20)
+allbus2018 %>% get_label(im19, im20)
 ```
 
 ### `Get_labels()` {-}
@@ -662,8 +661,7 @@ ds <- allbus2018 %>%
 
 # Variablenbeschriftung wurde gelöscht
 
-ds %>% 
-  get_label(sex)
+ds %>% get_label(sex)
 
 # Löschung aller Variablenbeschriftungen im Datensatz
 
@@ -673,8 +671,7 @@ ds <- allbus2018 %>%
 
 # Variablenbeschriftungen wurden gelöscht
 
-ds %>% 
-  get_label(im19, im20)
+ds %>% get_label(im19, im20)
 ```
 
 ### `Remove_labels()` {-}
@@ -753,8 +750,7 @@ ds <- allbus2018 %>%
 
 # Variablenbeschriftungen wurden gelöscht
 
-ds %>% 
-  get_label(im19, im20) 
+ds %>% get_label(im19, im20) 
 
 # Beschriftung von Ausprägungsmerkmalen wurden gelöscht
 
@@ -788,8 +784,7 @@ ds <- ds %>%
 
 # Variablenbeschriftungen abrufen
 
-ds %>% 
-  get_label(im19, im20)
+ds %>% get_label(im19, im20)
 ```
 
 ### `Val_labels()` {-}
@@ -841,10 +836,9 @@ Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem 
 | sjmisc         | rec()        | Rekodierung von Variablen  |
 | sjmisc         | std()        | Z-Standardisierung von Variablen  |
 | sjmisc         | center()     | Zentrierung von Variablen am Mittelwert  |
-| sjmisc         | split_var()  | Aufspaltung von Variablen in n Gruppen |
+| sjmisc         | split_var()  | Aufspaltung von Variablen in n Gruppen gleicher Größe |
 | sjmisc         | group_var()  | Aufspaltung von Variablen in Gruppen gleicher Spannweite |
 | sjmisc         | row_count()  | Zählung von Zeilenwerten  |
-| sjmisc         | col_count()  | Zählung von Spaltenwerten  |
 | sjmisc         | row_sums()   | Summe der Zeilenwerte |
 | sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
 | sjlabelled     | set_na()     | Transformiert Ausprägungsmerkmale zu fehlenden Werten |
@@ -945,8 +939,7 @@ ds <- allbus2018 %>%
   mutate(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
   ungroup() 
 
-ds %>% 
-  select(eastwest, alterOstWest)
+ds %>% select(eastwest, alterOstWest)
 ```
 
 Unter Verwendung von `group_by()` haben wir den Datensatz in zwei separate Teile geteilt und dann den Gruppenmittelwert für Ost- und Westdeutschland errechnet. Da wir unser Ergebnis allen Fällen zuweisen wollten, haben wir eine neue Variable über `mutate()` gebildet. Anschließend haben wir die Teile wieder über `ungroup()` “zusammengesetzt” (d.h. es ist wieder ein Datensatz) und so das Ergebnis allen Fällen zugewiesen. Als Resultat besitzen alle Fälle den Altersdurchschnitt in ihrem Bundesgebiet als neue Variable `alterOstWest`.
@@ -979,8 +972,7 @@ ds <- allbus2018 %>%
   summarise(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
   ungroup() 
 
-ds %>% 
-  select(eastwest, alterOstWest)
+ds %>% select(eastwest, alterOstWest)
 ```
 
 ### `Distinct()` {-}
@@ -1054,7 +1046,8 @@ ds <- allbus2018 %>%
 # Wir müssten natürlich noch die Mischtypen berechnen!
 
 ds %>% 
-  select(inglehartIndex, ingle) 
+  select(inglehartIndex, ingle) %>% 
+  filter(inglehartIndex %in% c(1, 4))
 ```
 
 ### `Rec()` {-}
@@ -1115,13 +1108,12 @@ ds <- allbus2018 %>%
   select(im19, wghtpew) %>% 
   std(im19, weights = wghtpew)
 
-ds %>% 
-  select(im19, im19_z)
+ds %>% select(im19, im19_z)
 ```
 
 Suffix erklären!
 
-### `center()` {-}
+### `Center()` {-}
 
 **Syntax:**
 
@@ -1143,24 +1135,148 @@ ds <- allbus2018 %>%
   select(im19, wghtpew) %>% 
   center(im19, weights = wghtpew)
 
-ds %>% 
-  select(im19, im19_c)
+ds %>% select(im19, im19_c)
 ```
 
 ### `Split_var()` {-}
 
+**Syntax:**
 
+```{}
+# Ohne Pipe
+split_var(datensatz, variable1, n = 5)
 
+# Mit Pipe
+datensatz %>% 
+  split_var(datensatz, variable1, n = 5)
+```
 
-```{r}
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Alter in 5 gleichgroße Gruppen unterteilen
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  mutate(ageGrp = split_var(age, n = 5))
+
+# Den Befehl frq() werden wir in Kapitel 4 umfassend besprechen!
+ds %>% frq(ageGrp, weights = allbus2018$wghtpew)
+```
+
+### `Group_var()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+group_var(datensatz, variable1, size = 5)
+
+# Mit Pipe
+datensatz %>% 
+  group_var(datensatz, variable1, size = 5)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# 10 Jahre Altersspannen 
+# Achtung! Intervalle orientieren sich "default" an der oberen Wertgrenze des Intervalls
 
 ds <- allbus2018 %>% 
   select(age) %>% 
   mutate(ageGrp = group_var(age, size = 10))
 
-ds
+# Eine direkte Beschriftung ist leider nicht möglich.
+# Zum Abgleich der Intervallgrenzen ist group_labels() aber sehr hilfreich!
+# Group_labels() generiert in gleicher Form die gewüschten Intervalle, besitz aber als Ausprägungsmerkmale die Beschriftung. 
+
+group_labels(ds$age, size = 10)
+
+# Beschriftung der Intervalle 
+
+ds <- ds %>% 
+  val_labels(ageGrp = c("10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"))
+
+attributes(ds$ageGrp)
 ```
 
+### `Row_count()` {-}
+
+Befehl `count` in `SPSS`. Noch suchen: count für mehrere Werte!
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+row_count(datensatz, count = 1)
+
+# Mit Pipe
+datensatz %>% 
+  row_count(count = 1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mitgliedsstatus in Vereinen zählen - aktives Mitglied (3)
+
+ds <- allbus2018 %>% 
+  select(sm04:sm14) %>% 
+  row_count(count = 3)
+
+ds %>% frq(rowcount, weights = allbus2018$wghtpew)
+```
+
+### `Row_sums()` {-}
+
+Summenindex
+
+```{}
+# Ohne Pipe
+row_sums(datensatz, n = Inf)
+
+# Mit Pipe
+datensatz %>% 
+  row_sums(n = Inf)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mitgliedsstatus in Vereinen zählen 
+
+ds <- allbus2018 %>% 
+  select(sm04:sm07) %>% 
+  row_sums(n = Inf)
+
+ds %>% frq(rowsums, weights = allbus2018$wghtpew)
+```
+
+### `Row_means()` {-}
+
+Mittelwertindex
+
+```{}
+# Ohne Pipe
+row_means(datensatz, n = 1)
+
+# Mit Pipe
+datensatz %>% 
+  row_means(n = 1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwertindex: Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  row_means(n = 1)
+
+ds %>% frq(rowmeans, weights = allbus2018$wghtpew)
+```
 
 
 ### `Set_na()` {-}
@@ -1191,6 +1307,57 @@ ds <- allbus2018 %>%
 
 view_df(ds)
 ```
+
+### `Drop_na()` {-}
+
+**Syntax:**
+
+```{}
+# Einzelne Variable
+# Ohne Pipe
+drop_na(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  drop_na(variable1)
+
+# --------
+
+# Ganzer Datensatz
+# Ohne Pipe
+drop_na(variable1)
+
+# Mit Pipe
+datensatz %>% 
+  drop_na()
+```
+
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Fehlende Werte in Leistungsprinzip (im19) löschen
+
+ds <- allbus2018 %>% 
+  drop_na(im19)
+  
+allbus2018 %>% frq(im19, weights = wghtpew)
+
+ds %>% frq(im19, weights = wghtpew)
+
+# Alle fehelnden Werte im Datensatz löschen
+
+ds1 <- allbus2018 %>% 
+  select(im19, im20, wghtpew)
+
+ds2 <- ds1 %>% 
+  drop_na()
+
+ds1 %>% frq(im19, im20, weights = wghtpew)
+
+ds2 %>% frq(im19, im20, weights = wghtpew)
+```
+
 
 
 **Referenz:**

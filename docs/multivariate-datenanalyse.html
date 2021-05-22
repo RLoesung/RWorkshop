@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>R Workshop - Sozialwissenschaften</title>
+  <title>5 Multivariate Datenanalyse | R Workshop - Sozialwissenschaften</title>
   <meta name="description" content="Einführung in R" />
   <meta name="generator" content="bookdown 0.22.2 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="R Workshop - Sozialwissenschaften" />
+  <meta property="og:title" content="5 Multivariate Datenanalyse | R Workshop - Sozialwissenschaften" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R Workshop - Sozialwissenschaften" />
+  <meta name="twitter:title" content="5 Multivariate Datenanalyse | R Workshop - Sozialwissenschaften" />
   
   <meta name="twitter:description" content="Einführung in R" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
+<link rel="prev" href="uni-und-bivariate-datenanalyse.html"/>
 
-<link rel="next" href="rstudio.html"/>
 <script src="libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -318,63 +318,72 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">R Workshop - Sozialwissenschaften</h1>
-<p class="author"><em>Yannick Diehl und Daniel Moosdorf</em></p>
-<p class="date" style="margin-top: 1.5em;"><em>2021-05-22</em></p>
+<div id="multivariate-datenanalyse" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Multivariate Datenanalyse</h1>
+<div id="realiabilitätstest" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Realiabilitätstest</h2>
 </div>
-<div id="vorwort" class="section level1 unnumbered">
-<h1>Vorwort</h1>
-<p>Dieser Workshop richtet sich insbesondere an Studierende der Sozialwissenschaften und möchte einen einfachen und verständlichen Einstieg in statistische Auswertungen mit R bieten.</p>
-<p>Ein besonderer Augenmerk liegt auf Anwender:innen die eine neue Heimat zur Lösung statistischer Aufgaben- und Problemstellungen suchen und folgend Kenntnisse im Umgang mit (u.a. kommerziellen) Statistik- und Analyse-Software besitzen (v.a. SPSS).</p>
-<p>Anwendungsziel der kommenden Analysetechniken sind insbesondere sozialwissenschaftliche Studien/Bevölkerungsumfragen mit wissenschaftlichen Erhebungsstandards, wenngleich auch “unstandartisierte” Datensätze mit den vorzustellenden Techniken verarbeitet werden können. Zudem soll den künftigen Anwender:innen eine umfassende Funktionsbibliothek an die Hand gegeben werden, welche eine komplexe Gewichtung von Studiendaten erlaubt.</p>
-<div id="voraussetzungen" class="section level2" number="0.1">
-<h2><span class="header-section-number">0.1</span> Voraussetzungen</h2>
-<p>Bitte installieren Sie hierfür die aktuelle Version von R unter: <a href="https://stat.ethz.ch/CRAN/">R Programm - Version 4.0.5 (17.05.2021)</a></p>
-<p>Darüber hinaus werden wir mit der <em>integrierten Entwicklungsumgebung</em> (IDE) RStudio arbeiten. Die aktuelle Version findet sich unter: <a href="https://www.rstudio.com/products/rstudio/download/">RStudio Desktop</a></p>
-<p>Intergrierte Entwicklungsumgebungen wie RStudio vereinfachen den Arbeitprozess mit der Programmiersprache R ungemein, wenngleich auch schon im ersten Installationsschritt über das R Programm die gleichen Funktionsanwendungen ausführbar sind. So stellt RStudio vor allem eine Vereinfachung des Arbeitsprozesses dar, obgleich mit weitreichenden Implikationen bei der Nachvollziehbarkeit von Ablaufschritten und Anwendungsverfahren.</p>
+<div id="mittelwertvergleiche-unabhängig" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Mittelwertvergleiche (unabhängig)</h2>
+<p>Tablle mit Funktionen</p>
+<div id="weighted_ttest" class="section level3 unnumbered">
+<h3><code>Weighted_ttest()</code></h3>
 </div>
-<div id="warum-r" class="section level2" number="0.2">
-<h2><span class="header-section-number">0.2</span> Warum R?</h2>
-<ul>
-<li>R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten konzipiert ist.</li>
-<li>R ist eine der führenden Lösungen für die statistische Datenanalyse und kann auch für das Data Mining oder Predictive Analytics eingesetzt werden.</li>
-<li>Daten lassen sich mit der Sprache sehr flexibel auswerten und visualisieren.</li>
-<li>Sowohl wissenschaftliche Organisationen als auch große Unternehmen wie Oracle oder Microsoft verwenden R umfassend.</li>
-<li>R kann problemlos in alle Ebenen der Analyse und Präsentation von Daten integriert werden.</li>
-<li>Dank der Flexibilität von R ist der gleiche Code sowohl für kleinere Datenanalysen als auch für umfangreiches Data Mining im Big-Data-Umfeld geeignet.</li>
-<li>Die Plattformunabhängigkeit sorgt dafür, dass R in verschiedenste IT-Strukturen leicht integrierbar und universell nutzbar ist.</li>
-</ul>
-<p>Und zuletzt:</p>
-<ul>
-<li>Im Gegensatz zu anderen Lösungen für die Analyse und Visualisierung von Daten ist R Open Source. Es fallen keine Lizenzkosten an, auch nicht für den Großteil der verfügbaren Erweiterungspakete.</li>
-</ul>
+<div id="means_by_group" class="section level3 unnumbered">
+<h3><code>Means_by_group()</code></h3>
 </div>
-<div id="was-ist-r" class="section level2" number="0.3">
-<h2><span class="header-section-number">0.3</span> Was ist R?</h2>
-<p>R wurde 1992 von <strong>R</strong>oss Ihaka und <strong>R</strong>obert Gentleman an der Universität Auckland entwickelt und wird als Open Source-Software unter der GNU General Public License durch die in Wien ansässige R Foundation for Statistical Computing verwaltet und verbreitet.</p>
-<p>R stammt direkt von der kommerziellen statistischen Programmiersprache S ab und während das Herz von R durch das R (Development) Core Team (aus dem auch die Stiftung hervorgegangen ist) weiterentwickelt wird, liegt die eigentliche Stärke von R in der Verfügbarkeit von Zusatzfunktionen, in Form sogenannter Packages (dt. Packete). So erweitern unabhängige Entwickler überall auf der Welt durch unzählige Packages mit unterschiedlichsten Ausrichtungen die Funktionsmöglichkeit von R, angefangen von der klassichen Regression bis zum maschinellen Lernen. Mehr als 12.000 dieser Funktionspakete, die geschätzt mehr als 220.000 Funktionen beinhalten, stehen über das Comprehensive R Archive Network (CRAN) und einige weitere Hubs zur kostenfreien Verfügung. Folglich gibt es praktisch kein statistisches Problem, dass noch nicht eine entsprechende Lösung in R gefunden hat und damit gebrauchsfertig heruntergeladen und nach eigenen Vorstellungen modifiziert werden kann.</p>
+<div id="weighted_mannwhitney" class="section level3 unnumbered">
+<h3><code>Weighted_mannwhitney()</code></h3>
 </div>
-<div id="aller-einstieg-ist-schwer" class="section level2" number="0.4">
-<h2><span class="header-section-number">0.4</span> Aller Einstieg ist schwer?!</h2>
-<p>Wir werden uns primär mit R als Statistikumgebung und weniger als klassische Programmierumgebung beschäftigen, wenngleich kleinere Exkurse in die Fundamente dieser Sprache nicht vermieden werden können. Unser Anspruch bleibt dabei immer eine einfache, konsistente und übersichtliche Lösung zu geben, um dem freien und selbstbestimmten Lernen und Arbeiten aller Teilnehmenden Sorge zu tragen.</p>
-<p>Um diesem Anspruch gerecht werden zu können, werden wir uns vornehmlich in relativ “abgeschlossenen” Ökosystemen (Ecosystems) bewegen, also Sammlungen von Packeten, die aufeinander abgestimmt wurden. Das bekannteste Beispiel ist hierfür sicherlich das <em>tidyverse</em>, welches maßgebend von einem der großen R-Pioniere und RStudio chief scientist Hadley Wickham entwickelt wurde. Auf Grundlage des selbigen werden wir noch die Packete von Daniel Lüdecke <em>strengejacke</em> und die beeindruckenden Modellaufbereitungen in <em>easystats</em> kennen lernen. So repräsentieren diese Packete in vollem Umfang den “state-of-the-art” sozialwissenschaftlicher Datenanalysetechniken, obgleich der Lernprozess damit deutlich vereinfacht ist. Zudem werden alle genannten Packete, vor allem das tidyverse, auch in nicht-universitären Kontexten weitreichend genutzt.</p>
 </div>
-<div id="typographie" class="section level2" number="0.5">
-<h2><span class="header-section-number">0.5</span> Typographie</h2>
-<p>Die folgenden Kapitel bestehen zu einem großen Teil aus <code>R Code</code> und damit aus den entsprechenden <em>chunks</em>. Damit können sie leicht erkannt und für den eigenen Gebrauch in das persönliche <em>R Script</em> kopiert werden. Ein Beispiel:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">10</span>)</span>
-<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div>
-<p>Das Ergebnis lässt sich folgend in der Konsole ablesen.</p>
-<pre><code>##  [1]  1 11 21 31 41 51 61 71 81 91</code></pre>
-<p>Damit ist <code>x</code> unser Input und <code>## [1]  1 11 21 31 41 51 61 71 81 91</code> unser Output nachdem wir <code>x</code> eine Zahlensequenz zwischen 1 und 100 in 10er Schritten zugewiesen haben.</p>
+<div id="faktoranalyse-und-hauptkomponentenanalyse" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Faktoranalyse und Hauptkomponentenanalyse</h2>
+<div id="kmo" class="section level3 unnumbered">
+<h3><code>KMO()</code></h3>
 </div>
-<div id="weiterführende-literatur" class="section level2" number="0.6">
-<h2><span class="header-section-number">0.6</span> Weiterführende Literatur</h2>
-<p>Wir orientieren uns vor allem in den ersten beiden Kapiteln unseres Workshops an dem Kurs: <a href="https://methodenlehre.github.io/einfuehrung-in-R/index.html">Einführung in R</a> von Andrew Ellis und Boris Mayer.</p>
-<p>Grundständige Literatur, die auch zu diesem Workshop passt, findet sich als freie Publikation von Garrett Grolemund und Hadley Wickham unter dem Titel <a href="http://r4ds.had.co.nz/">R for Data Science</a>.</p>
-<p>Zur Vertiefung bieten sich die Bücher <a href="http://shop.oreilly.com/product/0636920028574.do">Hands-On Programming with R</a> von Garrett Grolemund und <a href="http://adv-r.had.co.nz/">Advanced R</a> von Hadley Wickham an.</p>
+<div id="bartlett.test" class="section level3 unnumbered">
+<h3><code>Bartlett.test()</code></h3>
+</div>
+<div id="scree" class="section level3 unnumbered">
+<h3><code>Scree()</code></h3>
+</div>
+<div id="fa" class="section level3 unnumbered">
+<h3><code>Fa()</code></h3>
+</div>
+<div id="principal" class="section level3 unnumbered">
+<h3><code>Principal()</code></h3>
+</div>
+</div>
+<div id="regressionsanalyse" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Regressionsanalyse</h2>
+<div id="lm" class="section level3 unnumbered">
+<h3><code>lm()</code></h3>
+</div>
+<div id="glm" class="section level3 unnumbered">
+<h3><code>glm()</code></h3>
+</div>
+<div id="model_parameters" class="section level3 unnumbered">
+<h3><code>Model_parameters()</code></h3>
+</div>
+<div id="model_performance" class="section level3 unnumbered">
+<h3><code>Model_performance()</code></h3>
+</div>
+<div id="compare_performance" class="section level3 unnumbered">
+<h3><code>Compare_performance()</code></h3>
+</div>
+<div id="screenreg" class="section level3 unnumbered">
+<h3><code>Screenreg()</code></h3>
+</div>
+<div id="plot_model" class="section level3 unnumbered">
+<h3><code>Plot_model()</code></h3>
+</div>
+<div id="plot_residuals" class="section level3 unnumbered">
+<h3><code>Plot_Residuals()</code></h3>
+</div>
+<div id="check_model" class="section level3 unnumbered">
+<h3><code>Check_model()</code></h3>
 
+</div>
 </div>
 </div>
             </section>
@@ -382,8 +391,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
+<a href="uni-und-bivariate-datenanalyse.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="rstudio.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
