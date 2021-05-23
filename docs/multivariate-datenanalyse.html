@@ -332,51 +332,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">5.1</span> Korrelationsmatrix</h2>
 <div id="wtd.cor" class="section level3 unnumbered">
 <h3><code>Wtd.cor()</code></h3>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="multivariate-datenanalyse.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
-<span id="cb161-2"><a href="multivariate-datenanalyse.html#cb161-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-3"><a href="multivariate-datenanalyse.html#cb161-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb161-4"><a href="multivariate-datenanalyse.html#cb161-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
-<span id="cb161-5"><a href="multivariate-datenanalyse.html#cb161-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-6"><a href="multivariate-datenanalyse.html#cb161-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Berechnung der Korrelationsmatrix</span></span>
-<span id="cb161-7"><a href="multivariate-datenanalyse.html#cb161-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-8"><a href="multivariate-datenanalyse.html#cb161-8" aria-hidden="true" tabindex="-1"></a>corMatrix <span class="ot">&lt;-</span> <span class="fu">wtd.cor</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew)</span>
-<span id="cb161-9"><a href="multivariate-datenanalyse.html#cb161-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-10"><a href="multivariate-datenanalyse.html#cb161-10" aria-hidden="true" tabindex="-1"></a>corMatrix</span>
-<span id="cb161-11"><a href="multivariate-datenanalyse.html#cb161-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $correlation</span></span>
-<span id="cb161-12"><a href="multivariate-datenanalyse.html#cb161-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            im19        im20       im21        id01</span></span>
-<span id="cb161-13"><a href="multivariate-datenanalyse.html#cb161-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.00000000  0.51469202  0.3452849  0.03606102</span></span>
-<span id="cb161-14"><a href="multivariate-datenanalyse.html#cb161-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.51469202  1.00000000  0.5031235 -0.02409378</span></span>
-<span id="cb161-15"><a href="multivariate-datenanalyse.html#cb161-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.34528492  0.50312350  1.0000000 -0.16428931</span></span>
-<span id="cb161-16"><a href="multivariate-datenanalyse.html#cb161-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.03606102 -0.02409378 -0.1642893  1.00000000</span></span>
-<span id="cb161-17"><a href="multivariate-datenanalyse.html#cb161-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb161-18"><a href="multivariate-datenanalyse.html#cb161-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $std.err</span></span>
-<span id="cb161-19"><a href="multivariate-datenanalyse.html#cb161-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19         im20         im21         id01</span></span>
-<span id="cb161-20"><a href="multivariate-datenanalyse.html#cb161-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 7.895494e-17 1.492272e-02 1.624389e-02 1.737802e-02</span></span>
-<span id="cb161-21"><a href="multivariate-datenanalyse.html#cb161-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 1.492272e-02 1.144824e-15 1.495593e-02 1.739744e-02</span></span>
-<span id="cb161-22"><a href="multivariate-datenanalyse.html#cb161-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 1.624389e-02 1.495593e-02 9.207409e-16 1.702737e-02</span></span>
-<span id="cb161-23"><a href="multivariate-datenanalyse.html#cb161-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 1.737802e-02 1.739744e-02 1.702737e-02 4.070850e-17</span></span>
-<span id="cb161-24"><a href="multivariate-datenanalyse.html#cb161-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb161-25"><a href="multivariate-datenanalyse.html#cb161-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $t.value</span></span>
-<span id="cb161-26"><a href="multivariate-datenanalyse.html#cb161-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19          im20          im21          id01</span></span>
-<span id="cb161-27"><a href="multivariate-datenanalyse.html#cb161-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.266545e+16  3.449049e+01  2.125629e+01  2.075094e+00</span></span>
-<span id="cb161-28"><a href="multivariate-datenanalyse.html#cb161-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 3.449049e+01  8.734970e+14  3.364041e+01 -1.384903e+00</span></span>
-<span id="cb161-29"><a href="multivariate-datenanalyse.html#cb161-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 2.125629e+01  3.364041e+01  1.086082e+15 -9.648546e+00</span></span>
-<span id="cb161-30"><a href="multivariate-datenanalyse.html#cb161-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 2.075094e+00 -1.384903e+00 -9.648546e+00  2.456490e+16</span></span>
-<span id="cb161-31"><a href="multivariate-datenanalyse.html#cb161-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb161-32"><a href="multivariate-datenanalyse.html#cb161-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
-<span id="cb161-33"><a href="multivariate-datenanalyse.html#cb161-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               im19          im20          im21         id01</span></span>
-<span id="cb161-34"><a href="multivariate-datenanalyse.html#cb161-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.000000e+00 6.726140e-223  3.831939e-94 3.805500e-02</span></span>
-<span id="cb161-35"><a href="multivariate-datenanalyse.html#cb161-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 6.726140e-223  0.000000e+00 6.568035e-214 1.661756e-01</span></span>
-<span id="cb161-36"><a href="multivariate-datenanalyse.html#cb161-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  3.831939e-94 6.568035e-214  0.000000e+00 9.526801e-22</span></span>
-<span id="cb161-37"><a href="multivariate-datenanalyse.html#cb161-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01  3.805500e-02  1.661756e-01  9.526801e-22 0.000000e+00</span></span>
-<span id="cb161-38"><a href="multivariate-datenanalyse.html#cb161-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-39"><a href="multivariate-datenanalyse.html#cb161-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik </span></span>
-<span id="cb161-40"><a href="multivariate-datenanalyse.html#cb161-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil</span></span>
-<span id="cb161-41"><a href="multivariate-datenanalyse.html#cb161-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-42"><a href="multivariate-datenanalyse.html#cb161-42" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(corMatrix<span class="sc">$</span>correlation, <span class="at">p.mat =</span> corMatrix<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, </span>
-<span id="cb161-43"><a href="multivariate-datenanalyse.html#cb161-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">addCoef.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">cl.cex =</span> .<span class="dv">7</span>, <span class="at">number.cex =</span> .<span class="dv">7</span>, </span>
-<span id="cb161-44"><a href="multivariate-datenanalyse.html#cb161-44" aria-hidden="true" tabindex="-1"></a>         <span class="at">insig =</span> <span class="st">&quot;pch&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-117-1.png" width="672" /></p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="multivariate-datenanalyse.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
+<span id="cb163-2"><a href="multivariate-datenanalyse.html#cb163-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-3"><a href="multivariate-datenanalyse.html#cb163-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb163-4"><a href="multivariate-datenanalyse.html#cb163-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
+<span id="cb163-5"><a href="multivariate-datenanalyse.html#cb163-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-6"><a href="multivariate-datenanalyse.html#cb163-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Berechnung der Korrelationsmatrix</span></span>
+<span id="cb163-7"><a href="multivariate-datenanalyse.html#cb163-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-8"><a href="multivariate-datenanalyse.html#cb163-8" aria-hidden="true" tabindex="-1"></a>corMatrix <span class="ot">&lt;-</span> <span class="fu">wtd.cor</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew)</span>
+<span id="cb163-9"><a href="multivariate-datenanalyse.html#cb163-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-10"><a href="multivariate-datenanalyse.html#cb163-10" aria-hidden="true" tabindex="-1"></a>corMatrix</span>
+<span id="cb163-11"><a href="multivariate-datenanalyse.html#cb163-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $correlation</span></span>
+<span id="cb163-12"><a href="multivariate-datenanalyse.html#cb163-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            im19        im20       im21        id01</span></span>
+<span id="cb163-13"><a href="multivariate-datenanalyse.html#cb163-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.00000000  0.51469202  0.3452849  0.03606102</span></span>
+<span id="cb163-14"><a href="multivariate-datenanalyse.html#cb163-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.51469202  1.00000000  0.5031235 -0.02409378</span></span>
+<span id="cb163-15"><a href="multivariate-datenanalyse.html#cb163-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.34528492  0.50312350  1.0000000 -0.16428931</span></span>
+<span id="cb163-16"><a href="multivariate-datenanalyse.html#cb163-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.03606102 -0.02409378 -0.1642893  1.00000000</span></span>
+<span id="cb163-17"><a href="multivariate-datenanalyse.html#cb163-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb163-18"><a href="multivariate-datenanalyse.html#cb163-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $std.err</span></span>
+<span id="cb163-19"><a href="multivariate-datenanalyse.html#cb163-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19         im20         im21         id01</span></span>
+<span id="cb163-20"><a href="multivariate-datenanalyse.html#cb163-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 7.895494e-17 1.492272e-02 1.624389e-02 1.737802e-02</span></span>
+<span id="cb163-21"><a href="multivariate-datenanalyse.html#cb163-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 1.492272e-02 1.144824e-15 1.495593e-02 1.739744e-02</span></span>
+<span id="cb163-22"><a href="multivariate-datenanalyse.html#cb163-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 1.624389e-02 1.495593e-02 9.207409e-16 1.702737e-02</span></span>
+<span id="cb163-23"><a href="multivariate-datenanalyse.html#cb163-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 1.737802e-02 1.739744e-02 1.702737e-02 4.070850e-17</span></span>
+<span id="cb163-24"><a href="multivariate-datenanalyse.html#cb163-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb163-25"><a href="multivariate-datenanalyse.html#cb163-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $t.value</span></span>
+<span id="cb163-26"><a href="multivariate-datenanalyse.html#cb163-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19          im20          im21          id01</span></span>
+<span id="cb163-27"><a href="multivariate-datenanalyse.html#cb163-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.266545e+16  3.449049e+01  2.125629e+01  2.075094e+00</span></span>
+<span id="cb163-28"><a href="multivariate-datenanalyse.html#cb163-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 3.449049e+01  8.734970e+14  3.364041e+01 -1.384903e+00</span></span>
+<span id="cb163-29"><a href="multivariate-datenanalyse.html#cb163-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 2.125629e+01  3.364041e+01  1.086082e+15 -9.648546e+00</span></span>
+<span id="cb163-30"><a href="multivariate-datenanalyse.html#cb163-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 2.075094e+00 -1.384903e+00 -9.648546e+00  2.456490e+16</span></span>
+<span id="cb163-31"><a href="multivariate-datenanalyse.html#cb163-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb163-32"><a href="multivariate-datenanalyse.html#cb163-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
+<span id="cb163-33"><a href="multivariate-datenanalyse.html#cb163-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               im19          im20          im21         id01</span></span>
+<span id="cb163-34"><a href="multivariate-datenanalyse.html#cb163-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.000000e+00 6.726140e-223  3.831939e-94 3.805500e-02</span></span>
+<span id="cb163-35"><a href="multivariate-datenanalyse.html#cb163-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 6.726140e-223  0.000000e+00 6.568035e-214 1.661756e-01</span></span>
+<span id="cb163-36"><a href="multivariate-datenanalyse.html#cb163-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  3.831939e-94 6.568035e-214  0.000000e+00 9.526801e-22</span></span>
+<span id="cb163-37"><a href="multivariate-datenanalyse.html#cb163-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01  3.805500e-02  1.661756e-01  9.526801e-22 0.000000e+00</span></span>
+<span id="cb163-38"><a href="multivariate-datenanalyse.html#cb163-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-39"><a href="multivariate-datenanalyse.html#cb163-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik </span></span>
+<span id="cb163-40"><a href="multivariate-datenanalyse.html#cb163-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil</span></span>
+<span id="cb163-41"><a href="multivariate-datenanalyse.html#cb163-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-42"><a href="multivariate-datenanalyse.html#cb163-42" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(corMatrix<span class="sc">$</span>correlation, <span class="at">p.mat =</span> corMatrix<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, </span>
+<span id="cb163-43"><a href="multivariate-datenanalyse.html#cb163-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">addCoef.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">cl.cex =</span> .<span class="dv">7</span>, <span class="at">number.cex =</span> .<span class="dv">7</span>, </span>
+<span id="cb163-44"><a href="multivariate-datenanalyse.html#cb163-44" aria-hidden="true" tabindex="-1"></a>         <span class="at">insig =</span> <span class="st">&quot;pch&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-118-1.png" width="672" /></p>
 </div>
 </div>
 <div id="realiabilitätsanalyse" class="section level2" number="5.2">

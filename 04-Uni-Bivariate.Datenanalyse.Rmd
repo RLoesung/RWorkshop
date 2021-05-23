@@ -464,8 +464,8 @@ plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
 ```{r, echo=T, collapse=T, comment="#>"}
 # Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs
 
-plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), values = "sum.inside",
-            show.prc.sign = T, weight.by = allbus2018$wghtpew)
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), wrap.legend.labels = 11,
+            wrap.labels = 12, values = "sum.inside", show.prc.sign = T, weight.by = allbus2018$wghtpew)
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
@@ -496,7 +496,7 @@ plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
 # Farbauswahl mit RColorBrewer::display.brewer.all()
 
 plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")], weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
-              wrap.labels = 1, wrap.legend.labels = 1)
+              wrap.labels = 12, wrap.legend.labels = 11)
 ```
 
 ### `Plot_grpfrq()` {-}
@@ -513,8 +513,18 @@ plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")], weight.by = allbus2
 
 **Beispielcode:**
 
-```{r, echo=T, collapse=T, comment="#>"}
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Alter nach Geschlecht und Statistiken
 
+allbus2018 %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, show.values = F, type = "line", show.summary = T, summary.pos = 1)
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungs nach Geschlecht und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(im20, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
 ```
 
 ### `Plot_xtab()` {-}
