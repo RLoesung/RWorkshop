@@ -7,19 +7,239 @@
 
 ## Univariate Statistiken
 
-Tabelle mit Funktionen
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjmisc         | frq()               | Häufigkeitstabelle |
+| sjmisc         | descr()             | Despriptive Statistiken ausgeben |
+| sjmisc         | weighted_mean()     | Mittelwert berechnen |
+| sjmisc         | weighted_median()   | Median berechnen |
+| sjmisc         | weighted_sd()       | Standardabweichung berechnen |
+| sjmisc         | weighted_se()       | Standardfehler berechnen |
+| weights        | wtd.quantile()      | Quantile berechnen |
 
 ### `Frq()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+frq(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  frq(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Häufigkeitstabelle Leistungsprinzip (im19)
+
+allbus2018 %>% frq(im19, weights = wghtpew)
+```
+
 ### `Descr()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+descr(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  descr(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Deskriptive Statistiken Leistungsprinzip (im19)
+
+allbus2018 %>% descr(im19, weights = wghtpew)
+
+allbus2018 %>% descr(im19, weights = wghtpew, show = "short")
+```
 
 ### `Weighted_mean()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_mean(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_mean(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert Leistungsprinzip (im19) 
+
+allbus2018 %$% 
+  weighted_mean(im19, weights = wghtpew)
+
+# Mittelwert Leistungsprinzip (im19) als neue Variable
+
+ds <- allbus2018 %>% 
+  transmute(mittelLeistung = weighted_mean(im19, weights = wghtpew)) 
+
+ds
+```
+
 ### `Weighted_median()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_median(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_median(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Median Leistungsprinzip (im19)
+
+allbus2018 %$% 
+  weighted_median(im19, weights = wghtpew)
+
+# Median Leistungsprinzip (im19) als neue Variable
+
+ds <- allbus2018 %>% 
+  mutate(medianLeistung = weighted_median(im19, weights = wghtpew)) %>% 
+  distinct(medianLeistung)
+
+ds
+```
 
 ### `Weighted_sd()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_sd(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_sd(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert und Standardabweichung Leistungprinzip nach Ost-West (Fälle)
+
+ds <- allbus2018 %>% 
+  select(eastwest, im19, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  mutate(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+         leistungSDOstWest = weighted_sd(im19, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% 
+  select(eastwest, leistungMittelOstWest, leistungSDOstWest)
+```
+
 ### `Weighted_se()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_se(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_se(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert, Standardabweichung und Standardfehler Leistungprinzip nach Ost-West (Gruppen)
+
+ds <- allbus2018 %>% 
+  select(eastwest, im19, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
+            leistungSEOstWest = weighted_se(im19, weights = wghtpew)) %>% 
+  ungroup()
+
+ds
+
+# Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall Leistungprinzip nach Ost-West (Gruppen)
+
+ds <- allbus2018 %>% 
+  group_by(eastwest) %>% 
+  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
+            leistungSEOstWest = weighted_se(im19, weights = wghtpew),
+            CI.95.down = leistungMittelOstWest-1.96*(leistungSDOstWest/sqrt(n())),
+            CI.95.up = leistungMittelOstWest+1.96*(leistungSDOstWest/sqrt(n()))) %>% 
+  ungroup()
+
+ds
+
+
+```
+
+### `wtd.quantile()` {-}
+
+```{}
+library(weights)
+```
+```{r, include=F}
+library(weights)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+wtd.quantile(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  wtd.quantile(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Quantile Alter
+
+allbus2018 %$% 
+  wtd.quantile(age, weights = wghtpew)
+```
 
 ## Bivariate Statistiken
 
@@ -27,38 +247,294 @@ Tabelle mit Funktionen
 
 ### `Crosstab()` {-}
 
+```{}
+library(descr)
+
+# Achtung! Überschreibt sjmisc::descr
+# Paket sjmisc deaktivieren und nochmal aktivieren
+
+detach("package:sjmisc", unload = TRUE)
+library(sjmisc)
+```
 ```{r, include=F}
 library(descr)
+detach("package:sjmisc", unload = TRUE)
+library(sjmisc)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+crosstab(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  crosstab(variable1, variable2, weight = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - Absolute Häufigkeit
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Zeilen
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.r = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Gesamthäufigkeit
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.t = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit mit Chi-Quadrat nach Zellen
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.chisq = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten
+# mit Chi-Quadrat-Test 
+# mit Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T)
 ```
 
 ### `Weighted_chisqtest()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_chisqtest(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  weighted_chisqtest(variable1, variable2, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Chi-Quadrat-Test Geschlecht (sex) und Bildung (educ)
+
+allbus2018 %>% 
+  weighted_chisqtest(sex, educ, weights = wghtpew)
+```
+
 ### `Crosstable_statistiscs()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+crosstable_statistics(datensatz$vaiable1, datensatz$variable2, weights = datensatz$gewicht,
+                      statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
+
+# Mit Pipe
+
+allbus2018 %>% 
+  crosstable_statistics(variable1, variable2, weights = gewicht, 
+                        statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Phi Geschlecht (sex) und Ost West (eastwest)
+
+allbus2018 %>% 
+  crosstable_statistics(sex, eastwest, weights = wghtpew, statistics = "phi")
+
+# Cramers V Geschlecht (sex) und Bildung (educ)
+
+allbus2018 %>% 
+  crosstable_statistics(sex, educ, weights = wghtpew, statistics = "cramer")
+
+# Spearman`s rho Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% 
+  crosstable_statistics(im19, im20, weights = wghtpew, statistics = "spearman")
+```
 
 ### `Weighted_correlation()` {-}
 
-```{r, echo=T, collapse=T, comment="#>"}
-allbus2018 %>% 
-  select(im19:im21, wghtpew) %>% 
-  weighted_correlation(im19, im20, weights = wghtpew)
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_correlation(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  weighted_correlation(variable1, variable2, weights = gewicht)
 ```
 
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Pearsons r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% 
+  weighted_correlation(im19, im20, weights = wghtpew)
+```
 
 ## Grafiken
 
 ### `Plot_frq()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_frq(datensatz$variable1, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  plot_frq(variable1, weight.by = gewicht)
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Garfik zur Häufigkeitsverteilung Bildung (educ)
+
+allbus2018 %$% 
+  plot_frq(educ, weight.by = wghtpew, coord.flip = T, hjust = "left", type = "dot", show.ci = T,
+           expand.grid = T, vjust = "bottom", sort.frq = "desc")
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Garfik zur Häufigkeitsverteilung Alter (age) 
+# mit Normalverteilungskurve, Mittelwert und Standardabweichung
+
+allbus2018 %$% 
+  plot_frq(age, weight.by = wghtpew, type = "h", show.mean = TRUE, show.mean.val = TRUE,
+        normal.curve = TRUE, show.sd = TRUE, normal.curve.color = "black")
+```
+
+```{r, echo=T, collapse=T, comment="#>", include=F}
+# Grafik Alter
+
+allbus2018 %$% 
+  plot_frq(age, weight.by = wghtpew, type = "violin", show.values = F)
+```
+
 ### `Plot_likert()` {-}
 
-### `Plot_scatter()` {-}
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+
+# Mit Pipe
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+```
 
 ### `Plot_stackfrq()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+
+# Mit Pipe
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+```
+
 ### `Plot_grpfrq()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+
+# Mit Pipe
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+```
 
 ### `Plot_xtab()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+
+# Mit Pipe
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+```
+
 ### `Save_plot()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+
+# Mit Pipe
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+```
 
 
 
