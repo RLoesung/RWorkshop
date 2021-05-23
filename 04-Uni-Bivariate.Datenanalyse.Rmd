@@ -314,7 +314,7 @@ allbus2018 %$%
 # mit Grafik
 
 allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T)
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
 ```
 
 ### `Weighted_chisqtest()` {-}
@@ -521,10 +521,25 @@ allbus2018 %$%
 ```
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungs nach Geschlecht und Statistiken
+# Verteilung Leistungsprinzip nach Schichtzugehörigkeit (id02) 
 
 allbus2018 %$% 
-  plot_grpfrq(im20, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
+  plot_grpfrq(im19, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungsprinzip (im19) nach Geschlecht und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(im19, sex, weight.by = wghtpew, show.values = T, type = "bar", show.summary = T, summary.pos = "1", show.axis.values = T, show.prc = T, ylim = c(0, 850))
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungsprinzip (im19) nach Geschlecht und Ost West
+# und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(im19, sex, intr.var = eastwest, weight.by = wghtpew, type = "violin", show.summary = T, summary.pos = "1")
 ```
 
 ### `Plot_xtab()` {-}
@@ -542,7 +557,12 @@ allbus2018 %$%
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
+# Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West
+# und Statistiken
 
+allbus2018 %$% 
+  plot_xtab(im21, eastwest, weight.by = wghtpew, type = "line", show.total = F, show.n = F,
+            show.summary = T, summary.pos = "1")
 ```
 
 ### `Save_plot()` {-}
