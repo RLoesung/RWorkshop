@@ -6,10 +6,27 @@
 
 ```{r, include=F}
 library(weights)
+library(corrplot)
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
-wtd.cors(allbus2018[95:97], weight = allbus2018$wghtpew)
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+#Berechnung der Korrelationsmatrix
+
+corMatrix <- wtd.cor(ds[1:4], weight = ds$wghtpew)
+
+corMatrix
+
+# Grafik 
+# Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil
+
+corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle", 
+         tl.col = "black", addCoef.col = "black", cl.cex = .7, number.cex = .7, 
+         insig = "pch")
 ```
 
 ## Realiabilitätsanalyse
