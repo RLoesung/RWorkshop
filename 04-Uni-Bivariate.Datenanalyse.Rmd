@@ -278,7 +278,7 @@ datensatz %$%
 
 **Beispielcode:**
 
-```{r, echo=T, collapse=T, comment="#>"}
+```{r echo=T, collapse=T, comment="#>"}
 # Kreuztabelle Geschlecht (sex) und Bildung (educ) - Absolute Häufigkeit
 # ohne Grafik
 
@@ -439,7 +439,7 @@ allbus2018 %$%
         normal.curve = TRUE, show.sd = TRUE, normal.curve.color = "black")
 ```
 
-```{r, echo=T, collapse=T, comment="#>"}
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
 # Grafik Alter
 
 allbus2018 %$% 
@@ -453,15 +453,27 @@ allbus2018 %$%
 ```{}
 # Ohne Pipe
 
+plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
 
 # Mit Pipe
-
+# Nicht gut zu handhaben!
 ```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
+# Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs
 
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), values = "sum.inside",
+            show.prc.sign = T, weight.by = allbus2018$wghtpew)
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs nach Komponenten
+# Farbauswahl mit RColorBrewer::display.brewer.all()
+
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2), grid.range = c(1.1, 1.1), values = "sum.outside",
+            show.prc.sign = T, weight.by = allbus2018$wghtpew, legend.pos = "none")
 ```
 
 ### `Plot_stackfrq()` {-}
@@ -471,15 +483,20 @@ allbus2018 %$%
 ```{}
 # Ohne Pipe
 
+plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
 
 # Mit Pipe
-
+# Nicht gut zu handhaben!
 ```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
+# Verteilung der Ausprägungsmerkmalen 
+# Farbauswahl mit RColorBrewer::display.brewer.all()
 
+plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")], weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
+              wrap.labels = 1, wrap.legend.labels = 1)
 ```
 
 ### `Plot_grpfrq()` {-}
