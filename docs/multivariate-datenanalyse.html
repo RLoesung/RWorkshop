@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2021-05-23" />
+<meta name="date" content="2021-05-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -266,7 +266,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_stackfrq"><code>Plot_stackfrq()</code></a></li>
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_grpfrq"><code>Plot_grpfrq()</code></a></li>
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_xtab"><code>Plot_xtab()</code></a></li>
-<li><a href="uni-und-bivariate-datenanalyse.html#save_plot"><code>Save_plot()</code></a></li>
+<li><a href="uni-und-bivariate-datenanalyse.html#grid.arrange"><code>Grid.arrange()</code></a></li>
+<li><a href="uni-und-bivariate-datenanalyse.html#ggsave"><code>Ggsave()</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html"><i class="fa fa-check"></i><b>5</b> Multivariate Datenanalyse</a>
@@ -279,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.3" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#mittelwertvergleich-unabhängig"><i class="fa fa-check"></i><b>5.3</b> Mittelwertvergleich (unabhängig)</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#weighted_ttest"><code>Weighted_ttest()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#means_by_group"><code>Means_by_group()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#grpmean"><code>Grpmean()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#weighted_mannwhitney"><code>Weighted_mannwhitney()</code></a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#faktoranalyse-und-hauptkomponentenanalyse"><i class="fa fa-check"></i><b>5.4</b> Faktoranalyse und Hauptkomponentenanalyse</a>
@@ -287,8 +288,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="multivariate-datenanalyse.html#kmo"><code>KMO()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#bartlett.test"><code>Bartlett.test()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#scree"><code>Scree()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#fa"><code>Fa()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#principal"><code>Principal()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#fa"><code>Fa()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#fa_diagram"><code>Fa_diagram()</code></a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#regressionsanalyse"><i class="fa fa-check"></i><b>5.5</b> Regressionsanalyse</a>
 <ul>
@@ -332,51 +334,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">5.1</span> Korrelationsmatrix</h2>
 <div id="wtd.cor" class="section level3 unnumbered">
 <h3><code>Wtd.cor()</code></h3>
-<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb165-1"><a href="multivariate-datenanalyse.html#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
-<span id="cb165-2"><a href="multivariate-datenanalyse.html#cb165-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-3"><a href="multivariate-datenanalyse.html#cb165-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb165-4"><a href="multivariate-datenanalyse.html#cb165-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
-<span id="cb165-5"><a href="multivariate-datenanalyse.html#cb165-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-6"><a href="multivariate-datenanalyse.html#cb165-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Berechnung der Korrelationsmatrix</span></span>
-<span id="cb165-7"><a href="multivariate-datenanalyse.html#cb165-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-8"><a href="multivariate-datenanalyse.html#cb165-8" aria-hidden="true" tabindex="-1"></a>corMatrix <span class="ot">&lt;-</span> <span class="fu">wtd.cor</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew)</span>
-<span id="cb165-9"><a href="multivariate-datenanalyse.html#cb165-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-10"><a href="multivariate-datenanalyse.html#cb165-10" aria-hidden="true" tabindex="-1"></a>corMatrix</span>
-<span id="cb165-11"><a href="multivariate-datenanalyse.html#cb165-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $correlation</span></span>
-<span id="cb165-12"><a href="multivariate-datenanalyse.html#cb165-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            im19        im20       im21        id01</span></span>
-<span id="cb165-13"><a href="multivariate-datenanalyse.html#cb165-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.00000000  0.51469202  0.3452849  0.03606102</span></span>
-<span id="cb165-14"><a href="multivariate-datenanalyse.html#cb165-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.51469202  1.00000000  0.5031235 -0.02409378</span></span>
-<span id="cb165-15"><a href="multivariate-datenanalyse.html#cb165-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.34528492  0.50312350  1.0000000 -0.16428931</span></span>
-<span id="cb165-16"><a href="multivariate-datenanalyse.html#cb165-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.03606102 -0.02409378 -0.1642893  1.00000000</span></span>
-<span id="cb165-17"><a href="multivariate-datenanalyse.html#cb165-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb165-18"><a href="multivariate-datenanalyse.html#cb165-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $std.err</span></span>
-<span id="cb165-19"><a href="multivariate-datenanalyse.html#cb165-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19         im20         im21         id01</span></span>
-<span id="cb165-20"><a href="multivariate-datenanalyse.html#cb165-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 7.895494e-17 1.492272e-02 1.624389e-02 1.737802e-02</span></span>
-<span id="cb165-21"><a href="multivariate-datenanalyse.html#cb165-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 1.492272e-02 1.144824e-15 1.495593e-02 1.739744e-02</span></span>
-<span id="cb165-22"><a href="multivariate-datenanalyse.html#cb165-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 1.624389e-02 1.495593e-02 9.207409e-16 1.702737e-02</span></span>
-<span id="cb165-23"><a href="multivariate-datenanalyse.html#cb165-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 1.737802e-02 1.739744e-02 1.702737e-02 4.070850e-17</span></span>
-<span id="cb165-24"><a href="multivariate-datenanalyse.html#cb165-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb165-25"><a href="multivariate-datenanalyse.html#cb165-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $t.value</span></span>
-<span id="cb165-26"><a href="multivariate-datenanalyse.html#cb165-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19          im20          im21          id01</span></span>
-<span id="cb165-27"><a href="multivariate-datenanalyse.html#cb165-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.266545e+16  3.449049e+01  2.125629e+01  2.075094e+00</span></span>
-<span id="cb165-28"><a href="multivariate-datenanalyse.html#cb165-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 3.449049e+01  8.734970e+14  3.364041e+01 -1.384903e+00</span></span>
-<span id="cb165-29"><a href="multivariate-datenanalyse.html#cb165-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 2.125629e+01  3.364041e+01  1.086082e+15 -9.648546e+00</span></span>
-<span id="cb165-30"><a href="multivariate-datenanalyse.html#cb165-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 2.075094e+00 -1.384903e+00 -9.648546e+00  2.456490e+16</span></span>
-<span id="cb165-31"><a href="multivariate-datenanalyse.html#cb165-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb165-32"><a href="multivariate-datenanalyse.html#cb165-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
-<span id="cb165-33"><a href="multivariate-datenanalyse.html#cb165-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               im19          im20          im21         id01</span></span>
-<span id="cb165-34"><a href="multivariate-datenanalyse.html#cb165-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.000000e+00 6.726140e-223  3.831939e-94 3.805500e-02</span></span>
-<span id="cb165-35"><a href="multivariate-datenanalyse.html#cb165-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 6.726140e-223  0.000000e+00 6.568035e-214 1.661756e-01</span></span>
-<span id="cb165-36"><a href="multivariate-datenanalyse.html#cb165-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  3.831939e-94 6.568035e-214  0.000000e+00 9.526801e-22</span></span>
-<span id="cb165-37"><a href="multivariate-datenanalyse.html#cb165-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01  3.805500e-02  1.661756e-01  9.526801e-22 0.000000e+00</span></span>
-<span id="cb165-38"><a href="multivariate-datenanalyse.html#cb165-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-39"><a href="multivariate-datenanalyse.html#cb165-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik </span></span>
-<span id="cb165-40"><a href="multivariate-datenanalyse.html#cb165-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil</span></span>
-<span id="cb165-41"><a href="multivariate-datenanalyse.html#cb165-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb165-42"><a href="multivariate-datenanalyse.html#cb165-42" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(corMatrix<span class="sc">$</span>correlation, <span class="at">p.mat =</span> corMatrix<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, </span>
-<span id="cb165-43"><a href="multivariate-datenanalyse.html#cb165-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">addCoef.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">cl.cex =</span> .<span class="dv">7</span>, <span class="at">number.cex =</span> .<span class="dv">7</span>, </span>
-<span id="cb165-44"><a href="multivariate-datenanalyse.html#cb165-44" aria-hidden="true" tabindex="-1"></a>         <span class="at">insig =</span> <span class="st">&quot;pch&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-120-1.png" width="672" /></p>
+<pre><code>library(weights)
+library(corrplot)</code></pre>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+wtd.cor(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)], weight = datensatz$gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="multivariate-datenanalyse.html#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
+<span id="cb172-2"><a href="multivariate-datenanalyse.html#cb172-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-3"><a href="multivariate-datenanalyse.html#cb172-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb172-4"><a href="multivariate-datenanalyse.html#cb172-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
+<span id="cb172-5"><a href="multivariate-datenanalyse.html#cb172-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-6"><a href="multivariate-datenanalyse.html#cb172-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Berechnung der Korrelationsmatrix</span></span>
+<span id="cb172-7"><a href="multivariate-datenanalyse.html#cb172-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-8"><a href="multivariate-datenanalyse.html#cb172-8" aria-hidden="true" tabindex="-1"></a>corMatrix <span class="ot">&lt;-</span> <span class="fu">wtd.cor</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew)</span>
+<span id="cb172-9"><a href="multivariate-datenanalyse.html#cb172-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-10"><a href="multivariate-datenanalyse.html#cb172-10" aria-hidden="true" tabindex="-1"></a>corMatrix</span>
+<span id="cb172-11"><a href="multivariate-datenanalyse.html#cb172-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $correlation</span></span>
+<span id="cb172-12"><a href="multivariate-datenanalyse.html#cb172-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            im19        im20       im21        id01</span></span>
+<span id="cb172-13"><a href="multivariate-datenanalyse.html#cb172-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.00000000  0.51469202  0.3452849  0.03606102</span></span>
+<span id="cb172-14"><a href="multivariate-datenanalyse.html#cb172-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.51469202  1.00000000  0.5031235 -0.02409378</span></span>
+<span id="cb172-15"><a href="multivariate-datenanalyse.html#cb172-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.34528492  0.50312350  1.0000000 -0.16428931</span></span>
+<span id="cb172-16"><a href="multivariate-datenanalyse.html#cb172-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.03606102 -0.02409378 -0.1642893  1.00000000</span></span>
+<span id="cb172-17"><a href="multivariate-datenanalyse.html#cb172-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb172-18"><a href="multivariate-datenanalyse.html#cb172-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $std.err</span></span>
+<span id="cb172-19"><a href="multivariate-datenanalyse.html#cb172-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19         im20         im21         id01</span></span>
+<span id="cb172-20"><a href="multivariate-datenanalyse.html#cb172-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 7.895494e-17 1.492272e-02 1.624389e-02 1.737802e-02</span></span>
+<span id="cb172-21"><a href="multivariate-datenanalyse.html#cb172-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 1.492272e-02 1.144824e-15 1.495593e-02 1.739744e-02</span></span>
+<span id="cb172-22"><a href="multivariate-datenanalyse.html#cb172-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 1.624389e-02 1.495593e-02 9.207409e-16 1.702737e-02</span></span>
+<span id="cb172-23"><a href="multivariate-datenanalyse.html#cb172-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 1.737802e-02 1.739744e-02 1.702737e-02 4.070850e-17</span></span>
+<span id="cb172-24"><a href="multivariate-datenanalyse.html#cb172-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb172-25"><a href="multivariate-datenanalyse.html#cb172-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $t.value</span></span>
+<span id="cb172-26"><a href="multivariate-datenanalyse.html#cb172-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              im19          im20          im21          id01</span></span>
+<span id="cb172-27"><a href="multivariate-datenanalyse.html#cb172-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 1.266545e+16  3.449049e+01  2.125629e+01  2.075094e+00</span></span>
+<span id="cb172-28"><a href="multivariate-datenanalyse.html#cb172-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 3.449049e+01  8.734970e+14  3.364041e+01 -1.384903e+00</span></span>
+<span id="cb172-29"><a href="multivariate-datenanalyse.html#cb172-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 2.125629e+01  3.364041e+01  1.086082e+15 -9.648546e+00</span></span>
+<span id="cb172-30"><a href="multivariate-datenanalyse.html#cb172-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 2.075094e+00 -1.384903e+00 -9.648546e+00  2.456490e+16</span></span>
+<span id="cb172-31"><a href="multivariate-datenanalyse.html#cb172-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb172-32"><a href="multivariate-datenanalyse.html#cb172-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $p.value</span></span>
+<span id="cb172-33"><a href="multivariate-datenanalyse.html#cb172-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               im19          im20          im21         id01</span></span>
+<span id="cb172-34"><a href="multivariate-datenanalyse.html#cb172-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.000000e+00 6.726140e-223  3.831939e-94 3.805500e-02</span></span>
+<span id="cb172-35"><a href="multivariate-datenanalyse.html#cb172-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 6.726140e-223  0.000000e+00 6.568035e-214 1.661756e-01</span></span>
+<span id="cb172-36"><a href="multivariate-datenanalyse.html#cb172-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  3.831939e-94 6.568035e-214  0.000000e+00 9.526801e-22</span></span>
+<span id="cb172-37"><a href="multivariate-datenanalyse.html#cb172-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01  3.805500e-02  1.661756e-01  9.526801e-22 0.000000e+00</span></span>
+<span id="cb172-38"><a href="multivariate-datenanalyse.html#cb172-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-39"><a href="multivariate-datenanalyse.html#cb172-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik </span></span>
+<span id="cb172-40"><a href="multivariate-datenanalyse.html#cb172-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil</span></span>
+<span id="cb172-41"><a href="multivariate-datenanalyse.html#cb172-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb172-42"><a href="multivariate-datenanalyse.html#cb172-42" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(corMatrix<span class="sc">$</span>correlation, <span class="at">p.mat =</span> corMatrix<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">&quot;circle&quot;</span>, </span>
+<span id="cb172-43"><a href="multivariate-datenanalyse.html#cb172-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">addCoef.col =</span> <span class="st">&quot;black&quot;</span>, <span class="at">cl.cex =</span> .<span class="dv">7</span>, <span class="at">number.cex =</span> .<span class="dv">7</span>, </span>
+<span id="cb172-44"><a href="multivariate-datenanalyse.html#cb172-44" aria-hidden="true" tabindex="-1"></a>         <span class="at">insig =</span> <span class="st">&quot;pch&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-123-1.png" width="672" /></p>
 </div>
 </div>
 <div id="realiabilitätsanalyse" class="section level2" number="5.2">
@@ -384,40 +396,436 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="mittelwertvergleich-unabhängig" class="section level2" number="5.3">
 <h2><span class="header-section-number">5.3</span> Mittelwertvergleich (unabhängig)</h2>
-<p>Tablle mit Funktionen</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Packet</th>
+<th align="left">Funktion</th>
+<th align="left">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sjstats</td>
+<td align="left">weighted_ttest()</td>
+<td align="left">T-Test</td>
+</tr>
+<tr class="even">
+<td align="left">sjstats</td>
+<td align="left">grpmean()</td>
+<td align="left">Einfaktorielle ANOVA</td>
+</tr>
+<tr class="odd">
+<td align="left">sjstats</td>
+<td align="left">weighted_mannwhitney()</td>
+<td align="left">Mann-Whitney-Test / Kruskall-Wallis-Test</td>
+</tr>
+</tbody>
+</table>
 <div id="weighted_ttest" class="section level3 unnumbered">
 <h3><code>Weighted_ttest()</code></h3>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 
+weighted_ttest(variable1 ~ gruppenvariable + gewicht, datensatz)
 
 # Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="multivariate-datenanalyse.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="co"># T-Test zu Leistungsprinzip (im19) zwischen Geschlecht (sex)</span></span>
+<span id="cb174-2"><a href="multivariate-datenanalyse.html#cb174-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb174-3"><a href="multivariate-datenanalyse.html#cb174-3" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted_ttest</span>(im19 <span class="sc">~</span> sex <span class="sc">+</span> wghtpew, allbus2018)</span>
+<span id="cb174-4"><a href="multivariate-datenanalyse.html#cb174-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb174-5"><a href="multivariate-datenanalyse.html#cb174-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Two-Sample t-test (two.sided)</span></span>
+<span id="cb174-6"><a href="multivariate-datenanalyse.html#cb174-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb174-7"><a href="multivariate-datenanalyse.html#cb174-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # comparison of im19 by sex</span></span>
+<span id="cb174-8"><a href="multivariate-datenanalyse.html#cb174-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # t=-6.06  df=3338  p-value=0.000</span></span>
+<span id="cb174-9"><a href="multivariate-datenanalyse.html#cb174-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb174-10"><a href="multivariate-datenanalyse.html#cb174-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   mean in group [1] MANN: 2.393</span></span>
+<span id="cb174-11"><a href="multivariate-datenanalyse.html#cb174-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   mean in group [2] FRAU: 2.587</span></span>
+<span id="cb174-12"><a href="multivariate-datenanalyse.html#cb174-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   difference of mean    : -0.195 [-0.257  -0.132]</span></span></code></pre></div>
+</div>
+<div id="grpmean" class="section level3 unnumbered">
+<h3><code>Grpmean()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+grpmean(datensatz$variable1, datensatz$gruppenvariable, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %&gt;% 
+  grpmean(variable1, gruppenvariable, gewicht)
 </code></pre>
 <p><strong>Beispielcode:</strong></p>
-</div>
-<div id="means_by_group" class="section level3 unnumbered">
-<h3><code>Means_by_group()</code></h3>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="multivariate-datenanalyse.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ)</span></span>
+<span id="cb176-2"><a href="multivariate-datenanalyse.html#cb176-2" aria-hidden="true" tabindex="-1"></a><span class="co"># P-Wert in Relation zu absolutem Mittelwert</span></span>
+<span id="cb176-3"><a href="multivariate-datenanalyse.html#cb176-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb176-4"><a href="multivariate-datenanalyse.html#cb176-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb176-5"><a href="multivariate-datenanalyse.html#cb176-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grpmean</span>(im19, educ, <span class="at">weights =</span> wghtpew)</span>
+<span id="cb176-6"><a href="multivariate-datenanalyse.html#cb176-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-7"><a href="multivariate-datenanalyse.html#cb176-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Grouped Means for EINKOMMENSDIFFERENZ ERHOEHT MOTIVATION by ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb176-8"><a href="multivariate-datenanalyse.html#cb176-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-9"><a href="multivariate-datenanalyse.html#cb176-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Category           | Mean |    N |   SD |   SE |      p</span></span>
+<span id="cb176-10"><a href="multivariate-datenanalyse.html#cb176-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------</span></span>
+<span id="cb176-11"><a href="multivariate-datenanalyse.html#cb176-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; OHNE ABSCHLUSS     | 2.29 |   45 | 0.90 | 0.14 |  0.451</span></span>
+<span id="cb176-12"><a href="multivariate-datenanalyse.html#cb176-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; VOLKS-,HAUPTSCHULE | 2.20 |  817 | 0.92 | 0.03 | &lt; .001</span></span>
+<span id="cb176-13"><a href="multivariate-datenanalyse.html#cb176-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; MITTLERE REIFE     | 2.51 | 1058 | 0.94 | 0.03 |  0.080</span></span>
+<span id="cb176-14"><a href="multivariate-datenanalyse.html#cb176-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FACHHOCHSCHULREIFE | 2.49 |  323 | 0.87 | 0.05 |  0.269</span></span>
+<span id="cb176-15"><a href="multivariate-datenanalyse.html#cb176-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HOCHSCHULREIFE     | 2.70 | 1081 | 0.91 | 0.03 | &lt; .001</span></span>
+<span id="cb176-16"><a href="multivariate-datenanalyse.html#cb176-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ANDERER ABSCHLUSS  | 2.24 |   20 | 1.01 | 0.24 |  0.451</span></span>
+<span id="cb176-17"><a href="multivariate-datenanalyse.html#cb176-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NOCH SCHUELER      | 2.38 |   22 | 0.76 | 0.17 |  0.885</span></span>
+<span id="cb176-18"><a href="multivariate-datenanalyse.html#cb176-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total              | 2.49 | 3370 | 0.93 | 0.02 |       </span></span>
+<span id="cb176-19"><a href="multivariate-datenanalyse.html#cb176-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-20"><a href="multivariate-datenanalyse.html#cb176-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Anova: R2=0.041; adj.R2=0.039; F=23.736; p=0.000</span></span>
+<span id="cb176-21"><a href="multivariate-datenanalyse.html#cb176-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb176-22"><a href="multivariate-datenanalyse.html#cb176-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ) </span></span>
+<span id="cb176-23"><a href="multivariate-datenanalyse.html#cb176-23" aria-hidden="true" tabindex="-1"></a><span class="co"># nach Geschlecht (sex)</span></span>
+<span id="cb176-24"><a href="multivariate-datenanalyse.html#cb176-24" aria-hidden="true" tabindex="-1"></a><span class="co"># P-Wert in Relation zu absolutem Mittelwert</span></span>
+<span id="cb176-25"><a href="multivariate-datenanalyse.html#cb176-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb176-26"><a href="multivariate-datenanalyse.html#cb176-26" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb176-27"><a href="multivariate-datenanalyse.html#cb176-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-28"><a href="multivariate-datenanalyse.html#cb176-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grpmean</span>(im19, educ, <span class="at">weights =</span> wghtpew)</span>
+<span id="cb176-29"><a href="multivariate-datenanalyse.html#cb176-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-30"><a href="multivariate-datenanalyse.html#cb176-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Grouped by:</span></span>
+<span id="cb176-31"><a href="multivariate-datenanalyse.html#cb176-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R): MANN</span></span>
+<span id="cb176-32"><a href="multivariate-datenanalyse.html#cb176-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-33"><a href="multivariate-datenanalyse.html#cb176-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Grouped Means for EINKOMMENSDIFFERENZ ERHOEHT MOTIVATION by ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb176-34"><a href="multivariate-datenanalyse.html#cb176-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-35"><a href="multivariate-datenanalyse.html#cb176-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Category           | Mean |    N |   SD |   SE |     p</span></span>
+<span id="cb176-36"><a href="multivariate-datenanalyse.html#cb176-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------</span></span>
+<span id="cb176-37"><a href="multivariate-datenanalyse.html#cb176-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; OHNE ABSCHLUSS     | 2.31 |   28 | 0.94 | 0.18 | 0.869</span></span>
+<span id="cb176-38"><a href="multivariate-datenanalyse.html#cb176-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; VOLKS-,HAUPTSCHULE | 2.15 |  435 | 0.89 | 0.04 | 0.103</span></span>
+<span id="cb176-39"><a href="multivariate-datenanalyse.html#cb176-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; MITTLERE REIFE     | 2.45 |  506 | 0.93 | 0.04 | 0.076</span></span>
+<span id="cb176-40"><a href="multivariate-datenanalyse.html#cb176-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FACHHOCHSCHULREIFE | 2.42 |  183 | 0.83 | 0.06 | 0.146</span></span>
+<span id="cb176-41"><a href="multivariate-datenanalyse.html#cb176-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HOCHSCHULREIFE     | 2.54 |  564 | 0.90 | 0.04 | 0.001</span></span>
+<span id="cb176-42"><a href="multivariate-datenanalyse.html#cb176-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ANDERER ABSCHLUSS  | 1.79 |   11 | 0.64 | 0.20 | 0.076</span></span>
+<span id="cb176-43"><a href="multivariate-datenanalyse.html#cb176-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NOCH SCHUELER      | 2.35 |   12 | 0.82 | 0.25 | 0.869</span></span>
+<span id="cb176-44"><a href="multivariate-datenanalyse.html#cb176-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total              | 2.39 | 1733 | 0.91 | 0.02 |      </span></span>
+<span id="cb176-45"><a href="multivariate-datenanalyse.html#cb176-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-46"><a href="multivariate-datenanalyse.html#cb176-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Anova: R2=0.030; adj.R2=0.026; F=8.815; p=0.000</span></span>
+<span id="cb176-47"><a href="multivariate-datenanalyse.html#cb176-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-48"><a href="multivariate-datenanalyse.html#cb176-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-49"><a href="multivariate-datenanalyse.html#cb176-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Grouped by:</span></span>
+<span id="cb176-50"><a href="multivariate-datenanalyse.html#cb176-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R): FRAU</span></span>
+<span id="cb176-51"><a href="multivariate-datenanalyse.html#cb176-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-52"><a href="multivariate-datenanalyse.html#cb176-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Grouped Means for EINKOMMENSDIFFERENZ ERHOEHT MOTIVATION by ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb176-53"><a href="multivariate-datenanalyse.html#cb176-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-54"><a href="multivariate-datenanalyse.html#cb176-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Category           | Mean |    N |   SD |   SE |      p</span></span>
+<span id="cb176-55"><a href="multivariate-datenanalyse.html#cb176-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------</span></span>
+<span id="cb176-56"><a href="multivariate-datenanalyse.html#cb176-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; OHNE ABSCHLUSS     | 2.24 |   17 | 0.85 | 0.22 |  0.323</span></span>
+<span id="cb176-57"><a href="multivariate-datenanalyse.html#cb176-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; VOLKS-,HAUPTSCHULE | 2.25 |  383 | 0.94 | 0.05 |  0.001</span></span>
+<span id="cb176-58"><a href="multivariate-datenanalyse.html#cb176-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; MITTLERE REIFE     | 2.57 |  552 | 0.94 | 0.04 |  0.713</span></span>
+<span id="cb176-59"><a href="multivariate-datenanalyse.html#cb176-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FACHHOCHSCHULREIFE | 2.58 |  139 | 0.92 | 0.08 |  0.713</span></span>
+<span id="cb176-60"><a href="multivariate-datenanalyse.html#cb176-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HOCHSCHULREIFE     | 2.87 |  517 | 0.89 | 0.04 | &lt; .001</span></span>
+<span id="cb176-61"><a href="multivariate-datenanalyse.html#cb176-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ANDERER ABSCHLUSS  | 2.87 |    8 | 1.12 | 0.40 |  0.418</span></span>
+<span id="cb176-62"><a href="multivariate-datenanalyse.html#cb176-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NOCH SCHUELER      | 2.41 |   10 | 0.73 | 0.24 |  0.713</span></span>
+<span id="cb176-63"><a href="multivariate-datenanalyse.html#cb176-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total              | 2.59 | 1637 | 0.95 | 0.02 |       </span></span>
+<span id="cb176-64"><a href="multivariate-datenanalyse.html#cb176-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb176-65"><a href="multivariate-datenanalyse.html#cb176-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Anova: R2=0.060; adj.R2=0.056; F=17.300; p=0.000</span></span></code></pre></div>
 </div>
 <div id="weighted_mannwhitney" class="section level3 unnumbered">
 <h3><code>Weighted_mannwhitney()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+weighted_mannwhitney(variable1 ~ gruppenvariable + gewicht, datensatz)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="multivariate-datenanalyse.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mann-Whitney-Test Leistungsprinzip (im19) nach Geschlecht (sex)</span></span>
+<span id="cb178-2"><a href="multivariate-datenanalyse.html#cb178-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb178-3"><a href="multivariate-datenanalyse.html#cb178-3" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted_mannwhitney</span>(im19 <span class="sc">~</span> sex <span class="sc">+</span> wghtpew, allbus2018)</span>
+<span id="cb178-4"><a href="multivariate-datenanalyse.html#cb178-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb178-5"><a href="multivariate-datenanalyse.html#cb178-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Weighted Mann-Whitney-U test</span></span>
+<span id="cb178-6"><a href="multivariate-datenanalyse.html#cb178-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb178-7"><a href="multivariate-datenanalyse.html#cb178-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   comparison of im19 by sex</span></span>
+<span id="cb178-8"><a href="multivariate-datenanalyse.html#cb178-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Chisq=5.88  df=3371  p-value=0.000</span></span>
+<span id="cb178-9"><a href="multivariate-datenanalyse.html#cb178-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb178-10"><a href="multivariate-datenanalyse.html#cb178-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Kruskall-Wallis-Test Leistungsprinzip (im19) nach Geschlecht (sex)</span></span>
+<span id="cb178-11"><a href="multivariate-datenanalyse.html#cb178-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb178-12"><a href="multivariate-datenanalyse.html#cb178-12" aria-hidden="true" tabindex="-1"></a><span class="fu">weighted_mannwhitney</span>(im19 <span class="sc">~</span> educ <span class="sc">+</span> wghtpew, allbus2018)</span>
+<span id="cb178-13"><a href="multivariate-datenanalyse.html#cb178-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb178-14"><a href="multivariate-datenanalyse.html#cb178-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Weighted Kruskal-Wallis test</span></span>
+<span id="cb178-15"><a href="multivariate-datenanalyse.html#cb178-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb178-16"><a href="multivariate-datenanalyse.html#cb178-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   comparison of im19 by educ</span></span>
+<span id="cb178-17"><a href="multivariate-datenanalyse.html#cb178-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Chisq=6.00  df=130  p-value=0.000</span></span></code></pre></div>
 </div>
 </div>
 <div id="faktoranalyse-und-hauptkomponentenanalyse" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Faktoranalyse und Hauptkomponentenanalyse</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Packet</th>
+<th align="left">Funktion</th>
+<th align="left">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">psych</td>
+<td align="left">KMO()</td>
+<td align="left">Kaiser-Meyer-Olkin-Kriterium (MSA)</td>
+</tr>
+<tr class="even">
+<td align="left">psych</td>
+<td align="left">bartlett.test()</td>
+<td align="left">Bartlett-Test</td>
+</tr>
+<tr class="odd">
+<td align="left">psych</td>
+<td align="left">scree()</td>
+<td align="left">Scree-Test</td>
+</tr>
+<tr class="even">
+<td align="left">psych</td>
+<td align="left">principal()</td>
+<td align="left">Hauptkomponentenanalyse</td>
+</tr>
+<tr class="odd">
+<td align="left">psych</td>
+<td align="left">fa()</td>
+<td align="left">Faktoranalyse</td>
+</tr>
+</tbody>
+</table>
+<pre><code>library(psych)</code></pre>
 <div id="kmo" class="section level3 unnumbered">
 <h3><code>KMO()</code></h3>
+<p>Achtung! Ungewichtete Analyse.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+KMO(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)])
+
+# Mit Pipe
+
+datensatz %&gt;% 
+  select(variable1, variable2, variable3) %&gt;% 
+  KMO()
+</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="multivariate-datenanalyse.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KMO/MSA </span></span>
+<span id="cb181-2"><a href="multivariate-datenanalyse.html#cb181-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb181-3"><a href="multivariate-datenanalyse.html#cb181-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb181-4"><a href="multivariate-datenanalyse.html#cb181-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01) <span class="sc">%&gt;%</span> </span>
+<span id="cb181-5"><a href="multivariate-datenanalyse.html#cb181-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">KMO</span>() </span>
+<span id="cb181-6"><a href="multivariate-datenanalyse.html#cb181-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kaiser-Meyer-Olkin factor adequacy</span></span>
+<span id="cb181-7"><a href="multivariate-datenanalyse.html#cb181-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call: KMO(r = .)</span></span>
+<span id="cb181-8"><a href="multivariate-datenanalyse.html#cb181-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overall MSA =  0.63</span></span>
+<span id="cb181-9"><a href="multivariate-datenanalyse.html#cb181-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; MSA for each item = </span></span>
+<span id="cb181-10"><a href="multivariate-datenanalyse.html#cb181-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 im20 im21 id01 </span></span>
+<span id="cb181-11"><a href="multivariate-datenanalyse.html#cb181-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.66 0.61 0.66 0.45</span></span></code></pre></div>
 </div>
 <div id="bartlett.test" class="section level3 unnumbered">
 <h3><code>Bartlett.test()</code></h3>
+<p>Achtung! Ungewichtete Analyse.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+bartlett.test(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)])
+
+# Mit Pipe
+
+datensatz %&gt;% 
+  select(variable1, variable2, variable3) %&gt;% 
+  bartlett.test()
+</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="multivariate-datenanalyse.html#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bartlett-Test </span></span>
+<span id="cb183-2"><a href="multivariate-datenanalyse.html#cb183-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-3"><a href="multivariate-datenanalyse.html#cb183-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb183-4"><a href="multivariate-datenanalyse.html#cb183-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01) <span class="sc">%&gt;%</span> </span>
+<span id="cb183-5"><a href="multivariate-datenanalyse.html#cb183-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bartlett.test</span>() </span>
+<span id="cb183-6"><a href="multivariate-datenanalyse.html#cb183-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb183-7"><a href="multivariate-datenanalyse.html#cb183-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Bartlett test of homogeneity of variances</span></span>
+<span id="cb183-8"><a href="multivariate-datenanalyse.html#cb183-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb183-9"><a href="multivariate-datenanalyse.html#cb183-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  .</span></span>
+<span id="cb183-10"><a href="multivariate-datenanalyse.html#cb183-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bartlett&#39;s K-squared = 299.4, df = 3, p-value &lt; 2.2e-16</span></span></code></pre></div>
 </div>
 <div id="scree" class="section level3 unnumbered">
 <h3><code>Scree()</code></h3>
-</div>
-<div id="fa" class="section level3 unnumbered">
-<h3><code>Fa()</code></h3>
+<p>Achtung! Ungewichtete Analyse.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+scree(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)])
+
+# Mit Pipe
+
+datensatz %&gt;% 
+  select(variable1, variable2, variable3) %&gt;% 
+  scree()
+</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="multivariate-datenanalyse.html#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scree-Plot</span></span>
+<span id="cb185-2"><a href="multivariate-datenanalyse.html#cb185-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb185-3"><a href="multivariate-datenanalyse.html#cb185-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb185-4"><a href="multivariate-datenanalyse.html#cb185-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01) <span class="sc">%&gt;%</span> </span>
+<span id="cb185-5"><a href="multivariate-datenanalyse.html#cb185-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scree</span>() </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-130-1.png" width="672" /></p>
 </div>
 <div id="principal" class="section level3 unnumbered">
 <h3><code>Principal()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+principal(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)], 
+          weight = datensatz$gewicht, nfactors = 1, rotate = &quot;varimax&quot;,
+          use = &quot;pairwise&quot;, scores = T)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="multivariate-datenanalyse.html#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
+<span id="cb187-2"><a href="multivariate-datenanalyse.html#cb187-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-3"><a href="multivariate-datenanalyse.html#cb187-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb187-4"><a href="multivariate-datenanalyse.html#cb187-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
+<span id="cb187-5"><a href="multivariate-datenanalyse.html#cb187-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-6"><a href="multivariate-datenanalyse.html#cb187-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Hauptkomponentenanalyse</span></span>
+<span id="cb187-7"><a href="multivariate-datenanalyse.html#cb187-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-8"><a href="multivariate-datenanalyse.html#cb187-8" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">principal</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew, <span class="at">nfactors =</span> <span class="dv">2</span>, <span class="at">rotate =</span> <span class="st">&quot;varimax&quot;</span>,</span>
+<span id="cb187-9"><a href="multivariate-datenanalyse.html#cb187-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">use =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb187-10"><a href="multivariate-datenanalyse.html#cb187-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-11"><a href="multivariate-datenanalyse.html#cb187-11" aria-hidden="true" tabindex="-1"></a>pca</span>
+<span id="cb187-12"><a href="multivariate-datenanalyse.html#cb187-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Principal Components Analysis</span></span>
+<span id="cb187-13"><a href="multivariate-datenanalyse.html#cb187-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call: principal(r = ds[1:4], nfactors = 2, rotate = &quot;varimax&quot;, use = &quot;pairwise&quot;, </span></span>
+<span id="cb187-14"><a href="multivariate-datenanalyse.html#cb187-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     weight = ds$wghtpew)</span></span>
+<span id="cb187-15"><a href="multivariate-datenanalyse.html#cb187-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Standardized loadings (pattern matrix) based upon correlation matrix</span></span>
+<span id="cb187-16"><a href="multivariate-datenanalyse.html#cb187-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       RC1   RC2   h2    u2 com</span></span>
+<span id="cb187-17"><a href="multivariate-datenanalyse.html#cb187-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 0.79  0.17 0.65 0.351 1.1</span></span>
+<span id="cb187-18"><a href="multivariate-datenanalyse.html#cb187-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.86  0.00 0.73 0.268 1.0</span></span>
+<span id="cb187-19"><a href="multivariate-datenanalyse.html#cb187-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.74 -0.31 0.65 0.355 1.4</span></span>
+<span id="cb187-20"><a href="multivariate-datenanalyse.html#cb187-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.00  0.96 0.93 0.071 1.0</span></span>
+<span id="cb187-21"><a href="multivariate-datenanalyse.html#cb187-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-22"><a href="multivariate-datenanalyse.html#cb187-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                        RC1  RC2</span></span>
+<span id="cb187-23"><a href="multivariate-datenanalyse.html#cb187-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SS loadings           1.90 1.06</span></span>
+<span id="cb187-24"><a href="multivariate-datenanalyse.html#cb187-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Var        0.47 0.26</span></span>
+<span id="cb187-25"><a href="multivariate-datenanalyse.html#cb187-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Var        0.47 0.74</span></span>
+<span id="cb187-26"><a href="multivariate-datenanalyse.html#cb187-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Explained  0.64 0.36</span></span>
+<span id="cb187-27"><a href="multivariate-datenanalyse.html#cb187-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Proportion 0.64 1.00</span></span>
+<span id="cb187-28"><a href="multivariate-datenanalyse.html#cb187-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-29"><a href="multivariate-datenanalyse.html#cb187-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mean item complexity =  1.1</span></span>
+<span id="cb187-30"><a href="multivariate-datenanalyse.html#cb187-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test of the hypothesis that 2 components are sufficient.</span></span>
+<span id="cb187-31"><a href="multivariate-datenanalyse.html#cb187-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-32"><a href="multivariate-datenanalyse.html#cb187-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The root mean square of the residuals (RMSR) is  0.14 </span></span>
+<span id="cb187-33"><a href="multivariate-datenanalyse.html#cb187-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  with the empirical chi square  813.23  with prob &lt;  NA </span></span>
+<span id="cb187-34"><a href="multivariate-datenanalyse.html#cb187-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-35"><a href="multivariate-datenanalyse.html#cb187-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Fit based upon off diagonal values = 0.82</span></span>
+<span id="cb187-36"><a href="multivariate-datenanalyse.html#cb187-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-37"><a href="multivariate-datenanalyse.html#cb187-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Ladungen (Übersichtlicher)</span></span>
+<span id="cb187-38"><a href="multivariate-datenanalyse.html#cb187-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-39"><a href="multivariate-datenanalyse.html#cb187-39" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pca<span class="sc">$</span>loadings, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">cutoff =</span> .<span class="dv">2</span>)</span>
+<span id="cb187-40"><a href="multivariate-datenanalyse.html#cb187-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-41"><a href="multivariate-datenanalyse.html#cb187-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loadings:</span></span>
+<span id="cb187-42"><a href="multivariate-datenanalyse.html#cb187-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      RC1   RC2  </span></span>
+<span id="cb187-43"><a href="multivariate-datenanalyse.html#cb187-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.79      </span></span>
+<span id="cb187-44"><a href="multivariate-datenanalyse.html#cb187-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20  0.86      </span></span>
+<span id="cb187-45"><a href="multivariate-datenanalyse.html#cb187-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  0.74 -0.31</span></span>
+<span id="cb187-46"><a href="multivariate-datenanalyse.html#cb187-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01        0.96</span></span>
+<span id="cb187-47"><a href="multivariate-datenanalyse.html#cb187-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb187-48"><a href="multivariate-datenanalyse.html#cb187-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 RC1  RC2</span></span>
+<span id="cb187-49"><a href="multivariate-datenanalyse.html#cb187-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SS loadings    1.90 1.06</span></span>
+<span id="cb187-50"><a href="multivariate-datenanalyse.html#cb187-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Var 0.47 0.26</span></span>
+<span id="cb187-51"><a href="multivariate-datenanalyse.html#cb187-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Var 0.47 0.74</span></span></code></pre></div>
+</div>
+<div id="fa" class="section level3 unnumbered">
+<h3><code>Fa()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+fa(datensatz[c(&quot;Variable1&quot;, &quot;variable2&quot;, &quot;variable3&quot;)], 
+   weight = datensatz$gewicht, nfactors = 1, rotate = &quot;varimax&quot;, 
+   use = &quot;pairwise&quot;, scores = &quot;regression&quot;)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="multivariate-datenanalyse.html#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Datensatz erstellen</span></span>
+<span id="cb189-2"><a href="multivariate-datenanalyse.html#cb189-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-3"><a href="multivariate-datenanalyse.html#cb189-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb189-4"><a href="multivariate-datenanalyse.html#cb189-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19<span class="sc">:</span>im21, id01, wghtpew)</span>
+<span id="cb189-5"><a href="multivariate-datenanalyse.html#cb189-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-6"><a href="multivariate-datenanalyse.html#cb189-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Hauptkomponentenanalyse</span></span>
+<span id="cb189-7"><a href="multivariate-datenanalyse.html#cb189-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-8"><a href="multivariate-datenanalyse.html#cb189-8" aria-hidden="true" tabindex="-1"></a>fa <span class="ot">&lt;-</span> <span class="fu">fa</span>(ds[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">weight =</span> ds<span class="sc">$</span>wghtpew, <span class="at">nfactors =</span> <span class="dv">2</span>, <span class="at">rotate =</span> <span class="st">&quot;varimax&quot;</span>,</span>
+<span id="cb189-9"><a href="multivariate-datenanalyse.html#cb189-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">use =</span> <span class="st">&quot;pairwise&quot;</span>, <span class="at">scores =</span> <span class="st">&quot;regression&quot;</span>)</span>
+<span id="cb189-10"><a href="multivariate-datenanalyse.html#cb189-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-11"><a href="multivariate-datenanalyse.html#cb189-11" aria-hidden="true" tabindex="-1"></a>fa</span>
+<span id="cb189-12"><a href="multivariate-datenanalyse.html#cb189-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Factor Analysis using method =  minres</span></span>
+<span id="cb189-13"><a href="multivariate-datenanalyse.html#cb189-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call: fa(r = ds[1:4], nfactors = 2, rotate = &quot;varimax&quot;, scores = &quot;regression&quot;, </span></span>
+<span id="cb189-14"><a href="multivariate-datenanalyse.html#cb189-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     use = &quot;pairwise&quot;, weight = ds$wghtpew)</span></span>
+<span id="cb189-15"><a href="multivariate-datenanalyse.html#cb189-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Standardized loadings (pattern matrix) based upon correlation matrix</span></span>
+<span id="cb189-16"><a href="multivariate-datenanalyse.html#cb189-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       MR1   MR2   h2   u2 com</span></span>
+<span id="cb189-17"><a href="multivariate-datenanalyse.html#cb189-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 0.64  0.10 0.42 0.58 1.0</span></span>
+<span id="cb189-18"><a href="multivariate-datenanalyse.html#cb189-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20 0.81 -0.04 0.65 0.35 1.0</span></span>
+<span id="cb189-19"><a href="multivariate-datenanalyse.html#cb189-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21 0.59 -0.37 0.49 0.51 1.7</span></span>
+<span id="cb189-20"><a href="multivariate-datenanalyse.html#cb189-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01 0.00  0.42 0.18 0.82 1.0</span></span>
+<span id="cb189-21"><a href="multivariate-datenanalyse.html#cb189-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-22"><a href="multivariate-datenanalyse.html#cb189-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                        MR1  MR2</span></span>
+<span id="cb189-23"><a href="multivariate-datenanalyse.html#cb189-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SS loadings           1.41 0.33</span></span>
+<span id="cb189-24"><a href="multivariate-datenanalyse.html#cb189-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Var        0.35 0.08</span></span>
+<span id="cb189-25"><a href="multivariate-datenanalyse.html#cb189-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Var        0.35 0.43</span></span>
+<span id="cb189-26"><a href="multivariate-datenanalyse.html#cb189-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Explained  0.81 0.19</span></span>
+<span id="cb189-27"><a href="multivariate-datenanalyse.html#cb189-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Proportion 0.81 1.00</span></span>
+<span id="cb189-28"><a href="multivariate-datenanalyse.html#cb189-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-29"><a href="multivariate-datenanalyse.html#cb189-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mean item complexity =  1.2</span></span>
+<span id="cb189-30"><a href="multivariate-datenanalyse.html#cb189-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test of the hypothesis that 2 factors are sufficient.</span></span>
+<span id="cb189-31"><a href="multivariate-datenanalyse.html#cb189-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-32"><a href="multivariate-datenanalyse.html#cb189-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The degrees of freedom for the null model are  6  and the objective function was  0.63 with Chi Square of  2202.75</span></span>
+<span id="cb189-33"><a href="multivariate-datenanalyse.html#cb189-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The degrees of freedom for the model are -1  and the objective function was  0 </span></span>
+<span id="cb189-34"><a href="multivariate-datenanalyse.html#cb189-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-35"><a href="multivariate-datenanalyse.html#cb189-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The root mean square of the residuals (RMSR) is  0 </span></span>
+<span id="cb189-36"><a href="multivariate-datenanalyse.html#cb189-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The df corrected root mean square of the residuals is  NA </span></span>
+<span id="cb189-37"><a href="multivariate-datenanalyse.html#cb189-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-38"><a href="multivariate-datenanalyse.html#cb189-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The harmonic number of observations is  3341 with the empirical chi square  0  with prob &lt;  NA </span></span>
+<span id="cb189-39"><a href="multivariate-datenanalyse.html#cb189-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The total number of observations was  3477  with Likelihood Chi Square =  0  with prob &lt;  NA </span></span>
+<span id="cb189-40"><a href="multivariate-datenanalyse.html#cb189-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-41"><a href="multivariate-datenanalyse.html#cb189-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Tucker Lewis Index of factoring reliability =  1.003</span></span>
+<span id="cb189-42"><a href="multivariate-datenanalyse.html#cb189-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Fit based upon off diagonal values = 1</span></span>
+<span id="cb189-43"><a href="multivariate-datenanalyse.html#cb189-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Measures of factor score adequacy             </span></span>
+<span id="cb189-44"><a href="multivariate-datenanalyse.html#cb189-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                    MR1   MR2</span></span>
+<span id="cb189-45"><a href="multivariate-datenanalyse.html#cb189-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Correlation of (regression) scores with factors   0.87  0.56</span></span>
+<span id="cb189-46"><a href="multivariate-datenanalyse.html#cb189-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Multiple R square of scores with factors          0.76  0.32</span></span>
+<span id="cb189-47"><a href="multivariate-datenanalyse.html#cb189-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Minimum correlation of possible factor scores     0.52 -0.36</span></span>
+<span id="cb189-48"><a href="multivariate-datenanalyse.html#cb189-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-49"><a href="multivariate-datenanalyse.html#cb189-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Ladungen (Übersichtlicher)</span></span>
+<span id="cb189-50"><a href="multivariate-datenanalyse.html#cb189-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-51"><a href="multivariate-datenanalyse.html#cb189-51" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fa<span class="sc">$</span>loadings, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">cutoff =</span> .<span class="dv">2</span>)</span>
+<span id="cb189-52"><a href="multivariate-datenanalyse.html#cb189-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-53"><a href="multivariate-datenanalyse.html#cb189-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loadings:</span></span>
+<span id="cb189-54"><a href="multivariate-datenanalyse.html#cb189-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      MR1   MR2  </span></span>
+<span id="cb189-55"><a href="multivariate-datenanalyse.html#cb189-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19  0.64      </span></span>
+<span id="cb189-56"><a href="multivariate-datenanalyse.html#cb189-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im20  0.81      </span></span>
+<span id="cb189-57"><a href="multivariate-datenanalyse.html#cb189-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im21  0.59 -0.37</span></span>
+<span id="cb189-58"><a href="multivariate-datenanalyse.html#cb189-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; id01        0.42</span></span>
+<span id="cb189-59"><a href="multivariate-datenanalyse.html#cb189-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb189-60"><a href="multivariate-datenanalyse.html#cb189-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 MR1  MR2</span></span>
+<span id="cb189-61"><a href="multivariate-datenanalyse.html#cb189-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; SS loadings    1.41 0.33</span></span>
+<span id="cb189-62"><a href="multivariate-datenanalyse.html#cb189-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Proportion Var 0.35 0.08</span></span>
+<span id="cb189-63"><a href="multivariate-datenanalyse.html#cb189-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cumulative Var 0.35 0.43</span></span></code></pre></div>
+</div>
+<div id="fa_diagram" class="section level3 unnumbered">
+<h3><code>Fa_diagram()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+fa.diagram(modell)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="multivariate-datenanalyse.html#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA</span></span>
+<span id="cb191-2"><a href="multivariate-datenanalyse.html#cb191-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-3"><a href="multivariate-datenanalyse.html#cb191-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.diagram</span>(pca)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-133-1.png" width="672" /></p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="multivariate-datenanalyse.html#cb192-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-2"><a href="multivariate-datenanalyse.html#cb192-2" aria-hidden="true" tabindex="-1"></a><span class="co"># FA</span></span>
+<span id="cb192-3"><a href="multivariate-datenanalyse.html#cb192-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb192-4"><a href="multivariate-datenanalyse.html#cb192-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.diagram</span>(fa)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-133-2.png" width="672" /></p>
 </div>
 </div>
 <div id="regressionsanalyse" class="section level2" number="5.5">

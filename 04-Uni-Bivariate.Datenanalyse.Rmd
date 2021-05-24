@@ -11,10 +11,10 @@
 | :------------- | :------------------ | :------------------------ |
 | sjmisc         | frq()               | Häufigkeitstabelle |
 | sjmisc         | descr()             | Despriptive Statistiken ausgeben |
-| sjmisc         | weighted_mean()     | Mittelwert berechnen |
-| sjmisc         | weighted_median()   | Median berechnen |
-| sjmisc         | weighted_sd()       | Standardabweichung berechnen |
-| sjmisc         | weighted_se()       | Standardfehler berechnen |
+| sjstats        | weighted_mean()     | Mittelwert berechnen |
+| sjstats        | weighted_median()   | Median berechnen |
+| sjstats        | weighted_sd()       | Standardabweichung berechnen |
+| sjstats        | weighted_se()       | Standardfehler berechnen |
 | weights        | wtd.quantile()      | Quantile berechnen |
 
 ### `Frq()` {-}
@@ -181,7 +181,8 @@ datensatz %$%
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Mittelwert, Standardabweichung und Standardfehler Leistungprinzip nach Ost-West (Gruppen)
+# Mittelwert, Standardabweichung und Standardfehler 
+# Leistungprinzip nach Ost-West (Gruppen)
 
 ds <- allbus2018 %>% 
   select(eastwest, im19, wghtpew) %>% 
@@ -193,7 +194,8 @@ ds <- allbus2018 %>%
 
 ds
 
-# Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall Leistungprinzip nach Ost-West (Gruppen)
+# Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall 
+# Leistungprinzip nach Ost-West (Gruppen)
 
 ds <- allbus2018 %>% 
   group_by(eastwest) %>% 
@@ -243,7 +245,12 @@ allbus2018 %$%
 
 ## Bivariate Statistiken
 
-Tabelle mit Funktionen
+| Packet         | Funktion                | Verwendung                |
+| :------------- | :---------------------- | :------------------------ |
+| dscr           | crosstab()              | Kreuztabellen |
+| sjstats        | weighted_chisqtest()    | Chi-Quadrat-Test |
+| sjstats        | crosstable_statistics() | Zusammenhangsmaße |
+| sjmisc         | weighted_correlation()  | Pearson`s r |
 
 ### `Crosstab()` {-}
 
@@ -279,42 +286,57 @@ datensatz %$%
 **Beispielcode:**
 
 ```{r echo=T, collapse=T, comment="#>"}
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - Absolute Häufigkeit
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# Absolute Häufigkeit
 # ohne Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, plot = F)
 
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Spalten
 # ohne Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, prop.c = T, plot = F)
 
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Zeilen
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Zeilen
 # ohne Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, prop.r = T, plot = F)
 
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Gesamthäufigkeit
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Gesamthäufigkeit
 # ohne Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, prop.t = T, plot = F)
 
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit mit Chi-Quadrat nach Zellen
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit mit Chi-Quadrat nach Zellen
 # ohne Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, prop.chisq = T, plot = F)
 
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Spalten
 # mit Chi-Quadrat-Test 
 # mit Grafik
 
 allbus2018 %$% 
   crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
+
+# Grafik
+```
+
+```{r, echo=F}
+x <- allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
+
+plot(x)
 ```
 
 ### `Weighted_chisqtest()` {-}
@@ -360,7 +382,7 @@ allbus2018 %>%
 
 **Beispielcode:**
 
-```{r, echo=T, collapse=T, comment="#>"}
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
 # Phi Geschlecht (sex) und Ost West (eastwest)
 
 allbus2018 %>% 
@@ -384,7 +406,8 @@ allbus2018 %>%
 ```{}
 # Ohne Pipe
 
-weighted_correlation(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+weighted_correlation(datensatz$variable1, datensatz$variable2, 
+                     weights = datensatz$gewicht)
 
 # Mit Pipe
 
@@ -395,13 +418,22 @@ datensatz %>%
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Pearsons r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+# Pearson`s r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
 
 allbus2018 %>% 
   weighted_correlation(im19, im20, weights = wghtpew)
 ```
 
 ## Grafiken
+
+| Packet         | Funktion           | Verwendung                |
+| :------------- | :----------------- | :------------------------ |
+| sjplot         | plot_frq()         | Grafiken zu univariaten Häufigkeitsverteilungen |
+| sjplot         | plot_likert()      | Grafiken zu univariaten Häufigkeitsverteilungen bei Likert-Items |
+| sjplot         | plot_stackfrq()    | Grafiken als univariate Balkenschichtungsdiagramme |
+| sjplot         | plot_grpfrq()      | Grafiken zu univariaten Häufigkeitsverteilungen nach Gruppen |
+| sjplot         | plot_xtab()        | Grafiken als Kreuztabellendiagramme |
+ 
 
 ### `Plot_frq()` {-}
 
@@ -423,24 +455,25 @@ datensatz %$%
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Garfik zur Häufigkeitsverteilung Bildung (educ)
+# Grafik zur Häufigkeitsverteilung Bildung (educ)
 
 allbus2018 %$% 
-  plot_frq(educ, weight.by = wghtpew, coord.flip = T, hjust = "left", type = "dot", show.ci = T,
-           expand.grid = T, vjust = "bottom", sort.frq = "desc")
-```
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Garfik zur Häufigkeitsverteilung Alter (age) 
-# mit Normalverteilungskurve, Mittelwert und Standardabweichung
-
-allbus2018 %$% 
-  plot_frq(age, weight.by = wghtpew, type = "h", show.mean = TRUE, show.mean.val = TRUE,
-        normal.curve = TRUE, show.sd = TRUE, normal.curve.color = "black")
+  plot_frq(educ, weight.by = wghtpew, coord.flip = T, hjust = "left", type = "dot",
+           show.ci = T, expand.grid = T, vjust = "bottom", sort.frq = "desc")
 ```
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Grafik Alter
+# Grafik zur Häufigkeitsverteilung Alter (age) 
+# mit Normalverteilungskurve, Mittelwert und Standardabweichung
+
+allbus2018 %$% 
+  plot_frq(age, weight.by = wghtpew, type = "h", show.mean = TRUE, 
+           show.mean.val = TRUE, normal.curve = TRUE, show.sd = TRUE, 
+           normal.curve.color = "black", geom.size = .3, xlim = c(15, 100))
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Grafik zur Häufigkeitsverteilung Alter (age) 
 
 allbus2018 %$% 
   plot_frq(age, weight.by = wghtpew, type = "violin", show.values = F)
@@ -462,17 +495,18 @@ plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs
+# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items
 
-plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), wrap.legend.labels = 11,
-            wrap.labels = 12, values = "sum.inside", show.prc.sign = T, weight.by = allbus2018$wghtpew)
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), 
+            wrap.legend.labels = 11, wrap.labels = 12, values = "sum.inside", 
+            show.prc.sign = T, weight.by = allbus2018$wghtpew)
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs nach Komponenten
-# Farbauswahl mit RColorBrewer::display.brewer.all()
+# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items nach Komponenten
 
-plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2), grid.range = c(1.1, 1.1), values = "sum.outside",
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2),
+            grid.range = c(1.1, 1.1), values = "sum.outside",
             show.prc.sign = T, weight.by = allbus2018$wghtpew, legend.pos = "none")
 ```
 
@@ -492,10 +526,11 @@ plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Verteilung der Ausprägungsmerkmalen 
+# Verteilung von Ausprägungsmerkmalen in einem Balkenschichtungsdiagramm 
 # Farbauswahl mit RColorBrewer::display.brewer.all()
 
-plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")], weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
+plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")],
+              weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
               wrap.labels = 12, wrap.legend.labels = 11)
 ```
 
@@ -506,40 +541,47 @@ plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")], weight.by = allbus2
 ```{}
 # Ohne Pipe
 
+plot_frq(datensatz$variable1, datensatz$gruppenvariable, weight.by = datensatz$gewicht)
 
 # Mit Pipe
+# Achtung! %$% Operator
 
+datensatz %$%
+  plot_frq(variable1, gruppenvariable, weight.by = gewicht)
 ```
 
 **Beispielcode:**
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Alter nach Geschlecht und Statistiken
+# Verteilung Alter (age) nach Geschlecht (sex) und Statistiken
 
 allbus2018 %$% 
-  plot_grpfrq(age, sex, weight.by = wghtpew, show.values = F, type = "line", show.summary = T, summary.pos = 1)
+  plot_grpfrq(age, sex, weight.by = wghtpew, show.values = F, type = "line",
+              show.summary = T, summary.pos = 1)
 ```
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip nach Schichtzugehörigkeit (id02) 
+# Verteilung Leistungsprinzip (im19) nach Schichtzugehörigkeit (id02) 
 
 allbus2018 %$% 
   plot_grpfrq(im19, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
 ```
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip (im19) nach Geschlecht und Statistiken
+# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Statistiken
 
 allbus2018 %$% 
-  plot_grpfrq(im19, sex, weight.by = wghtpew, show.values = T, type = "bar", show.summary = T, summary.pos = "1", show.axis.values = T, show.prc = T, ylim = c(0, 850))
+  plot_grpfrq(im19, sex, weight.by = wghtpew, type = "bar", show.summary = T,
+              summary.pos = "1", ylim = c(0, 850))
 ```
 
 ```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip (im19) nach Geschlecht und Ost West
+# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Ost West (eastwest)
 # und Statistiken
 
 allbus2018 %$% 
-  plot_grpfrq(im19, sex, intr.var = eastwest, weight.by = wghtpew, type = "violin", show.summary = T, summary.pos = "1")
+  plot_grpfrq(im19, sex, intr.var = eastwest, weight.by = wghtpew, 
+              type = "violin", show.summary = T, summary.pos = "1")
 ```
 
 ### `Plot_xtab()` {-}
@@ -549,37 +591,90 @@ allbus2018 %$%
 ```{}
 # Ohne Pipe
 
+plot_xtab(datensatz$variable1, datensatz$variable2, weight.by = datensatz$gewicht)
 
 # Mit Pipe
+# Achtung! %$% Operator
 
+datensatz %$%
+  plot_xtab(variable1, variable2, weight.by = gewicht)
 ```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
-# Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West
+# Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West (eastwest)
 # und Statistiken
 
 allbus2018 %$% 
-  plot_xtab(im21, eastwest, weight.by = wghtpew, type = "line", show.total = F, show.n = F,
-            show.summary = T, summary.pos = "1")
+  plot_xtab(im21, eastwest, weight.by = wghtpew, type = "line", show.total = F, 
+            show.n = F, show.summary = T, summary.pos = "1")
 ```
 
-### `Save_plot()` {-}
+### `Grid.arrange()` {-}
+
+```{}
+library(gridExtra)
+```
+```{r, include=FALSE}
+library(gridExtra)
+```
 
 **Syntax:** 
 
 ```{}
 # Ohne Pipe
 
+grid.arrange(arrangeGrob(abbildung1, abbildung2))
 
 # Mit Pipe
+# Nicht gut zu handhaben!
+```
 
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Alter (age) nach Geschlecht (sex) zwischen Ost West (eastwest)
+
+p1 <- allbus2018 %>% 
+  filter(eastwest == 1) %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
+              summary.pos = "1", title = "ALTER nach GESCHLECHT - WEST",
+              geom.colors = "Blues")
+
+p2 <- allbus2018 %>% 
+  filter(eastwest == 2) %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
+              summary.pos = "1", title = "ALTER nach GESCHLECHT - OST",
+              geom.colors = "Greens")
+  
+
+# --------
+
+pp1 <- grid.arrange(arrangeGrob(p1, p2, nrow = 1))
+
+pp1
+```
+
+
+### `Ggsave()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+ggsave("Grafik.png", plot = last_plot(), dpi = 300)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
 ```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
+
+ggsave("grid.plot.png", plot = pp1, dpi = 300)
 
 ```
 

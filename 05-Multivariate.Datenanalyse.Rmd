@@ -4,10 +4,28 @@
 
 ### `Wtd.cor()` {-}
 
+```{}
+library(weights)
+library(corrplot)
+```
+
 ```{r, include=F}
 library(weights)
 library(corrplot)
 ```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+wtd.cor(datensatz[c("Variable1", "variable2", "variable3")], weight = datensatz$gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Datensatz erstellen
@@ -33,7 +51,11 @@ corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle",
 
 ## Mittelwertvergleich (unabhängig)
 
-Tablle mit Funktionen
+| Packet         | Funktion                | Verwendung                |
+| :------------- | :---------------------- | :------------------------ |
+| sjstats        | weighted_ttest()        | T-Test |
+| sjstats        | grpmean()               | Einfaktorielle ANOVA |
+| sjstats        | weighted_mannwhitney()  | Mann-Whitney-Test / Kruskall-Wallis-Test |
 
 ### `Weighted_ttest()` {-}
 
@@ -42,32 +64,279 @@ Tablle mit Funktionen
 ```{}
 # Ohne Pipe
 
+weighted_ttest(variable1 ~ gruppenvariable + gewicht, datensatz)
 
 # Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# T-Test zu Leistungsprinzip (im19) zwischen Geschlecht (sex)
+
+weighted_ttest(im19 ~ sex + wghtpew, allbus2018)
+```
+
+### `Grpmean()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+grpmean(datensatz$variable1, datensatz$gruppenvariable, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  grpmean(variable1, gruppenvariable, gewicht)
 
 ```
 
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
+# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ)
+# P-Wert in Relation zu absolutem Mittelwert
 
+allbus2018 %>% 
+  grpmean(im19, educ, weights = wghtpew)
+
+# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ) 
+# nach Geschlecht (sex)
+# P-Wert in Relation zu absolutem Mittelwert
+
+allbus2018 %>% 
+  group_by(sex) %>% 
+  grpmean(im19, educ, weights = wghtpew)
 ```
-
-### `Means_by_group()` {-}
 
 ### `Weighted_mannwhitney()` {-}
 
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_mannwhitney(variable1 ~ gruppenvariable + gewicht, datensatz)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mann-Whitney-Test Leistungsprinzip (im19) nach Geschlecht (sex)
+
+weighted_mannwhitney(im19 ~ sex + wghtpew, allbus2018)
+
+# Kruskall-Wallis-Test Leistungsprinzip (im19) nach Geschlecht (sex)
+
+weighted_mannwhitney(im19 ~ educ + wghtpew, allbus2018)
+```
+
 ## Faktoranalyse und Hauptkomponentenanalyse
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| psych        | KMO()                   | Kaiser-Meyer-Olkin-Kriterium (MSA) |
+| psych        | bartlett.test()         | Bartlett-Test |
+| psych        | scree()                 | Scree-Test |
+| psych        | principal()             | Hauptkomponentenanalyse |
+| psych        | fa()                    | Faktoranalyse |
+
+```{}
+library(psych)
+```
+```{r, include=F}
+library(psych)
+```
 
 ### `KMO()` {-}
 
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+KMO(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  KMO()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# KMO/MSA 
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  KMO() 
+  
+```
+
 ### `Bartlett.test()` {-}
+
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+bartlett.test(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  bartlett.test()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Bartlett-Test 
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  bartlett.test() 
+  
+```
 
 ### `Scree()` {-}
 
-### `Fa()` {-}
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+scree(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  scree()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Scree-Plot
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  scree() 
+```
 
 ### `Principal()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+principal(datensatz[c("Variable1", "variable2", "variable3")], 
+          weight = datensatz$gewicht, nfactors = 1, rotate = "varimax",
+          use = "pairwise", scores = T)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+# Hauptkomponentenanalyse
+
+pca <- principal(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
+          use = "pairwise")
+
+pca
+
+# Ladungen (Übersichtlicher)
+
+print(pca$loadings, digits = 2, cutoff = .2)
+```
+
+### `Fa()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+fa(datensatz[c("Variable1", "variable2", "variable3")], 
+   weight = datensatz$gewicht, nfactors = 1, rotate = "varimax", 
+   use = "pairwise", scores = "regression")
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+# Hauptkomponentenanalyse
+
+fa <- fa(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
+         use = "pairwise", scores = "regression")
+
+fa
+
+# Ladungen (Übersichtlicher)
+
+print(fa$loadings, digits = 2, cutoff = .2)
+```
+
+### `Fa_diagram()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+fa.diagram(modell)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# PCA
+
+fa.diagram(pca)
+
+# FA
+
+fa.diagram(fa)
+```
 
 ## Regressionsanalyse
 

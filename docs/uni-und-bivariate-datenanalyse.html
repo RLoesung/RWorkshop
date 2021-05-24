@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2021-05-23" />
+<meta name="date" content="2021-05-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -266,7 +266,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_stackfrq"><code>Plot_stackfrq()</code></a></li>
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_grpfrq"><code>Plot_grpfrq()</code></a></li>
 <li><a href="uni-und-bivariate-datenanalyse.html#plot_xtab"><code>Plot_xtab()</code></a></li>
-<li><a href="uni-und-bivariate-datenanalyse.html#save_plot"><code>Save_plot()</code></a></li>
+<li><a href="uni-und-bivariate-datenanalyse.html#grid.arrange"><code>Grid.arrange()</code></a></li>
+<li><a href="uni-und-bivariate-datenanalyse.html#ggsave"><code>Ggsave()</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html"><i class="fa fa-check"></i><b>5</b> Multivariate Datenanalyse</a>
@@ -279,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.3" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#mittelwertvergleich-unabhängig"><i class="fa fa-check"></i><b>5.3</b> Mittelwertvergleich (unabhängig)</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#weighted_ttest"><code>Weighted_ttest()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#means_by_group"><code>Means_by_group()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#grpmean"><code>Grpmean()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#weighted_mannwhitney"><code>Weighted_mannwhitney()</code></a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#faktoranalyse-und-hauptkomponentenanalyse"><i class="fa fa-check"></i><b>5.4</b> Faktoranalyse und Hauptkomponentenanalyse</a>
@@ -287,8 +288,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="multivariate-datenanalyse.html#kmo"><code>KMO()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#bartlett.test"><code>Bartlett.test()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#scree"><code>Scree()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#fa"><code>Fa()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#principal"><code>Principal()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#fa"><code>Fa()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#fa_diagram"><code>Fa_diagram()</code></a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#regressionsanalyse"><i class="fa fa-check"></i><b>5.5</b> Regressionsanalyse</a>
 <ul>
@@ -353,22 +355,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td align="left">Despriptive Statistiken ausgeben</td>
 </tr>
 <tr class="odd">
-<td align="left">sjmisc</td>
+<td align="left">sjstats</td>
 <td align="left">weighted_mean()</td>
 <td align="left">Mittelwert berechnen</td>
 </tr>
 <tr class="even">
-<td align="left">sjmisc</td>
+<td align="left">sjstats</td>
 <td align="left">weighted_median()</td>
 <td align="left">Median berechnen</td>
 </tr>
 <tr class="odd">
-<td align="left">sjmisc</td>
+<td align="left">sjstats</td>
 <td align="left">weighted_sd()</td>
 <td align="left">Standardabweichung berechnen</td>
 </tr>
 <tr class="even">
-<td align="left">sjmisc</td>
+<td align="left">sjstats</td>
 <td align="left">weighted_se()</td>
 <td align="left">Standardfehler berechnen</td>
 </tr>
@@ -559,41 +561,43 @@ weighted_se(datensatz$variable1, weights = datensatz$gewicht)
 datensatz %$% 
   weighted_se(variable1, weights = gewicht)</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="uni-und-bivariate-datenanalyse.html#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mittelwert, Standardabweichung und Standardfehler Leistungprinzip nach Ost-West (Gruppen)</span></span>
-<span id="cb135-2"><a href="uni-und-bivariate-datenanalyse.html#cb135-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb135-3"><a href="uni-und-bivariate-datenanalyse.html#cb135-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb135-4"><a href="uni-und-bivariate-datenanalyse.html#cb135-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(eastwest, im19, wghtpew) <span class="sc">%&gt;%</span> </span>
-<span id="cb135-5"><a href="uni-und-bivariate-datenanalyse.html#cb135-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">%&gt;%</span> </span>
-<span id="cb135-6"><a href="uni-und-bivariate-datenanalyse.html#cb135-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">leistungMittelOstWest =</span> <span class="fu">weighted_mean</span>(im19, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb135-7"><a href="uni-und-bivariate-datenanalyse.html#cb135-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSDOstWest =</span> <span class="fu">weighted_sd</span>(im19, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb135-8"><a href="uni-und-bivariate-datenanalyse.html#cb135-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSEOstWest =</span> <span class="fu">weighted_se</span>(im19, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
-<span id="cb135-9"><a href="uni-und-bivariate-datenanalyse.html#cb135-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb135-10"><a href="uni-und-bivariate-datenanalyse.html#cb135-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb135-11"><a href="uni-und-bivariate-datenanalyse.html#cb135-11" aria-hidden="true" tabindex="-1"></a>ds</span>
-<span id="cb135-12"><a href="uni-und-bivariate-datenanalyse.html#cb135-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 x 4</span></span>
-<span id="cb135-13"><a href="uni-und-bivariate-datenanalyse.html#cb135-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   eastwest leistungMittelOstWest leistungSDOstWest leistungSEOstWest</span></span>
-<span id="cb135-14"><a href="uni-und-bivariate-datenanalyse.html#cb135-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      &lt;dbl&gt;                 &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;</span></span>
-<span id="cb135-15"><a href="uni-und-bivariate-datenanalyse.html#cb135-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        1                  2.46             0.923            0.0192</span></span>
-<span id="cb135-16"><a href="uni-und-bivariate-datenanalyse.html#cb135-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        2                  2.60             0.985            0.0302</span></span>
-<span id="cb135-17"><a href="uni-und-bivariate-datenanalyse.html#cb135-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb135-18"><a href="uni-und-bivariate-datenanalyse.html#cb135-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall Leistungprinzip nach Ost-West (Gruppen)</span></span>
-<span id="cb135-19"><a href="uni-und-bivariate-datenanalyse.html#cb135-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb135-20"><a href="uni-und-bivariate-datenanalyse.html#cb135-20" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb135-21"><a href="uni-und-bivariate-datenanalyse.html#cb135-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">%&gt;%</span> </span>
-<span id="cb135-22"><a href="uni-und-bivariate-datenanalyse.html#cb135-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">leistungMittelOstWest =</span> <span class="fu">weighted_mean</span>(im19, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb135-23"><a href="uni-und-bivariate-datenanalyse.html#cb135-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSDOstWest =</span> <span class="fu">weighted_sd</span>(im19, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb135-24"><a href="uni-und-bivariate-datenanalyse.html#cb135-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSEOstWest =</span> <span class="fu">weighted_se</span>(im19, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb135-25"><a href="uni-und-bivariate-datenanalyse.html#cb135-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">CI.95.down =</span> leistungMittelOstWest<span class="fl">-1.96</span><span class="sc">*</span>(leistungSDOstWest<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>())),</span>
-<span id="cb135-26"><a href="uni-und-bivariate-datenanalyse.html#cb135-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">CI.95.up =</span> leistungMittelOstWest<span class="fl">+1.96</span><span class="sc">*</span>(leistungSDOstWest<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()))) <span class="sc">%&gt;%</span> </span>
-<span id="cb135-27"><a href="uni-und-bivariate-datenanalyse.html#cb135-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb135-28"><a href="uni-und-bivariate-datenanalyse.html#cb135-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb135-29"><a href="uni-und-bivariate-datenanalyse.html#cb135-29" aria-hidden="true" tabindex="-1"></a>ds</span>
-<span id="cb135-30"><a href="uni-und-bivariate-datenanalyse.html#cb135-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 x 6</span></span>
-<span id="cb135-31"><a href="uni-und-bivariate-datenanalyse.html#cb135-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   eastwest leistungMittelOstWest leistungSDOstWest leistungSEOstWest CI.95.down</span></span>
-<span id="cb135-32"><a href="uni-und-bivariate-datenanalyse.html#cb135-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      &lt;dbl&gt;                 &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;      &lt;dbl&gt;</span></span>
-<span id="cb135-33"><a href="uni-und-bivariate-datenanalyse.html#cb135-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        1                  2.46             0.923            0.0192       2.43</span></span>
-<span id="cb135-34"><a href="uni-und-bivariate-datenanalyse.html#cb135-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        2                  2.60             0.985            0.0302       2.55</span></span>
-<span id="cb135-35"><a href="uni-und-bivariate-datenanalyse.html#cb135-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 1 more variable: CI.95.up &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="uni-und-bivariate-datenanalyse.html#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mittelwert, Standardabweichung und Standardfehler </span></span>
+<span id="cb135-2"><a href="uni-und-bivariate-datenanalyse.html#cb135-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Leistungprinzip nach Ost-West (Gruppen)</span></span>
+<span id="cb135-3"><a href="uni-und-bivariate-datenanalyse.html#cb135-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb135-4"><a href="uni-und-bivariate-datenanalyse.html#cb135-4" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb135-5"><a href="uni-und-bivariate-datenanalyse.html#cb135-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(eastwest, im19, wghtpew) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-6"><a href="uni-und-bivariate-datenanalyse.html#cb135-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-7"><a href="uni-und-bivariate-datenanalyse.html#cb135-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">leistungMittelOstWest =</span> <span class="fu">weighted_mean</span>(im19, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb135-8"><a href="uni-und-bivariate-datenanalyse.html#cb135-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSDOstWest =</span> <span class="fu">weighted_sd</span>(im19, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb135-9"><a href="uni-und-bivariate-datenanalyse.html#cb135-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSEOstWest =</span> <span class="fu">weighted_se</span>(im19, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-10"><a href="uni-und-bivariate-datenanalyse.html#cb135-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb135-11"><a href="uni-und-bivariate-datenanalyse.html#cb135-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb135-12"><a href="uni-und-bivariate-datenanalyse.html#cb135-12" aria-hidden="true" tabindex="-1"></a>ds</span>
+<span id="cb135-13"><a href="uni-und-bivariate-datenanalyse.html#cb135-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 x 4</span></span>
+<span id="cb135-14"><a href="uni-und-bivariate-datenanalyse.html#cb135-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   eastwest leistungMittelOstWest leistungSDOstWest leistungSEOstWest</span></span>
+<span id="cb135-15"><a href="uni-und-bivariate-datenanalyse.html#cb135-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      &lt;dbl&gt;                 &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span id="cb135-16"><a href="uni-und-bivariate-datenanalyse.html#cb135-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        1                  2.46             0.923            0.0192</span></span>
+<span id="cb135-17"><a href="uni-und-bivariate-datenanalyse.html#cb135-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        2                  2.60             0.985            0.0302</span></span>
+<span id="cb135-18"><a href="uni-und-bivariate-datenanalyse.html#cb135-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb135-19"><a href="uni-und-bivariate-datenanalyse.html#cb135-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall </span></span>
+<span id="cb135-20"><a href="uni-und-bivariate-datenanalyse.html#cb135-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Leistungprinzip nach Ost-West (Gruppen)</span></span>
+<span id="cb135-21"><a href="uni-und-bivariate-datenanalyse.html#cb135-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb135-22"><a href="uni-und-bivariate-datenanalyse.html#cb135-22" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb135-23"><a href="uni-und-bivariate-datenanalyse.html#cb135-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-24"><a href="uni-und-bivariate-datenanalyse.html#cb135-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">leistungMittelOstWest =</span> <span class="fu">weighted_mean</span>(im19, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb135-25"><a href="uni-und-bivariate-datenanalyse.html#cb135-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSDOstWest =</span> <span class="fu">weighted_sd</span>(im19, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb135-26"><a href="uni-und-bivariate-datenanalyse.html#cb135-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">leistungSEOstWest =</span> <span class="fu">weighted_se</span>(im19, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb135-27"><a href="uni-und-bivariate-datenanalyse.html#cb135-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">CI.95.down =</span> leistungMittelOstWest<span class="fl">-1.96</span><span class="sc">*</span>(leistungSDOstWest<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>())),</span>
+<span id="cb135-28"><a href="uni-und-bivariate-datenanalyse.html#cb135-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">CI.95.up =</span> leistungMittelOstWest<span class="fl">+1.96</span><span class="sc">*</span>(leistungSDOstWest<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()))) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-29"><a href="uni-und-bivariate-datenanalyse.html#cb135-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb135-30"><a href="uni-und-bivariate-datenanalyse.html#cb135-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb135-31"><a href="uni-und-bivariate-datenanalyse.html#cb135-31" aria-hidden="true" tabindex="-1"></a>ds</span>
+<span id="cb135-32"><a href="uni-und-bivariate-datenanalyse.html#cb135-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 x 6</span></span>
+<span id="cb135-33"><a href="uni-und-bivariate-datenanalyse.html#cb135-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   eastwest leistungMittelOstWest leistungSDOstWest leistungSEOstWest CI.95.down</span></span>
+<span id="cb135-34"><a href="uni-und-bivariate-datenanalyse.html#cb135-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      &lt;dbl&gt;                 &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span id="cb135-35"><a href="uni-und-bivariate-datenanalyse.html#cb135-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        1                  2.46             0.923            0.0192       2.43</span></span>
+<span id="cb135-36"><a href="uni-und-bivariate-datenanalyse.html#cb135-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        2                  2.60             0.985            0.0302       2.55</span></span>
+<span id="cb135-37"><a href="uni-und-bivariate-datenanalyse.html#cb135-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 1 more variable: CI.95.up &lt;dbl&gt;</span></span></code></pre></div>
 </div>
 <div id="wtd.quantile" class="section level3 unnumbered">
 <h3><code>wtd.quantile()</code></h3>
@@ -619,7 +623,37 @@ datensatz %$%
 </div>
 <div id="bivariate-statistiken" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Bivariate Statistiken</h2>
-<p>Tabelle mit Funktionen</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Packet</th>
+<th align="left">Funktion</th>
+<th align="left">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">dscr</td>
+<td align="left">crosstab()</td>
+<td align="left">Kreuztabellen</td>
+</tr>
+<tr class="even">
+<td align="left">sjstats</td>
+<td align="left">weighted_chisqtest()</td>
+<td align="left">Chi-Quadrat-Test</td>
+</tr>
+<tr class="odd">
+<td align="left">sjstats</td>
+<td align="left">crosstable_statistics()</td>
+<td align="left">Zusammenhangsmaße</td>
+</tr>
+<tr class="even">
+<td align="left">sjmisc</td>
+<td align="left">weighted_correlation()</td>
+<td align="left">Pearson`s r</td>
+</tr>
+</tbody>
+</table>
 <div id="crosstab" class="section level3 unnumbered">
 <h3><code>Crosstab()</code></h3>
 <pre><code>library(descr)
@@ -640,157 +674,166 @@ crosstab(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
 datensatz %$% 
   crosstab(variable1, variable2, weight = gewicht)</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="uni-und-bivariate-datenanalyse.html#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - Absolute Häufigkeit</span></span>
-<span id="cb141-2"><a href="uni-und-bivariate-datenanalyse.html#cb141-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
-<span id="cb141-3"><a href="uni-und-bivariate-datenanalyse.html#cb141-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-4"><a href="uni-und-bivariate-datenanalyse.html#cb141-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-5"><a href="uni-und-bivariate-datenanalyse.html#cb141-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">plot =</span> F)</span>
-<span id="cb141-6"><a href="uni-und-bivariate-datenanalyse.html#cb141-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-7"><a href="uni-und-bivariate-datenanalyse.html#cb141-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-8"><a href="uni-und-bivariate-datenanalyse.html#cb141-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-9"><a href="uni-und-bivariate-datenanalyse.html#cb141-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-10"><a href="uni-und-bivariate-datenanalyse.html#cb141-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-11"><a href="uni-und-bivariate-datenanalyse.html#cb141-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================================================================================</span></span>
-<span id="cb141-12"><a href="uni-und-bivariate-datenanalyse.html#cb141-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-13"><a href="uni-und-bivariate-datenanalyse.html#cb141-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1      2      3      4      5      6      7   Total</span></span>
-<span id="cb141-14"><a href="uni-und-bivariate-datenanalyse.html#cb141-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
-<span id="cb141-15"><a href="uni-und-bivariate-datenanalyse.html#cb141-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31    445    519    185    570     12     13    1775</span></span>
-<span id="cb141-16"><a href="uni-und-bivariate-datenanalyse.html#cb141-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
-<span id="cb141-17"><a href="uni-und-bivariate-datenanalyse.html#cb141-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23    408    575    140    531     10     11    1698</span></span>
-<span id="cb141-18"><a href="uni-und-bivariate-datenanalyse.html#cb141-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
-<span id="cb141-19"><a href="uni-und-bivariate-datenanalyse.html#cb141-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54    853   1094    325   1101     22     24    3473</span></span>
-<span id="cb141-20"><a href="uni-und-bivariate-datenanalyse.html#cb141-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================================================================================</span></span>
-<span id="cb141-21"><a href="uni-und-bivariate-datenanalyse.html#cb141-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-22"><a href="uni-und-bivariate-datenanalyse.html#cb141-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten</span></span>
-<span id="cb141-23"><a href="uni-und-bivariate-datenanalyse.html#cb141-23" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
-<span id="cb141-24"><a href="uni-und-bivariate-datenanalyse.html#cb141-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-25"><a href="uni-und-bivariate-datenanalyse.html#cb141-25" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-26"><a href="uni-und-bivariate-datenanalyse.html#cb141-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.c =</span> T, <span class="at">plot =</span> F)</span>
-<span id="cb141-27"><a href="uni-und-bivariate-datenanalyse.html#cb141-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-28"><a href="uni-und-bivariate-datenanalyse.html#cb141-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-29"><a href="uni-und-bivariate-datenanalyse.html#cb141-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-30"><a href="uni-und-bivariate-datenanalyse.html#cb141-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |          Column Percent | </span></span>
-<span id="cb141-31"><a href="uni-und-bivariate-datenanalyse.html#cb141-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-32"><a href="uni-und-bivariate-datenanalyse.html#cb141-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-33"><a href="uni-und-bivariate-datenanalyse.html#cb141-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-34"><a href="uni-und-bivariate-datenanalyse.html#cb141-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-35"><a href="uni-und-bivariate-datenanalyse.html#cb141-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
-<span id="cb141-36"><a href="uni-und-bivariate-datenanalyse.html#cb141-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-37"><a href="uni-und-bivariate-datenanalyse.html#cb141-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31     445     519     185     570      12      13    1775 </span></span>
-<span id="cb141-38"><a href="uni-und-bivariate-datenanalyse.html#cb141-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            57.4%   52.2%   47.4%   56.9%   51.8%   54.5%   54.2%        </span></span>
-<span id="cb141-39"><a href="uni-und-bivariate-datenanalyse.html#cb141-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-40"><a href="uni-und-bivariate-datenanalyse.html#cb141-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23     408     575     140     531      10      11    1698 </span></span>
-<span id="cb141-41"><a href="uni-und-bivariate-datenanalyse.html#cb141-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            42.6%   47.8%   52.6%   43.1%   48.2%   45.5%   45.8%        </span></span>
-<span id="cb141-42"><a href="uni-und-bivariate-datenanalyse.html#cb141-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-43"><a href="uni-und-bivariate-datenanalyse.html#cb141-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54     853    1094     325    1101      22      24    3473 </span></span>
-<span id="cb141-44"><a href="uni-und-bivariate-datenanalyse.html#cb141-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             1.6%   24.6%   31.5%    9.4%   31.7%    0.6%    0.7%        </span></span>
-<span id="cb141-45"><a href="uni-und-bivariate-datenanalyse.html#cb141-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-46"><a href="uni-und-bivariate-datenanalyse.html#cb141-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-47"><a href="uni-und-bivariate-datenanalyse.html#cb141-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Zeilen</span></span>
-<span id="cb141-48"><a href="uni-und-bivariate-datenanalyse.html#cb141-48" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
-<span id="cb141-49"><a href="uni-und-bivariate-datenanalyse.html#cb141-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-50"><a href="uni-und-bivariate-datenanalyse.html#cb141-50" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-51"><a href="uni-und-bivariate-datenanalyse.html#cb141-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.r =</span> T, <span class="at">plot =</span> F)</span>
-<span id="cb141-52"><a href="uni-und-bivariate-datenanalyse.html#cb141-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-53"><a href="uni-und-bivariate-datenanalyse.html#cb141-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-54"><a href="uni-und-bivariate-datenanalyse.html#cb141-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-55"><a href="uni-und-bivariate-datenanalyse.html#cb141-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |             Row Percent | </span></span>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="uni-und-bivariate-datenanalyse.html#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-2"><a href="uni-und-bivariate-datenanalyse.html#cb141-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Absolute Häufigkeit</span></span>
+<span id="cb141-3"><a href="uni-und-bivariate-datenanalyse.html#cb141-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-4"><a href="uni-und-bivariate-datenanalyse.html#cb141-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-5"><a href="uni-und-bivariate-datenanalyse.html#cb141-5" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-6"><a href="uni-und-bivariate-datenanalyse.html#cb141-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">plot =</span> F)</span>
+<span id="cb141-7"><a href="uni-und-bivariate-datenanalyse.html#cb141-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
+<span id="cb141-8"><a href="uni-und-bivariate-datenanalyse.html#cb141-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-9"><a href="uni-und-bivariate-datenanalyse.html#cb141-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-10"><a href="uni-und-bivariate-datenanalyse.html#cb141-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-11"><a href="uni-und-bivariate-datenanalyse.html#cb141-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-12"><a href="uni-und-bivariate-datenanalyse.html#cb141-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================================================================================</span></span>
+<span id="cb141-13"><a href="uni-und-bivariate-datenanalyse.html#cb141-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-14"><a href="uni-und-bivariate-datenanalyse.html#cb141-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1      2      3      4      5      6      7   Total</span></span>
+<span id="cb141-15"><a href="uni-und-bivariate-datenanalyse.html#cb141-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
+<span id="cb141-16"><a href="uni-und-bivariate-datenanalyse.html#cb141-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31    445    519    185    570     12     13    1775</span></span>
+<span id="cb141-17"><a href="uni-und-bivariate-datenanalyse.html#cb141-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
+<span id="cb141-18"><a href="uni-und-bivariate-datenanalyse.html#cb141-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23    408    575    140    531     10     11    1698</span></span>
+<span id="cb141-19"><a href="uni-und-bivariate-datenanalyse.html#cb141-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------------------------------</span></span>
+<span id="cb141-20"><a href="uni-und-bivariate-datenanalyse.html#cb141-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54    853   1094    325   1101     22     24    3473</span></span>
+<span id="cb141-21"><a href="uni-und-bivariate-datenanalyse.html#cb141-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =================================================================================</span></span>
+<span id="cb141-22"><a href="uni-und-bivariate-datenanalyse.html#cb141-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-23"><a href="uni-und-bivariate-datenanalyse.html#cb141-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-24"><a href="uni-und-bivariate-datenanalyse.html#cb141-24" aria-hidden="true" tabindex="-1"></a><span class="co"># relative Häufigkeit nach Spalten</span></span>
+<span id="cb141-25"><a href="uni-und-bivariate-datenanalyse.html#cb141-25" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-26"><a href="uni-und-bivariate-datenanalyse.html#cb141-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-27"><a href="uni-und-bivariate-datenanalyse.html#cb141-27" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-28"><a href="uni-und-bivariate-datenanalyse.html#cb141-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.c =</span> T, <span class="at">plot =</span> F)</span>
+<span id="cb141-29"><a href="uni-und-bivariate-datenanalyse.html#cb141-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
+<span id="cb141-30"><a href="uni-und-bivariate-datenanalyse.html#cb141-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-31"><a href="uni-und-bivariate-datenanalyse.html#cb141-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-32"><a href="uni-und-bivariate-datenanalyse.html#cb141-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |          Column Percent | </span></span>
+<span id="cb141-33"><a href="uni-und-bivariate-datenanalyse.html#cb141-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-34"><a href="uni-und-bivariate-datenanalyse.html#cb141-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-35"><a href="uni-und-bivariate-datenanalyse.html#cb141-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
+<span id="cb141-36"><a href="uni-und-bivariate-datenanalyse.html#cb141-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-37"><a href="uni-und-bivariate-datenanalyse.html#cb141-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
+<span id="cb141-38"><a href="uni-und-bivariate-datenanalyse.html#cb141-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-39"><a href="uni-und-bivariate-datenanalyse.html#cb141-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31     445     519     185     570      12      13    1775 </span></span>
+<span id="cb141-40"><a href="uni-und-bivariate-datenanalyse.html#cb141-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            57.4%   52.2%   47.4%   56.9%   51.8%   54.5%   54.2%        </span></span>
+<span id="cb141-41"><a href="uni-und-bivariate-datenanalyse.html#cb141-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-42"><a href="uni-und-bivariate-datenanalyse.html#cb141-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23     408     575     140     531      10      11    1698 </span></span>
+<span id="cb141-43"><a href="uni-und-bivariate-datenanalyse.html#cb141-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            42.6%   47.8%   52.6%   43.1%   48.2%   45.5%   45.8%        </span></span>
+<span id="cb141-44"><a href="uni-und-bivariate-datenanalyse.html#cb141-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-45"><a href="uni-und-bivariate-datenanalyse.html#cb141-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54     853    1094     325    1101      22      24    3473 </span></span>
+<span id="cb141-46"><a href="uni-und-bivariate-datenanalyse.html#cb141-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             1.6%   24.6%   31.5%    9.4%   31.7%    0.6%    0.7%        </span></span>
+<span id="cb141-47"><a href="uni-und-bivariate-datenanalyse.html#cb141-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
+<span id="cb141-48"><a href="uni-und-bivariate-datenanalyse.html#cb141-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-49"><a href="uni-und-bivariate-datenanalyse.html#cb141-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-50"><a href="uni-und-bivariate-datenanalyse.html#cb141-50" aria-hidden="true" tabindex="-1"></a><span class="co"># relative Häufigkeit nach Zeilen</span></span>
+<span id="cb141-51"><a href="uni-und-bivariate-datenanalyse.html#cb141-51" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-52"><a href="uni-und-bivariate-datenanalyse.html#cb141-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-53"><a href="uni-und-bivariate-datenanalyse.html#cb141-53" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-54"><a href="uni-und-bivariate-datenanalyse.html#cb141-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.r =</span> T, <span class="at">plot =</span> F)</span>
+<span id="cb141-55"><a href="uni-und-bivariate-datenanalyse.html#cb141-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
 <span id="cb141-56"><a href="uni-und-bivariate-datenanalyse.html#cb141-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-57"><a href="uni-und-bivariate-datenanalyse.html#cb141-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-58"><a href="uni-und-bivariate-datenanalyse.html#cb141-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =====================================================================================</span></span>
-<span id="cb141-59"><a href="uni-und-bivariate-datenanalyse.html#cb141-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-60"><a href="uni-und-bivariate-datenanalyse.html#cb141-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1       2       3       4       5      6      7   Total</span></span>
-<span id="cb141-61"><a href="uni-und-bivariate-datenanalyse.html#cb141-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------------------------------------</span></span>
-<span id="cb141-62"><a href="uni-und-bivariate-datenanalyse.html#cb141-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                           31     445     519     185     570     12     13    1775 </span></span>
-<span id="cb141-63"><a href="uni-und-bivariate-datenanalyse.html#cb141-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            1.7%   25.1%   29.2%   10.4%   32.1%   0.7%   0.7%   51.1%</span></span>
+<span id="cb141-57"><a href="uni-und-bivariate-datenanalyse.html#cb141-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-58"><a href="uni-und-bivariate-datenanalyse.html#cb141-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |             Row Percent | </span></span>
+<span id="cb141-59"><a href="uni-und-bivariate-datenanalyse.html#cb141-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-60"><a href="uni-und-bivariate-datenanalyse.html#cb141-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-61"><a href="uni-und-bivariate-datenanalyse.html#cb141-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =====================================================================================</span></span>
+<span id="cb141-62"><a href="uni-und-bivariate-datenanalyse.html#cb141-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-63"><a href="uni-und-bivariate-datenanalyse.html#cb141-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1       2       3       4       5      6      7   Total</span></span>
 <span id="cb141-64"><a href="uni-und-bivariate-datenanalyse.html#cb141-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------------------------------------</span></span>
-<span id="cb141-65"><a href="uni-und-bivariate-datenanalyse.html#cb141-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                           23     408     575     140     531     10     11    1698 </span></span>
-<span id="cb141-66"><a href="uni-und-bivariate-datenanalyse.html#cb141-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            1.4%   24.0%   33.9%    8.2%   31.3%   0.6%   0.6%   48.9%</span></span>
+<span id="cb141-65"><a href="uni-und-bivariate-datenanalyse.html#cb141-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                           31     445     519     185     570     12     13    1775 </span></span>
+<span id="cb141-66"><a href="uni-und-bivariate-datenanalyse.html#cb141-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            1.7%   25.1%   29.2%   10.4%   32.1%   0.7%   0.7%   51.1%</span></span>
 <span id="cb141-67"><a href="uni-und-bivariate-datenanalyse.html#cb141-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------------------------------------</span></span>
-<span id="cb141-68"><a href="uni-und-bivariate-datenanalyse.html#cb141-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                       54     853    1094     325    1101     22     24    3473 </span></span>
-<span id="cb141-69"><a href="uni-und-bivariate-datenanalyse.html#cb141-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =====================================================================================</span></span>
-<span id="cb141-70"><a href="uni-und-bivariate-datenanalyse.html#cb141-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-71"><a href="uni-und-bivariate-datenanalyse.html#cb141-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Gesamthäufigkeit</span></span>
-<span id="cb141-72"><a href="uni-und-bivariate-datenanalyse.html#cb141-72" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-68"><a href="uni-und-bivariate-datenanalyse.html#cb141-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                           23     408     575     140     531     10     11    1698 </span></span>
+<span id="cb141-69"><a href="uni-und-bivariate-datenanalyse.html#cb141-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            1.4%   24.0%   33.9%    8.2%   31.3%   0.6%   0.6%   48.9%</span></span>
+<span id="cb141-70"><a href="uni-und-bivariate-datenanalyse.html#cb141-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------------------------------------</span></span>
+<span id="cb141-71"><a href="uni-und-bivariate-datenanalyse.html#cb141-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                       54     853    1094     325    1101     22     24    3473 </span></span>
+<span id="cb141-72"><a href="uni-und-bivariate-datenanalyse.html#cb141-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =====================================================================================</span></span>
 <span id="cb141-73"><a href="uni-und-bivariate-datenanalyse.html#cb141-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-74"><a href="uni-und-bivariate-datenanalyse.html#cb141-74" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-75"><a href="uni-und-bivariate-datenanalyse.html#cb141-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.t =</span> T, <span class="at">plot =</span> F)</span>
-<span id="cb141-76"><a href="uni-und-bivariate-datenanalyse.html#cb141-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-77"><a href="uni-und-bivariate-datenanalyse.html#cb141-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-78"><a href="uni-und-bivariate-datenanalyse.html#cb141-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-79"><a href="uni-und-bivariate-datenanalyse.html#cb141-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |           Total Percent | </span></span>
-<span id="cb141-80"><a href="uni-und-bivariate-datenanalyse.html#cb141-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-81"><a href="uni-und-bivariate-datenanalyse.html#cb141-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-82"><a href="uni-und-bivariate-datenanalyse.html#cb141-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ====================================================================================</span></span>
-<span id="cb141-83"><a href="uni-und-bivariate-datenanalyse.html#cb141-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-84"><a href="uni-und-bivariate-datenanalyse.html#cb141-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1       2       3      4       5      6      7   Total</span></span>
-<span id="cb141-85"><a href="uni-und-bivariate-datenanalyse.html#cb141-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
-<span id="cb141-86"><a href="uni-und-bivariate-datenanalyse.html#cb141-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                           31     445     519    185     570     12     13    1775 </span></span>
-<span id="cb141-87"><a href="uni-und-bivariate-datenanalyse.html#cb141-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.9%   12.8%   14.9%   5.3%   16.4%   0.3%   0.4%        </span></span>
-<span id="cb141-88"><a href="uni-und-bivariate-datenanalyse.html#cb141-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
-<span id="cb141-89"><a href="uni-und-bivariate-datenanalyse.html#cb141-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                           23     408     575    140     531     10     11    1698 </span></span>
-<span id="cb141-90"><a href="uni-und-bivariate-datenanalyse.html#cb141-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.7%   11.7%   16.6%   4.0%   15.3%   0.3%   0.3%        </span></span>
-<span id="cb141-91"><a href="uni-und-bivariate-datenanalyse.html#cb141-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
-<span id="cb141-92"><a href="uni-und-bivariate-datenanalyse.html#cb141-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                       54     853    1094    325    1101     22     24    3473 </span></span>
-<span id="cb141-93"><a href="uni-und-bivariate-datenanalyse.html#cb141-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ====================================================================================</span></span>
-<span id="cb141-94"><a href="uni-und-bivariate-datenanalyse.html#cb141-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-95"><a href="uni-und-bivariate-datenanalyse.html#cb141-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit mit Chi-Quadrat nach Zellen</span></span>
-<span id="cb141-96"><a href="uni-und-bivariate-datenanalyse.html#cb141-96" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
-<span id="cb141-97"><a href="uni-und-bivariate-datenanalyse.html#cb141-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-98"><a href="uni-und-bivariate-datenanalyse.html#cb141-98" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-99"><a href="uni-und-bivariate-datenanalyse.html#cb141-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.chisq =</span> T, <span class="at">plot =</span> F)</span>
-<span id="cb141-100"><a href="uni-und-bivariate-datenanalyse.html#cb141-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-101"><a href="uni-und-bivariate-datenanalyse.html#cb141-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-102"><a href="uni-und-bivariate-datenanalyse.html#cb141-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-103"><a href="uni-und-bivariate-datenanalyse.html#cb141-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | Chi-square contribution | </span></span>
-<span id="cb141-104"><a href="uni-und-bivariate-datenanalyse.html#cb141-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-105"><a href="uni-und-bivariate-datenanalyse.html#cb141-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-106"><a href="uni-und-bivariate-datenanalyse.html#cb141-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-107"><a href="uni-und-bivariate-datenanalyse.html#cb141-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-108"><a href="uni-und-bivariate-datenanalyse.html#cb141-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
-<span id="cb141-109"><a href="uni-und-bivariate-datenanalyse.html#cb141-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-110"><a href="uni-und-bivariate-datenanalyse.html#cb141-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                             31     445     519     185     570      12      13    1775</span></span>
-<span id="cb141-111"><a href="uni-und-bivariate-datenanalyse.html#cb141-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.419   0.188   2.880   2.150   0.095   0.051   0.044        </span></span>
-<span id="cb141-112"><a href="uni-und-bivariate-datenanalyse.html#cb141-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-113"><a href="uni-und-bivariate-datenanalyse.html#cb141-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                             23     408     575     140     531      10      11    1698</span></span>
-<span id="cb141-114"><a href="uni-und-bivariate-datenanalyse.html#cb141-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.438   0.196   3.010   2.247   0.099   0.053   0.046        </span></span>
-<span id="cb141-115"><a href="uni-und-bivariate-datenanalyse.html#cb141-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-116"><a href="uni-und-bivariate-datenanalyse.html#cb141-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                         54     853    1094     325    1101      22      24    3473</span></span>
-<span id="cb141-117"><a href="uni-und-bivariate-datenanalyse.html#cb141-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-118"><a href="uni-und-bivariate-datenanalyse.html#cb141-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-119"><a href="uni-und-bivariate-datenanalyse.html#cb141-119" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - relative Häufigkeit nach Spalten</span></span>
-<span id="cb141-120"><a href="uni-und-bivariate-datenanalyse.html#cb141-120" aria-hidden="true" tabindex="-1"></a><span class="co"># mit Chi-Quadrat-Test </span></span>
-<span id="cb141-121"><a href="uni-und-bivariate-datenanalyse.html#cb141-121" aria-hidden="true" tabindex="-1"></a><span class="co"># mit Grafik</span></span>
-<span id="cb141-122"><a href="uni-und-bivariate-datenanalyse.html#cb141-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb141-123"><a href="uni-und-bivariate-datenanalyse.html#cb141-123" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb141-124"><a href="uni-und-bivariate-datenanalyse.html#cb141-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.c =</span> T, <span class="at">chisq =</span> T, <span class="at">plot =</span> F)</span>
-<span id="cb141-125"><a href="uni-und-bivariate-datenanalyse.html#cb141-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
-<span id="cb141-126"><a href="uni-und-bivariate-datenanalyse.html#cb141-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-127"><a href="uni-und-bivariate-datenanalyse.html#cb141-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
-<span id="cb141-128"><a href="uni-und-bivariate-datenanalyse.html#cb141-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |          Column Percent | </span></span>
-<span id="cb141-129"><a href="uni-und-bivariate-datenanalyse.html#cb141-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
-<span id="cb141-130"><a href="uni-und-bivariate-datenanalyse.html#cb141-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-131"><a href="uni-und-bivariate-datenanalyse.html#cb141-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-132"><a href="uni-und-bivariate-datenanalyse.html#cb141-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
-<span id="cb141-133"><a href="uni-und-bivariate-datenanalyse.html#cb141-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
-<span id="cb141-134"><a href="uni-und-bivariate-datenanalyse.html#cb141-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-135"><a href="uni-und-bivariate-datenanalyse.html#cb141-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31     445     519     185     570      12      13    1775 </span></span>
-<span id="cb141-136"><a href="uni-und-bivariate-datenanalyse.html#cb141-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            57.4%   52.2%   47.4%   56.9%   51.8%   54.5%   54.2%        </span></span>
-<span id="cb141-137"><a href="uni-und-bivariate-datenanalyse.html#cb141-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-138"><a href="uni-und-bivariate-datenanalyse.html#cb141-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23     408     575     140     531      10      11    1698 </span></span>
-<span id="cb141-139"><a href="uni-und-bivariate-datenanalyse.html#cb141-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            42.6%   47.8%   52.6%   43.1%   48.2%   45.5%   45.8%        </span></span>
+<span id="cb141-74"><a href="uni-und-bivariate-datenanalyse.html#cb141-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-75"><a href="uni-und-bivariate-datenanalyse.html#cb141-75" aria-hidden="true" tabindex="-1"></a><span class="co"># relative Häufigkeit nach Gesamthäufigkeit</span></span>
+<span id="cb141-76"><a href="uni-und-bivariate-datenanalyse.html#cb141-76" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-77"><a href="uni-und-bivariate-datenanalyse.html#cb141-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-78"><a href="uni-und-bivariate-datenanalyse.html#cb141-78" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-79"><a href="uni-und-bivariate-datenanalyse.html#cb141-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.t =</span> T, <span class="at">plot =</span> F)</span>
+<span id="cb141-80"><a href="uni-und-bivariate-datenanalyse.html#cb141-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
+<span id="cb141-81"><a href="uni-und-bivariate-datenanalyse.html#cb141-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-82"><a href="uni-und-bivariate-datenanalyse.html#cb141-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-83"><a href="uni-und-bivariate-datenanalyse.html#cb141-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |           Total Percent | </span></span>
+<span id="cb141-84"><a href="uni-und-bivariate-datenanalyse.html#cb141-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-85"><a href="uni-und-bivariate-datenanalyse.html#cb141-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-86"><a href="uni-und-bivariate-datenanalyse.html#cb141-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ====================================================================================</span></span>
+<span id="cb141-87"><a href="uni-und-bivariate-datenanalyse.html#cb141-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-88"><a href="uni-und-bivariate-datenanalyse.html#cb141-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)       1       2       3      4       5      6      7   Total</span></span>
+<span id="cb141-89"><a href="uni-und-bivariate-datenanalyse.html#cb141-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
+<span id="cb141-90"><a href="uni-und-bivariate-datenanalyse.html#cb141-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                           31     445     519    185     570     12     13    1775 </span></span>
+<span id="cb141-91"><a href="uni-und-bivariate-datenanalyse.html#cb141-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.9%   12.8%   14.9%   5.3%   16.4%   0.3%   0.4%        </span></span>
+<span id="cb141-92"><a href="uni-und-bivariate-datenanalyse.html#cb141-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
+<span id="cb141-93"><a href="uni-und-bivariate-datenanalyse.html#cb141-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                           23     408     575    140     531     10     11    1698 </span></span>
+<span id="cb141-94"><a href="uni-und-bivariate-datenanalyse.html#cb141-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.7%   11.7%   16.6%   4.0%   15.3%   0.3%   0.3%        </span></span>
+<span id="cb141-95"><a href="uni-und-bivariate-datenanalyse.html#cb141-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
+<span id="cb141-96"><a href="uni-und-bivariate-datenanalyse.html#cb141-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                       54     853    1094    325    1101     22     24    3473 </span></span>
+<span id="cb141-97"><a href="uni-und-bivariate-datenanalyse.html#cb141-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ====================================================================================</span></span>
+<span id="cb141-98"><a href="uni-und-bivariate-datenanalyse.html#cb141-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-99"><a href="uni-und-bivariate-datenanalyse.html#cb141-99" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-100"><a href="uni-und-bivariate-datenanalyse.html#cb141-100" aria-hidden="true" tabindex="-1"></a><span class="co"># relative Häufigkeit mit Chi-Quadrat nach Zellen</span></span>
+<span id="cb141-101"><a href="uni-und-bivariate-datenanalyse.html#cb141-101" aria-hidden="true" tabindex="-1"></a><span class="co"># ohne Grafik</span></span>
+<span id="cb141-102"><a href="uni-und-bivariate-datenanalyse.html#cb141-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-103"><a href="uni-und-bivariate-datenanalyse.html#cb141-103" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-104"><a href="uni-und-bivariate-datenanalyse.html#cb141-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.chisq =</span> T, <span class="at">plot =</span> F)</span>
+<span id="cb141-105"><a href="uni-und-bivariate-datenanalyse.html#cb141-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
+<span id="cb141-106"><a href="uni-und-bivariate-datenanalyse.html#cb141-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-107"><a href="uni-und-bivariate-datenanalyse.html#cb141-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-108"><a href="uni-und-bivariate-datenanalyse.html#cb141-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; | Chi-square contribution | </span></span>
+<span id="cb141-109"><a href="uni-und-bivariate-datenanalyse.html#cb141-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-110"><a href="uni-und-bivariate-datenanalyse.html#cb141-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-111"><a href="uni-und-bivariate-datenanalyse.html#cb141-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
+<span id="cb141-112"><a href="uni-und-bivariate-datenanalyse.html#cb141-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-113"><a href="uni-und-bivariate-datenanalyse.html#cb141-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
+<span id="cb141-114"><a href="uni-und-bivariate-datenanalyse.html#cb141-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-115"><a href="uni-und-bivariate-datenanalyse.html#cb141-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                             31     445     519     185     570      12      13    1775</span></span>
+<span id="cb141-116"><a href="uni-und-bivariate-datenanalyse.html#cb141-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.419   0.188   2.880   2.150   0.095   0.051   0.044        </span></span>
+<span id="cb141-117"><a href="uni-und-bivariate-datenanalyse.html#cb141-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-118"><a href="uni-und-bivariate-datenanalyse.html#cb141-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                             23     408     575     140     531      10      11    1698</span></span>
+<span id="cb141-119"><a href="uni-und-bivariate-datenanalyse.html#cb141-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            0.438   0.196   3.010   2.247   0.099   0.053   0.046        </span></span>
+<span id="cb141-120"><a href="uni-und-bivariate-datenanalyse.html#cb141-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-121"><a href="uni-und-bivariate-datenanalyse.html#cb141-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                         54     853    1094     325    1101      22      24    3473</span></span>
+<span id="cb141-122"><a href="uni-und-bivariate-datenanalyse.html#cb141-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
+<span id="cb141-123"><a href="uni-und-bivariate-datenanalyse.html#cb141-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-124"><a href="uni-und-bivariate-datenanalyse.html#cb141-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Kreuztabelle Geschlecht (sex) und Bildung (educ) - </span></span>
+<span id="cb141-125"><a href="uni-und-bivariate-datenanalyse.html#cb141-125" aria-hidden="true" tabindex="-1"></a><span class="co"># relative Häufigkeit nach Spalten</span></span>
+<span id="cb141-126"><a href="uni-und-bivariate-datenanalyse.html#cb141-126" aria-hidden="true" tabindex="-1"></a><span class="co"># mit Chi-Quadrat-Test </span></span>
+<span id="cb141-127"><a href="uni-und-bivariate-datenanalyse.html#cb141-127" aria-hidden="true" tabindex="-1"></a><span class="co"># mit Grafik</span></span>
+<span id="cb141-128"><a href="uni-und-bivariate-datenanalyse.html#cb141-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-129"><a href="uni-und-bivariate-datenanalyse.html#cb141-129" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
+<span id="cb141-130"><a href="uni-und-bivariate-datenanalyse.html#cb141-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstab</span>(sex, educ, <span class="at">weight =</span> wghtpew, <span class="at">prop.c =</span> T, <span class="at">chisq =</span> T, <span class="at">plot =</span> F)</span>
+<span id="cb141-131"><a href="uni-und-bivariate-datenanalyse.html#cb141-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Cell Contents </span></span>
+<span id="cb141-132"><a href="uni-und-bivariate-datenanalyse.html#cb141-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-133"><a href="uni-und-bivariate-datenanalyse.html#cb141-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |                   Count | </span></span>
+<span id="cb141-134"><a href="uni-und-bivariate-datenanalyse.html#cb141-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |          Column Percent | </span></span>
+<span id="cb141-135"><a href="uni-und-bivariate-datenanalyse.html#cb141-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; |-------------------------|</span></span>
+<span id="cb141-136"><a href="uni-und-bivariate-datenanalyse.html#cb141-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-137"><a href="uni-und-bivariate-datenanalyse.html#cb141-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
+<span id="cb141-138"><a href="uni-und-bivariate-datenanalyse.html#cb141-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            ALLGEMEINER SCHULABSCHLUSS</span></span>
+<span id="cb141-139"><a href="uni-und-bivariate-datenanalyse.html#cb141-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; GESCHLECHT, BEFRAGTE(R)        1       2       3       4       5       6       7   Total</span></span>
 <span id="cb141-140"><a href="uni-und-bivariate-datenanalyse.html#cb141-140" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
-<span id="cb141-141"><a href="uni-und-bivariate-datenanalyse.html#cb141-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54     853    1094     325    1101      22      24    3473 </span></span>
-<span id="cb141-142"><a href="uni-und-bivariate-datenanalyse.html#cb141-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             1.6%   24.6%   31.5%    9.4%   31.7%    0.6%    0.7%        </span></span>
-<span id="cb141-143"><a href="uni-und-bivariate-datenanalyse.html#cb141-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
-<span id="cb141-144"><a href="uni-und-bivariate-datenanalyse.html#cb141-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-145"><a href="uni-und-bivariate-datenanalyse.html#cb141-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Statistics for All Table Factors</span></span>
-<span id="cb141-146"><a href="uni-und-bivariate-datenanalyse.html#cb141-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-147"><a href="uni-und-bivariate-datenanalyse.html#cb141-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pearson&#39;s Chi-squared test </span></span>
-<span id="cb141-148"><a href="uni-und-bivariate-datenanalyse.html#cb141-148" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------</span></span>
-<span id="cb141-149"><a href="uni-und-bivariate-datenanalyse.html#cb141-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Chi^2 = 11.91607      d.f. = 6      p = 0.0639 </span></span>
+<span id="cb141-141"><a href="uni-und-bivariate-datenanalyse.html#cb141-141" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                            31     445     519     185     570      12      13    1775 </span></span>
+<span id="cb141-142"><a href="uni-und-bivariate-datenanalyse.html#cb141-142" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            57.4%   52.2%   47.4%   56.9%   51.8%   54.5%   54.2%        </span></span>
+<span id="cb141-143"><a href="uni-und-bivariate-datenanalyse.html#cb141-143" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-144"><a href="uni-und-bivariate-datenanalyse.html#cb141-144" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                            23     408     575     140     531      10      11    1698 </span></span>
+<span id="cb141-145"><a href="uni-und-bivariate-datenanalyse.html#cb141-145" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                            42.6%   47.8%   52.6%   43.1%   48.2%   45.5%   45.8%        </span></span>
+<span id="cb141-146"><a href="uni-und-bivariate-datenanalyse.html#cb141-146" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ----------------------------------------------------------------------------------------</span></span>
+<span id="cb141-147"><a href="uni-und-bivariate-datenanalyse.html#cb141-147" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total                        54     853    1094     325    1101      22      24    3473 </span></span>
+<span id="cb141-148"><a href="uni-und-bivariate-datenanalyse.html#cb141-148" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             1.6%   24.6%   31.5%    9.4%   31.7%    0.6%    0.7%        </span></span>
+<span id="cb141-149"><a href="uni-und-bivariate-datenanalyse.html#cb141-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================================================================</span></span>
 <span id="cb141-150"><a href="uni-und-bivariate-datenanalyse.html#cb141-150" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb141-151"><a href="uni-und-bivariate-datenanalyse.html#cb141-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Minimum expected frequency: 10.75612</span></span></code></pre></div>
+<span id="cb141-151"><a href="uni-und-bivariate-datenanalyse.html#cb141-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Statistics for All Table Factors</span></span>
+<span id="cb141-152"><a href="uni-und-bivariate-datenanalyse.html#cb141-152" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-153"><a href="uni-und-bivariate-datenanalyse.html#cb141-153" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pearson&#39;s Chi-squared test </span></span>
+<span id="cb141-154"><a href="uni-und-bivariate-datenanalyse.html#cb141-154" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------</span></span>
+<span id="cb141-155"><a href="uni-und-bivariate-datenanalyse.html#cb141-155" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Chi^2 = 11.91607      d.f. = 6      p = 0.0639 </span></span>
+<span id="cb141-156"><a href="uni-und-bivariate-datenanalyse.html#cb141-156" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb141-157"><a href="uni-und-bivariate-datenanalyse.html#cb141-157" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Minimum expected frequency: 10.75612</span></span>
+<span id="cb141-158"><a href="uni-und-bivariate-datenanalyse.html#cb141-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-159"><a href="uni-und-bivariate-datenanalyse.html#cb141-159" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik</span></span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
 </div>
 <div id="weighted_chisqtest" class="section level3 unnumbered">
 <h3><code>Weighted_chisqtest()</code></h3>
@@ -861,30 +904,29 @@ allbus2018 %&gt;%
 <span id="cb145-28"><a href="uni-und-bivariate-datenanalyse.html#cb145-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb145-29"><a href="uni-und-bivariate-datenanalyse.html#cb145-29" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb145-30"><a href="uni-und-bivariate-datenanalyse.html#cb145-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crosstable_statistics</span>(im19, im20, <span class="at">weights =</span> wghtpew, <span class="at">statistics =</span> <span class="st">&quot;spearman&quot;</span>)</span>
-<span id="cb145-31"><a href="uni-und-bivariate-datenanalyse.html#cb145-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in cor.test.default(x = data[[1]], y = data[[2]], method = statistics, :</span></span>
-<span id="cb145-32"><a href="uni-und-bivariate-datenanalyse.html#cb145-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Cannot compute exact p-value with ties</span></span>
+<span id="cb145-31"><a href="uni-und-bivariate-datenanalyse.html#cb145-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb145-32"><a href="uni-und-bivariate-datenanalyse.html#cb145-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Measure of Association for Contingency Tables</span></span>
 <span id="cb145-33"><a href="uni-und-bivariate-datenanalyse.html#cb145-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb145-34"><a href="uni-und-bivariate-datenanalyse.html#cb145-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Measure of Association for Contingency Tables</span></span>
-<span id="cb145-35"><a href="uni-und-bivariate-datenanalyse.html#cb145-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb145-36"><a href="uni-und-bivariate-datenanalyse.html#cb145-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                S: 2913791351.3356</span></span>
-<span id="cb145-37"><a href="uni-und-bivariate-datenanalyse.html#cb145-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Spearman&#39;s rho: 0.5148</span></span>
-<span id="cb145-38"><a href="uni-und-bivariate-datenanalyse.html#cb145-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               df: 9</span></span>
-<span id="cb145-39"><a href="uni-und-bivariate-datenanalyse.html#cb145-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          p-value: &lt; .001***</span></span>
-<span id="cb145-40"><a href="uni-und-bivariate-datenanalyse.html#cb145-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Observations: 3298</span></span></code></pre></div>
+<span id="cb145-34"><a href="uni-und-bivariate-datenanalyse.html#cb145-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                S: 2913791351.3356</span></span>
+<span id="cb145-35"><a href="uni-und-bivariate-datenanalyse.html#cb145-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Spearman&#39;s rho: 0.5148</span></span>
+<span id="cb145-36"><a href="uni-und-bivariate-datenanalyse.html#cb145-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               df: 9</span></span>
+<span id="cb145-37"><a href="uni-und-bivariate-datenanalyse.html#cb145-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          p-value: &lt; .001***</span></span>
+<span id="cb145-38"><a href="uni-und-bivariate-datenanalyse.html#cb145-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Observations: 3298</span></span></code></pre></div>
 </div>
 <div id="weighted_correlation" class="section level3 unnumbered">
 <h3><code>Weighted_correlation()</code></h3>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 
-weighted_correlation(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+weighted_correlation(datensatz$variable1, datensatz$variable2, 
+                     weights = datensatz$gewicht)
 
 # Mit Pipe
 
 datensatz %&gt;% 
   weighted_correlation(variable1, variable2, weights = gewicht)</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="uni-und-bivariate-datenanalyse.html#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pearsons r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)</span></span>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="uni-und-bivariate-datenanalyse.html#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pearson`s r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)</span></span>
 <span id="cb147-2"><a href="uni-und-bivariate-datenanalyse.html#cb147-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb147-3"><a href="uni-und-bivariate-datenanalyse.html#cb147-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb147-4"><a href="uni-und-bivariate-datenanalyse.html#cb147-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">weighted_correlation</span>(im19, im20, <span class="at">weights =</span> wghtpew)</span>
@@ -897,6 +939,47 @@ datensatz %&gt;%
 </div>
 <div id="grafiken" class="section level2" number="4.4">
 <h2><span class="header-section-number">4.4</span> Grafiken</h2>
+<table>
+<colgroup>
+<col width="24%" />
+<col width="31%" />
+<col width="43%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Packet</th>
+<th align="left">Funktion</th>
+<th align="left">Verwendung</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sjplot</td>
+<td align="left">plot_frq()</td>
+<td align="left">Grafiken zu univariaten Häufigkeitsverteilungen</td>
+</tr>
+<tr class="even">
+<td align="left">sjplot</td>
+<td align="left">plot_likert()</td>
+<td align="left">Grafiken zu univariaten Häufigkeitsverteilungen bei Likert-Items</td>
+</tr>
+<tr class="odd">
+<td align="left">sjplot</td>
+<td align="left">plot_stackfrq()</td>
+<td align="left">Grafiken als univariate Balkenschichtungsdiagramme</td>
+</tr>
+<tr class="even">
+<td align="left">sjplot</td>
+<td align="left">plot_grpfrq()</td>
+<td align="left">Grafiken zu univariaten Häufigkeitsverteilungen nach Gruppen</td>
+</tr>
+<tr class="odd">
+<td align="left">sjplot</td>
+<td align="left">plot_xtab()</td>
+<td align="left">Grafiken als Kreuztabellendiagramme</td>
+</tr>
+</tbody>
+</table>
 <div id="plot_frq" class="section level3 unnumbered">
 <h3><code>Plot_frq()</code></h3>
 <p><strong>Syntax:</strong></p>
@@ -911,24 +994,25 @@ datensatz %$%
   plot_frq(variable1, weight.by = gewicht)
 </code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="uni-und-bivariate-datenanalyse.html#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Garfik zur Häufigkeitsverteilung Bildung (educ)</span></span>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="uni-und-bivariate-datenanalyse.html#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Häufigkeitsverteilung Bildung (educ)</span></span>
 <span id="cb149-2"><a href="uni-und-bivariate-datenanalyse.html#cb149-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb149-3"><a href="uni-und-bivariate-datenanalyse.html#cb149-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb149-4"><a href="uni-und-bivariate-datenanalyse.html#cb149-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_frq</span>(educ, <span class="at">weight.by =</span> wghtpew, <span class="at">coord.flip =</span> T, <span class="at">hjust =</span> <span class="st">&quot;left&quot;</span>, <span class="at">type =</span> <span class="st">&quot;dot&quot;</span>, <span class="at">show.ci =</span> T,</span>
-<span id="cb149-5"><a href="uni-und-bivariate-datenanalyse.html#cb149-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">expand.grid =</span> T, <span class="at">vjust =</span> <span class="st">&quot;bottom&quot;</span>, <span class="at">sort.frq =</span> <span class="st">&quot;desc&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-107-1.png" width="672" /></p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="uni-und-bivariate-datenanalyse.html#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Garfik zur Häufigkeitsverteilung Alter (age) </span></span>
+<span id="cb149-4"><a href="uni-und-bivariate-datenanalyse.html#cb149-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_frq</span>(educ, <span class="at">weight.by =</span> wghtpew, <span class="at">coord.flip =</span> T, <span class="at">hjust =</span> <span class="st">&quot;left&quot;</span>, <span class="at">type =</span> <span class="st">&quot;dot&quot;</span>,</span>
+<span id="cb149-5"><a href="uni-und-bivariate-datenanalyse.html#cb149-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">show.ci =</span> T, <span class="at">expand.grid =</span> T, <span class="at">vjust =</span> <span class="st">&quot;bottom&quot;</span>, <span class="at">sort.frq =</span> <span class="st">&quot;desc&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-108-1.png" width="672" /></p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="uni-und-bivariate-datenanalyse.html#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Häufigkeitsverteilung Alter (age) </span></span>
 <span id="cb150-2"><a href="uni-und-bivariate-datenanalyse.html#cb150-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mit Normalverteilungskurve, Mittelwert und Standardabweichung</span></span>
 <span id="cb150-3"><a href="uni-und-bivariate-datenanalyse.html#cb150-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb150-4"><a href="uni-und-bivariate-datenanalyse.html#cb150-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb150-5"><a href="uni-und-bivariate-datenanalyse.html#cb150-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_frq</span>(age, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">show.mean =</span> <span class="cn">TRUE</span>, <span class="at">show.mean.val =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb150-6"><a href="uni-und-bivariate-datenanalyse.html#cb150-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">normal.curve =</span> <span class="cn">TRUE</span>, <span class="at">show.sd =</span> <span class="cn">TRUE</span>, <span class="at">normal.curve.color =</span> <span class="st">&quot;black&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-108-1.png" width="672" /></p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="uni-und-bivariate-datenanalyse.html#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik Alter</span></span>
+<span id="cb150-5"><a href="uni-und-bivariate-datenanalyse.html#cb150-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_frq</span>(age, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">show.mean =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb150-6"><a href="uni-und-bivariate-datenanalyse.html#cb150-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">show.mean.val =</span> <span class="cn">TRUE</span>, <span class="at">normal.curve =</span> <span class="cn">TRUE</span>, <span class="at">show.sd =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb150-7"><a href="uni-und-bivariate-datenanalyse.html#cb150-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">normal.curve.color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">geom.size =</span> .<span class="dv">3</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">100</span>))</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-109-1.png" width="672" /></p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="uni-und-bivariate-datenanalyse.html#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Häufigkeitsverteilung Alter (age) </span></span>
 <span id="cb151-2"><a href="uni-und-bivariate-datenanalyse.html#cb151-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb151-3"><a href="uni-und-bivariate-datenanalyse.html#cb151-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
 <span id="cb151-4"><a href="uni-und-bivariate-datenanalyse.html#cb151-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_frq</span>(age, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;violin&quot;</span>, <span class="at">show.values =</span> F)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-109-1.png" width="672" /></p>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-110-1.png" width="672" /></p>
 </div>
 <div id="plot_likert" class="section level3 unnumbered">
 <h3><code>Plot_likert()</code></h3>
@@ -940,17 +1024,18 @@ plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
 # Mit Pipe
 # Nicht gut zu handhaben!</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="uni-und-bivariate-datenanalyse.html#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs</span></span>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="uni-und-bivariate-datenanalyse.html#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items</span></span>
 <span id="cb153-2"><a href="uni-und-bivariate-datenanalyse.html#cb153-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb153-3"><a href="uni-und-bivariate-datenanalyse.html#cb153-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_likert</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)], <span class="at">grid.range =</span> <span class="fu">c</span>(.<span class="dv">8</span>, .<span class="dv">8</span>), <span class="at">wrap.legend.labels =</span> <span class="dv">11</span>,</span>
-<span id="cb153-4"><a href="uni-und-bivariate-datenanalyse.html#cb153-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">wrap.labels =</span> <span class="dv">12</span>, <span class="at">values =</span> <span class="st">&quot;sum.inside&quot;</span>, <span class="at">show.prc.sign =</span> T, <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-110-1.png" width="672" /></p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="uni-und-bivariate-datenanalyse.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Verteilung von Ausprägungsmerkmalen des Likert-Typs nach Komponenten</span></span>
-<span id="cb154-2"><a href="uni-und-bivariate-datenanalyse.html#cb154-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Farbauswahl mit RColorBrewer::display.brewer.all()</span></span>
-<span id="cb154-3"><a href="uni-und-bivariate-datenanalyse.html#cb154-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb154-4"><a href="uni-und-bivariate-datenanalyse.html#cb154-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_likert</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)], <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>), <span class="at">grid.range =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">1.1</span>), <span class="at">values =</span> <span class="st">&quot;sum.outside&quot;</span>,</span>
-<span id="cb154-5"><a href="uni-und-bivariate-datenanalyse.html#cb154-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.prc.sign =</span> T, <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew, <span class="at">legend.pos =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<span id="cb153-3"><a href="uni-und-bivariate-datenanalyse.html#cb153-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_likert</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)], <span class="at">grid.range =</span> <span class="fu">c</span>(.<span class="dv">8</span>, .<span class="dv">8</span>), </span>
+<span id="cb153-4"><a href="uni-und-bivariate-datenanalyse.html#cb153-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">wrap.legend.labels =</span> <span class="dv">11</span>, <span class="at">wrap.labels =</span> <span class="dv">12</span>, <span class="at">values =</span> <span class="st">&quot;sum.inside&quot;</span>, </span>
+<span id="cb153-5"><a href="uni-und-bivariate-datenanalyse.html#cb153-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.prc.sign =</span> T, <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-111-1.png" width="672" /></p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="uni-und-bivariate-datenanalyse.html#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items nach Komponenten</span></span>
+<span id="cb154-2"><a href="uni-und-bivariate-datenanalyse.html#cb154-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-3"><a href="uni-und-bivariate-datenanalyse.html#cb154-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_likert</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)], <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>),</span>
+<span id="cb154-4"><a href="uni-und-bivariate-datenanalyse.html#cb154-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">grid.range =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">1.1</span>), <span class="at">values =</span> <span class="st">&quot;sum.outside&quot;</span>,</span>
+<span id="cb154-5"><a href="uni-und-bivariate-datenanalyse.html#cb154-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.prc.sign =</span> T, <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew, <span class="at">legend.pos =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-112-1.png" width="672" /></p>
 </div>
 <div id="plot_stackfrq" class="section level3 unnumbered">
 <h3><code>Plot_stackfrq()</code></h3>
@@ -962,70 +1047,122 @@ plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
 # Mit Pipe
 # Nicht gut zu handhaben!</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="uni-und-bivariate-datenanalyse.html#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung der Ausprägungsmerkmalen </span></span>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="uni-und-bivariate-datenanalyse.html#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung von Ausprägungsmerkmalen in einem Balkenschichtungsdiagramm </span></span>
 <span id="cb156-2"><a href="uni-und-bivariate-datenanalyse.html#cb156-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Farbauswahl mit RColorBrewer::display.brewer.all()</span></span>
 <span id="cb156-3"><a href="uni-und-bivariate-datenanalyse.html#cb156-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb156-4"><a href="uni-und-bivariate-datenanalyse.html#cb156-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_stackfrq</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)], <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew, <span class="at">expand.grid =</span> T, <span class="at">geom.colors =</span> <span class="st">&quot;Greens&quot;</span>, </span>
-<span id="cb156-5"><a href="uni-und-bivariate-datenanalyse.html#cb156-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">wrap.labels =</span> <span class="dv">12</span>, <span class="at">wrap.legend.labels =</span> <span class="dv">11</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-112-1.png" width="672" /></p>
+<span id="cb156-4"><a href="uni-und-bivariate-datenanalyse.html#cb156-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_stackfrq</span>(allbus2018[<span class="fu">c</span>(<span class="st">&quot;im19&quot;</span>, <span class="st">&quot;im20&quot;</span>, <span class="st">&quot;im21&quot;</span>, <span class="st">&quot;id01&quot;</span>)],</span>
+<span id="cb156-5"><a href="uni-und-bivariate-datenanalyse.html#cb156-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">weight.by =</span> allbus2018<span class="sc">$</span>wghtpew, <span class="at">expand.grid =</span> T, <span class="at">geom.colors =</span> <span class="st">&quot;Greens&quot;</span>, </span>
+<span id="cb156-6"><a href="uni-und-bivariate-datenanalyse.html#cb156-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">wrap.labels =</span> <span class="dv">12</span>, <span class="at">wrap.legend.labels =</span> <span class="dv">11</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-113-1.png" width="672" /></p>
 </div>
 <div id="plot_grpfrq" class="section level3 unnumbered">
 <h3><code>Plot_grpfrq()</code></h3>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 
+plot_frq(datensatz$variable1, datensatz$gruppenvariable, weight.by = datensatz$gewicht)
 
 # Mit Pipe
-</code></pre>
+# Achtung! %$% Operator
+
+datensatz %$%
+  plot_frq(variable1, gruppenvariable, weight.by = gewicht)</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="uni-und-bivariate-datenanalyse.html#cb158-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Alter nach Geschlecht und Statistiken</span></span>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="uni-und-bivariate-datenanalyse.html#cb158-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Alter (age) nach Geschlecht (sex) und Statistiken</span></span>
 <span id="cb158-2"><a href="uni-und-bivariate-datenanalyse.html#cb158-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb158-3"><a href="uni-und-bivariate-datenanalyse.html#cb158-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb158-4"><a href="uni-und-bivariate-datenanalyse.html#cb158-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(age, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">show.values =</span> F, <span class="at">type =</span> <span class="st">&quot;line&quot;</span>, <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-113-1.png" width="672" /></p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="uni-und-bivariate-datenanalyse.html#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip nach Schichtzugehörigkeit (id02) </span></span>
+<span id="cb158-4"><a href="uni-und-bivariate-datenanalyse.html#cb158-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(age, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">show.values =</span> F, <span class="at">type =</span> <span class="st">&quot;line&quot;</span>,</span>
+<span id="cb158-5"><a href="uni-und-bivariate-datenanalyse.html#cb158-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-114-1.png" width="672" /></p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="uni-und-bivariate-datenanalyse.html#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip (im19) nach Schichtzugehörigkeit (id02) </span></span>
 <span id="cb159-2"><a href="uni-und-bivariate-datenanalyse.html#cb159-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb159-3"><a href="uni-und-bivariate-datenanalyse.html#cb159-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
 <span id="cb159-4"><a href="uni-und-bivariate-datenanalyse.html#cb159-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(im19, id02, <span class="at">weight.by =</span> wghtpew, <span class="at">show.values =</span> F, <span class="at">type =</span> <span class="st">&quot;boxplot&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-114-1.png" width="672" /></p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="uni-und-bivariate-datenanalyse.html#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip (im19) nach Geschlecht und Statistiken</span></span>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-115-1.png" width="672" /></p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="uni-und-bivariate-datenanalyse.html#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Statistiken</span></span>
 <span id="cb160-2"><a href="uni-und-bivariate-datenanalyse.html#cb160-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb160-3"><a href="uni-und-bivariate-datenanalyse.html#cb160-3" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb160-4"><a href="uni-und-bivariate-datenanalyse.html#cb160-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(im19, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">show.values =</span> T, <span class="at">type =</span> <span class="st">&quot;bar&quot;</span>, <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>, <span class="at">show.axis.values =</span> T, <span class="at">show.prc =</span> T, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">850</span>))</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-115-1.png" width="672" /></p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="uni-und-bivariate-datenanalyse.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip (im19) nach Geschlecht und Ost West</span></span>
+<span id="cb160-4"><a href="uni-und-bivariate-datenanalyse.html#cb160-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(im19, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;bar&quot;</span>, <span class="at">show.summary =</span> T,</span>
+<span id="cb160-5"><a href="uni-und-bivariate-datenanalyse.html#cb160-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">850</span>))</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-116-1.png" width="672" /></p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="uni-und-bivariate-datenanalyse.html#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Ost West (eastwest)</span></span>
 <span id="cb161-2"><a href="uni-und-bivariate-datenanalyse.html#cb161-2" aria-hidden="true" tabindex="-1"></a><span class="co"># und Statistiken</span></span>
 <span id="cb161-3"><a href="uni-und-bivariate-datenanalyse.html#cb161-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb161-4"><a href="uni-und-bivariate-datenanalyse.html#cb161-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb161-5"><a href="uni-und-bivariate-datenanalyse.html#cb161-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(im19, sex, <span class="at">intr.var =</span> eastwest, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;violin&quot;</span>, <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-116-1.png" width="672" /></p>
+<span id="cb161-5"><a href="uni-und-bivariate-datenanalyse.html#cb161-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(im19, sex, <span class="at">intr.var =</span> eastwest, <span class="at">weight.by =</span> wghtpew, </span>
+<span id="cb161-6"><a href="uni-und-bivariate-datenanalyse.html#cb161-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">type =</span> <span class="st">&quot;violin&quot;</span>, <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-117-1.png" width="672" /></p>
 </div>
 <div id="plot_xtab" class="section level3 unnumbered">
 <h3><code>Plot_xtab()</code></h3>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 
+plot_xtab(datensatz$variable1, datensatz$variable2, weight.by = datensatz$gewicht)
 
 # Mit Pipe
-</code></pre>
+# Achtung! %$% Operator
+
+datensatz %$%
+  plot_xtab(variable1, variable2, weight.by = gewicht)</code></pre>
 <p><strong>Beispielcode:</strong></p>
-<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="uni-und-bivariate-datenanalyse.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West</span></span>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="uni-und-bivariate-datenanalyse.html#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West (eastwest)</span></span>
 <span id="cb163-2"><a href="uni-und-bivariate-datenanalyse.html#cb163-2" aria-hidden="true" tabindex="-1"></a><span class="co"># und Statistiken</span></span>
 <span id="cb163-3"><a href="uni-und-bivariate-datenanalyse.html#cb163-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb163-4"><a href="uni-und-bivariate-datenanalyse.html#cb163-4" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%$%</span> </span>
-<span id="cb163-5"><a href="uni-und-bivariate-datenanalyse.html#cb163-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_xtab</span>(im21, eastwest, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;line&quot;</span>, <span class="at">show.total =</span> F, <span class="at">show.n =</span> F,</span>
-<span id="cb163-6"><a href="uni-und-bivariate-datenanalyse.html#cb163-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>)</span></code></pre></div>
-<p><img src="RWorkshop_files/figure-html/unnamed-chunk-117-1.png" width="672" /></p>
+<span id="cb163-5"><a href="uni-und-bivariate-datenanalyse.html#cb163-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_xtab</span>(im21, eastwest, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;line&quot;</span>, <span class="at">show.total =</span> F, </span>
+<span id="cb163-6"><a href="uni-und-bivariate-datenanalyse.html#cb163-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.n =</span> F, <span class="at">show.summary =</span> T, <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-118-1.png" width="672" /></p>
 </div>
-<div id="save_plot" class="section level3 unnumbered">
-<h3><code>Save_plot()</code></h3>
+<div id="grid.arrange" class="section level3 unnumbered">
+<h3><code>Grid.arrange()</code></h3>
+<pre><code>library(gridExtra)</code></pre>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 
+grid.arrange(arrangeGrob(abbildung1, abbildung2))
 
 # Mit Pipe
-</code></pre>
+# Nicht gut zu handhaben!</code></pre>
 <p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="uni-und-bivariate-datenanalyse.html#cb166-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verteilung Alter (age) nach Geschlecht (sex) zwischen Ost West (eastwest)</span></span>
+<span id="cb166-2"><a href="uni-und-bivariate-datenanalyse.html#cb166-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-3"><a href="uni-und-bivariate-datenanalyse.html#cb166-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb166-4"><a href="uni-und-bivariate-datenanalyse.html#cb166-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(eastwest <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%$%</span> </span>
+<span id="cb166-5"><a href="uni-und-bivariate-datenanalyse.html#cb166-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(age, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;violin&quot;</span>, <span class="at">show.summary =</span> T,</span>
+<span id="cb166-6"><a href="uni-und-bivariate-datenanalyse.html#cb166-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>, <span class="at">title =</span> <span class="st">&quot;ALTER nach GESCHLECHT - WEST&quot;</span>,</span>
+<span id="cb166-7"><a href="uni-und-bivariate-datenanalyse.html#cb166-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">geom.colors =</span> <span class="st">&quot;Blues&quot;</span>)</span>
+<span id="cb166-8"><a href="uni-und-bivariate-datenanalyse.html#cb166-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-9"><a href="uni-und-bivariate-datenanalyse.html#cb166-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb166-10"><a href="uni-und-bivariate-datenanalyse.html#cb166-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(eastwest <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%$%</span> </span>
+<span id="cb166-11"><a href="uni-und-bivariate-datenanalyse.html#cb166-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_grpfrq</span>(age, sex, <span class="at">weight.by =</span> wghtpew, <span class="at">type =</span> <span class="st">&quot;violin&quot;</span>, <span class="at">show.summary =</span> T,</span>
+<span id="cb166-12"><a href="uni-und-bivariate-datenanalyse.html#cb166-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">summary.pos =</span> <span class="st">&quot;1&quot;</span>, <span class="at">title =</span> <span class="st">&quot;ALTER nach GESCHLECHT - OST&quot;</span>,</span>
+<span id="cb166-13"><a href="uni-und-bivariate-datenanalyse.html#cb166-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">geom.colors =</span> <span class="st">&quot;Greens&quot;</span>)</span>
+<span id="cb166-14"><a href="uni-und-bivariate-datenanalyse.html#cb166-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb166-15"><a href="uni-und-bivariate-datenanalyse.html#cb166-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-16"><a href="uni-und-bivariate-datenanalyse.html#cb166-16" aria-hidden="true" tabindex="-1"></a><span class="co"># --------</span></span>
+<span id="cb166-17"><a href="uni-und-bivariate-datenanalyse.html#cb166-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-18"><a href="uni-und-bivariate-datenanalyse.html#cb166-18" aria-hidden="true" tabindex="-1"></a>pp1 <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(<span class="fu">arrangeGrob</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>))</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-120-1.png" width="672" /></p>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb167-1"><a href="uni-und-bivariate-datenanalyse.html#cb167-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb167-2"><a href="uni-und-bivariate-datenanalyse.html#cb167-2" aria-hidden="true" tabindex="-1"></a>pp1</span>
+<span id="cb167-3"><a href="uni-und-bivariate-datenanalyse.html#cb167-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; TableGrob (1 x 1) &quot;arrange&quot;: 1 grobs</span></span>
+<span id="cb167-4"><a href="uni-und-bivariate-datenanalyse.html#cb167-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   z     cells    name            grob</span></span>
+<span id="cb167-5"><a href="uni-und-bivariate-datenanalyse.html#cb167-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1 (1-1,1-1) arrange gtable[arrange]</span></span></code></pre></div>
+</div>
+<div id="ggsave" class="section level3 unnumbered">
+<h3><code>Ggsave()</code></h3>
+<p><strong>Syntax:</strong></p>
+<pre><code># Ohne Pipe
+
+ggsave(&quot;Grafik.png&quot;, plot = last_plot(), dpi = 300)
+
+# Mit Pipe
+# Nicht gut zu handhaben!</code></pre>
+<p><strong>Beispielcode:</strong></p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="uni-und-bivariate-datenanalyse.html#cb169-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb169-2"><a href="uni-und-bivariate-datenanalyse.html#cb169-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">&quot;grid.plot.png&quot;</span>, <span class="at">plot =</span> pp1, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb169-3"><a href="uni-und-bivariate-datenanalyse.html#cb169-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Saving 7 x 5 in image</span></span></code></pre></div>
 
 </div>
 </div>
