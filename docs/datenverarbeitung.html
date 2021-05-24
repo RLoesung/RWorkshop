@@ -294,15 +294,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#regressionsanalyse"><i class="fa fa-check"></i><b>5.5</b> Regressionsanalyse</a>
 <ul>
-<li><a href="multivariate-datenanalyse.html#lm"><code>lm()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#glm"><code>glm()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#lm"><code>Lm()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#model_parameters"><code>Model_parameters()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#anova"><code>Anova()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#model_performance"><code>Model_performance()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#compare_performance"><code>Compare_performance()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#screenreg"><code>Screenreg()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#plot_model"><code>Plot_model()</code></a></li>
-<li><a href="multivariate-datenanalyse.html#plot_residuals"><code>Plot_Residuals()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#plot_models"><code>Plot_models()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#check_model"><code>Check_model()</code></a></li>
+<li><a href="multivariate-datenanalyse.html#glm"><code>Glm()</code></a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html"><i class="fa fa-check"></i><b>6</b> Grafiken erstellen</a>
@@ -1755,24 +1756,23 @@ datensatz %&gt;%
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="datenverarbeitung.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="co"># z-Standardisierung des Leistungsprinzip (im19)</span></span>
 <span id="cb107-2"><a href="datenverarbeitung.html#cb107-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb107-3"><a href="datenverarbeitung.html#cb107-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb107-4"><a href="datenverarbeitung.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, wghtpew) <span class="sc">%&gt;%</span> </span>
-<span id="cb107-5"><a href="datenverarbeitung.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">std</span>(im19, <span class="at">weights =</span> wghtpew)</span>
-<span id="cb107-6"><a href="datenverarbeitung.html#cb107-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb107-7"><a href="datenverarbeitung.html#cb107-7" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">select</span>(im19, im19_z)</span>
-<span id="cb107-8"><a href="datenverarbeitung.html#cb107-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
-<span id="cb107-9"><a href="datenverarbeitung.html#cb107-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19 im19_z</span></span>
-<span id="cb107-10"><a href="datenverarbeitung.html#cb107-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb107-11"><a href="datenverarbeitung.html#cb107-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4  1.58 </span></span>
-<span id="cb107-12"><a href="datenverarbeitung.html#cb107-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4  1.58 </span></span>
-<span id="cb107-13"><a href="datenverarbeitung.html#cb107-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2 -0.537</span></span>
-<span id="cb107-14"><a href="datenverarbeitung.html#cb107-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4  1.58 </span></span>
-<span id="cb107-15"><a href="datenverarbeitung.html#cb107-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4  1.58 </span></span>
-<span id="cb107-16"><a href="datenverarbeitung.html#cb107-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2 -0.537</span></span>
-<span id="cb107-17"><a href="datenverarbeitung.html#cb107-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4  1.58 </span></span>
-<span id="cb107-18"><a href="datenverarbeitung.html#cb107-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4  1.58 </span></span>
-<span id="cb107-19"><a href="datenverarbeitung.html#cb107-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3  0.522</span></span>
-<span id="cb107-20"><a href="datenverarbeitung.html#cb107-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4  1.58 </span></span>
-<span id="cb107-21"><a href="datenverarbeitung.html#cb107-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+<span id="cb107-4"><a href="datenverarbeitung.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">std</span>(im19)</span>
+<span id="cb107-5"><a href="datenverarbeitung.html#cb107-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-6"><a href="datenverarbeitung.html#cb107-6" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">select</span>(im19, im19_z)</span>
+<span id="cb107-7"><a href="datenverarbeitung.html#cb107-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
+<span id="cb107-8"><a href="datenverarbeitung.html#cb107-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19 im19_z</span></span>
+<span id="cb107-9"><a href="datenverarbeitung.html#cb107-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb107-10"><a href="datenverarbeitung.html#cb107-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4  1.58 </span></span>
+<span id="cb107-11"><a href="datenverarbeitung.html#cb107-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4  1.58 </span></span>
+<span id="cb107-12"><a href="datenverarbeitung.html#cb107-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2 -0.537</span></span>
+<span id="cb107-13"><a href="datenverarbeitung.html#cb107-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4  1.58 </span></span>
+<span id="cb107-14"><a href="datenverarbeitung.html#cb107-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4  1.58 </span></span>
+<span id="cb107-15"><a href="datenverarbeitung.html#cb107-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2 -0.537</span></span>
+<span id="cb107-16"><a href="datenverarbeitung.html#cb107-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4  1.58 </span></span>
+<span id="cb107-17"><a href="datenverarbeitung.html#cb107-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4  1.58 </span></span>
+<span id="cb107-18"><a href="datenverarbeitung.html#cb107-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3  0.522</span></span>
+<span id="cb107-19"><a href="datenverarbeitung.html#cb107-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4  1.58 </span></span>
+<span id="cb107-20"><a href="datenverarbeitung.html#cb107-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
 <p>Suffix erklären!</p>
 </div>
 <div id="center" class="section level3 unnumbered">
@@ -1788,24 +1788,23 @@ datensatz %&gt;%
 <div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="datenverarbeitung.html#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Zentrierung des Leistungsprinzip (im19) am Mittelwert</span></span>
 <span id="cb109-2"><a href="datenverarbeitung.html#cb109-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb109-3"><a href="datenverarbeitung.html#cb109-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb109-4"><a href="datenverarbeitung.html#cb109-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, wghtpew) <span class="sc">%&gt;%</span> </span>
-<span id="cb109-5"><a href="datenverarbeitung.html#cb109-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">center</span>(im19, <span class="at">weights =</span> wghtpew)</span>
-<span id="cb109-6"><a href="datenverarbeitung.html#cb109-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb109-7"><a href="datenverarbeitung.html#cb109-7" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">select</span>(im19, im19_c)</span>
-<span id="cb109-8"><a href="datenverarbeitung.html#cb109-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
-<span id="cb109-9"><a href="datenverarbeitung.html#cb109-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19 im19_c</span></span>
-<span id="cb109-10"><a href="datenverarbeitung.html#cb109-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
-<span id="cb109-11"><a href="datenverarbeitung.html#cb109-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4  1.49 </span></span>
-<span id="cb109-12"><a href="datenverarbeitung.html#cb109-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4  1.49 </span></span>
-<span id="cb109-13"><a href="datenverarbeitung.html#cb109-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2 -0.507</span></span>
-<span id="cb109-14"><a href="datenverarbeitung.html#cb109-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4  1.49 </span></span>
-<span id="cb109-15"><a href="datenverarbeitung.html#cb109-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4  1.49 </span></span>
-<span id="cb109-16"><a href="datenverarbeitung.html#cb109-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2 -0.507</span></span>
-<span id="cb109-17"><a href="datenverarbeitung.html#cb109-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4  1.49 </span></span>
-<span id="cb109-18"><a href="datenverarbeitung.html#cb109-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4  1.49 </span></span>
-<span id="cb109-19"><a href="datenverarbeitung.html#cb109-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3  0.493</span></span>
-<span id="cb109-20"><a href="datenverarbeitung.html#cb109-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4  1.49 </span></span>
-<span id="cb109-21"><a href="datenverarbeitung.html#cb109-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
+<span id="cb109-4"><a href="datenverarbeitung.html#cb109-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">center</span>(im19)</span>
+<span id="cb109-5"><a href="datenverarbeitung.html#cb109-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb109-6"><a href="datenverarbeitung.html#cb109-6" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">select</span>(im19, im19_c)</span>
+<span id="cb109-7"><a href="datenverarbeitung.html#cb109-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3,477 x 2</span></span>
+<span id="cb109-8"><a href="datenverarbeitung.html#cb109-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     im19 im19_c</span></span>
+<span id="cb109-9"><a href="datenverarbeitung.html#cb109-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb109-10"><a href="datenverarbeitung.html#cb109-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1     4  1.49 </span></span>
+<span id="cb109-11"><a href="datenverarbeitung.html#cb109-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2     4  1.49 </span></span>
+<span id="cb109-12"><a href="datenverarbeitung.html#cb109-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3     2 -0.507</span></span>
+<span id="cb109-13"><a href="datenverarbeitung.html#cb109-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4     4  1.49 </span></span>
+<span id="cb109-14"><a href="datenverarbeitung.html#cb109-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5     4  1.49 </span></span>
+<span id="cb109-15"><a href="datenverarbeitung.html#cb109-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6     2 -0.507</span></span>
+<span id="cb109-16"><a href="datenverarbeitung.html#cb109-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7     4  1.49 </span></span>
+<span id="cb109-17"><a href="datenverarbeitung.html#cb109-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8     4  1.49 </span></span>
+<span id="cb109-18"><a href="datenverarbeitung.html#cb109-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3  0.493</span></span>
+<span id="cb109-19"><a href="datenverarbeitung.html#cb109-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4  1.49 </span></span>
+<span id="cb109-20"><a href="datenverarbeitung.html#cb109-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
 </div>
 <div id="split_var" class="section level3 unnumbered">
 <h3><code>Split_var()</code></h3>

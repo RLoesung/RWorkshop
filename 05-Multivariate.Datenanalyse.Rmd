@@ -340,24 +340,185 @@ fa.diagram(fa)
 
 ## Regressionsanalyse
 
-### `lm()` {-}
+### `Lm()` {-}
 
-### `glm()` {-}
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19, sex, age, educ, di08, wghtpew) %>% 
+  # Z-Standardisierung Einkommen
+  std(di08) %>% 
+  # Umbennenung zEinkommen
+  rename(zEinkommen = di08_z) %>% 
+  # Rekodierung Geschlecht und Bildung
+  mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
+         bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
+                                    4:5=3 [hoch]; else=NA")) %>% 
+  # Konvertierung in Faktor Geschlecht und Bildung
+  to_label(sex, bildung) %>% 
+  # Refrenzkategorie Bildung auf mittel
+  ref_lvl(bildung, lvl = 2) %>% 
+  # Löschung NA 
+  drop_na()
+  
+# Nullmodell
+
+nullmodel <- lm(im19 ~ 1, ds, weights = wghtpew)
+summary(nullmodel)
+
+# Modellierung erstes Modell
+
+model1 <- lm(im19 ~ sex + age + bildung + zEinkommen, ds, weights = ds$wghtpew)
+summary(model1)
+
+# Prüfung auf Interaktioneffekt zwischen Geschlecht und zEinkommen
+
+model2.1 <- lm(im19 ~ zEinkommen + sex + age + bildung + zEinkommen:sex, ds, 
+               weights = ds$wghtpew)
+summary(model2.1)
+
+# ODER
+
+model2.2 <- lm(im19 ~ zEinkommen*sex + age + bildung, ds, weights = ds$wghtpew)
+
+summary(model2.2)
+```
 
 ### `Model_parameters()` {-}
 
+```{r, include=F}
+library("easystats")
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modellparameter in übersichtlicher Darstellung
+
+m1Parameter <- model_parameters(model2.1)
+
+m1Parameter
+
+plot(m1Parameter)
+```
+
+### `Anova()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# F-Tests auf Gesamtsignifikanz (Anpassung an Daten)
+
+anova(nullmodel, model1)
+
+anova(model1, model2.1)
+```
+
 ### `Model_performance()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modellgüte nach verschiedenen Kennzahlen 
+
+model_performance(model2.1)
+
+```
 
 ### `Compare_performance()` {-}
 
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vergleich von Modellgüte
+
+cperf <- compare_performance(model1, model2.1)
+
+cperf
+
+plot(cperf)
+```
+
 ### `Screenreg()` {-}
+
+```{}
+library(texreg)
+```
+```{r, include=F}
+library(texreg)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Tabellarische Darstellung im Modellvergleich mit Kennzahlen der Modellgüte
+
+screenreg(list(model1, model2.1), single.row = T)
+```
 
 ### `Plot_model()` {-}
 
-### `Plot_Residuals()` {-}
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Regressionskoeffizienten
+
+plot_model(model2.1)
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Schätzwerte (predicted values)
+
+plot_model(model2.1, type = "pred")
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Gruppierung von Effekten
+
+plot_model(model2.1, type = "pred", terms = c("zEinkommen","bildung"))
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Interaktion
+
+plot_model(model2.1, type = "int")
+```
+
+### `Plot_models()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vergleich Regressionskoeffizienten
+
+plot_models(model1, model2.1)
+```
 
 ### `Check_model()` {-}
 
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Annahmenprüfung
+
+check_model(model2.1)
+```
+
+### `Glm()` {-}
 
 
 
