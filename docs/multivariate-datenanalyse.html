@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2021-05-24" />
+<meta name="date" content="2021-05-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -846,9 +846,9 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 <span id="cb194-3"><a href="multivariate-datenanalyse.html#cb194-3" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb194-4"><a href="multivariate-datenanalyse.html#cb194-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, sex, age, educ, di08, wghtpew) <span class="sc">%&gt;%</span> </span>
 <span id="cb194-5"><a href="multivariate-datenanalyse.html#cb194-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Z-Standardisierung Einkommen</span></span>
-<span id="cb194-6"><a href="multivariate-datenanalyse.html#cb194-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">std</span>(di08) <span class="sc">%&gt;%</span> </span>
-<span id="cb194-7"><a href="multivariate-datenanalyse.html#cb194-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Umbennenung zEinkommen</span></span>
-<span id="cb194-8"><a href="multivariate-datenanalyse.html#cb194-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">zEinkommen =</span> di08_z) <span class="sc">%&gt;%</span> </span>
+<span id="cb194-6"><a href="multivariate-datenanalyse.html#cb194-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">wMean =</span> <span class="fu">weighted_mean</span>(di08, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb194-7"><a href="multivariate-datenanalyse.html#cb194-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">wSD =</span> <span class="fu">weighted_sd</span>(di08, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb194-8"><a href="multivariate-datenanalyse.html#cb194-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">zEinkommen =</span> (di08<span class="sc">-</span>wMean)<span class="sc">/</span>wSD) <span class="sc">%&gt;%</span> </span>
 <span id="cb194-9"><a href="multivariate-datenanalyse.html#cb194-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rekodierung Geschlecht und Bildung</span></span>
 <span id="cb194-10"><a href="multivariate-datenanalyse.html#cb194-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">rec</span>(sex, <span class="at">rec =</span> <span class="st">&quot;1=1 [Mann]; 2=0 [Frau]&quot;</span>),</span>
 <span id="cb194-11"><a href="multivariate-datenanalyse.html#cb194-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">bildung =</span> <span class="fu">rec</span>(educ, <span class="at">rec =</span> <span class="st">&quot;1:2=1 [niedrig]; 3=2 [mittel]; </span></span>
@@ -895,12 +895,12 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 <span id="cb194-52"><a href="multivariate-datenanalyse.html#cb194-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb194-53"><a href="multivariate-datenanalyse.html#cb194-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
 <span id="cb194-54"><a href="multivariate-datenanalyse.html#cb194-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span id="cb194-55"><a href="multivariate-datenanalyse.html#cb194-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)     2.709660   0.063320  42.793  &lt; 2e-16 ***</span></span>
+<span id="cb194-55"><a href="multivariate-datenanalyse.html#cb194-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)     2.708765   0.063434  42.702  &lt; 2e-16 ***</span></span>
 <span id="cb194-56"><a href="multivariate-datenanalyse.html#cb194-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sexMann        -0.179526   0.033839  -5.305 1.21e-07 ***</span></span>
 <span id="cb194-57"><a href="multivariate-datenanalyse.html#cb194-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age            -0.002105   0.001042  -2.020 0.043423 *  </span></span>
 <span id="cb194-58"><a href="multivariate-datenanalyse.html#cb194-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildungniedrig -0.265591   0.046215  -5.747 1.00e-08 ***</span></span>
 <span id="cb194-59"><a href="multivariate-datenanalyse.html#cb194-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildunghoch     0.153043   0.040719   3.759 0.000174 ***</span></span>
-<span id="cb194-60"><a href="multivariate-datenanalyse.html#cb194-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen     -0.020489   0.017223  -1.190 0.234299    </span></span>
+<span id="cb194-60"><a href="multivariate-datenanalyse.html#cb194-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen     -0.021174   0.017799  -1.190 0.234299    </span></span>
 <span id="cb194-61"><a href="multivariate-datenanalyse.html#cb194-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
 <span id="cb194-62"><a href="multivariate-datenanalyse.html#cb194-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
 <span id="cb194-63"><a href="multivariate-datenanalyse.html#cb194-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -924,13 +924,13 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 <span id="cb194-81"><a href="multivariate-datenanalyse.html#cb194-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb194-82"><a href="multivariate-datenanalyse.html#cb194-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
 <span id="cb194-83"><a href="multivariate-datenanalyse.html#cb194-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span id="cb194-84"><a href="multivariate-datenanalyse.html#cb194-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)         2.706608   0.063317  42.747  &lt; 2e-16 ***</span></span>
-<span id="cb194-85"><a href="multivariate-datenanalyse.html#cb194-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen          0.012521   0.025009   0.501 0.616637    </span></span>
-<span id="cb194-86"><a href="multivariate-datenanalyse.html#cb194-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sexMann            -0.176613   0.033863  -5.215 1.96e-07 ***</span></span>
+<span id="cb194-84"><a href="multivariate-datenanalyse.html#cb194-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)         2.707154   0.063416  42.689  &lt; 2e-16 ***</span></span>
+<span id="cb194-85"><a href="multivariate-datenanalyse.html#cb194-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen          0.012940   0.025846   0.501 0.616637    </span></span>
+<span id="cb194-86"><a href="multivariate-datenanalyse.html#cb194-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sexMann            -0.179216   0.033826  -5.298 1.26e-07 ***</span></span>
 <span id="cb194-87"><a href="multivariate-datenanalyse.html#cb194-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age                -0.002042   0.001042  -1.960 0.050066 .  </span></span>
 <span id="cb194-88"><a href="multivariate-datenanalyse.html#cb194-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildungniedrig     -0.265051   0.046198  -5.737 1.06e-08 ***</span></span>
 <span id="cb194-89"><a href="multivariate-datenanalyse.html#cb194-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildunghoch         0.154179   0.040707   3.787 0.000155 ***</span></span>
-<span id="cb194-90"><a href="multivariate-datenanalyse.html#cb194-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen:sexMann -0.059617   0.032761  -1.820 0.068896 .  </span></span>
+<span id="cb194-90"><a href="multivariate-datenanalyse.html#cb194-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen:sexMann -0.061611   0.033856  -1.820 0.068896 .  </span></span>
 <span id="cb194-91"><a href="multivariate-datenanalyse.html#cb194-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
 <span id="cb194-92"><a href="multivariate-datenanalyse.html#cb194-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
 <span id="cb194-93"><a href="multivariate-datenanalyse.html#cb194-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -954,13 +954,13 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 <span id="cb194-111"><a href="multivariate-datenanalyse.html#cb194-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb194-112"><a href="multivariate-datenanalyse.html#cb194-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
 <span id="cb194-113"><a href="multivariate-datenanalyse.html#cb194-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                     Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span id="cb194-114"><a href="multivariate-datenanalyse.html#cb194-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)         2.706608   0.063317  42.747  &lt; 2e-16 ***</span></span>
-<span id="cb194-115"><a href="multivariate-datenanalyse.html#cb194-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen          0.012521   0.025009   0.501 0.616637    </span></span>
-<span id="cb194-116"><a href="multivariate-datenanalyse.html#cb194-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sexMann            -0.176613   0.033863  -5.215 1.96e-07 ***</span></span>
+<span id="cb194-114"><a href="multivariate-datenanalyse.html#cb194-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)         2.707154   0.063416  42.689  &lt; 2e-16 ***</span></span>
+<span id="cb194-115"><a href="multivariate-datenanalyse.html#cb194-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen          0.012940   0.025846   0.501 0.616637    </span></span>
+<span id="cb194-116"><a href="multivariate-datenanalyse.html#cb194-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sexMann            -0.179216   0.033826  -5.298 1.26e-07 ***</span></span>
 <span id="cb194-117"><a href="multivariate-datenanalyse.html#cb194-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age                -0.002042   0.001042  -1.960 0.050066 .  </span></span>
 <span id="cb194-118"><a href="multivariate-datenanalyse.html#cb194-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildungniedrig     -0.265051   0.046198  -5.737 1.06e-08 ***</span></span>
 <span id="cb194-119"><a href="multivariate-datenanalyse.html#cb194-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildunghoch         0.154179   0.040707   3.787 0.000155 ***</span></span>
-<span id="cb194-120"><a href="multivariate-datenanalyse.html#cb194-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen:sexMann -0.059617   0.032761  -1.820 0.068896 .  </span></span>
+<span id="cb194-120"><a href="multivariate-datenanalyse.html#cb194-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen:sexMann -0.061611   0.033856  -1.820 0.068896 .  </span></span>
 <span id="cb194-121"><a href="multivariate-datenanalyse.html#cb194-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
 <span id="cb194-122"><a href="multivariate-datenanalyse.html#cb194-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
 <span id="cb194-123"><a href="multivariate-datenanalyse.html#cb194-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -978,13 +978,13 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 <span id="cb195-5"><a href="multivariate-datenanalyse.html#cb195-5" aria-hidden="true" tabindex="-1"></a>m1Parameter</span>
 <span id="cb195-6"><a href="multivariate-datenanalyse.html#cb195-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameter               | Coefficient |       SE |         95% CI | t(2941) |      p</span></span>
 <span id="cb195-7"><a href="multivariate-datenanalyse.html#cb195-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ------------------------------------------------------------------------------------</span></span>
-<span id="cb195-8"><a href="multivariate-datenanalyse.html#cb195-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)             |        2.71 |     0.06 | [ 2.58,  2.83] |   42.75 | &lt; .001</span></span>
+<span id="cb195-8"><a href="multivariate-datenanalyse.html#cb195-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)             |        2.71 |     0.06 | [ 2.58,  2.83] |   42.69 | &lt; .001</span></span>
 <span id="cb195-9"><a href="multivariate-datenanalyse.html#cb195-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen              |        0.01 |     0.03 | [-0.04,  0.06] |    0.50 | 0.617 </span></span>
-<span id="cb195-10"><a href="multivariate-datenanalyse.html#cb195-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sex [Mann]              |       -0.18 |     0.03 | [-0.24, -0.11] |   -5.22 | &lt; .001</span></span>
+<span id="cb195-10"><a href="multivariate-datenanalyse.html#cb195-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sex [Mann]              |       -0.18 |     0.03 | [-0.25, -0.11] |   -5.30 | &lt; .001</span></span>
 <span id="cb195-11"><a href="multivariate-datenanalyse.html#cb195-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age                     |   -2.04e-03 | 1.04e-03 | [ 0.00,  0.00] |   -1.96 | 0.050 </span></span>
 <span id="cb195-12"><a href="multivariate-datenanalyse.html#cb195-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildung [niedrig]       |       -0.27 |     0.05 | [-0.36, -0.17] |   -5.74 | &lt; .001</span></span>
 <span id="cb195-13"><a href="multivariate-datenanalyse.html#cb195-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bildung [hoch]          |        0.15 |     0.04 | [ 0.07,  0.23] |    3.79 | &lt; .001</span></span>
-<span id="cb195-14"><a href="multivariate-datenanalyse.html#cb195-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen * sex [Mann] |       -0.06 |     0.03 | [-0.12,  0.00] |   -1.82 | 0.069</span></span>
+<span id="cb195-14"><a href="multivariate-datenanalyse.html#cb195-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zEinkommen * sex [Mann] |       -0.06 |     0.03 | [-0.13,  0.00] |   -1.82 | 0.069</span></span>
 <span id="cb195-15"><a href="multivariate-datenanalyse.html#cb195-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb195-16"><a href="multivariate-datenanalyse.html#cb195-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1Parameter)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-136-1.png" width="672" /></p>
@@ -1119,6 +1119,7 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 </div>
 <div id="glm" class="section level3 unnumbered">
 <h3><code>Glm()</code></h3>
+<p>Kommt in wenigen Tagen!</p>
 
 </div>
 </div>
