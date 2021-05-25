@@ -361,9 +361,9 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 ds <- allbus2018 %>% 
   select(im19, sex, age, educ, di08, wghtpew) %>% 
   # Z-Standardisierung Einkommen
-  std(di08) %>% 
-  # Umbennenung zEinkommen
-  rename(zEinkommen = di08_z) %>% 
+   mutate(wMean = weighted_mean(di08, weights = wghtpew),
+         wSD = weighted_sd(di08, weights = wghtpew),
+         zEinkommen = (di08-wMean)/wSD) %>% 
   # Rekodierung Geschlecht und Bildung
   mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
          bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
