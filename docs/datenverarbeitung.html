@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2022-01-11" />
+<meta name="date" content="2022-02-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1576,7 +1576,7 @@ distinct(datensatz, variable1)
 
 # Mit Pipe
 datensatz %&gt;% 
-  distinct(datensatz, variable1)</code></pre>
+  distinct(variable1)</code></pre>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="datenverarbeitung.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Geburtsjahre</span></span>
 <span id="cb101-2"><a href="datenverarbeitung.html#cb101-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1750,6 +1750,7 @@ gering<br>mittel<br>hoch
 </div>
 <div id="std" class="section level3 unnumbered">
 <h3><code>Std()</code></h3>
+<p>Mit der Funktion <code>std()</code> können wir Variablen z-transformieren (Standardisierung und Zentrierung).</p>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 std(datensatz, variable1)
@@ -1757,6 +1758,7 @@ std(datensatz, variable1)
 # Mit Pipe
 datensatz %&gt;% 
   std(datensatz, variable1)</code></pre>
+<p>Im Default wird dabei eine neue Variable mit dem Suffix “_z” erstellt. Im Beispiel würde im Datensatz <code>datensatz</code> eine neue Variable mit dem Namen <code>variable1_z</code> gebildet werden.</p>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="datenverarbeitung.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="co"># z-Standardisierung des Leistungsprinzip (im19)</span></span>
 <span id="cb107-2"><a href="datenverarbeitung.html#cb107-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1778,10 +1780,10 @@ datensatz %&gt;%
 <span id="cb107-18"><a href="datenverarbeitung.html#cb107-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9     3  0.522</span></span>
 <span id="cb107-19"><a href="datenverarbeitung.html#cb107-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10     4  1.58 </span></span>
 <span id="cb107-20"><a href="datenverarbeitung.html#cb107-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,467 more rows</span></span></code></pre></div>
-<p>Suffix erklären!</p>
 </div>
 <div id="center" class="section level3 unnumbered">
 <h3><code>Center()</code></h3>
+<p>Zur Zentrierung (um den Mittelwert) einer Variable kann der Befehl <code>center()</code> genutzt werden.</p>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 center(datensatz, variable1)
@@ -1789,6 +1791,7 @@ center(datensatz, variable1)
 # Mit Pipe
 datensatz %&gt;% 
   center(datensatz, variable1)</code></pre>
+<p>Im Default wird bei der Zentrierung eine neue Variable mit dem Suffix “_c” erstellt. Im Beispiel würde im Datensatz <code>datensatz</code> eine neue Variable mit dem Namen <code>variable1_c</code> gebildet werden.</p>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="datenverarbeitung.html#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Zentrierung des Leistungsprinzip (im19) am Mittelwert</span></span>
 <span id="cb109-2"><a href="datenverarbeitung.html#cb109-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1813,6 +1816,7 @@ datensatz %&gt;%
 </div>
 <div id="split_var" class="section level3 unnumbered">
 <h3><code>Split_var()</code></h3>
+<p>Mit dem Befehl <code>split_var()</code> können nummerische Variablen in gleich große Gruppen (Befragtenanzahl) aufgeteilt werden. Die Anzahl der Gruppen wird dabei im Befehl mit <code>n=</code> festgelegt.</p>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 split_var(datensatz, variable1, n = 5)
@@ -1820,6 +1824,7 @@ split_var(datensatz, variable1, n = 5)
 # Mit Pipe
 datensatz %&gt;% 
   split_var(datensatz, variable1, n = 5)</code></pre>
+<p>Bei der Gruppierung mit diesem Befehl wird eine neue Variable mit dem Suffix “_g” erstellt. Im Beispiel würde im Datensatz <code>datensatz</code> eine neue Variable mit dem Namen <code>variable1_g</code> gebildet werden.</p>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="datenverarbeitung.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Alter in 5 gleichgroße Gruppen unterteilen</span></span>
 <span id="cb111-2"><a href="datenverarbeitung.html#cb111-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1843,6 +1848,7 @@ datensatz %&gt;%
 </div>
 <div id="group_var" class="section level3 unnumbered">
 <h3><code>Group_var()</code></h3>
+<p>Entgehgen dem vorherigen Befehl <code>split_var()</code>, ist hier der Fokus die Gruppen nach dem Wertebereich einzuteilen. Mit dem <code>group_var()</code> Befehl wird eine nummerische Variable in einer neuen Variable zu Gruppen mit gleichem Wertebereich gruppiert. Mit <code>size=</code> wird der Wertebreich der einzelnen Gruppen festgelegt.</p>
 <p><strong>Syntax:</strong></p>
 <pre><code># Ohne Pipe
 group_var(datensatz, variable1, size = 5)
@@ -1850,6 +1856,7 @@ group_var(datensatz, variable1, size = 5)
 # Mit Pipe
 datensatz %&gt;% 
   group_var(datensatz, variable1, size = 5)</code></pre>
+<p>Bei der Gruppierung mit diesem Befehl wird eine neue Variable mit dem Suffix “_gr” erstellt. Im Beispiel würde im Datensatz <code>datensatz</code> eine neue Variable mit dem Namen <code>variable1_gr</code> gebildet werden.</p>
 <p><strong>Beispielcode:</strong></p>
 <div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="datenverarbeitung.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 10 Jahre Altersspannen </span></span>
 <span id="cb113-2"><a href="datenverarbeitung.html#cb113-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Achtung! Intervalle orientieren sich &quot;default&quot; an der oberen Wertgrenze des Intervalls</span></span>
