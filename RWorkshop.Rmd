@@ -1,0 +1,3697 @@
+--- 
+title: "R Workshop - Sozialwissenschaften"
+author: "Yannick Diehl und Daniel Moosdorf"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+description: "Einführung in R"
+---
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+# Vorwort {-}
+
+Dieser Workshop richtet sich insbesondere an Studierende der Sozialwissenschaften und möchte einen einfachen und verständlichen Einstieg in statistische Auswertungen mit R bieten.
+
+Ein besonderer Augenmerk liegt auf Anwender:innen die eine neue Heimat zur Lösung statistischer Aufgaben- und Problemstellungen suchen und folgend Kenntnisse im Umgang mit (u.a. kommerziellen) Statistik- und Analyse-Software besitzen (v.a. SPSS). 
+
+Anwendungsziel der kommenden Analysetechniken sind insbesondere sozialwissenschaftliche Studien/Bevölkerungsumfragen mit wissenschaftlichen Erhebungsstandards, wenngleich auch "unstandartisierte" Datensätze mit den vorzustellenden Techniken verarbeitet werden können. Zudem soll den künftigen Anwender:innen eine umfassende Funktionsbibliothek an die Hand gegeben werden, welche eine komplexe Gewichtung von Studiendaten erlaubt.
+
+## Voraussetzungen
+
+Bitte installieren Sie hierfür die aktuelle Version von R unter: [R Programm - Version 4.0.5 (17.05.2021)](https://stat.ethz.ch/CRAN/)
+
+Darüber hinaus werden wir mit der *integrierten Entwicklungsumgebung* (IDE) RStudio arbeiten. Die aktuelle Version findet sich unter: [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/) 
+
+Intergrierte Entwicklungsumgebungen wie RStudio vereinfachen den Arbeitprozess mit der Programmiersprache R ungemein, wenngleich auch schon im ersten Installationsschritt über das R Programm die gleichen Funktionsanwendungen ausführbar sind. So stellt RStudio vor allem eine Vereinfachung des Arbeitsprozesses dar, obgleich mit weitreichenden Implikationen bei der Nachvollziehbarkeit von Ablaufschritten und Anwendungsverfahren.
+
+## Warum R?
+
+* R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten konzipiert ist.
+* R ist eine der führenden Lösungen für die statistische Datenanalyse und kann auch für das Data Mining oder Predictive Analytics eingesetzt werden.
+* Daten lassen sich mit der Sprache sehr flexibel auswerten und visualisieren.
+* Sowohl wissenschaftliche Organisationen als auch große Unternehmen wie Oracle oder Microsoft verwenden R umfassend.
+* R kann problemlos in alle Ebenen der Analyse und Präsentation von Daten integriert werden.
+* Dank der Flexibilität von R ist der gleiche Code sowohl für kleinere Datenanalysen als auch für umfangreiches Data Mining im Big-Data-Umfeld geeignet.
+* Die Plattformunabhängigkeit sorgt dafür, dass R in verschiedenste IT-Strukturen leicht integrierbar und universell nutzbar ist.
+
+Und zuletzt:
+
+* Im Gegensatz zu anderen Lösungen für die Analyse und Visualisierung von Daten ist R Open Source. Es fallen keine Lizenzkosten an, auch nicht für den Großteil der verfügbaren Erweiterungspakete.
+
+## Was ist R?
+
+R wurde 1992 von **R**oss Ihaka und **R**obert Gentleman an der Universität Auckland entwickelt und wird als Open Source-Software unter der GNU General Public License durch die in Wien ansässige R Foundation for Statistical Computing verwaltet und verbreitet.
+
+R stammt direkt von der kommerziellen statistischen Programmiersprache S ab und während das Herz von R durch das R (Development) Core Team (aus dem auch die Stiftung hervorgegangen ist) weiterentwickelt wird, liegt die eigentliche Stärke von R in der Verfügbarkeit von Zusatzfunktionen, in Form sogenannter Packages (dt. Packete). So erweitern unabhängige Entwickler überall auf der Welt durch unzählige Packages mit unterschiedlichsten Ausrichtungen die Funktionsmöglichkeit von R, angefangen von der klassichen Regression bis zum maschinellen Lernen. Mehr als 12.000 dieser Funktionspakete, die geschätzt mehr als 220.000 Funktionen beinhalten, stehen über das Comprehensive R Archive Network (CRAN) und einige weitere Hubs zur kostenfreien Verfügung. Folglich gibt es praktisch kein statistisches Problem, dass noch nicht eine entsprechende Lösung in R gefunden hat und damit gebrauchsfertig heruntergeladen und nach eigenen Vorstellungen modifiziert werden kann. 
+
+## Aller Einstieg ist schwer?!
+
+Wir werden uns primär mit R als Statistikumgebung und weniger als klassische Programmierumgebung beschäftigen, wenngleich kleinere Exkurse in die Fundamente dieser Sprache nicht vermieden werden können. Unser Anspruch bleibt dabei immer eine einfache, konsistente und übersichtliche Lösung zu geben, um dem freien und selbstbestimmten Lernen und Arbeiten aller Teilnehmenden Sorge zu tragen. 
+
+Um diesem Anspruch gerecht werden zu können, werden wir uns vornehmlich in relativ "abgeschlossenen" Ökosystemen (Ecosystems) bewegen, also Sammlungen von Paketen, die aufeinander abgestimmt wurden. Das bekannteste Beispiel ist hierfür sicherlich das *tidyverse*, welches maßgebend von einem der großen R-Pioniere und RStudio chief scientist Hadley Wickham entwickelt wurde. Auf Grundlage des selbigen werden wir noch die Pakete von Daniel Lüdecke *strengejacke* und die beeindruckenden Modellaufbereitungen in *easystats* kennen lernen. So repräsentieren diese Pakete in vollem Umfang den "state-of-the-art" sozialwissenschaftlicher Datenanalysetechniken, obgleich der Lernprozess damit deutlich vereinfacht ist. Zudem werden alle genannten Pakete, vor allem das tidyverse, auch in nicht-universitären Kontexten weitreichend genutzt.
+
+## Typographie
+
+Die folgenden Kapitel bestehen zu einem großen Teil aus `R Code` und damit aus den entsprechenden *chunks*. Damit können sie leicht erkannt und für den eigenen Gebrauch in das persönliche *R Script* kopiert werden. Ein Beispiel:
+
+```{r, echo=T, results='hide'}
+x <- seq(from = 1, to = 100, by = 10)
+x
+```
+
+Das Ergebnis lässt sich folgend in der Konsole ablesen.
+
+```{r, echo=F}
+x
+```
+
+Damit ist `x` unser Input und `## [1]  1 11 21 31 41 51 61 71 81 91` unser Output nachdem wir `x` eine Zahlensequenz zwischen 1 und 100 in 10er Schritten zugewiesen haben.
+
+## Weiterführende Literatur
+
+Wir orientieren uns vor allem in den ersten beiden Kapiteln unseres Workshops an dem Kurs: [Einführung in R](https://methodenlehre.github.io/einfuehrung-in-R/index.html) von Andrew Ellis und Boris Mayer. 
+
+Grundständige Literatur, die auch zu diesem Workshop passt, findet sich als freie Publikation von Garrett Grolemund und Hadley Wickham unter dem Titel [R for Data Science](http://r4ds.had.co.nz/). 
+
+Zur Vertiefung bieten sich die Bücher [Hands-On Programming with R](http://shop.oreilly.com/product/0636920028574.do) von Garrett Grolemund und [Advanced R](http://adv-r.had.co.nz/) von Hadley Wickham an.
+
+
+
+
+
+<!--chapter:end:index.Rmd-->
+
+# RStudio 
+
+In einem ersten Schritt wollen wir uns RStudio genauer ansehen. Öffnen Sie nun bitte RStudio. 
+
+## Benutzeroberfläche
+
+Sie sollten ungefähr die gleiche Benutzeroberfläche bzw. GUI (Graphical User Interface) vor sich sehen (standardmäßig weiß):
+
+```{r, echo=F}
+knitr::include_graphics("Bilder/GUI.png")
+```
+
+## Optionen
+
+Wir empfehlen eindrücklich vor Beginn einer intensiven Nutzung mit RStudio die folgenden Punkte in den Optionen unter `Preferences`bzw. `Global Options` zu deaktivieren. 
+
+1. Restore .RData into workspace at startup (deaktivieren)
+2. Save workspace to .RData on exit (Never)
+
+Folgend müssen wir immer alle Daten und Variablen bei einem Neustart von RStudio neu laden. Belohnt werden wir hingegen durch einen frischen Workspace.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Menu.png")
+```
+
+Sofern Sie Interesse an einer Änderungen der grafischen Darstellung von RStudio haben (z.B. eine dunkle Farbgebung), sollten Sie sich unter dem Menüpunkt `Appearance` ausprobieren.
+
+## Konsole
+
+Die R Konsole ist praktisch das Herzstück der Benutzeroberfläche und ermöglicht geschriebenen Code direkt oder über das `R Script` interpretieren zu lassen. Das `>` Zeichen ist die R Prompt (das Aufforderungszeichen). 
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Konsole.png")
+```
+
+Die Konsole kann gerne auch als Übungsfeld für die ersten Eingaben genutzt werden, z.B. als Taschenrechner.
+
+```{r}
+2+3
+```
+
+## Environment und History
+
+Im Reiter `Enironment` finden wir die Funktion `Global Environment` (drop-down menu). In diesem Bereich werden alle **Objekte**, also Variablen und Datensätze, die wir zuvor angelegt haben, gespeichert. Auch selbstgeschriebene Funktionen werden hier hinterlegt.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Environment.png")
+```
+
+Unter dem Reiter `History` finden Sie alle Befehle, die Sie bisher ausgeführt haben. Mit einem Doppelklick werden diese automatisch in die Konsole kopiert. Damit können sie einfach modifiziert und/oder erneut ausgebenen werden.
+
+**Tipp:** Die History lässt sich auch direkt über die Testenbefehle `cmd`+ `up` auf macOS bzw. `strg`+ `up` bei Windows in der Konsole abrufen.
+
+## Files 
+
+Unter dem Reiter **Files** können Sie auf Ihre Datenstruktur zugreifen und damit ein **Arbeitsverzeichnis (working directory)** festlegen (siehe Bild). 
+
+Die Festlegung eines Arbeitsverzeichnis erleichtert in Folge das Einlesen von weiteren Datenobjekten (z.B. Datensätzen), sofern nicht in einem `Project` gearbeitet wird. Das Arbeitsverzeichnis muss in dem Ordner gesetzt werden, indem sich auch der Datensatz bzw. die einzulesenden Daten befinden. 
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Files.png")
+```
+
+## Packages
+
+R stellt uns über *base R* schon eine ganze Reihe nützlicher Funktionen zur Verfügung. Diese bewegen sich jedoch auf sehr abstarktem Niveau und würden bei ausschließlicher Nutzung viele Analyseschritte sehr aufwendig machen. Folgend greifen wir auf die versprochenen Pakete bzw. Ökosysteme zurück, um unsere Funktionsbibliothek deutlich zu erweitern. Pakete lassen sich mit dem folgenden Befehl in der Konsole sehr leicht installieren. 
+
+```{}
+install.packages("tidyverse")
+```
+
+Damit haben wir alle Pakete und Funktionen aus dem tidyverse installiert.
+
+Nun wollen wir noch strengejacke und easystats installieren.
+
+Die Pakete aus strengejacke können entweder einzeln über das CRAN installiert werden, oder im Bündel über Github. Wollen wir z.B. nur das Paket sjmisc aus strengejacke installieren verwenden wir den folgenden Befehl:
+
+```{}
+install.packages("sjmisc")
+```
+
+Sofern das ganze Bündel installiert werden soll, laden wir zunächst das Paket remotes, um Github als Downloadplattform anwählen zu können und dann strengejacke.
+
+```{}
+install.packages("remotes")
+remotes::install_github("strengejacke/strengejacke")
+```
+
+Damit wurde strengejacke erfolgreich installiert!
+
+Das Ökosystem easystats ist gegenwärtig noch in der Testphase und damit auch nur über Github zu laden. 
+
+```{}
+install.packages("remotes")
+remotes::install_github("easystats/easystats")
+```
+
+Gratulation, damit haben wir die wichtigsten Pakete installiert!
+
+Nun müssen wir sie nur noch aktivieren. Dafür nutzen wir den Befehl `library`, um auf unsere Funktionsbibliothek zuzugreifen.
+
+```{}
+library(tidyverse)
+library(strengejacke)
+library("easystats")
+```
+
+**Wichtig!** Das Packetbündel easystats muss beim Aufruf in Anführungszeichen geschrieben werden.
+
+Als Alternative können wir Pakete auch über den Reiter `Packages` installieren und aktivieren (oben links im Fenster).
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Packages.png")
+```
+
+Updates lassen sich über den Reiter `Packages` oder den folgenden Befehl machen:
+
+```{}
+update.packages()
+```
+
+bzw.
+
+```{}
+update.packages(ask = F)
+
+```
+
+## Help
+
+Selbst wenn man täglich mit R arbeitet, ist es (fast) unmöglich, sich alle Funktionen zu merken. Deshalb bietet R über den Reiter `Help` die Möglichkeit eine lexikale Darstellung aller Funktionen und Anwendungsmöglichkeiten zu bekommen. Leider sind viele der Einträge zu Beginn nicht ganz leicht verständlich. Nach einiger Zeit bieten sie aber eine zuverlässige Möglichkeit neue Funktionen zu erlernen und alte nachzuschlagen. 
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Help.png")
+```
+
+Hat man eine Funktion im Kopf lässt sich diese leicht über das Suchfenster im `Help Viewer` suchen. Über die Konsole geht das natürlich auch. Der Befehl hier z.B. für den gewichteten Mittelwert:
+
+```{}
+?weighted_mean
+```
+
+Hier muss nur die gesuchte Funktion hinter ein `?` geschrieben werden.
+
+Will man herausfinden, welche Funktionen in einem Paket enthalten sind, ist der Reiter `Packages` zu öffnen. Über das Suchfenster das entsprechende Paket suchen und mit einem Klick öffnen. Anschließend wird man im `Help Viewer` über die möglichen Funktionen in einer Auswahl informiert. 
+
+Viele Entwickler erstellen zudem eigene Websites für ihre Pakete. Hier einige Beispiele:
+
+* Auf der Seite des [tidyverse](https://www.tidyverse.org/packages/) das gewünschte Paket aussuchen und dann über Reference eine Auswahlliste der Funktionen aufrufen. Beim Klick auf eine Funktion wird die dahinterliegende `Vignette` - Erklärung mit Beispielen - geöffnet.  
+* Die Pakete von strengejacke haben keine gebündelte Auswahl. Wir müssen uns also zuerst eines der Pakete aussuchen (sjmisc, sjlabelled, sjplot, sjstats) und dann nach diesem suchen. Bei strengejacke lassen sich alle Pakete über den folgenden Link öffnen: 
+https://strengejacke.github.io/*Paketname*/, also z.B. https://strengejacke.github.io/sjmisc/
+* Bei den Paketen von easystats gilt das genauso. Erst ein Paket wählen (parameters, performance, effectsize, correlation, see) und dann öffnen über: https://easystats.github.io/*Paketname*/
+
+**Tipp:** Um einen erster Eindruck über die Anwendungsmöglichkeiten und die Form der Pakete zu bekommen, lohnt sich zudem der Klick auf den Reiter Articles auf den Dokumentationsseiten der Pakete!
+
+Abschließend ist noch die FAQ-Seite *Stackoverflow* zu empfehlen, auf der schier zu jedem Problem schon einmal eine Frage gestellt und diese beantwortet wurde. Hierzu lohnt es sich das eigene Problem mit dem zusätzlichen Schlagwort Stackoverflow in eine Suchmaschine zu geben und die Einträge nach Lösungen zu durchsuchen.
+
+## Arbeiten mit RStudio
+
+Auf an die praktische Arbeit mit RStudio! 
+
+### Projects 
+
+Vor der eigentlichen Arbeit mit R und der Analyse von Daten ist es immer ratsam über die Erstellung eines Projekts nachzudenken. Über den Menüpunkt `File` + `New Project` + `New Directory` + `New Project` öffnet sich die entsprechende Auswahlmaske. Hier kann ein Projektname und der gewünschte Speicherort festgelegt werden. 
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Project.png")
+```
+
+Im nächsten Schritt schieben wir die gewünschten Datensätze in den Projektordner, um einen ungehinderten Datenzugriff zu ermöglichen.
+
+Vorteile:
+
+* Alle *Files* werden beim Start des Projekts, über den blauen Projektwürfel (.Rproj), wieder geöffnet. 
+* Es lassen sich beliebig viele Projekte gleichzeitig öffnen und zwischen diesen wechseln.
+* Bei der Erstellung eines Projekts wird automatisch ein Arbeitsverzeichnis erstellt, auf das zurückgegriffen wird (Projektordner). Man muss sich also nicht mehr um das working directory bemühen und kann z.B. Daten- oder Skriptdateien direkt vom Projektordner aus aufrufen, ohne jedes Mal den vollständigen Pfad definieren zu müssen.
+
+### Konsole oder RScript?
+
+Es stehen dem Benutzer von RStudio wesentlich zwei Nutzungswege zur Verfügung:
+
+**1. Befehle direkt über die Konsole eintippen**
+
+Die Eingabe über die Konsole ist dann empfehlenswert, wenn man schnell etwas ausprobieren möchte, oder ein Befehl wiederholt werden soll. 
+
+Die Konsole wird auch bei unvollständiger Eingabe von Funktionen relevant. Im folgenden Beispiel wurde eine Klammer am Ende der Funktion vergessen.
+
+```{}
+> seq(1, 100, 5
++
+```
+
+Nun muss entweder die fehlende Klammer zur Vervollständigung eingetippt, oder über `Esc`der Befehl abgebrochen werden. 
+
+Wird ein Befehl ungewollt ausgeführt, oder ist R abgestürzt? Hier kann ganz leicht über `Session` + `Interrupt R` bzw. das rote Stoppschild über der Konsole der Befehl abgebrochen, oder die ganze Sitzung über `Session` + `Terminate R` neu gestartet werden.
+
+**2. Befehle im Script speichern (vergleichbar mit Syntax aus SPSS)**
+
+Zur Erstellung eines RScript öffnen wir über das Symbol mit dem weißen Blatt und grünem Kreuz (oben links) ein neues RScript (Tastenkürzel: `cmd bzw. strg` + `up` + `N`). Vorteile sind hier, wie auch in SPSS, die Möglichkeit zur übersichtlichen und nachvollziehbaren Arbeitsweise und das Speichern von Auswertungen. 
+
+**Wichtig!** RScript-Datein werden beim Ausführen von oben nach unten gelesen. Wir können also Werte im Laufe eines Scripts immer wieder überschreiben und neu zuweisen. 
+
+Wir probieren uns zu Beginn wieder an einer kurzen Rechnung aus.
+
+```{r, results='hide'}
+2+3
+```
+
+Um die entsprechende Zeile auszuführen, klicken wir auf `Run` (Tastenkürzel: `cmd bzw. strg` + `enter`). 
+
+```{r, echo=F}
+2+3
+```
+
+Der Output erscheint wie gewohnt in der Konsole. 
+
+Im nächsten Schritt definieren wir das Ergebnis unserer mathematischen Operation als Variable (Objekt), um es für folgende Anwendungen nutzen zu können. 
+
+```{r, echo=T}
+var1 <- 2+3
+```
+
+Damit haben wir unsere gewünschte Variable (Objekt) mit der Bezeichnung *var1* definiert. 
+
+Wichtig ist für uns erstmal, dass wir unsere definierten Variablen im `Environment` sehen können. var1 wird folgend mit dem Wert 5 angezeigt.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Environmentoutput.png")
+```
+
+### Tab completion
+
+RStudio verfügt über eine weitere sehr hilfreiche Funktion: Tab completion. Während der Eingabe eines beliebigen Befehls erscheint über RStudio ein entsprechendes Menu mit Befehlsvorschlägen zur Vervollständigung. So erscheint z.B. bei der Eingabe von `weighted_mean()` eine ganze Reihe von Vorschlägen. Manuell wird auch über `Tab` das gleiche Menu aufgerufen. Wollen wir die erste Funktion übernehmen, drücken wir `Enter` zur Bestätigung. Zur Auswahl einer anderen Funktion einfach über die Pfeiltasten die richtige Funktion ansteuern und diese über `Enter` anwählen. 
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/tabcomp1.png")
+```
+
+Hat man eine Funktion eingegeben und drückt man innerhalb der Klammern `Tab`, erscheint eine Liste mit allen Argumenten dieser Funktion. Funktionsargumente definieren welche Daten einbezogen werden sollen und wie mit diesen umgegangen wird. `x =` steht z.B. für die eingehenden Daten und `weights =` für das anzuwendende Gewicht.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/tabcomp2.png")
+```
+
+Überschneiden sich zwei Funktionensbezeichungen zwischen zwei Paketen oder wissen wir, dass eine Funktion in einem Paket enthalten ist, können wir auch über den Paketnamen gefolgt von :: eine Funktionsliste erzeugen.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/tabcomp3.png")
+```
+
+### Nützliche Tastenbefehle (Shortcuts)
+
+Folgende Tastenbefehle erleichtern das Arbeiten mit R.
+
+| Befehl                           | Wirkung                                   | 
+| :------------------------------- | :---------------------------------------- | 
+| Wir haben schon folgende Befehle kennen gelernt:                          |
+| cmd bzw. strg + shift            | Vorherige Befehle in der Konsole anzeigen | 
+| cmd bzw. strg + shift + N        | Neues Script erstellen                    | 
+| cmd bzw. strg + Enter            | Eingabe ausführen                         | 
+| cmd bzw. strg + S                | Speichert geöffnete RScript-Datei         |
+| cmd bzw. strg + option + S       | Speichert alle geöffneten RScript-Datein  | 
+| Weitere nützliche Befehle:                                                |
+| cmd bzw. strg + shift + Enter    | Gesamtes Script ausführen                 | 
+| cmd bzw. strg + shift + R        | Kapitel im RScript definieren             | 
+| cmd bzw. strg + shift + C        | Kommentar im RScript                      | 
+| control bzw. strg + L            | Konsole leeren                            |
+| cmd bzw. strg + shift + A        | Code restrukturieren                      | 
+| Für folgende Kapitel:                                                        |
+| option bzw. alt + -              | Zuweisungspfeil (<-) erzeugen             | 
+| cmd bzw. strg + shift + M        | %<% erstellen                             | 
+
+**Tipp:** Um alle verfügbaren Tastenkürzel in RStudio sehen zu können, drücken Sie:
+`option bzw. strg` + `shift` + `K`.
+
+
+
+
+
+<!--chapter:end:01-RStudio.Rmd-->
+
+# Programmiersprache R
+
+In diesem Kapitel wollen wir R als Programmierspache kennenlernen.
+
+## Variablen definieren
+
+In einem ersten Schritt wollen wir eine Rechnung (einen Wert) in einer Variable speichern.
+
+```{r, echo=T, collapse=T, comment="#>"}
+var1 <- 2*4
+```
+
+Unsere Variable mit dem Namen `var1` (immer links in der Zeile) wird über den Zuweisungspfeil `<-` (Tastenkürzel: `option` + `-`) mit dem Ergebnis aus `2*4 (8)` definiert.
+
+Zur Kontrolle können wir `var1` mit den folgenden Befehlen aufrufen.
+
+```{r, echo=T, collapse=T, comment="#>"}
+var1
+```
+
+Man kann auch gleich bei der Definition der Variablen die Zuweisung in Klammern schreiben und das Resultat wird gleichzeitig in der Konsole angezeigt.
+
+```{r, echo=T, collapse=T, comment="#>"}
+(var1 <- 2*4)
+```
+
+**Tipp:** Sollten Sie aus anderen Programmiersprachen schon Kenntnisse mitbringen und `=` als Zuweisungsoperator kennen, empfehlen wir dennoch eindringlich mit `<-` zu arbeiten. Funktionen in R arbeiten bei der Zuweisung von Argumenten mit dem Zuweisungsoperator `=`. Folglich ist die Verwendung von `<-` nicht nur besser zu lesen, sie kann auch Fehler vorbeugen.
+
+### Variablennamen
+
+Eine Variable muss immer einen Namen haben. Sie darf aus Buchstaben, Zahlen und den Zeichen `.` und `_` bestehen. Dennoch muss sie immer mit einem Buchstaben beginnen und darf keine Leerzeichen enthalten.
+
+Um lesbaren und verständlichen Code zu schreiben, gibt es ein paar Konventionen an die man sich halten sollte. Hier gibt es zwei gängige Möglichkeiten und eine ältere Form, um Variablen zu bennen. 
+
+*Die Wahl ist egal, solange man konsequent bei einer Schreibweise bleibt!*
+
+**1. snake_case_variable**
+
+Bei dieser Schreibform werden die einzelnen Worten in einer Variablenbezeichnung durch Unterstriche verbunden und alle Worte kleingeschrieben. 
+
+**2. camelCaseVariable**
+
+Hier wird nur das erste Wort kleingeschrieben und die folgenden mit dem ersten Buchstaben großgeschrieben.
+
+**3. variable.with.perdiods (alt)**
+
+Die kleingeschriebenen Worte werden mit Punkten getrennt.
+
+```{}
+# Gute Bezeichnungen
+efaKonstrukt1
+efa_konstrukt_1
+
+# Schlechte Bezeichnungen
+Efa.konstrukt_1
+efaKonstrukt_1
+
+# Unmöglich
+efa 1
+```
+
+## Funktionen  aufrufen
+
+> "Everything that exists is an object. Everything that happens is a function call".
+>
+>--John Chambers
+
+Objekte haben wir schon in ihrer einfachsten Form als Rechenergebnis in einer Variable kennen gelernt. Um kompliziertere Objekte verstehen zu können, wollen wir uns erst den Funktionen (function calls) in R zuwenden. 
+
+Unsere Funktion sieht wie folgt aus (ein fiktionales Beispiel):
+
+```{}
+functionName(arg1 = Daten, arg2 = option1, arg3)
+```
+
+In einem ersten Schritt sehen wir uns an, welchen Namen die Funktion trägt. Unsere Funktion heißt functionName. Wir können leider nicht direkt aus dem Namen erschließen, welche Auswirkung unser *function call* haben wird. In so einem Fall würde ein Blick in `Help` (`?functionName`) sicher Abhilfe schaffen, wenngleich wir in unserem Beispiel leider keine Dokumentation nutzen können. 
+
+So sehen wir uns in einem zweiten Schritt die *Argumente* unserer Funktion an. Wie wir sehen können, besitzt unsere Funktion drei Argumente: `arg1`, `arg2` und `arg3`. Die Argumente werden mit spezifischen Werten über `=` bestückt. In unserem Beispiel benötigt das erste Argument Daten und das zweite Argument einen spezifischen Wert aus einer Auswahl an möglichen Werten - diese werden immer vom Entwickler der Funktion in der Dokumentation angegeben. Das dritte Argument wird als "default" abgerufen, also über eine Voreinstellung der Entwicklers geladen. Argumente die mit "default" arbeiten sind aber keinesfalls fest. Sie können immer auch durch andere Werte ersetzt werden. Argumente arbeiten immer dann mit "default", wenn die Grundeinstellung des Arguments die häufigste Nutzungsform darstellt und man nicht bei jedem *function call* die Wertzuweisung von neuem schaffen möchte. 
+
+**Tipp:** Wollen wir alle verfügbaren Argumente in einer Funktion sehen, drücken wir `Tab`.
+
+**Wichtig!** Eine Funktion kann beliebig viele Argumente besitzen.
+
+Um uns einer "großen" Funktion zu nähern, müssen wir zu Beginn einige "Grundfunktionen" kennenlernen.
+
+* `c()` > Combine: kreiert einen Vektor 
+* `seq(from, to, by)` > Generiert eine Sequenz an Zahlen
+* `:` > Colon Operator: generiert eine reguläre Sequenz (Sequenz in Einerschritten)
+* `rep(x, times, each)` > Wiederholt x 
+                          times: Sequenz wird n-mal wiederholt
+                          each: jedes Element wird n-mal wiederholt
+* `head(x, n = 6)` > Zeigt die n ersten Elemente von x an
+* `tail(x, n = 6)` > Zeigt die n letzten Elemente von x an
+* `print(x)` > Gibt Werte eines Objekts aus (vor allem bei großen Objekten wichtig)
+* `round(x, digits)` > Rundung von Zahlen
+
+z.B.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Daten erzeugen
+# Vektor erzeugen
+c(1, 2, 3, 4, 5)
+
+# Sequenz erzeugen
+seq(from = 1, to = 10, by = 2)
+
+# Reguläre Sequenz erzeugen
+1:5
+
+# Wiederholt 2 ganze 3-mal in 5 Schleifen
+rep(x = 2, times = 5, each = 3)
+
+# Überblick über die erzeugten Daten
+# Vektor in var1 speichern
+var1 <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+# Ersten 6 Elemente in var1
+head(x = var1, n = 6)
+
+# Letzten 4 Elemente in var1
+tail(x = var1, n = 4)
+
+# Alle Elemente in var1
+print(x = var1)
+
+# Daten transformieren
+var2 <- c(1.222, 2.333, 3.444)
+
+# var2 wird auf eine Nachkommastelle gerundet
+round(x = var2, digits = 1)
+```
+
+Wir wollen uns die Variable `var2` etwas genauer ansehen. `var2` enthält durch das Aufrufen der Funktion `c()` eine Reihe von Zahlen (1.222 bis 3.444) mit drei Nachkommastellen. Diese Zahlen wollen wir mit der Funktion `round()` auf eine Nachkommastelle runden. Das Argument `digits` beschreibt damit die Rundungszahl nach dem Komma. `digits = 1` löst eine Rundung der Nachkommastellen auf die erste Nachkommastelle aus. Der Wert im Argument `digits` kann damit theoretisch von 0 bis ∞ variieren. 
+
+### Verschachtelung von Funktionen
+
+Zudem können wir beliebig viele Funktion ineinander verschachteln, d.h. wir können den Output einer Funktion einer anderen Funktion als Input übergeben. 
+
+Wir bilden zuerst einen Vektor, runden die Zahlen und lassen uns dann nur die ersten drei Zahlen ausgeben.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mehrere Funktionen hintereinander
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+var1 <- round(x = var1, digits = 1)
+head(x = var1, n = 3)
+
+# jetzt in einer verschachtelten Funktion
+head(x = round(x = c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+
+# kürzeste Form
+head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+
+# Mit var1 als Dateninput
+head(round(var1, digits = 1), n = 3)
+```
+
+Die Funktionen werden immer in Reihenfolge *von innen nach außen* ausgeführt. In unserem Beispiel also erst `c()`, dann `round()` und dann `head()`. Jede Funktion gibt ihren Wert an die nächste Funktion weiter. 
+
+**Anmerkung:** Die Funktion `head()` enthält zwei Argumente mit "default"-Werten: keepnums und addrownums. Beide bekommen automatisch ("default") den Wert `NULL` und müssen damit nicht ausgeschrieben werden. Sie werden für unsere Anwendung auch nicht gebraucht und damit nicht angepasst. 
+
+Vorteile von verschachtelten Funktionen:
+
+* Es können unendlich viele Funktionen verschachtelt werden. 
+* Wir müssen Argumente nicht ausschreiben, solange sie eindeutig von der Funktion erkannt werden können. So gibt es in allen genutzten Funktionen mit `x =` nur eine Schnittstelle für die Dateneingabe. 
+* Weiterhin können wir so unseren Code in eine Kette von Befehlen verwandeln, die nur einen Output (ein Objekt) ausgibt. Die Objektstruktur wird damit übersichtlicher. 
+
+Nachteil:
+
+* Wenn wir mehrere Funktionen ineinander verschachteln, kann unser Code schnell unlesbar werden. Natürlich könnten wir die einzelnen Zwischenschritte speichern, wie im Beispiel weiter oben, aber dann definieren wir eine Menge Variablen, welche wir vielleicht gar nicht benötigen. 
+
+*Wir werden in Kapitel 2.4 einen neuen Operator kennen lernen, welcher eine sehr elegante Lösung für dieses Problem bietet.*
+
+## Objekte und Datentypen 
+
+In R kann alles als Objekt in Variablen gespeichert werden.
+
+* Einzelne Werte / Mehrere Werte (z.B. ein Datensatz mit Rohdaten)
+* Tabellen
+* Statistische Modelle
+* Ergebnisse statitischer Analysen
+* Funktionen, etc. 
+
+Anmerkung: Objekte sind nicht gleich Variablen, da Objekte nicht gespeichert werden *müssen*. Ein Objekt wird erst dann zur Variable, wenn es eine Bezeichnung über `<-` erhält und damit gespeichert wird. Die Zahlenfolge aus `c(1, 2, 3)` stellt auch schon ein Objekt da.
+
+In R gibt es eine Vielzahl von verschiedenen Objekttypen. Die grundlegenden Objekttypen sind:
+
+### Vektoren (vector)
+
+* Vektoren → ordinale/metrische Variablen
+  * numeric (Zahlen)
+  * character (Buchstaben)
+  * logical (Richtig oder Falsch)
+  
+Beispiel
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Numerischer Verktor (numeric vector) 
+var1 <- c(1, 2, 3, 4, 5) 
+var1
+
+# Buchstaben Vektor (character vector) 
+var2 <- c("Peter", "Yusuf", "Sarah", "Aayana")
+var2
+
+# Logischer Vektor (logical vector)
+var3 <- c(TRUE, FALSE, NA) 
+var3
+```
+
+**Tipp:** TRUE bzw. FALSE können mit T bzw. F abgekürzt werden.
+
+Vektoren stellen die fundamentalen Datentypen dar. Alle weiteren Datentypen bauen auf diesen auf. Zudem müssen Vektoren aus denselben Elementen bestehen, d.h. wir können keine `logical` und `character` Elemente in einem Vektor mischen. Sie bilden damit die `atomare Struktur` in R.
+
+* **numeric vector:** Die häufigste Datenform in R. Numerische Vektoren lassen sich zudem weiter unterteilen, in `integer` (ganze Zahlen) und `double` (reele Zahlen - Kommazahlen). Zahlen werden in R praktisch immer als `double` abgelegt (auch die ganzen Zahlen) und müssen somit nie für Berechungen gewandelt werden. 
+
+* **character vector:** Die Elemente dieses Typs bestehen aus Zeichen, welche von Anführungszeichen umgeben werden (entweder ' oder " ). Sie werden auch *strings* genannt.
+
+  Anmerkung: Anführungszeichen dienen in R zur Kennzeichnung von nicht numerischen Werten. Wir müssen also **alle** natürlichen Worte in jedem Kontext in Anführungszeichen schreiben.
+
+* **logical vector:** Die Elemente dieses Typs können nur 3 Werte annehmen:`TRUE`, `FALSE` oder `NA`. Logische Vektoren lassen sich auch numerisch übersetzen in `TRUE = 1` und `FALSE = 0`, damit werden sie auch als `integer` abgelegt. Das wird vor allem bei der Datenselektion relevant.
+
+  Anmerkung: `NA` steht für fehlende Werte.
+
+Vektoren haben folgend drei Eigenschaften:
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modus bzw. Struktur (mode) - Was ist es?
+typeof(var1)
+
+# Länge - Wie viele Elemente?
+length(var1)
+
+# Attribute (optional) - Zusätzliche Informationen (Metadaten)
+attributes(var1) # x wurden noch keine attribute zugeordnet
+
+# ------ Zusatz ------
+
+# Objektbestimmung
+class(var1)
+```
+
+Nun wollen wir auf die einzelnen Elemente in den Vektoren zugreifen (indizieren). Wir können die einzelnen Elemente eines Vektor mit `[]` anwählen (`subsetting`).
+
+```{r, echo=T, collapse=T, comment="#>"}
+zahlenreihe <- c(1, 2.5, 3, 4, 5.77, 6, 7)
+
+# Das erste Element
+zahlenreihe[1]
+
+# das fünfte Element
+zahlenreihe[5]
+
+# Das letzte Element
+zahlenreihe[length(zahlenreihe)]
+
+# Mit - (Minus) können wir gezielt Elemente ausschließen
+zahlenreihe[-4]
+
+# Wir können auch Sequenzen auswählen
+zahlenreihe[2:5]
+
+# Wir können auch gezielt mehrere Elemente ausschließen oder auswählen
+zahlenreihe[-c(1, 4)]
+
+zahlenreihe[c(1, 2, 5)]
+
+# Das Gleiche funktioniert auch mit einem character vector
+buchstabenreihe <- c("A", "B", "C", "D", "E")
+
+buchstabenreihe[1]
+```
+
+### Faktoren (factor)
+
+* Faktoren  → nominale/ordinale Variablen
+  * nominale Variable
+  * Kategorien des Faktors = levels (kann Zahlen oder Buchstaben enthalten)
+
+Bisher haben wir `numeric`, `character` und `logical` Vektoren kennengelernt. Ein weiterer Objekttyp wird benötigt, um kategoriale Daten oder Gruppierungsvariablen darzustellen. Dieser Objekttyp wird `factor` genannt. 
+
+Ein `Faktor` ist ein Vektor mit ganze Zahlen (`integer`), welcher eine Beschriftung für die einzelnen Fakttorstufen (`levels`) besitzt. Die Beschriftungen sind letztlich Attribute (`attributes`), die Informationen über die Faktorstufen geben. Ein Beispiel:
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht als character vector
+sex <- c("Mann", "Frau", "Mann", "Frau", "Frau", "Div")
+sex
+
+# Modus (mode)
+typeof(sex)
+
+# Attribute
+attributes(sex)
+```
+
+Nun haben wir einen `character vector` mit Informationen über Geschlechter. In einem nächsten Schritt wollen wir diesen Vektor als Faktor definieren.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht als Faktor
+sexf <- factor(sex, levels = c("Mann", "Frau", "Div"))
+sexf
+
+# Geschlecht hat nun den Datentyp integer
+typeof(sexf)
+
+# und die Klasse "factor"
+class(sexf)
+
+# jetzt sind auch die Attribute definiert
+attributes(sexf)
+```
+
+Wir haben bei der Definition die `levels` explizit angegeben. Das hätten wir aber nicht machen müssen. R ordnet standardmäßig alle Faktorstufen alphabetisch zu. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht als Faktor
+sexf2 <- factor(sex)
+sexf2
+
+# Datentyp
+typeof(sexf2)
+
+# Klasse
+class(sexf2)
+
+# Attribute 
+attributes(sexf2)
+```
+
+Wir werden Faktoren später häufig bei der Modellierung benötigen z.B. bei Regressionsmodellen mit Dummyvariablen. Die erste Stufe eines Faktors wird von R automatisch als Referenzkategorie bestimmt, wenn wir den Faktor als Prädiktorvariable in ein Modell einbringen. Manchmal wollen wir jedoch eine andere Stufe als Referenzkategorie. In diesem Fall kann man die Reihenfolge der Faktorstufen ändern.
+
+Über `relevel()` kann direkt die Refrenzkategorie bestimmt werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Unsere Refrenzkategorie ist gegenwärtig "Mann"
+levels(sexf)
+
+# Wir ändern die Refrenkategorie folgend auf "Frau"
+sexf <- relevel(sexf, ref = "Frau")
+levels(sexf)
+```
+
+Mit der Funktion `factor()` lassen sich alle Faktorstufen frei ordnen, solange wir im Befehl alle Faktorstufen benutzen. Die erste Stufe wird folglich zur Refrenzkategorie.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Unsere Refrenzkategorie ist gegenwärtig "Frau"
+levels(sexf)
+
+# Wir ändern die Refrenkategorie durch die neue Auflistung unserer level auf "Mann"
+sexf <- factor(sexf, levels = c("Mann", "Frau", "Div"))
+levels(sexf)
+```
+
+Durch die Festlegung einer Variable als Faktor wird diese automatisch dummykodiert und kann umstandslos in ein Modell einbezogen werden. Wir müssen nur die Refrenzkategorie im Blick behalten.
+
+### Datensatz (data frame)
+
+* Datensatz (mehrere Zeilen und Spalten) 
+  * Spalten (Vektoren und Faktoren)
+  * Zeilen (Fälle, z. B. Versuchspersonen)
+  
+Nun kommen wir zu dem für uns wichtigsten Objekt in R, dem Datensatz. Ein Datensatz besteht aus Zeilen (rows) und Spalten (columns) **gleicher Länge** und entspricht einem Datensatz in SPSS. 
+
+Die Spalten eines Datensatz sind lediglich Vektoren. Sie können damit `numeric`, `character` und `logical` sein, oder als `factor` auftreten. Numerische Variablen in einem Datensatz sollten demzufolge numerische Vektoren und kategoriale Variablen/Gruppierungsvariablen sollten Faktoren sein. Durch die Mischung von Datentypen innerhalb des Objekts "Datensatz" sprechen wir auch von einer `rekursiven Struktur`.
+
+Datensätze werden traditionell über die Funktion `data.frame()` definiert. Da wir das *tidyverse* nutzen, greifen wir auf eine weiterentwickelte Form zurück - `tibbles` oder `tbl`. tibbles werden über die Funktion `tibble()` definiert und erleichtern so die Arbeit mit dem Datensatz. 
+
+**Anmerkung:** Der Vorteil liegt beim Einlesen von Datensätzen, da weniger Rücksicht auf die Datenstruktur genommen werden muss. Durch `tibbles` wird viel durch R automatisiert.
+
+Erstellung eines Datensatz.
+
+```{r, include=F}
+library(tidyverse)
+```
+
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektoren
+sex <- factor(c("Mann", "Frau", "Mann", "Mann", "Frau", "Mann"))
+alter <- c(22, 45, 67, 87, 16, 56)
+
+# Datensatz
+datensatz <- tibble(sex, alter)
+datensatz
+
+```
+
+Unser `datensatz` ist damit ein Datensatz mit zwei Variablen (`sex` und `alter`) und sechs Fällen (rows). Dieser wird uns entsprechend im `Environment` angezeigt.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Datensatz.png")
+```
+
+Ein Datensatz hat die Attribute `names()`, `colnames()` und `rownames()` - [`names()` und `colnames()` bedeuten dasselbe].
+
+```{r, echo=T, collapse=T, comment="#>"}
+attributes(datensatz)
+```
+
+Wir können zudem sowohl die Länge des Spaltenvektors (Anzahl der Spalten) über `ncol` abfragen, wie auch die Länge des Zeilenvektors (Anzahl der Fälle) über `nrow`. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+ncol(datensatz)
+
+nrow(datensatz)
+```
+
+#### Datensatz indizieren (subsetting)
+
+Ein Datensatz ist eine 2-dimensionale Struktur aus Spalten und Fällen, die entsprechend indiziert werden kann.
+
+* Einzelne Spalten können über `$` ausgewählt werden.
+* Einzelne oder mehrere Elemente, ob Spalten oder Zeilen, können über `[]` ausgewählt werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Spaltenname zur Auswahl einer spezifischen Variable über $
+datensatz$sex
+
+# Spaltenname zur Auswahl einer spezifischen Variable über []
+datensatz["sex"]
+
+# Nach Position auswählen
+datensatz[2]
+```
+
+Wir können aber auch mehrer Variablen und sogar Zeilen (Fälle) auswählen. Sobald wir die Werte in `[]` durch ein Komma trennen, gibt der erste Wert die Zeilen und der zweite die Spalten an. Ohne Komma nur die Spalten.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Erste Spalte und erste Zeile
+datensatz[1, 1]
+
+# Erster Fall über alle Spalten (Variablen)
+datensatz[1, ]
+
+# Alle Zeilen in der ersten Spalte
+datensatz[, 1]
+
+# Wir können auch Sequenzen benutzen
+# Ersten drei Fälle über alle Spalten
+datensatz[1:3, ]
+
+# Da die Spalten Vektoren sind, können wir diese genauso indizieren
+# Erster Fall im Vektor zu Geschlecht
+datensatz$sex[1]
+          
+# Letzten drei Fälle in der Variable alter
+datensatz$alter[4:length(datensatz$alter)]
+
+# Die Spalten sex und alter
+datensatz[c("sex", "alter")]
+```
+
+### Listen (list)
+
+* Listen → in SPSS nicht vorhanden
+  * Kombination mehrerer Objekte
+  * Listen können beliebige Objekte enthalten, auch Objekte verschiedenen Typs.
+  * Im Unterschied zu Datensätzen können auch Objekte unterschiedlicher Länge gespeichert werden.
+
+Ein weiterer Datentyp ist `list`. Während Datensätze schon aus verschiedenen Vektoren bestehen können, lassen sich diese in Listen auch in **verschiedenen Längen** ablegen. Die meisten Objekte die wir im Verlauf unserer R Anwendung kennenlernen werden, sind damit Listen (z.B. die Ergebnisse eines Regressionsmodells werden als Liste gespeichert). Wir müssen aber nur mit ihnen umgehen können und sie verstehen. Wir werden sie praktisch nie selbst erstellen müssen.
+
+In einem ersten Schritt wollen wir dennoch mit der Funktion `list()` eine Liste definieren. So können wir schrittweise verstehen, welche Eigenschaften Listen besitzen.
+
+```{r, echo=T, collapse=T, comment="#>"}
+list1 <- list(1:3, "a", c(1.22, 2, 3.44, 4, 5), c(TRUE, FALSE, FALSE))
+list1
+```
+
+Wir haben mit der Variable `list1` eine Liste erstellt, die als Elemente einen `numeric` Vektor mit einer Zahlenreihe, einen `character` Vektor mit der Länge 1 (L1), einen `numeric`Vektor mit Kommazahlen und einen `logical` Vektor speichert.
+
+Listen können wie Vektoren indiziert werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Erstes Element in der Liste (erster Vektor)
+list1[1]
+
+# Zweites Element (zweiter Vektor)
+list1[2]
+
+# Drittes Element (dritter Vektor)
+list1[3]
+```
+
+Häufig sind die Elemente in einer Liste als Variablen benannt und können entsprechend wie in einem Datensatz über `$` abgerufen werden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+list2 <- list(var1 = c(1, 2, 3),
+              var2 = c("a", "b", "c", "d"),
+              var3 = c(TRUE, FALSE),
+              var4 = seq(from = 1, to = 100, by = 5))
+
+# Ganze Liste abrufen
+list2
+
+# Aufruf der ersten Variable mit ihrem Namen var1
+list2$var1
+
+# Aufruf der zweiten Variable mit ihrem Namen var2
+list2$var2
+
+# Objektbestimmung
+typeof(list2)
+```
+
+Im `Environment` gibt sich folgende Datenstruktur.
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Liste.png")
+```
+
+**Wichtig!** Elemente in Listen können unendlich "gestapelt" werden und folgend mit einer Verschränkung des `[]` Operator "entpackt" werden. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+list3 <- list(list1 = list1,
+              list2 = list(var1 = c(1, 2, 3, 4, 5), 
+                           var2 = "a"),
+              var1 = 1:100)
+
+# Liste1 aus Liste3 entpacken
+list3$list1
+
+# var1 aus liste1 in liste3 entpacken
+list3$list1[1]
+
+# var2 aus liste2 in liste3 entpacken
+list3$list2$var2
+
+# Erster Wert aus var1 in list1 über list3 entpacken
+list3$list1[[1]][1]
+```
+
+### Weitere Datentypen
+
+R kennt noch zwei weitere Datentypen (Matrizen und Arrays), die wir in diesem Kurs ausklammern werden. Sofern interesse besteht, verweisen wir auf das Buch von Hadley Wickham: [Advanced R](https://adv-r.hadley.nz/index.html). 
+
+## Pipe Operatoren
+
+In Kapitel 2.2.1 konnten wir schon sehen, dass es schnell unübersichtlich werden kann, wenn wir Funktionen ineinander verschachteln. Vor allem bei der Datenverarbeitung entsteht sehr schnell unübersichtlicher Code. 
+
+Hierfür gibt es in R eine "ganz einfache" Lösung - `Pipes`. So lassen sich Sequenzen von Funktionen sehr elegant abbilden. Eine `Pipe` zeigt sich immer durch den `%>%` Operator an. Um auf diesen zugreifen zu können, müssen wir eig. das Paket *magrittr* laden. Da aber die Packete des tidyverse den Operator automatisch laden, müssen wir zumindest in seiner einfachsten Form keinen zusätzlichen Aufwand betreiben. Nun wollen wir aber mit zwei weiteren Formen des Pipe-Operators arbeiten (`%$%` und `%T>%`), die uns nur über das Laden von magrittr zur Verfügung gestellt werden. 
+
+```{r, include=F}
+library(magrittr)
+```
+
+```{}
+install.packages("magrittr")
+library(magrittr)
+```
+
+### `%>% Operator` {-}
+
+**Tipp:** Um schnell auf den Pipe Operator zugreifen zu können, bietet sich das Tastenkürzel `cmd bzw. strg` + `up` + `M` an.
+
+Um einen ersten Einstieg zu schaffen, greifen auf unser Beispiel aus Kapitel 2.2.1 zurück. Hier haben wir den Vektor `c(1.11, 1.22, 1.33, 1.44, 1.55)`, welcher in var1 gespeichert wurde, gerundet. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden
+
+round(var1, digits = 1)
+```
+
+In diesem Stadium ist unser Code noch sehr übersichtlich. Wir können aber auch schon jetzt eine `Pipe` zu Demonstrationszwecken bilden. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden
+
+var1 %>% 
+  round(digits = 1)
+```
+
+Der Effekt ist für unser Beispiel klein, aber die Idee ist klar. Wir schreiben mit der `Pipe` also Funktionen nicht mehr als `f(x)` sondern als `x %>% f() bzw. x %>% f`. Wir reihen also unsere Funktionen aneinander, wir verschachteln sie nicht mehr.
+
+Im nächsten Schritt wollen wir unseren gerundeten Vektor in eine weitere Funktion übergeben, dann wird auch der Effekt dieses Vorgehens ersichtlich. 
+
+Wir rufen zusätzlich mit `head()` die ersten drei Elemente unseres Vektors auf.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen
+
+head(round(var1, digits = 1), n = 3)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+var1 %>% 
+  round(digits = 1) %>% 
+  head(n = 3)
+```
+
+Wie wir sehen können, wird der Vektor var1 durch die Funktionen "weitergegeben". Tatsächlich gibt jede Funktion ihren Output, also ihr Ergebnis, an die nächste weiter. Im ersten Beispiel passiert das von "innen nach außen". Damit wird es schnell unübersichtlich, zumal anstrengend zu schreiben. In der `Pipe` hingegen, erzeugen wir eine lineare Übergabe von Funktion zu Funktion.
+
+Der Ablauf der `Pipe` in Kürze: 
+
+1. Der Vektor aus var1 wird also an die Funktion `round()` weitergegeben und in dieser auf eine Nachkommastelle gerundet. Damit haben wir an diesem Punkt den Output: `c(1.1, 1.2, 1.3, 1.4, 1.6)`. 
+2. Im nächsten Schritt wird dieser Output an `head()` übergeben. In `head()` rufen wir nur die ersten drei Elemente ab, also `c(1.1, 1.2, 1.3)`. 
+
+**Vorteile:**
+
+* Unser Code ist lesbarer
+* Wir müssen keine unnötigen Variablen definieren
+
+Wir können diesen Prozess auch mit dem Platzhalter-Operator `.` veranschaulichen. Dieser steht immer für den Output aus der letzten Funktion.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+var1 %>% 
+  round(x = ., digits = 1) %>% 
+  head(x = ., n = 3)
+```
+
+Ziemlich schick, nicht wahr? Der Platzhalter lässt sich aber auch an jeder anderen Stelle in der Funktion als Wertcontainer einsetzen. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vektor speichern in var1
+
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# var1 runden und die ersten drei Elemente abrufen - Pipe
+
+1 %>% 
+  round(var1, digits = .) %>% 
+  head(x = ., n = 3)
+```
+
+**Wichtig!** Wollen wir ohne einen Platzhalter arbeiten, muss das erste Argument der nachfolgenden Funktion den Output der vorherigen aufnehmen können - i.d.R. `x = Daten (Datensatz oder Variablen)`. 
+
+In den meisten Fällen ist auch das Objekt, welches übergeben wird, gleichzeitig das erste Argument der nächsten Funktion (vor allem für die tidyverse-Funktionen), so dass wir diesen Platzhalter selten brauchen werden. Wir haben alle Funktionen in diesem Kurs nach diesem Kriterium ausgewählt, um eine möglichst reibungslose Einarbeitung zu ermöglichen.
+
+**Anmerkung:** Der Verkettung von Funktionen ist damit praktisch kein Limit gesetzt, außer ein paar Regeln an die man sich halten sollte.
+
+`Pipes` sollten nicht genutzt werden, wenn
+
+1. die `Pipe` länger als 10 Schritte wäre,
+2. mehrere Inputs oder Outputs benötigt werden,
+3. eine komplexe Objektstruktur das Ziel ist.
+
+### `%$% Operator` {-}
+
+Für Funktionen, die auf Variablenebene arbeiten und keinen Datensatz als Dateninput erlauben, gibt es den `%$%` Operator. 
+
+**Wichtig!** Wir brauchen diesen Operator aber nur für ganz wenige Funktionen. Die meisten Funktionen die auf Variablenebene arbeiten, besitzen gleichzeitig auch als erstes Argument eine Datensatz-Schnittstelle - `x = Datensatz`. Sie greifen dann über das zweite Argument auf die Variablen in diesem Datensatz zu.  
+
+Der `%$%` Operator ermöglicht letztlich, dass wir gezielt einzelne Variablen aus dem Datensatz in der nächsten Funktion anwählen können, auch wenn es keine Datensatz-Schnittstelle gibt. 
+
+In unserem Beispiel benötigt die Funktion `ts.plot`, als Grafik für Zeitachsenmessungen, eine Variable als Input - `x = Variable`. Es darf also kein Datensatz eingespeist werden. Folglich brauchen wir den `%$%` Operator, um auf Variablenebene operieren zu können. 
+
+```{r, echo=T, collapse=T, comment="#>", message=T}
+# Vektoren in Datensatz speichern
+
+var1 <- c(1, 1, 2, 2, 2, 3, 3, 3, 3)
+var2 <- c(8, 9, 1, 1, 2, 3, 4, 5, 4)
+ds1 <- tibble(var1, var2)
+
+# Mit dem %$% Operator
+
+ds1 %$%
+  ts.plot(var1)
+```
+
+### `%T>% Operator` {-}
+
+Dieser Operator ermöglicht es eine `Pipe` auch bei Funktionen ohne "inhaltlichen" Output weiterzuführen. Grafiken haben letztlich keinen Output außer der Grafikausgabe und würden so eine Verkettung von Funktionen beenden. Wollen wir aber zu unserer Grafik noch einen "inhaltlichen" Output, brauchen wir den `%T>%` Operator. Dieser wird hinter den letzten Output geschrieben, auf den wir uns beziehen wollen. Unser Wert wird damit auch an die übernächste Funktion "weitergegeben". 
+
+Es wird also immer auf den linken Wert neben dem `%T>%` Operator zugegriffen und dieser an alle folgenden Funktionen "weitergegeben".
+
+```{r, echo=T, collapse=T, comment="#>"}
+var1 <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+var1 %>% 
+  round(digits = 2) %T>%
+  plot() %>% 
+  head(n = 3) 
+```
+
+So können wir uns einen Grafikoutput, wie auch die ersten drei Elemente von unserem gerundeten Vektor ausgeben lassen.
+
+Hervorangend! Jetzt können wir mit der Bearbeitung unseres Datensatzes beginnen.
+
+
+
+
+
+
+
+<!--chapter:end:02-ProgrammierspracheR.Rmd-->
+
+# Datenverarbeitung
+
+In diesem Kapitel werden wir in einem ersten Schritt das Einlesen von Datensätzen in den geläufigen Datenstrurkturen kennenlernen, um in einem zweiten Schritt die Daten nach unseren Vorstellungen zu modifizieren.
+
+**Tipp:** Zur Erstellung eigener Datensätze empfehlen wir das Kapitel [Datensätze selber erstellen](https://methodenlehre.github.io/einfuehrung-in-R/datensätze.html#datensätze-selber-erstellen) von Andrew Ellis und Boris Mayer.
+
+Wie Eingangs erwähnt, arbeiten wir in diesem Kurs mit den Ökosystemen *tidyverse* und *strengejacke*, um Daten umfänglich modifizieren zu können. Natürlich gibt es auch andere Möglichkeiten der Datenbearbeitung. Wir sind aber davon überzeugt, dass die "tidyverse-Methode", an die sich auch strengejacke anschließt, eine sehr konsistente und eingängige Form des Arbeitens ermöglicht. 
+
+Wie wir später noch sehen werden, erfordern viele Arten von statistischen Analysen und insbesondere Grafik-Funktionen einen Datensatz im *long*-Format. So muss mitunter erstaunlich viel Zeit für die Organisation von Daten für die weitere Analyse aufgewendet werden (diese Art von Arbeit wird oft als “data wrangling” bezeichnet). Sofern Sie einen Datensatz im *wide*-Format in ein *long*-Format transformieren wollen, empfehlen wir das Kapitel: [Reshaping: tidyr](https://methodenlehre.github.io/einfuehrung-in-R/daten-transformieren.html#reshaping-tidyr) von Andrew Ellis und Boris Mayer. 
+
+## Vorbereitung 
+
+Wir wollen mit dem Allbus-Datensatz (Allgemeine Bevölkerungsumfrage der Sozialwissenschaften) von 2018 arbeiten. Dieser lässt sich über GESIS unter: [Allbus 2018](https://www.gesis.org/allbus/inhalte-suche/studienprofile-1980-bis-2018/2018) herunterladen. Der Allbus 2018 liegt gleich im *long*-Format vor. 
+
+**Anmerkung:** Der Allbus 2018 ist eine standardisierte Bevölkerungsbefragung mit überproportionaler Repräsentanz von Befragten aus den neuen Bundesländern. Um diesem Umstand gerecht zu werden, müssen die Daten des Allbus gewichtet werden. Eine ideale Voraussetzung für diesen Kurs.
+
+Wir wollen unserem Anspruch einer zielgerichteten und forschungspraktischen Anwendung von R auch während der Bearbeitung des Allbus 2018, als Datengrundlage, gerecht werden. So greifen wir auf vergangene Forschungspublikationen zurück. Diese erlauben uns eine Orientierungslinie für kommende Beispiele zu ziehen.
+
+Folgend erstellen wir ein Projekt in RStudio (siehe  1.8.1). Sobald der Projektordner erstellt wurde, schieben wir unseren Datensatz in den Projektordner. Durch die Festlegung unseres Arbeitsverzeichnises im Projektordner, kann R direkt auf den Datensatz zugreifen. Der Reiter `Files` sollte entsprechend so aussehen:
+
+```{r, echo=F, fig.align='center', out.width="75%"}
+knitr::include_graphics("Bilder/Files2.png")
+```
+
+Abschließend erstellen wir ein RScript (siehe 1.8.2) und laden unsere Pakete: tidyverse, strengejacke und easystats (siehe 1.6).
+
+Voila! Nun können wir den Datensatz einlesen.
+
+## Datensatz importieren
+
+Durch das Packet *sjlabelled* aus dem Packet *strengejacke* können wir drei verschiedene Dateiformate einlesen. 
+
+* .sav > SPSS
+* .dta > Stata
+* .sas > SAS
+
+Da wir den Allbus 2018 in .sav vorliegen haben, benutzen wir die folgende Funktion.
+
+```{r, include=F}
+library(strengejacke)
+library(tidyverse)
+```
+
+```{}
+# SPSS
+allbus2018 <- read_spss("ALLB2018.sav")
+```
+
+**Wichtig!** Mit der Funktion `read_spss()` über das Paket sjlabelled werden alle fehlenden Werte zu `NA` konvertiert. Sofern Sie mit fehlenden Werten arbeiten wollen, empfehlen wir gegenwärtig noch das Paket `haven` über die Funktion `read_sav()` und dem Argument `user_na = TRUE` zu nutzen. Hier ist aber zu beachten, dass alle Vektoren unter der Klasse `labelled_spss` gespeichert werden. Das kann zu Problemen mit Funktionen aus externen Paketen führen. Eine Lösung wäre vorher die betreffenden Vektoren händisch in atomare Strukturen zu konvertieren (z.B. durch `unlabel()` aus sjlabelled). Zudem müssen dann alle fehlenden Werte händisch als `NA` makiert werden (`set_na()` aus sjlabelled). *Dazu aber später mehr!*
+
+Sollten Ihre Daten in .dta oder .sas vorliegen, können Sie die folgenden Befehle nutzen.
+
+```{}
+# Stata
+allbus2018 <- read_stata("Datensatz.dta")
+
+# SAS
+allbus2018 <- read_sas("Datensatz.sas")
+```
+
+**Anmerkung:** Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Pakete `haven`, `readxl` und `readr` an. 
+
+Die Funktion `read_spss` besitzt vier für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: `?read_spss`.
+
+* `atomic.to.fac` = `TRUE` > Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.
+* `drop.labels` = `TRUE` > Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch `read_spss()` über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu `NA` konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen. 
+* `verbose` = `TRUE` > Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
+* `tag.na` = `TRUE` > Alle fehlenden Werte werden als `tagged_na` markiert. Damit werden sie in allen Berechnungen zwar als `NA` einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus `SPSS` bekannt, jederzeit auf diese mit der Funktion `replace_na()` zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). *Wir hoffen auf eine baldige Anpassung und stehen mit dem Entwickler im Kontakt*.
+
+Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
+
+```{r, echo=T, collapse=T, comment="#>"}
+allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T)
+
+# Noch schnell den Allbus zum tibble transformieren
+
+allbus2018 <- tibble(allbus2018)
+```
+
+Hervorragend! Damit haben wir erfolgreich unsere Daten in R importiert.
+
+Um bearbeitete Datensätze zu speichern, bietet sich der folgende Befehl an.
+
+```{}
+write_spss(allbus2018, path = "allbus2018")
+```
+
+Die Datei wird automatisch in unserem Projektordner abgelegt. Wir können aber auch über das Argument `path` einen neuen Speicherort definieren. 
+
+## Erster Blick auf den Datensatz
+
+Nachdem wir unseren Datensatz eingelesen haben, wollen wir uns zu Beginn einen Überblick über die vorhandenen Daten verschaffen. 
+
+Mit `view()` können wir den ganzen Datensatz als zusätzliches Fenster öffnen.
+
+```{r, results='hide'}
+view(allbus2018)
+```
+
+Über den Befehl `view_df()` wird uns eine HTML-Version unseres Datensatzes im `Viewer` angezeigt. 
+
+```{r, results='hide'}
+view_df(allbus2018)
+```
+
+Der große Vorteil der zweiten Abbildung liegt offensichtlich in der reduzierten Darstellung. So können wir über die Spalte `ID` ablesen, welchen Wert unsere Variablen im Spaltenvektor des Datensatzes innehaben. Wir können entsprechend Variablen über diesen indizieren. Zudem wird uns die Variablenbezeichnung über `Name`, die Variablenbeschriftung über `Label` und die Ausprägungsmerkmale bzw. Spannweite über `Values`, sowie die Merkmalsbeschriftung über `Value Labels` ausgegeben. 
+
+Weiterhin können wir über unsere zuvor erlernten "Grundfunktionen" einen Ausschnitt des Datensatzes generieren.
+
+```{r, echo=T, results='hide', comment="#>"}
+# Ersten 3 Fälle
+
+head(allbus2018, n = 3)
+
+# Letzten 5 Fälle
+
+tail(allbus2018, n = 5)
+
+#Ganzer Datensatz
+
+print(allbus2018)
+```
+
+Die Anwendung unserer Grundfunktionen hat gegenwärtig noch den großen Nachteil, dass R versucht alle Variablen unseres Datensatzes abzubilden. Um das in den Griff zu bekommen, wollen wir uns in den folgenden Kapiteln mit der Datensatztransformation und dann Datenmanipulation beschäftigen. 
+
+## Datensatz restrukturieren 
+
+**Anmerkung:** Ab jetzt werden wir mit dem Allbus 2018 arbeiten. Um die folgenden Befehle nachvollziehen zu können, sollte Sie den Datensatz entsprechend eingelesen haben. 
+
+Gemäß unseres forschungspraktischen Anspruchs stammen die kommenden Variablen aus einer Untersuchung politischen Wissens (Moosdorf 2020) in Bearbeitung des Allbus 2018.
+
+**Kurze Erläuterung des Forschungsinhalts**
+
+R verspricht eine enorme Flexibilität im Umgang mit Daten. Unmittelbar spürbar wird dieser Umstand in der Reorganisation von Datensätzen in neuen Objekten (gezielt aufgebaute eigene Datensätze). So wollen wir in einem ersten Schritt lernen, wie wir Datensätze grob restrukturieren und anschließend die Daten in einem neuen Datensatz speichern können. Unser Ziel ist es also einen eigenen, auf unsere Bedürfnisse zugeschnittenen, Datensatz zu erzeugen. Hierfür straten wir mit den folgenden Funktionen:
+
+| Packet         | Funktion     | Verwendung                |
+| :------------- | :----------- | :------------------------ |
+| dplyr          | select()     | Selektieren von Variablen |
+| dplyr          | filter()     | Filtern nach  Fällen mit spezifischer Ausprägung |
+| dplyr          | arrange()    | Sortiert Datensatz nach bestimmter Variable |
+
+Das dplyr Package stellt Funktionen für alle diese Aufgaben zur Verfügung (und noch viele mehr, wir betrachten hier nur eine kleine Auswahl). dplyr besteht sozusagen aus Verben (Funktionen) für all diese Operationen, und diese Funktionen können - je nach Bedarf - auf sehr elegante Weise zusammengesetzt werden.
+
+Wir sehen uns nun der Reihe nach die verschiedenen Funktionen und deren Verwendung an. Wir verwenden immer den `%>%` Operator. Der Input Datensatz ist dabei immer als erstes Argument der Funktion zu verstehen.
+
+### `Select()` {-}
+
+Mit der Funktion `select()` lassen sich Variablen aus einem Datensatz gezielt auswählen. 
+
+**Syntax:**
+```{}
+# Ohne Pipe
+select(datensatz, variable1, variable2:variable3, -variable4)
+
+# Mit Pipe
+datensatz %>% 
+  select(variable1, variable2:variable3, -variable4)
+```
+
+Mit dem Befehl `select()` wurden aus dem Datensatz `datensatz` die Variablen `variable1`, `variable2` bis `variable3` ausgewählt. `variable4` wurde weggelassen.
+
+**Beispielcode:**
+```{r, echo=T, collapse=T, comment="#>"}
+# Nur Einstellung zu Leistungsprinzip (im19) im neuen Datensatz ds speichern
+
+ds <- allbus2018 %>% 
+  select(im19)
+
+ds
+
+# Einstellungen zum Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20) 
+# in ds speichern
+
+ds <- allbus2018 %>% 
+  select(im19, im20)
+
+ds
+
+# Befürwortung von Ungleichheit (im20) aus ds löschen
+
+ds <- ds %>% 
+  select(-im20)
+
+ds
+
+# Auswahl von Einstellung zum Leistungsprinzip (im19) 
+# über Befürwortung von Ungleichheit (im20)
+# bis Einstellung zu sozialer Ungleichheit auf Makroebene (im21) und Mikroebene (id01)
+# in ds speichern
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01)
+
+ds
+```
+
+Wir können über `select()` auch die Reihenfolge unseres Spaltenvektors gezielt bestimmen.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Reheinfolge des Datensatz ds anpassen
+
+ds <- allbus2018 %>% 
+  select(id01, im19, im20, im21)
+
+ds
+```
+
+**Anmerkung:** 
+
+1. Viele Funktionen des tidyverse, auch `select()`, besitzen zusätzlich Hilfsfunktionen und erweiterte Funktionsvarianten, um gezielt mehrere Variablen nach bestimmten Kriterien einschließen zu können. In Anbetracht der umfänglichen Möglichkeiten dieses Vorgehens, können wir leider in diesem Kurs nicht darauf eingehen. Sofern Sie bedarf für Ihre eigenen Arbeiten sehen, empfehlen wir in der Packetdokumentation nachzusehen unter: [selection helpers](https://dplyr.tidyverse.org/reference/select.html) und [scoped verbs](https://dplyr.tidyverse.org/reference/scoped.html).
+
+2. Sofern Sie einzelne Variablen im Datensatz verschieben möchten, empfehlen wir die Funktion `move_columns()` aus dem Paket *sjmisc*. 
+
+### `Filter()` {-}
+
+Mit der Funktion `filter()` können wir eine Auswahl von Fällen treffen, die alle eine bestimmte Ausprägung einer Variable besitzen.
+
+**Tipp:** Wir kennen diesen Befehl aus SPSS als `select if`.
+
+Um unsere Daten ausgiebig filtern zu können, müssen wir uns kurz mit den `logischen Operatoren` in R beschäftigen.
+
+```{}
+<                Kleiner
+<=               Kleiner gleich
+>                Grösser
+>=               Grösser gleich
+==               Gleich (testet auf Äquivalenz)
+!=               Ungleich
+x | y            x ODER y
+x & y            x UND y
+xor(x, y)        Exklusives ODER (entweder in x oder y, aber nicht in beiden)
+```
+
+Die `logischen Operatoren` in R sind recht selbsterklärend und sollten bei eigener Anwendung recht schnell verstanden sein.
+
+Zusätzlich brauchen wir noch einen `infix operator`.
+
+```{}
+%in%             Merkmale in einem Vektor
+```
+
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+filter(datensatz, variable1 == 1)
+
+# Mit Pipe
+datensatz %>% 
+  filter(variable1 == 1)
+```
+
+Mit dem Befehl `filter()` wurden nur die Fälle des Datensatzes `datensatz` mit der Ausprägung `1` der Variable `variable1` übernommen. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit NUR der 
+# deutschen Staatsbürgerschaft
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, german) %>% 
+  filter(german == 1)
+
+ds
+
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
+# deutschen Staatsbürgerschaft (auch mit weiteren)
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, german) %>% 
+  filter(german %in% 1:2)
+
+ds
+
+# Auswahl unserer bekannten Variablen gefiltert nach Personen mit der 
+# deutschen Staatsbürgerschaft (auch mit weiteren) und weiblichem Geschlecht
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, german, sex) %>% 
+  filter(german %in% c(1,2) & sex == 2)
+
+ds
+```
+
+### `Arrange()` {-}
+
+Mit `arrange()` können wir Beobachtungen sortieren, entweder in aufsteigender oder in absteigender Reihenfolge.
+
+**Syntax:** 
+
+```{}
+# Aufsteigend 
+# Ohne Pipe
+arrange(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  arrange(variable1)
+
+# Absteigend
+# Ohne Pipe
+arrange(datensatz, desc(variable1))
+
+# Mit Pipe
+datensatz %>% 
+  arrange(desc(variable1))
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Sortieren nach Alter aufsteigend
+
+ds <- allbus2018 %>% 
+  select(age, im19:im21, id01, german, sex) %>% 
+  arrange(age)
+
+ds
+
+# Sortieren nach Alter absteigend
+
+ds <- allbus2018 %>% 
+  select(age, im19:im21, id01, german, sex) %>% 
+  arrange(desc(age))
+
+ds
+```
+
+## Daten konvertieren 
+
+So wollen wir uns den Funktionen zuwenden, die Datentypen verändern.
+
+**Anmerkung:** Wir benutzen die Pakete *sjmisc* und *sjlabelled* zur Konvertierung von Datentypen, weil die Anwendung der `base R` Funktionen alle Beschriftungen (siehe 3.3) unseres Datensatzes entfernen würde. Zudem sind die `base R` Funktionen nicht für die Nutzung in einer `Pipe` optimiert. 
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjlabelled     | to_factor()         | Konvertiert Variable in Faktor mit numerischen `levels` |
+| sjlabelled     | to_label()          | Konvertiert Variable in Faktor mit beschrifteten `levels` |
+| sjlabelled     | to_numeric()        | Konvertiert Variable in numerischen Vektor |
+| sjlabelled     | to_character()      | Konvertiert Variable in `character` Vektor |
+| sjmisc         | numeric_to_factor() | Konvertiert Variablen mit n Ausprägungsmerkmalen zu Faktor |
+| sjlabelled     | unlabel()           | Konvertiert `labelled class` in `atomare Struktur` |
+| sjmisc         | ref_lvl()           | Setzt Referenzkategorie |
+
+### `To_factor()` {-}
+
+Konvertiert einen Vektor in einen Faktor mit numerischen `levels` - äquivalent zur Funktion `factor()`. Sinnvoll bei Variablen mit mehr als zwei Ausprägungsmerkmalen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_factor(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_factor(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht unbearbeitet
+
+class(allbus2018$sex)
+
+# Geschlecht in Faktor mit numerischen levels konvertieren
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+attributes(ds$sex)
+```
+
+### `To_label()` {-}
+
+Konvertiert einen Vektor in einen Faktor mit beschrifteten `levels`. Sinvoll bei binären Ausprägungsmerkmalen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_label(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_label(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in Faktor mit beschrifteten levels konvertieren
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_label(sex)
+
+attributes(ds$sex)
+```
+
+### `To_numeric()` {-}
+
+Konvertiert einen Faktor oder `character` Vektor in einen numerischen Vektor. 
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_numeric(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_numeric(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in Faktor 
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+# Geschlecht wieder in numerischen Vektor konvertieren
+
+ds <- ds %>% 
+  select(sex) %>% 
+  to_numeric(sex)
+
+class(ds$sex)
+```
+
+### `To_character()` {-}
+
+Konvertiert einen numerischen Vektor oder Faktor in einen `character` Vektor.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+to_character(datensatz$variable1, datensatz$variable2)
+
+# Mit Pipe
+datensatz %>% 
+  to_character(variable1, variable2)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht in character Vektor konvertieren
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_character(sex)
+
+class(ds$sex)
+
+# Folge: Alle numerischen Ausprägungsmerkmale wurden in ihre Beschriftung umgewandelt
+
+str(ds$sex)
+```
+
+### `Numeric_to_factor()` {-}
+
+Diese Funktion ermöglicht es uns alle Variablen eines Datensatzes anzuwählen und diese zu einem Faktor zu konvertieren. Wir müssen lediglich eine Maximalgrenze (n) als gewünschten Grenzwert zur Umwandlung angeben. Hat eine Variable weniger oder gleich viele Ausprägungsmerkmale wird sie konvertiert.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz als Ausgangspunkt 
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01)
+
+class(ds$im19)
+
+# Alle Variablen haben nur bis zu vier Ausprägungsmerkmale
+# Wir können sie entsprechend zu Faktoren konvertieren
+# ACHTUNG: Diese Funktion ändert den Datentyp unseres Datensatzes! 
+# Wir geben also zusätzliche die Funktion tibble() an
+
+ds <- ds %>% 
+  numeric_to_factor(n = 4) %>% 
+  tibble()
+
+class(ds$im19)
+```
+
+**Wichtig!** Die Funktion `numeric_to_factor()` hat die gleiche Wirkung wie die Funktion `to_label()`. Wir sparen uns lediglich den Aufwand jede Variable einzeln anzuwählen. 
+
+### `Unlabel()` {-}
+
+Mit dieser Funktion können wir Variablen konvertieren, die als `labelled class` gespeichert wurden. Durch das Einlesen unseres Datensatzes über `read_spss()` werden wir diesen Befehl praktisch nie brauchen. Sollte wir den Datensatz aber über `haven` mit der Funktion `read_sav()` laden, ist es sinnvoll alle Variablen nach der Bearbeitung in eine `atomare Struktur` umzuwandeln - damit lassen sich spätere Probleme mit zusätzlichen Paketen vorbeugen.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz laden und vorbereiten
+
+library(haven)
+
+allbus2018_haven <- read_sav("ALLB2018.sav")
+
+ds <- allbus2018_haven %>% 
+  select(age, im19:im21, id01, german, sex)
+
+# Beispiel
+
+class(ds$age)
+
+# Wir konvertieren alle Variablen
+# ACHTUNG: Diese Funktion ändert den Datentyp unseres Datensatzes! 
+# Wir geben also zusätzliche die Funktion tibble() an
+
+ds <- ds %>% 
+  unlabel() %>% 
+  tibble()
+
+class(ds$age)
+```
+
+```{r, include=F}
+detach("package:haven", unload = TRUE)
+```
+
+### `Ref_lvl()` {-}
+
+Die Verwendung der Funktion `rev_lvl()` aus *sjmisc* hat den großen Vorteil, dass unser Faktor im Gegensatz zur Funktion `relevel()` rekodiert wird und damit alle Beschriftungen auch bei numerischen `levels` richtig zugewiesen werden können. 
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+rev_lvl(datensatz, variable1, lvl = 3)
+
+# Mit Pipe
+datensatz %>% 
+  ref_lvl(variable1, lvl = 3)
+```
+
+Wir ändern mit der Funktion `ref_lvl()` die Referenzkategorie von `variable1` auf das Ausprägungsmerkmal `3`.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geschlecht als Faktor
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  to_factor(sex)
+
+# Unsere Refrenzkategorie ist gegenwärtig "Mann"
+attributes(ds$sex)
+
+# Wir ändern die Refrenkategorie folgend auf "Frau"
+
+ds <- ds %>% 
+  ref_lvl(sex, lvl = 2)
+
+attributes(ds$sex)
+```
+
+## Daten beschriften
+
+Grundständig kennt R keine beschrifteten Daten. Erst durch den zunehmenden Einfluss sozialwisschenschaftlicher Anwendungsbedürfnisse und der bevorzugten Datenformate (.sav, .dta, .sas) halten Datenbeschriftungen auch in die R-Umgebung Einzug. 
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjlabelled     | get_label()         | Ruft Variablenbeschriftung ab |
+| sjlabelled     | get_labels()        | Ruft Beschriftung von Ausprägungsmerkmalen ab |
+| sjlabelled     | remove_label()      | Entfernt Variablenbeschriftung |
+| sjlabelled     | remove_labels()     | Entfernt Beschriftung von Ausprägungsmerkmalen |
+| sjlabelled     | remove_all_labels() | Entfernt alle Beschriftungen |
+| sjlabelled     | var_labels()        | Variable neubeschriften |
+| sjlabelled     | val_labels()        | Ausprägungsmerkmale neubeschriften |
+| sjlabelled     | drop_labels()       | Alle "unbesetzten" Ausprägungsmerkmale löschen |*
+
+*Die Funktion `drop_labels()` ist äquivalent zum Argument `drop.labels = T` in der Funktion `read_spss()`. Sofern Sie ihre Daten mit `read_sav()` eingelesen haben, können Sie diesen Befehl nach der Bearbeitung ihres Datensatzes zur Löschung überflüssiger Merkmalsausprägungen nutzen.
+
+### `Get_label()` {-}
+
+Mit der Funktion `get_label()` können wir Variablenbeschriftungen abrufen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+get_label(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  get_label(variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Variablenbeschriftung Leistungsprinzip (im19) 
+# und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% get_label(im19, im20)
+```
+
+### `Get_labels()` {-}
+
+Die Funktion `get_labels()` erlaubt uns das Abrufen der Beschriftung von Merkmalsausprägungen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+get_labels(datensatz, variable1)
+
+# Nicht mit Pipe möglich!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Beschriftung der Ausprägungsmerkmale - Leistungsprinzip (im19) 
+
+get_labels(allbus2018$im19)
+```
+
+### `Remove_label()` {-}
+
+Über die Funktion `remove_label()` lassen sich gezielt Variablenbeschriftungen von einzelnen Variablen oder allen Variablen im Datensatz entfernen.
+
+**Syntax:**
+
+```{}
+# Einzelne Variable
+# Ohne Pipe
+remove_label(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>%
+  remove_label(variable1)
+  
+# ---------
+  
+# Ganzer Datensatz
+# Ohne Pipe
+remove_label(datensatz)
+
+# Mit Pipe
+datensatz %>%
+  remove_label()
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung der Variablenbeschriftung - Geschlecht
+
+ds <- allbus2018 %>% 
+  select(sex) %>% 
+  remove_label(sex)
+
+# Variablenbeschriftung wurde gelöscht
+
+ds %>% get_label(sex)
+
+# Löschung aller Variablenbeschriftungen im Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  remove_label()
+
+# Variablenbeschriftungen wurden gelöscht
+
+ds %>% get_label(im19, im20)
+```
+
+### `Remove_labels()` {-}
+
+Die Funktion `remove_labels()` erlaubt es uns gezielt Beschriftungen der Ausprägungsmerkmale von einzelnen Variablen oder allen Variablen im Datensatz zu löschen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+remove_labels(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>%
+  remove_labels(variable1)
+  
+# ---------
+  
+# Ganzer Datensatz
+# Ohne Pipe
+remove_labels(datensatz)
+
+# Mit Pipe
+datensatz %>%
+  remove_labels()
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung der Variablenbeschriftung - Geschlecht
+
+ds <- allbus2018 %>% 
+  select(im19) %>% 
+  remove_labels(im19, labels = c(1, 2, 3, 4))
+
+# Variablenbeschriftung wurde gelöscht
+
+get_labels(ds$im19)
+
+# Löschung aller Variablenbeschriftungen im Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  remove_labels(labels = 0:99)
+
+# Variablenbeschriftungen wurden gelöscht
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+```
+
+### `Remove_all_labels()` {-}
+
+Wir können mit der Funktion `remove_all_labels()` **alle** (Variablenbeschriftungen und Beschriftungen von Merkmalsausprägungen) löschen.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+remove_all_labels(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  remove_all_labels(variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Löschung aller Beschriftungen in einem Datensatz
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  remove_all_labels()
+
+# Variablenbeschriftungen wurden gelöscht
+
+ds %>% get_label(im19, im20) 
+
+# Beschriftung von Ausprägungsmerkmalen wurden gelöscht
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+```
+
+### `Var_labels()` {-}
+
+Mit der Funktion `var_labels()` können wir von einer oder mehreren Variablen die Variablenbeschriftung neu definieren.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+var_labels(datensatz, variable1 = "Variablenbeschriftung")
+
+# Mit Pipe
+datensatz %>% 
+  var_labels(variable1 = "Variablenbeschriftung")
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Variablenbeschriftung neu definieren
+
+ds <- ds %>% 
+  var_labels(im19 = "Leistungsprinzip",
+             im20 = "Befürwortung von Ungleichheit")
+
+# Variablenbeschriftungen abrufen
+
+ds %>% get_label(im19, im20)
+```
+
+### `Val_labels()` {-}
+
+Die Funktion `val_labels()` erlaubt es uns Ausprägungsmerkmale für eine oder mehrere Variablen neu zu definieren.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+var_labels(datensatz, variable1 = c("1", "2"))
+
+# Mit Pipe
+datensatz %>% 
+  var_labels(variable1 = c("1", "2"),
+             variable2 = c("Hallo", "Tschüss"))
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Merkmalsausprägungen neu definieren
+
+ds <- ds %>% 
+  val_labels(im19 = c("Erste Stufe", "Zweite Stufe", "Dritte Stufe", "Vierte Stufe"),
+             im20 = c("Erste Stufe", "Zweite Stufe", "Dritte Stufe", "Vierte Stufe"))
+
+get_labels(ds$im19)
+get_labels(ds$im20)
+
+ds %>% 
+  select(im19, im20) %>% 
+  view_df()
+```
+
+## Daten manipulieren
+
+Zur Manipulation/Bearbeitung unseres Datensatzes werden wir maßgeblich mit dem `dplyr`-Paket aus dem tidyverse und dem Paket `sjmisc` aus `strengejacke` arbeiten. Die folgende Auswahl kann nur einen Überblick über die "wichtigsten" Funktionen dieser Pakete geben. Sofern Sie weitere Tranformationswünsche haben, sollten Sie unbedingt die Entwicklerseiten dieser Pakete aufsuchen und nach geeigneten Funktionen suchen (siehe 1.6).
+
+
+| Packet         | Funktion     | Verwendung                |
+| :------------- | :----------- | :------------------------ |
+| dplyr          | rename()     | Umbenennen von Variablen  |
+| dplyr          | mutate()     | Erstellen und verändern von vorhandenen Variablen  |
+| dplyr          | group_by()   | Erstellt Gruppen (Teilmengen) |
+| dplyr          | summarise()  | Daten zusammenfassen  |
+| dplyr          | distinct()   | Auswahl einzigartiger Werte |
+| dplyr          | case_when()  | Vektorisierter if-Befehl  |
+| sjmisc         | rec()        | Rekodierung von Variablen  |
+| sjmisc         | std()        | Z-Standardisierung von Variablen  |
+| sjmisc         | center()     | Zentrierung von Variablen am Mittelwert  |
+| sjmisc         | split_var()  | Aufspaltung von Variablen in n Gruppen gleicher Größe |
+| sjmisc         | group_var()  | Aufspaltung von Variablen in Gruppen gleicher Spannweite |
+| sjmisc         | row_count()  | Zählung von Zeilenwerten  |
+| sjmisc         | row_sums()   | Summe der Zeilenwerte |
+| sjmisc         | row_means()  | Mittelwert der Zeilenwerte |
+| sjlabelled     | set_na()     | Transformiert Ausprägungsmerkmale zu fehlenden Werten |
+| tidyr          | drop_na()    | Alle fehlenden Werte werden gelöscht |
+
+### `Rename()` {-}
+
+Die Funktion `rename()` erlaubt uns eine Neubeschriftung der Variablennamen vorzunehmen.
+
+**Wichtig!** Die nicht umbenannten Variablen verbleiben auch weiterhin im Datensatz.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+rename(datensatz, rename(variableA = variable1))
+
+# Mit Pipe
+datensatz %>% 
+  rename(variableA = variable1)
+```
+
+Mit dem Befehl `rename()` haben wir in unserem Datensatz `ds` die Variable `variable1` in `variableA` umbenannt. Der neue Name muss folgend immer auf der *linken* Seite der Gleichung stehen.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Neubeschriftung der Variablen Geschlecht (sex) und Alter (age)
+
+ds <-  allbus2018 %>% 
+  select(sex, age) %>% 
+  rename(Geschlecht = sex,
+         Alter = age)
+
+ds
+```
+
+### `Mutate()` {-}
+
+Über die Funktion `mutate()` können wir neue Variablen aus schon bestehenden Variablen bilden. Vor allem erlaubt uns dieser Befehl mathematische Operationen an Variablen vorzunehmen. Wir kennen diese Befehl in `SPSS` als `compute`.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+mutate(datensatz, variable1 = Berechnung)
+
+# Mit Pipe
+datensatz %>% 
+  mutate(variable1 = Berechnung)
+```
+
+Die Funktion `mutate()` erstellt eine neue Variable mit dem Namen `variable1`, in der wir das Ergebnis aus `Berechnung` speichern.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Berechung des Alters der Befragten aus ihrem Geburtsjahr in neuer Variable (Alter)
+
+ds <-  allbus2018 %>% 
+  select(yborn, age) %>% 
+  mutate(Alter = 2018-yborn)
+
+ds
+
+# Fast ;D
+# Um das korrekte Alter zu ermitteln, müssten wir natürlich noch den Geburtsmonat einbeziehen!
+```
+
+Sofern Sie nur die neu gebildeten Variablen in ihrem Datensatz behalten möchten, bietet sich der Befehl `transmute()` als Erweiterung von `mutate()` an.
+
+### `Group_by()` {-}
+
+Gesetzt den Fall, dass wir bestimmte Operationen nicht auf den ganzen Datensatz anwenden wollen, sondern nur auf Teilgruppen, ist die Funktion `group_by()` die ideale Lösung für uns. Über `group_by()` wird unser Datensatz anhand einer Gruppierungsvariable (mit nominalen Ausprägungsmerkmalen) geteilt. Anschließende Funktionen werden auf jeden Teil angewendet, bevor sich der Datensatz nach Abschluss unserer Operationen über wieder zusammensetzt (split-apply-combine). `group_by()` wird deshalb meistens in Kombination mit anderen Funktionen verwendet. Um nach einer abgeschlossenen Operation die Gruppierung wieder zusammen zu setzen, nutzen wir `ungroup()`. So können wir wieder mit einem ungruppierten Datensatz weiterarbeiten. Unsere Ergebnisse können wir über `mutate()` einer neuen Variable zuweisen und es damit auf alle Fälle in unserem Datensatz übertragen. 
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+group_by(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  group_by(variable1)
+```
+
+Wir spalten also über die Funktion `group_by()` unseren Datensatz in Gruppen nach den Ausprägungsmerkmalen der `variable1`.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Altersdurchschnitt nach Ost und West 
+
+ds <- allbus2018 %>% 
+  select(age, eastwest, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  # Wir werden in Kapitel 4 alles über gewichtete Objekte lernen (z.B. weighted_mean())!
+  mutate(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% select(eastwest, alterOstWest)
+```
+
+Unter Verwendung von `group_by()` haben wir den Datensatz in zwei separate Teile geteilt und dann den Gruppenmittelwert für Ost- und Westdeutschland errechnet. Da wir unser Ergebnis allen Fällen zuweisen wollten, haben wir eine neue Variable über `mutate()` gebildet. Anschließend haben wir die Teile wieder über `ungroup()` “zusammengesetzt” (d.h. es ist wieder ein Datensatz) und so das Ergebnis allen Fällen zugewiesen. Als Resultat besitzen alle Fälle den Altersdurchschnitt in ihrem Bundesgebiet als neue Variable `alterOstWest`.
+
+### `Summarise()` {-}
+
+Die Funktion `summarise()` ermöglicht es uns Variablen zusammen zu fassen und deskriptive Kennzahlen zu berechnen. Im Gegensatz zu `mutate()` gibt `summarise()` aber nicht den Wert für jede Beobachtung als Output aus, sondern einen Wert für jede Gruppe. `summarise()` wird oft zusammen mit `group_by()` verwendet.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+summarise(datensatz, variable1 = funktion(variable))
+
+# Mit Pipe
+datensatz %>% 
+  summarise(variable1 = funktion(variable))
+```
+
+Mit der Funktion `summarise()` wurde in `variable1` das Ergebnis aus `function(variable)` gespeichert. Hierbei wurde ein neuer Datensatz mit nur der Variable `variable1` gebildet, die als einzigen Wert den Gruppenwert aus `function(variable)` besitzt. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Altersdurchschnitt nach Ost und West 
+
+ds <- allbus2018 %>% 
+  select(age, eastwest, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  summarise(alterOstWest = weighted_mean(age, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% select(eastwest, alterOstWest)
+```
+
+### `Distinct()` {-}
+
+Die Funktion `distinct()` erlaubt uns einzigartige Werte in einem Vektor zu ermitteln.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+distinct(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  distinct(datensatz, variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Geburtsjahre
+
+ds <- allbus2018 %>% 
+  select(yborn) %>% 
+  distinct(yborn) %>% 
+  arrange(yborn)
+
+ds
+```
+
+### `Case_when()` {-}
+
+Über die Funktion `case_when()` lassen sich Kombinationen von Ausprägungsmerkmalen in neuen Variablen speichern - (Stw. Kombinationsindex). Der Befehl `if-Befehl` aus `SPSS` kommt diesem sehr nahe.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+case_when(datensatz$variable1 == 1 & datensatz$variable2 == 2 ~ 1,
+          datensatz$variable1 == 2 $ datensatz$variable2 == 1 ~ 2)
+
+# Mit Pipe
+datensatz %>%
+  mutate(variableA = case_when(variable1 == 1 & variable2 == 2 ~ 1,
+                               variable1 == 2 $ variable2 == 1 ~ 2)
+```
+
+Die Funktion `case_when()` erzeugt aus den Ausprägungsmerkmalen `1` und `2` der Variablen `variable1` und `variable2` eine neue Ausprägung `1`. Das gleiche passiert auch in den nachfolgenden Operationen mit verschiedenen Wertpaaren der `variable1` und `variable2`. 
+
+**Anmerkung:** Die Funktion `case_when()` kann innerhalb einer `Pipe` praktisch nicht ohne eine "Speicherfunktion" auskommen. Entsprechend haben wir hier `mutate()` vorangestellt. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Postmaterialismusindex nach Inglehart: Materialisten/Postmaterialisten
+
+ds <- allbus2018 %>%
+  select(va01:va04, ingle) %>%
+  mutate(
+    inglehartIndex = case_when(
+      # Materialisten
+      va01 == 1 & va03 == 2 ~ 4,
+      va01 == 2 & va03 == 1 ~ 4,
+      # Postmaterialisten
+      va02 == 1 & va04 == 2 ~ 1,
+      va02 == 2 & va04 == 1 ~ 1
+    )
+  )
+
+# Vergleich mit dem beigelegten Inglehartindex aus dem Allbus
+# Wir müssten natürlich noch die Mischtypen berechnen!
+
+ds %>% 
+  select(inglehartIndex, ingle) %>% 
+  filter(inglehartIndex %in% c(1, 4))
+```
+
+### `Rec()` {-}
+
+Nun folgt die wohl wichtigste Funktion in unserem Werkzeugkasten. So vereint die Funktion `rec()` eine Vielzahl von uns bekannten Funktionen z.B. `to_numeric() und to_factor()`, `var_labels() und val_labels()` und schafft darüber hinaus die Möglichkeit zur gezielten Rekodierung von Variablen. Diese Funktion entspricht dem Befehl `recode` aus `SPSS`.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+rec(datensatz, variable1, rec = "1=1 [niedrig]; 2,4=2 [mittel]; 4:max=3 [hoch], else=copy, 99=NA", 
+                          var.label = "Variablenbeschriftung", to.factor = TRUE)
+
+# Mit Pipe
+datensatz %$% 
+  rec(variable1, rec = "1=1 [niedrig]; 2,3=2 [mittel]; 4:max=3 [hoch], else=copy, 99=NA", 
+                 var.label = "Variablenbeschriftung", to.factor = TRUE)
+```
+
+`variable1` aus dem Datensatz `datensatz` wurde rekodiert und in einen Faktor konvertiert. So wurden alle Werte entsprechend neu zugewiesen und mit neuen Beschriftungen versehen. Zudem wurde die Variablenbeschriftung angepasst.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Rekodierung von Bildungsabschlüssen
+
+ds <- allbus2018 %>% 
+  select(educ) %>% 
+  mutate(bildung = rec(educ, rec = "1,2=1 [gering];  3,7=2 [mittel]; 4,5=3 [hoch]",
+                       var.label = "Bildung kategorisiert", to.factor = T))
+
+class(ds$educ)
+
+attributes(ds$bildung)
+
+view_df(ds)
+```
+
+### `Std()` {-}
+
+Mit der Funktion `std()` können wir Variablen z-transformieren (Standardisierung und Zentrierung).
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+std(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  std(datensatz, variable1)
+```
+
+Im Default wird dabei eine neue Variable mit dem Suffix "_z" erstellt. Im Beispiel aus der Syntax würde im Datensatz eine neue Variable mit dem Namen `variable1_z` gebildet werden.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# z-Standardisierung des Leistungsprinzip (im19)
+
+ds <- allbus2018 %>% 
+  std(im19)
+
+ds %>% select(im19, im19_z)
+```
+
+### `Center()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+center(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  center(datensatz, variable1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Zentrierung des Leistungsprinzip (im19) am Mittelwert
+
+ds <- allbus2018 %>% 
+  center(im19)
+
+ds %>% select(im19, im19_c)
+```
+
+### `Split_var()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+split_var(datensatz, variable1, n = 5)
+
+# Mit Pipe
+datensatz %>% 
+  split_var(datensatz, variable1, n = 5)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Alter in 5 gleichgroße Gruppen unterteilen
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  mutate(ageGrp = split_var(age, n = 5))
+
+# Den Befehl frq() werden wir in Kapitel 4 umfassend besprechen!
+ds %>% frq(ageGrp, weights = allbus2018$wghtpew)
+```
+
+### `Group_var()` {-}
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+group_var(datensatz, variable1, size = 5)
+
+# Mit Pipe
+datensatz %>% 
+  group_var(datensatz, variable1, size = 5)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# 10 Jahre Altersspannen 
+# Achtung! Intervalle orientieren sich "default" an der oberen Wertgrenze des Intervalls
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  mutate(ageGrp = group_var(age, size = 10))
+
+# Eine direkte Beschriftung ist leider nicht möglich.
+# Zum Abgleich der Intervallgrenzen ist group_labels() aber sehr hilfreich!
+# Group_labels() generiert in gleicher Form die gewüschten Intervalle, besitz aber als Ausprägungsmerkmale die Beschriftung. 
+
+group_labels(ds$age, size = 10)
+
+# Beschriftung der Intervalle 
+
+ds <- ds %>% 
+  val_labels(ageGrp = c("10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"))
+
+attributes(ds$ageGrp)
+```
+
+### `Row_count()` {-}
+
+Befehl `count` in `SPSS`. Noch suchen: count für mehrere Werte!
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+row_count(datensatz, count = 1)
+
+# Mit Pipe
+datensatz %>% 
+  row_count(count = 1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mitgliedsstatus in Vereinen zählen - aktives Mitglied (3)
+
+ds <- allbus2018 %>% 
+  select(sm04:sm14) %>% 
+  row_count(count = 3)
+
+ds %>% frq(rowcount, weights = allbus2018$wghtpew)
+```
+
+### `Row_sums()` {-}
+
+Summenindex
+
+```{}
+# Ohne Pipe
+row_sums(datensatz, n = Inf)
+
+# Mit Pipe
+datensatz %>% 
+  row_sums(n = Inf)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mitgliedsstatus in Vereinen zählen 
+
+ds <- allbus2018 %>% 
+  select(sm04:sm07) %>% 
+  row_sums(n = Inf)
+
+ds %>% frq(rowsums, weights = allbus2018$wghtpew)
+```
+
+### `Row_means()` {-}
+
+Mittelwertindex
+
+```{}
+# Ohne Pipe
+row_means(datensatz, n = 1)
+
+# Mit Pipe
+datensatz %>% 
+  row_means(n = 1)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwertindex: Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+ds <- allbus2018 %>% 
+  select(im19, im20) %>% 
+  row_means(n = 1)
+
+ds %>% frq(rowmeans, weights = allbus2018$wghtpew)
+```
+
+
+### `Set_na()` {-}
+
+Mit der Funktion `set_na()` wollen wir lernen, wie wir einzelne oder mehrere Ausprägungsmerkmale in `NA` konvertieren können.
+
+**Syntax:**
+
+```{}
+# Ohne Pipe
+set_na(datensatz, variable1, na = c(1, 3))
+
+# Mit Pipe
+datensatz %>% 
+  set_na(variable1, na = c(1, 3))
+```
+
+Mit haben mit der Funktion `set_na()` in `variable1` die Ausprägungsmerkmale `1` und `3` als `NA` definiert. 
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Definition der Altersspanne 61 bis 99 als NA
+
+ds <- allbus2018 %>% 
+  select(age) %>% 
+  set_na(age, na = 61:99)
+
+view_df(ds)
+```
+
+### `Drop_na()` {-}
+
+**Syntax:**
+
+```{}
+# Einzelne Variable
+# Ohne Pipe
+drop_na(datensatz, variable1)
+
+# Mit Pipe
+datensatz %>% 
+  drop_na(variable1)
+
+# --------
+
+# Ganzer Datensatz
+# Ohne Pipe
+drop_na(variable1)
+
+# Mit Pipe
+datensatz %>% 
+  drop_na()
+```
+
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Fehlende Werte in Leistungsprinzip (im19) löschen
+
+ds <- allbus2018 %>% 
+  drop_na(im19)
+
+# Alle fehelnden Werte im Datensatz löschen
+
+ds <- allbus2018 %>% 
+  drop_na()
+```
+
+
+
+**Referenz:**
+
+**Moosdorf, D. (2020):** Kritik an sozialer Ungleichheit – Macht politisches Wissen den Unterschied?. In Tausendpfund, M. & B. Westle (Hrsg.), Politisches Wissen in Deutschland: Empirische Analysen mit dem ALLBUS 2018 (S. 165–197). Wiesbaden: Springer VS. https://doi.org/10.1007/978-3-658-30492-8_6.
+
+
+
+
+
+<!--chapter:end:03-Datenmodifikation.Rmd-->
+
+# Uni- und Bivariate Datenanalyse
+
+## Gewichtung
+
+
+
+
+## Univariate Statistiken
+
+| Packet         | Funktion            | Verwendung                |
+| :------------- | :------------------ | :------------------------ |
+| sjmisc         | frq()               | Häufigkeitstabelle |
+| sjmisc         | descr()             | Despriptive Statistiken ausgeben |
+| sjstats        | weighted_mean()     | Mittelwert berechnen |
+| sjstats        | weighted_median()   | Median berechnen |
+| sjstats        | weighted_sd()       | Standardabweichung berechnen |
+| sjstats        | weighted_se()       | Standardfehler berechnen |
+| weights        | wtd.quantile()      | Quantile berechnen |
+
+### `Frq()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+frq(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  frq(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Häufigkeitstabelle Leistungsprinzip (im19)
+
+allbus2018 %>% frq(im19, weights = wghtpew)
+```
+
+### `Descr()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+descr(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  descr(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Deskriptive Statistiken Leistungsprinzip (im19)
+
+allbus2018 %>% descr(im19, weights = wghtpew)
+
+allbus2018 %>% descr(im19, weights = wghtpew, show = "short")
+```
+
+### `Weighted_mean()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_mean(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_mean(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert Leistungsprinzip (im19) 
+
+allbus2018 %$% 
+  weighted_mean(im19, weights = wghtpew)
+
+# Mittelwert Leistungsprinzip (im19) als neue Variable
+
+ds <- allbus2018 %>% 
+  transmute(mittelLeistung = weighted_mean(im19, weights = wghtpew)) 
+
+ds
+```
+
+### `Weighted_median()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_median(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_median(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Median Leistungsprinzip (im19)
+
+allbus2018 %$% 
+  weighted_median(im19, weights = wghtpew)
+
+# Median Leistungsprinzip (im19) als neue Variable
+
+ds <- allbus2018 %>% 
+  mutate(medianLeistung = weighted_median(im19, weights = wghtpew)) %>% 
+  distinct(medianLeistung)
+
+ds
+```
+
+### `Weighted_sd()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_sd(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_sd(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert und Standardabweichung Leistungprinzip nach Ost-West (Fälle)
+
+ds <- allbus2018 %>% 
+  select(eastwest, im19, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  mutate(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+         leistungSDOstWest = weighted_sd(im19, weights = wghtpew)) %>% 
+  ungroup() 
+
+ds %>% 
+  select(eastwest, leistungMittelOstWest, leistungSDOstWest)
+```
+
+### `Weighted_se()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_se(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  weighted_se(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mittelwert, Standardabweichung und Standardfehler 
+# Leistungprinzip nach Ost-West (Gruppen)
+
+ds <- allbus2018 %>% 
+  select(eastwest, im19, wghtpew) %>% 
+  group_by(eastwest) %>% 
+  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
+            leistungSEOstWest = weighted_se(im19, weights = wghtpew)) %>% 
+  ungroup()
+
+ds
+
+# Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall 
+# Leistungprinzip nach Ost-West (Gruppen)
+
+ds <- allbus2018 %>% 
+  group_by(eastwest) %>% 
+  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
+            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
+            leistungSEOstWest = weighted_se(im19, weights = wghtpew),
+            CI.95.down = leistungMittelOstWest-1.96*(leistungSDOstWest/sqrt(n())),
+            CI.95.up = leistungMittelOstWest+1.96*(leistungSDOstWest/sqrt(n()))) %>% 
+  ungroup()
+
+ds
+
+
+```
+
+### `wtd.quantile()` {-}
+
+```{}
+library(weights)
+```
+```{r, include=F}
+library(weights)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+wtd.quantile(datensatz$variable1, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  wtd.quantile(variable1, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Quantile Alter
+
+allbus2018 %$% 
+  wtd.quantile(age, weights = wghtpew)
+```
+
+## Bivariate Statistiken
+
+| Packet         | Funktion                | Verwendung                |
+| :------------- | :---------------------- | :------------------------ |
+| dscr           | crosstab()              | Kreuztabellen |
+| sjstats        | weighted_chisqtest()    | Chi-Quadrat-Test |
+| sjstats        | crosstable_statistics() | Zusammenhangsmaße |
+| sjmisc         | weighted_correlation()  | Pearson`s r |
+
+### `Crosstab()` {-}
+
+```{}
+library(descr)
+
+# Achtung! Überschreibt sjmisc::descr
+# Paket sjmisc deaktivieren und nochmal aktivieren
+
+detach("package:sjmisc", unload = TRUE)
+library(sjmisc)
+```
+```{r, include=F}
+library(descr)
+detach("package:sjmisc", unload = TRUE)
+library(sjmisc)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+crosstab(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  crosstab(variable1, variable2, weight = gewicht)
+```
+
+**Beispielcode:**
+
+```{r echo=T, collapse=T, comment="#>"}
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# Absolute Häufigkeit
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Spalten
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Zeilen
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.r = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Gesamthäufigkeit
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.t = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit mit Chi-Quadrat nach Zellen
+# ohne Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.chisq = T, plot = F)
+
+# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
+# relative Häufigkeit nach Spalten
+# mit Chi-Quadrat-Test 
+# mit Grafik
+
+allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
+
+# Grafik
+```
+
+```{r, echo=F}
+x <- allbus2018 %$% 
+  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
+
+plot(x)
+```
+
+### `Weighted_chisqtest()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_chisqtest(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  weighted_chisqtest(variable1, variable2, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Chi-Quadrat-Test Geschlecht (sex) und Bildung (educ)
+
+allbus2018 %>% 
+  weighted_chisqtest(sex, educ, weights = wghtpew)
+```
+
+### `Crosstable_statistiscs()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+crosstable_statistics(datensatz$vaiable1, datensatz$variable2, weights = datensatz$gewicht,
+                      statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
+
+# Mit Pipe
+
+allbus2018 %>% 
+  crosstable_statistics(variable1, variable2, weights = gewicht, 
+                        statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
+```
+
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Phi Geschlecht (sex) und Ost West (eastwest)
+
+allbus2018 %>% 
+  crosstable_statistics(sex, eastwest, weights = wghtpew, statistics = "phi")
+
+# Cramers V Geschlecht (sex) und Bildung (educ)
+
+allbus2018 %>% 
+  crosstable_statistics(sex, educ, weights = wghtpew, statistics = "cramer")
+
+# Spearman`s rho Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% 
+  crosstable_statistics(im19, im20, weights = wghtpew, statistics = "spearman")
+```
+
+### `Weighted_correlation()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_correlation(datensatz$variable1, datensatz$variable2, 
+                     weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  weighted_correlation(variable1, variable2, weights = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Pearson`s r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
+
+allbus2018 %>% 
+  weighted_correlation(im19, im20, weights = wghtpew)
+```
+
+
+## Mittelwertvergleiche (unabhängig)
+
+| Packet         | Funktion                | Verwendung                |
+| :------------- | :---------------------- | :------------------------ |
+| sjstats        | weighted_ttest()        | T-Test |
+| sjstats        | grpmean()               | Einfaktorielle ANOVA |
+| sjstats        | weighted_mannwhitney()  | Mann-Whitney-Test / Kruskall-Wallis-Test |
+
+### `Weighted_ttest()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_ttest(variable1 ~ gruppenvariable + gewicht, datensatz)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# T-Test zu Leistungsprinzip (im19) zwischen Geschlecht (sex)
+
+weighted_ttest(im19 ~ sex + wghtpew, allbus2018)
+```
+
+### `Grpmean()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+grpmean(datensatz$variable1, datensatz$gruppenvariable, weights = datensatz$gewicht)
+
+# Mit Pipe
+
+datensatz %>% 
+  grpmean(variable1, gruppenvariable, gewicht)
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ)
+# P-Wert in Relation zu absolutem Mittelwert
+
+allbus2018 %>% 
+  grpmean(im19, educ, weights = wghtpew)
+
+# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ) 
+# nach Geschlecht (sex)
+# P-Wert in Relation zu absolutem Mittelwert
+
+allbus2018 %>% 
+  group_by(sex) %>% 
+  grpmean(im19, educ, weights = wghtpew)
+```
+
+### `Weighted_mannwhitney()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+weighted_mannwhitney(variable1 ~ gruppenvariable + gewicht, datensatz)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Mann-Whitney-Test Leistungsprinzip (im19) nach Geschlecht (sex)
+
+weighted_mannwhitney(im19 ~ sex + wghtpew, allbus2018)
+
+# Kruskall-Wallis-Test Leistungsprinzip (im19) nach Geschlecht (sex)
+
+weighted_mannwhitney(im19 ~ educ + wghtpew, allbus2018)
+```
+
+## Grafiken
+
+| Packet         | Funktion           | Verwendung                |
+| :------------- | :----------------- | :------------------------ |
+| sjplot         | plot_frq()         | Grafiken zu univariaten Häufigkeitsverteilungen |
+| sjplot         | plot_likert()      | Grafiken zu univariaten Häufigkeitsverteilungen bei Likert-Items |
+| sjplot         | plot_stackfrq()    | Grafiken als univariate Balkenschichtungsdiagramme |
+| sjplot         | plot_grpfrq()      | Grafiken zu univariaten Häufigkeitsverteilungen nach Gruppen |
+| sjplot         | plot_xtab()        | Grafiken als Kreuztabellendiagramme |
+ 
+
+### `Plot_frq()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_frq(datensatz$variable1, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$% 
+  plot_frq(variable1, weight.by = gewicht)
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Grafik zur Häufigkeitsverteilung Bildung (educ)
+
+allbus2018 %$% 
+  plot_frq(educ, weight.by = wghtpew, coord.flip = T, hjust = "left", type = "dot",
+           show.ci = T, expand.grid = T, vjust = "bottom", sort.frq = "desc")
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Grafik zur Häufigkeitsverteilung Alter (age) 
+# mit Normalverteilungskurve, Mittelwert und Standardabweichung
+
+allbus2018 %$% 
+  plot_frq(age, weight.by = wghtpew, type = "h", show.mean = TRUE, 
+           show.mean.val = TRUE, normal.curve = TRUE, show.sd = TRUE, 
+           normal.curve.color = "black", geom.size = .3, xlim = c(15, 100))
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Grafik zur Häufigkeitsverteilung Alter (age) 
+
+allbus2018 %$% 
+  plot_frq(age, weight.by = wghtpew, type = "violin", show.values = F)
+```
+
+### `Plot_likert()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items
+
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), 
+            wrap.legend.labels = 11, wrap.labels = 12, values = "sum.inside", 
+            show.prc.sign = T, weight.by = allbus2018$wghtpew)
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items nach Komponenten
+
+plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2),
+            grid.range = c(1.1, 1.1), values = "sum.outside",
+            show.prc.sign = T, weight.by = allbus2018$wghtpew, legend.pos = "none")
+```
+
+### `Plot_stackfrq()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Verteilung von Ausprägungsmerkmalen in einem Balkenschichtungsdiagramm 
+# Farbauswahl mit RColorBrewer::display.brewer.all()
+
+plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")],
+              weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
+              wrap.labels = 12, wrap.legend.labels = 11)
+```
+
+### `Plot_grpfrq()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_frq(datensatz$variable1, datensatz$gruppenvariable, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$%
+  plot_frq(variable1, gruppenvariable, weight.by = gewicht)
+```
+
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Alter (age) nach Geschlecht (sex) und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, show.values = F, type = "line",
+              show.summary = T, summary.pos = 1)
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungsprinzip (im19) nach Schichtzugehörigkeit (id02) 
+
+allbus2018 %$% 
+  plot_grpfrq(im19, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(im19, sex, weight.by = wghtpew, type = "bar", show.summary = T,
+              summary.pos = "1", ylim = c(0, 850))
+```
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Ost West (eastwest)
+# und Statistiken
+
+allbus2018 %$% 
+  plot_grpfrq(im19, sex, intr.var = eastwest, weight.by = wghtpew, 
+              type = "violin", show.summary = T, summary.pos = "1")
+```
+
+### `Plot_xtab()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+plot_xtab(datensatz$variable1, datensatz$variable2, weight.by = datensatz$gewicht)
+
+# Mit Pipe
+# Achtung! %$% Operator
+
+datensatz %$%
+  plot_xtab(variable1, variable2, weight.by = gewicht)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West (eastwest)
+# und Statistiken
+
+allbus2018 %$% 
+  plot_xtab(im21, eastwest, weight.by = wghtpew, type = "line", show.total = F, 
+            show.n = F, show.summary = T, summary.pos = "1")
+```
+
+### `Grid.arrange()` {-}
+
+```{}
+library(gridExtra)
+```
+```{r, include=FALSE}
+library(gridExtra)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+grid.arrange(arrangeGrob(abbildung1, abbildung2))
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Verteilung Alter (age) nach Geschlecht (sex) zwischen Ost West (eastwest)
+
+p1 <- allbus2018 %>% 
+  filter(eastwest == 1) %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
+              summary.pos = "1", title = "ALTER nach GESCHLECHT - WEST",
+              geom.colors = "Blues")
+
+p2 <- allbus2018 %>% 
+  filter(eastwest == 2) %$% 
+  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
+              summary.pos = "1", title = "ALTER nach GESCHLECHT - OST",
+              geom.colors = "Greens")
+  
+
+# --------
+
+pp1 <- grid.arrange(arrangeGrob(p1, p2, nrow = 1))
+
+pp1
+```
+
+
+### `Ggsave()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+ggsave("Grafik.png", plot = last_plot(), dpi = 300)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+
+ggsave("grid.plot.png", plot = pp1, dpi = 300)
+
+```
+
+
+
+
+
+
+
+<!--chapter:end:04-Uni-Bivariate.Datenanalyse.Rmd-->
+
+# Multivariate Datenanalyse
+
+## Korrelationsmatrix
+
+### `Wtd.cor()` {-}
+
+```{}
+library(weights)
+library(corrplot)
+```
+
+```{r, include=F}
+library(weights)
+library(corrplot)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+wtd.cor(datensatz[c("Variable1", "variable2", "variable3")], weight = datensatz$gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+#Berechnung der Korrelationsmatrix
+
+corMatrix <- wtd.cor(ds[1:4], weight = ds$wghtpew)
+
+corMatrix
+
+# Grafik 
+# Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil
+
+corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle", 
+         tl.col = "black", addCoef.col = "black", cl.cex = .7, number.cex = .7, 
+         insig = "pch")
+```
+
+## Realiabilitätsanalyse
+
+## Faktoranalyse und Hauptkomponentenanalyse
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| psych        | KMO()                   | Kaiser-Meyer-Olkin-Kriterium (MSA) |
+| psych        | bartlett.test()         | Bartlett-Test |
+| psych        | scree()                 | Scree-Test |
+| psych        | principal()             | Hauptkomponentenanalyse |
+| psych        | fa()                    | Faktoranalyse |
+
+```{}
+library(psych)
+```
+```{r, include=F}
+library(psych)
+```
+
+### `KMO()` {-}
+
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+KMO(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  KMO()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# KMO/MSA 
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  KMO() 
+  
+```
+
+### `Bartlett.test()` {-}
+
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+bartlett.test(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  bartlett.test()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Bartlett-Test 
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  bartlett.test() 
+  
+```
+
+### `Scree()` {-}
+
+Achtung! Ungewichtete Analyse.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+scree(datensatz[c("Variable1", "variable2", "variable3")])
+
+# Mit Pipe
+
+datensatz %>% 
+  select(variable1, variable2, variable3) %>% 
+  scree()
+
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Scree-Plot
+
+allbus2018 %>% 
+  select(im19:im21, id01) %>% 
+  scree() 
+```
+
+### `Principal()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+principal(datensatz[c("Variable1", "variable2", "variable3")], 
+          weight = datensatz$gewicht, nfactors = 1, rotate = "varimax",
+          use = "pairwise", scores = T)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+# Hauptkomponentenanalyse
+
+pca <- principal(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
+          use = "pairwise")
+
+pca
+
+# Ladungen (Übersichtlicher)
+
+print(pca$loadings, digits = 2, cutoff = .2)
+```
+
+### `Fa()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+fa(datensatz[c("Variable1", "variable2", "variable3")], 
+   weight = datensatz$gewicht, nfactors = 1, rotate = "varimax", 
+   use = "pairwise", scores = "regression")
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+# Hauptkomponentenanalyse
+
+fa <- fa(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
+         use = "pairwise", scores = "regression")
+
+fa
+
+# Ladungen (Übersichtlicher)
+
+print(fa$loadings, digits = 2, cutoff = .2)
+```
+
+### `Fa_diagram()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+fa.diagram(modell)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# PCA
+
+fa.diagram(pca)
+
+# FA
+
+fa.diagram(fa)
+```
+
+## Regressionsanalyse
+
+### `Lm()` {-}
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19, sex, age, educ, di08, wghtpew) %>% 
+  # Z-Standardisierung Einkommen
+   mutate(wMean = weighted_mean(di08, weights = wghtpew),
+         wSD = weighted_sd(di08, weights = wghtpew),
+         zEinkommen = (di08-wMean)/wSD) %>% 
+  # Rekodierung Geschlecht und Bildung
+  mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
+         bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
+                                    4:5=3 [hoch]; else=NA")) %>% 
+  # Konvertierung in Faktor Geschlecht und Bildung
+  to_label(sex, bildung) %>% 
+  # Refrenzkategorie Bildung auf mittel
+  ref_lvl(bildung, lvl = 2) %>% 
+  # Löschung NA 
+  drop_na()
+  
+# Nullmodell
+
+nullmodel <- lm(im19 ~ 1, ds, weights = wghtpew)
+summary(nullmodel)
+
+# Modellierung erstes Modell
+
+model1 <- lm(im19 ~ sex + age + bildung + zEinkommen, ds, weights = ds$wghtpew)
+summary(model1)
+
+# Prüfung auf Interaktioneffekt zwischen Geschlecht und zEinkommen
+
+model2.1 <- lm(im19 ~ zEinkommen + sex + age + bildung + zEinkommen:sex, ds, 
+               weights = ds$wghtpew)
+summary(model2.1)
+
+# ODER
+
+model2.2 <- lm(im19 ~ zEinkommen*sex + age + bildung, ds, weights = ds$wghtpew)
+
+summary(model2.2)
+```
+
+### `Model_parameters()` {-}
+
+```{r, include=F}
+library("easystats")
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modellparameter in übersichtlicher Darstellung
+
+m1Parameter <- model_parameters(model2.1)
+
+m1Parameter
+
+plot(m1Parameter)
+```
+
+### `Anova()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# F-Tests auf Gesamtsignifikanz (Anpassung an Daten)
+
+anova(nullmodel, model1)
+
+anova(model1, model2.1)
+```
+
+### `Model_performance()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Modellgüte nach verschiedenen Kennzahlen 
+
+model_performance(model2.1)
+
+```
+
+### `Compare_performance()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vergleich von Modellgüte
+
+cperf <- compare_performance(model1, model2.1)
+
+cperf
+
+plot(cperf)
+```
+
+### `Screenreg()` {-}
+
+```{}
+library(texreg)
+```
+```{r, include=F}
+library(texreg)
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Tabellarische Darstellung im Modellvergleich mit Kennzahlen der Modellgüte
+
+screenreg(list(model1, model2.1), single.row = T)
+```
+
+### `Plot_model()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Regressionskoeffizienten
+
+plot_model(model2.1)
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Schätzwerte (predicted values)
+
+plot_model(model2.1, type = "pred")
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Gruppierung von Effekten
+
+plot_model(model2.1, type = "pred", terms = c("zEinkommen","bildung"))
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Interaktion
+
+plot_model(model2.1, type = "int")
+```
+
+### `Plot_models()` {-}
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Vergleich Regressionskoeffizienten
+
+plot_models(model1, model2.1)
+```
+
+### `Check_model()` {-}
+
+**Beispielcode:**
+
+```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
+# Annahmenprüfung
+
+check_model(model2.1)
+```
+
+### `Glm()` {-}
+
+Kommt in wenigen Tagen!
+
+
+
+
+
+<!--chapter:end:05-Multivariate.Datenanalyse.Rmd-->
+
+# Grafiken erstellen
+
+## Schritt 1:
+
+## Schritt 2:
+
+## Schritt 3:
+
+<!--chapter:end:06-Grafiken.erstellen.Rmd-->
+
+# Test
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+<!--chapter:end:07-Test.Rmd-->
+
