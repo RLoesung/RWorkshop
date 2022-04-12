@@ -9,7 +9,11 @@ Sozialwissenschaftlich arbeiten wir vielfach mit Umfragedaten, mit denen Aussage
 
 Hinweis an bisherigen SPSS-Nutzer:innen: Die Gewichtung erfolgt in R für jede Analyse einzeln (und nicht einmal für die ganze Analyse-Session wie in SPSS). Bei jedem Analyseschritt muss daher angegeben werden, ob gewichtet werden soll.
 
+Die Gewichtung erfolgt bei den einzelnen Funktionen i.d.R. mit dem Argument `weights=`. Bei jeder Funktion ist dies aber noch einmal ausgewiesen.
+
 ## Univariate Statistiken
+
+Für univariate Statistiken haben wir die gängigsten Verfahren zusammengestellt (Häufigkeitsverteilungnen sowie Lage- und Streuungsmaße).
 
 | Packet         | Funktion            | Verwendung                |
 | :------------- | :------------------ | :------------------------ |
@@ -22,6 +26,8 @@ Hinweis an bisherigen SPSS-Nutzer:innen: Die Gewichtung erfolgt in R für jede A
 | weights        | wtd.quantile()      | Quantile berechnen |
 
 ### `Frq()` {-}
+
+Mit der Funktion `frq()` können Häufigkeitstabellen ausgegeben werden, welche die Informationen: Value, Valuelabel, N, RaW %, Valid % und CUm. % umfassen. (Sie entsprechen damit dem SPSS-oUtput).
 
 **Syntax:** 
 
@@ -46,6 +52,8 @@ allbus2018 %>% frq(im19, weights = wghtpew)
 
 ### `Descr()` {-}
 
+Mit `descr()` werden die wesentlichen deskriptiven Statistiken ausgegeben: prozentuale Angabe fehlender Werten, Mittelwert, Standardabweichung, Standardfehler, Wertebereich, Interquartilsabstand, Scheife. 
+
 **Syntax:** 
 
 ```{}
@@ -59,6 +67,8 @@ datensatz %>%
   descr(variable1, weights = gewicht)
 ```
 
+Mit dem Argument `show = "short"` wird die Ausgabe verkürzt und nur noch: prozentuale Angabe fehlender Werten, Mittelwert, Standardabweichung ausgegeben.
+
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
@@ -70,6 +80,10 @@ allbus2018 %>% descr(im19, weights = wghtpew, show = "short")
 ```
 
 ### `Weighted_mean()` {-}
+
+`weighted_mean()` wird verwendet um lediglich den Mittelwert zu berechnen. Dies hat den Vorteil, dass das Ergebnis direkt als neue Variable abgespreichert werden kann (siehe dazu den Beispielcode unten).
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 **Syntax:** 
 
@@ -102,6 +116,10 @@ ds
 ```
 
 ### `Weighted_median()` {-}
+
+Analog zur vorherigen Funktion wird mit `weighted_median()` nur der Median berechnet.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 **Syntax:** 
 
@@ -136,6 +154,10 @@ ds
 
 ### `Weighted_sd()` {-}
 
+Mit `weighted_sd` kann die Standardabweichung berechnet werden.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
+
 **Syntax:** 
 
 ```{}
@@ -167,6 +189,10 @@ ds %>%
 ```
 
 ### `Weighted_se()` {-}
+
+`weighted_se()` wird verwendet, um nur den Standardfehler zu berechnen.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 **Syntax:** 
 
@@ -216,6 +242,10 @@ ds
 ```
 
 ### `wtd.quantile()` {-}
+
+Für die Berchnung der Quantile müssen wir auf das Paket `weights` zurückgreifen. Wir verwenden davon die Funktion `wtd.quantile`.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 ```{}
 library(weights)
