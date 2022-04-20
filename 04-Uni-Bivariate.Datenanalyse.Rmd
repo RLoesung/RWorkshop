@@ -243,7 +243,7 @@ ds
 
 ### `wtd.quantile()` {-}
 
-Für die Berchnung der Quantile müssen wir auf das Paket `weights` zurückgreifen. Wir verwenden davon die Funktion `wtd.quantile`.
+Für die Berchnung der Quantile müssen wir auf das Paket `weights` zurückgreifen. Bitte installieren und laden. Wir verwenden davon die Funktion `wtd.quantile`.
 
 ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
@@ -279,6 +279,8 @@ allbus2018 %$%
 
 ## Bivariate Statistiken
 
+Für bivariate Statistiken schauen wir uns zunächst mit der Funktion `crosstab()` die gemeinsame Verteilung zweier Variablen in einer Kreuztabelle an. Die Zusammenhangsmaße können wir überwiegend mit `crosstable_statistics()` abrufen. Für den Chi-Quadart-Test und den Korrelataionskoeffizienten nach Pearson verwenden wir spezifisch dafür geschriebene Funktionen. 
+
 | Packet         | Funktion                | Verwendung                |
 | :------------- | :---------------------- | :------------------------ |
 | dscr           | crosstab()              | Kreuztabellen |
@@ -287,6 +289,8 @@ allbus2018 %$%
 | sjmisc         | weighted_correlation()  | Pearson`s r |
 
 ### `Crosstab()` {-}
+
+Für die Berechung einer Kreuztabelle verwenden wir das Paket `descr`, welches installiert und geladen werden muss.
 
 ```{}
 library(descr)
@@ -304,6 +308,10 @@ library(sjmisc)
 ```
 
 **Syntax:** 
+
+Mit der Funktion `crosstab` aus dem `descr`-Paket berechnen wir die Kreuztabelle. Mit der ersten Variable definieren wir die Zeilen und mit der Zweiten die Spalten. Im default ohne weitere Spezifikation erhalten wir eine Kreuztabelle mit den absoluten Häufigkeiten und eine Mosaik-Plot der Verteilung. Für andere Angaben müssen entsprechende Argumente benannt werden. Siehe dazu die folgenden Beispiele oder die Hilfeseite der Funktion mit `?crosstab`.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 ```{}
 # Ohne Pipe
@@ -375,6 +383,8 @@ plot(x)
 
 ### `Weighted_chisqtest()` {-}
 
+Der Chi-Quadrat-Test kann mit der `crosstab`-Funktion direkt unterhalb der Kreuztabelle berechnet oder direkt mit der `weighted_chisqtest()`-Funktion.
+
 **Syntax:** 
 
 ```{}
@@ -398,6 +408,8 @@ allbus2018 %>%
 ```
 
 ### `Crosstable_statistiscs()` {-}
+
+Die Funktion `crosstable_statistics()` können gängige Zusammenhangsmaße berechnet werden. 
 
 **Syntax:** 
 
@@ -435,6 +447,8 @@ allbus2018 %>%
 
 ### `Weighted_correlation()` {-}
 
+Mit `weighted_correlation` berechnen wir den Korrelationskoeffizienten nach Pearson. Ausgeben wird der Wert des Korrelationskoeffizienten, die Werte für ein Konfidenzintervall von 95% in eckigen Klammern und der p-Wert,
+
 **Syntax:** 
 
 ```{}
@@ -461,6 +475,8 @@ allbus2018 %>%
 
 ## Mittelwertvergleiche (unabhängig)
 
+Für Mittelwertvergleiche können mit folgenden Funktionen t-Tests, einfaktorielle ANOVAs und der Mann-Whitney-Test bzw. Kruskall-Wallis-Test berechnet werden.
+
 | Packet         | Funktion                | Verwendung                |
 | :------------- | :---------------------- | :------------------------ |
 | sjstats        | weighted_ttest()        | T-Test |
@@ -468,6 +484,8 @@ allbus2018 %>%
 | sjstats        | weighted_mannwhitney()  | Mann-Whitney-Test / Kruskall-Wallis-Test |
 
 ### `Weighted_ttest()` {-}
+
+Den t-Test berechnen wir mit der Funktion `weighted_ttest()`. Als Testergebnis werden der t-Wert, die Freiheitsgrade (df) und der P-Wert ausgegeben. Darunter wird der Mittelwert für beide Gruppen, die Mittelwertdifferenz sowie das 95%-Konfidenzintervall der Mittelwertdifferenz (in eckigen Klammern) ausgegeben.
 
 **Syntax:** 
 
@@ -489,6 +507,8 @@ weighted_ttest(im19 ~ sex + wghtpew, allbus2018)
 ```
 
 ### `Grpmean()` {-}
+
+Für einen Mittelwertvergleich über mehr als zwei Gruppen können wir mit der `grpmean`-Funktion eine einfaktorielle ANOVA berechnen. Ausgeben werden für jede Gruppe der Mittelwert, das N, die Standardabweichung, der Standardfehler sowie der p-Wert für den Mittelwertunterschied zum Mittelwert des gesamten Samples. Für die ANOVA werden der R-Quadrat-Wert, der korregierte R-Quadart-Wert, der F-Wert und der p-Wert ausgegeben.
 
 **Syntax:** 
 
@@ -523,6 +543,8 @@ allbus2018 %>%
 ```
 
 ### `Weighted_mannwhitney()` {-}
+
+Zur Berechnung des Mann-Whitney-Tests bzw. des Kruskall-Wallis-Tests verwenden wir die Funktion `weighted_mannwhitney()`.
 
 **Syntax:** 
 
