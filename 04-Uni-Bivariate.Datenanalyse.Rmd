@@ -571,6 +571,8 @@ weighted_mannwhitney(im19 ~ educ + wghtpew, allbus2018)
 
 ## Grafiken
 
+Zur grafischen Aufbereitung einiger der vorhergehenden univariaten und bivariaten Analysen bietet das Paket `sjplot` verschiedene Möglichkeiten an, mit wenigen Zielen Code Grafiken zu erstellen. Diese können exportiert und direkt in Ergebnisberichte verwendet werden.
+
 | Packet         | Funktion           | Verwendung                |
 | :------------- | :----------------- | :------------------------ |
 | sjplot         | plot_frq()         | Grafiken zu univariaten Häufigkeitsverteilungen |
@@ -581,6 +583,10 @@ weighted_mannwhitney(im19 ~ educ + wghtpew, allbus2018)
  
 
 ### `Plot_frq()` {-}
+
+Mit der Funktion `plot_frq()` können verschiedene Grafiken zu univariaten Häufigkeitsverteilungen erstellt werden. Im default wird dabei ein einfaches Balkendiagramm erstellt, welches die absolute Anzahl der Befragten pro Kategorie sowie deren prozentualen Anteil an der Gesamtverteilung abbildet. Mit verschiedenen Argumenten (Übersicht mit `?plot_frq` abrufbar) kann die Grafik entsprechend den eigenen Wünschen angepasst werden. In den Beispiele sind hierfür verschiedene Möglichkeiten aufgeführt.
+
+ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
 
 **Syntax:** 
 
@@ -626,6 +632,8 @@ allbus2018 %$%
 
 ### `Plot_likert()` {-}
 
+Um Häufigkeitsverteilungen verschiedener Likert-Items im Vergleich zu darzustellen bietet das `sjplot`-Paket mit der `plot_likert` Funktion eine sehr praktische Lösung an. Wie bei der vorherigen Funktion können über diverse Argumente die Grafik entsprechend den eigenen Vorstellungen angepasst werden. Auch hier bieten die aufgeführten Beispiele erste Orientierungen, welche Möglichkeiten bestehen.
+
 **Syntax:** 
 
 ```{}
@@ -657,6 +665,8 @@ plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2),
 
 ### `Plot_stackfrq()` {-}
 
+Mit der `plot_stackfrq()` Funktion können Balkenschichtungsdiagramme erstellt werden.
+
 **Syntax:** 
 
 ```{}
@@ -680,6 +690,8 @@ plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")],
 ```
 
 ### `Plot_grpfrq()` {-}
+
+Um die Häufigkeitsverteilung für verschiedene Gruppen im Vergleich abzubilden, verwenden wir die Funktion `plot_grpfrq()`. Diese Funktion bietet mit dem Argument `show.summary` auch an, die Chi-Quadart Statistiken in die Grafik zu integrieren. Auch für diese Funktion bieten die aufgeführten Beispiele einen ersten Überblick über die verschieden Möglichkeiten.
 
 **Syntax:** 
 
@@ -731,6 +743,8 @@ allbus2018 %$%
 
 ### `Plot_xtab()` {-}
 
+Mit der Funktion `plot_xtab()` können Kreuztabellen grafisch dargestellt werden. Auch diese Funktion bietet verschiedene Möglichkeiten über Argumente die Grafik den eigenen Bedürfnissen anzupassen.
+
 **Syntax:** 
 
 ```{}
@@ -757,6 +771,12 @@ allbus2018 %$%
 ```
 
 ### `Grid.arrange()` {-}
+
+Wenn wir mehrere Plots erstellen, welche zusammen berichtet werden sollen, bietet es sich mitunter an, sie mit der Funktion `grid.arrange()` in einer Grafik vor dem Exportieren zusammen zu fassen.
+
+Die Funktion `grid.arrange()` entnehmen wir aus dem Paket `gridExtra`.
+
+Zur Anordnung der gewünschten Plots erstellen wir zunächst die einzelnen Plots als neues Objekt. Anschließend definieren wir mit der Funktion `grid.arrange()` wie diese zueinander angeordnet werden sollen. 
 
 ```{}
 library(gridExtra)
@@ -803,6 +823,8 @@ pp1
 
 
 ### `Ggsave()` {-}
+
+Wenn wir mit der grafischen Aufbereitung unserer Ergebnisse zufrieden sind, können wir diese mit der Funktion `ggsave()` exportieren.
 
 **Syntax:** 
 
