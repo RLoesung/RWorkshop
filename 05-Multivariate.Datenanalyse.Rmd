@@ -1,7 +1,7 @@
 # Multivariate Datenanalyse
 
 In diesem Kapitel werden unsere Ansätze vorgestellt, um multivariate Datenanalysen in R durchzuführen. Dabei müssen wir an verschiedenen Stellen auf andere Pakete zurück greifen, um die Analysen durchzuführen. Zwar beinhalten auch die bisher verwendeten Pakete tw. multivariate Analysemöglichkeiten, doch häufig ohne die Möglichkeit die Analysen auch zu gewichten.
-Das Kaptiel umfasst die Korrelationsanalyse, die Faktorenanalyse und Regressionsanalysen.
+Das Kaptiel umfasst die Korrelationsanalyse, Faktorenanalysen und Regressionsanalysen.
 
 ## Korrelationsmatrix
 
@@ -12,7 +12,7 @@ Das Kaptiel umfasst die Korrelationsanalyse, die Faktorenanalyse und Regressions
 
 ### `Wtd.cor()` {-}
 
-Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung wird der Korrelationskoeffizient, der Standardfehler, der t-Wert sowie der p-Wert ausgegeben.
+Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung werden die Korrelationskoeffizienten, die Standardfehler, die t-Werte sowie die p-Werte ausgegeben.
 
 ```{}
 library(weights)
@@ -85,10 +85,14 @@ corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle",
 
 ## Explorative Faktoranalyse und Hauptkomponentenanalyse
 
+Für die explorative Faktorenanalyse werdeb im folgenden zwei gängige Tests zur Prüfung der Voraussetzung (KMO, Bartlett), eine grafische Veranschaulichung zur Bestimmung der Anzahl der Faktoren (Screeplot), die Hauptkomponentenanalyse, die Faktorenanalyse sowie eine einfache Möglichkeit der grafischen Darstellung der Faktorenstruktur angeboten.
+
+Die notwendigen Funktionen entnehmen wir dabei überwiegend aus dem `psych` Paket.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | psych        | KMO()                   | Kaiser-Meyer-Olkin-Kriterium (MSA) |
-| psych        | bartlett.test()         | Bartlett-Test |
+| stats        | bartlett.test()         | Bartlett-Test |
 | psych        | scree()                 | Scree-Test |
 | psych        | principal()             | Hauptkomponentenanalyse |
 | psych        | fa()                    | Faktoranalyse |
@@ -102,6 +106,8 @@ library(psych)
 ```
 
 ### `KMO()` {-}
+
+Das Kaiser-Meyer-Olkin-Kriterium berechnen wir mit der Funktion `KMO()`. Ausgegeben wird KMO (bzw. MSA) gesamt sowie einzeln für jedes Item.
 
 Achtung! Ungewichtete Analyse.
 
@@ -133,6 +139,8 @@ allbus2018 %>%
 
 ### `Bartlett.test()` {-}
 
+Den Bartlett Test führen wir mit der Funktion `bartlett.test` aus. Ausgegeben werden die Test Statistics, die Freiheitsgrade sowie der p-wert.
+
 Achtung! Ungewichtete Analyse.
 
 **Syntax:** 
@@ -163,6 +171,8 @@ allbus2018 %>%
 
 ### `Scree()` {-}
 
+Einen Screeplot können wir mit der Funktion `scree()` abrufen. Im default wird dabei der Graph für Komponenten und Faktoren angezeigt und zur Lesehilfe eine horizontale Linie bei einem Eigenwert von 1.0 gezeichnet. 
+
 Achtung! Ungewichtete Analyse.
 
 **Syntax:** 
@@ -191,6 +201,8 @@ allbus2018 %>%
 ```
 
 ### `Principal()` {-}
+
+Für eine Hauptkomponentenanalyse verwenden wir die Funktion `principal()`. Über die Argumente können verschiedene Spezifikationen wie beispielweise die Anzahl der zu extrahierenden Komponenten (`nfactors`) oder die Rotationsmethode (`rotate`) festgelegt werden. 
 
 **Syntax:** 
 
@@ -227,6 +239,8 @@ print(pca$loadings, digits = 2, cutoff = .2)
 
 ### `Fa()` {-}
 
+Eine explorative Faktorenanalyse führen wir über die Funktion `fa()` aus. Auch wie bei der vorherigen Funktionen können die Spezifikationen der Analyse über die Argumente festgelegt werden.
+
 **Syntax:** 
 
 ```{}
@@ -260,7 +274,9 @@ fa
 print(fa$loadings, digits = 2, cutoff = .2)
 ```
 
-### `Fa_diagram()` {-}
+### `Fa.diagram()` {-}
+
+Eine einfache grafische Aufbereitung der durchgeführten Analysen (Hauptkomponenten- bzw. Faktorenanalysen) kann mit der Funktion `fa.diagram()` erstellt werden. Die folgenden Beispiele illustieren dies für die beiden vorherigen Analysen.
 
 **Syntax:** 
 
