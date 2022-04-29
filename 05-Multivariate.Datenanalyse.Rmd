@@ -47,9 +47,7 @@ corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle",
          insig = "pch")
 ```
 
-## Realiabilitätsanalyse
-
-## Faktoranalyse und Hauptkomponentenanalyse
+## Explorative Faktoranalyse und Hauptkomponentenanalyse
 
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
@@ -58,6 +56,7 @@ corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle",
 | psych        | scree()                 | Scree-Test |
 | psych        | principal()             | Hauptkomponentenanalyse |
 | psych        | fa()                    | Faktoranalyse |
+| psych        | fa_diagram()            | Grafik |
 
 ```{}
 library(psych)
@@ -248,6 +247,105 @@ fa.diagram(pca)
 # FA
 
 fa.diagram(fa)
+```
+
+## Konfirmatorische Faktorenanalyse
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| lavaan       | cfa()                   | Konfirmatorische Faktorenanalyse |
+| semPlot      | semPaths()              | Grafik |
+
+```{}
+library(lavaan)
+```
+```{r, include=F}
+library(lavaan)
+library(semPlot)
+```
+
+#### Modellspezifikation
+
+```{r}
+m1 <- "faktor =~ im19 + im20 + im21 + id01"
+```
+
+### `Cfa()` {-}
+
+**Syntax:**
+
+```{}
+# ohne Pipe
+
+cfa(model = modell, data = datensatz[c("Variable1", "variable2", "variable3")], sampling.weights = "gewicht",
+    estimator = "MLR")
+    
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(im19:im21, id01, wghtpew)
+
+# Faktorenanalyse
+
+cfa <- cfa(model = m1, data = ds, sampling.weights = "wghtpew", estimator = "MLR")
+
+summary(cfa, fit.measures = T, standardized = T, rsquar = T)
+```
+
+### `semPaths()` {-}
+
+**Syntax:**
+
+```{}
+# ohne Pipe
+
+semPaths(object = cfa-Objekt, whatLabels = "std", layout = "tree", edge.color = "black")
+    
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r}
+semPaths(cfa, whatLabels = "std", layout = "tree", edge.color = "black")
+```
+
+## Realiabilitätsanalyse
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| semTools       | reliability()         | Reliabilitätsmaße |
+
+```{}
+library(lavaan)
+```
+```{r, include=F}
+library(semTools)
+```
+
+**Syntax:**
+
+```{}
+# ohne Pipe
+
+reliability(object = cfa-Objekt)
+    
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r}
+reliability(object = cfa)
 ```
 
 ## Regressionsanalyse
