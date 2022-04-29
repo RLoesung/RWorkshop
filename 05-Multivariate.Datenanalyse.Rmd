@@ -1,17 +1,25 @@
 # Multivariate Datenanalyse
 
+In diesem Kapitel werden unsere Ansätze vorgestellt, um multivariate Datenanalysen in R durchzuführen. Dabei müssen wir an verschiedenen Stellen auf andere Pakete zurück greifen, um die Analysen durchzuführen. Zwar beinhalten auch die bisher verwendeten Pakete tw. multivariate Analysemöglichkeiten, doch häufig ohne die Möglichkeit die Analysen auch zu gewichten.
+Das Kaptiel umfasst die Korrelationsanalyse, die Faktorenanalyse und Regressionsanalysen.
+
 ## Korrelationsmatrix
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| weights      | wtd.cor()               | Korrelationsmatrix |
+| corrplot     | corrplot()              | Grafiken zu Korrelationsanalysen |
 
 ### `Wtd.cor()` {-}
 
+Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung wird der Korrelationskoeffizient, der Standardfehler, der t-Wert sowie der p-Wert ausgegeben.
+
 ```{}
 library(weights)
-library(corrplot)
 ```
 
 ```{r, include=F}
 library(weights)
-library(corrplot)
 ```
 
 **Syntax:** 
@@ -39,7 +47,35 @@ corMatrix <- wtd.cor(ds[1:4], weight = ds$wghtpew)
 
 corMatrix
 
-# Grafik 
+```
+
+### `Corrplot()` {-}
+
+Für die grafische Aufbereitung der Korrelationsmatrix bietet das Paket `corrplot` mit der Funktion `corrplot` eine einfache, aber anschauliche Möglichkeit. Auch für diese Funktion stehen eine Reihe verschiedener Argumente zur Verfügung, mit denen die Grafik angepasst werden kann.
+
+```{}
+library(corrplot)
+```
+
+```{r, include=F}
+library(corrplot)
+```
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+corrplot(korrelationsmatrix, method=number)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Grafik der Korrelationsmatrix erstellen
 # Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil
 
 corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle", 
