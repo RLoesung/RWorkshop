@@ -303,6 +303,10 @@ fa.diagram(fa)
 
 ## Konfirmatorische Faktorenanalyse
 
+Wir wollen an dieser Stelle kurz auf Möglichkeiten konfirmatorischer Faktorenanalyse eingehen. Dies geschieht vor allem hier vor allem aus dem Grund, da über diesen kleinen Umweg eine gewichtete Realiabilitätsanalyse durchführbar ist. Eine andere Möglichkeit gewichtete Realiabilitätsanalysen zu berechnen ist uns derzeit nicht bekannt.
+
+Zur Berechnung konfirmatorischen Faktorenanalyse verwenden wir die `cfa()` Funktion aus dem `lavaan`Paket, welches vor allem auch zur Strukturgleichungsmodellierung eignesetzt werden kann. Mit der `semPath()`Funktion (aus dem `semPlot` Paket) können wir die berechnete Faktorenanalyse grafisch aufbereiten.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | lavaan       | cfa()                   | Konfirmatorische Faktorenanalyse |
@@ -319,11 +323,15 @@ library(semPlot)
 
 #### Modellspezifikation
 
+Zur Berechnung der konfirmatorischen Faktorenanalyse müssen wir zunächst das Modell spezifizieren. Mit `faktorname`, `=~` und den folgenden Variablen legen wir die Faktorenstruktur fest. Für Details zur verwendeten Syntax kann sich auf den Hilfeseiten des `lavaan` Pakets weitergehend informiert werden.
+
 ```{r}
 m1 <- "faktor =~ im19 + im20 + im21 + id01"
 ```
 
 ### `Cfa()` {-}
+
+Mit der `cfa` Funktion berechnen wir unser Modell, welche wir unter `m1` spezifiziert haben. Wir speichern das Ergebnis als neues Objekt `cfa` ab und lassen uns die mit den Argumenten festgelegten Werte mit der `summary` Funktion ausgeben.
 
 **Syntax:**
 
@@ -354,6 +362,8 @@ summary(cfa, fit.measures = T, standardized = T, rsquar = T)
 
 ### `semPaths()` {-}
 
+Mit der `semPath` Funktion kann eine grafische Aufbereitung der Faktorenanalyse erstellt werden. Auch hier können über verschiedene Argumente der Funktion die Grafik den eigenen Wünschen angepasst werden.
+
 **Syntax:**
 
 ```{}
@@ -373,6 +383,8 @@ semPaths(cfa, whatLabels = "std", layout = "tree", edge.color = "black")
 
 ## Realiabilitätsanalyse
 
+Mit der `reliability()` Funktion aus dem `semTools` Paket können wir nun im Anschluss an die berechnete konfirmatorische Faktorenanalyse die Realiabilitätsanalyse durchführen.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | semTools       | reliability()         | Reliabilitätsmaße |
@@ -383,6 +395,10 @@ library(semTools)
 ```{r, include=F}
 library(semTools)
 ```
+
+### `reliability()` {-}
+
+Zur Berechnung der Realiabilität setzen wir einfach die im Objekt `cfa` gespeicherten Ergebnisse der konfirmatorischen Faktorenanalyse in die `realiability()` Funktion ein.
 
 **Syntax:**
 
