@@ -1,5 +1,37 @@
 # Grafiken erstellen
 
+In diesem Kapitel werden wir lernen, welche Werkzeuge uns R zur Erstellung von Grafiken zur Verfügung stellt und
+wie uns das Paket `ggplot2` aus dem `tidyverse` ermöglicht durch explorative Datenanalyse verborgene Zusammenhänge zu entdecken, sowie 
+Resultate darzustellen und zu kommunizieren. 
+
+Im Gegensatz zum ursprünglichen Grafiksystem `R Base Graphics`, welches auf `Base R` aufsetzt, basiert `ggplot2` auf der intuitiven Syntax
+`grammar of graphics`. Hiermit lassen sich durch eleganten, flexiblen und konsistenten Code sehr komplexe Grafiken erstellen und nahtlos mit den 
+Funktionen des `tidyverse` verbinden. 
+
+Achtung! `ggplot2` benötigt Datensätze im *long* Format. (siehe hierzu: [R for Data Science - Tidy Data](https://r4ds.had.co.nz/tidy-data.html))
+
+Da Grafiken mit `ggplot2` immer nach dem gleichen Prinzip erstellt werden, ergeben sich immer folgende Schritte:
+
+**Schritt 1:** Erstellung eines `plot objects` mit der Funktion `ggplot()`, mit dem ersten Argument `data = datensatz`.
+
+**Schritt 2:** Definition von “aesthetic mappings”, also der Wahl einer Variable für die x-Achse: `x = var1`, y-Achse: `y = var2`, 
+Gewichtung: `weight = gewicht` und zur Gruppierung der Daten: `group bzw. colour, shape, linetype oder fill = var3` über die Funktion `mapping = aes()`. 
+
+**Schritt 3:** Die Addition verschiedener "Layer" bzw. "Schichten". Hierbei definieren wir, was dargestellt werden soll - z.B. ein Histogramm oder Linien. 
+Dabei wird uns in der Anzahl an Schichten kein Limit gesetzt. Die Funktionen beginnen dabei immer mit dem Präfix `geom_`, z.B. `geom_bar()` und werden über den
+Operator `+` zusammengefügt. 
+
+Im Verlauf des Kapitels werden wir die einzelnen Schritte noch einmal vertiefen, gleichwohl wollen wir mit einem eingängigen Beispiel beginnen.
+
+```{r}
+allbus2018 %>% 
+  ggplot(aes(x = im19, weight = wghtpew, group = as_label(sex), fill = as_label(sex))) +
+  geom_bar(aes(y = ..count..), stat = "count", position = "dodge", na.rm = T) +
+  geom_text(aes(label = round(..count.., 0)), stat = "count", vjust = -0.5, position=position_dodge(width=0.9), na.rm = T) +
+  labs(y = "Anzahl", fill = "Gechlecht")
+```
+
+
 ## Schritt 1:
 
 ## Schritt 2:

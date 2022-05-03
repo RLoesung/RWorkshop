@@ -67,10 +67,10 @@ Die Funktion `read_spss` besitzt vier für uns relevante Argumente. Einen Überb
 * `verbose` = `TRUE` > Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.
 * `tag.na` = `TRUE` > Alle fehlenden Werte werden als `tagged_na` markiert. Damit werden sie in allen Berechnungen zwar als `NA` einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus `SPSS` bekannt, jederzeit auf diese mit der Funktion `replace_na()` zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). *Wir hoffen auf eine baldige Anpassung und stehen mit dem Entwickler im Kontakt*.
 
-Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren.
+Damit empfehlen wir das Argument `dop.labels` mit `TRUE bzw. T` zu aktivieren und convert.factors mit `FALSE bzw. F` zu deaktivieren, um die Kontrolle über die Daten zu behalten.
 
 ```{r, echo=T, collapse=T, comment="#>"}
-allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T)
+allbus2018 <- read_spss("ALLB2018.sav", drop.labels = T, convert.factors = F)
 
 # Noch schnell den Allbus zum tibble transformieren
 
@@ -665,7 +665,8 @@ ds <- allbus2018 %>%
 
 # Variablenbeschriftung wurde gelöscht
 
-ds %>% get_label(sex)
+ds %>% 
+  get_label(sex)
 
 # Löschung aller Variablenbeschriftungen im Datensatz
 
@@ -675,7 +676,8 @@ ds <- allbus2018 %>%
 
 # Variablenbeschriftungen wurden gelöscht
 
-ds %>% get_label(im19, im20)
+ds %>% 
+  get_label(im19, im20)
 ```
 
 ### `Remove_labels()` {-}
