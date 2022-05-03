@@ -1,7 +1,7 @@
 # Multivariate Datenanalyse
 
 In diesem Kapitel werden unsere Ansätze vorgestellt, um multivariate Datenanalysen in R durchzuführen. Dabei müssen wir an verschiedenen Stellen auf andere Pakete zurück greifen, um die Analysen durchzuführen. Zwar beinhalten auch die bisher verwendeten Pakete tw. multivariate Analysemöglichkeiten, doch häufig ohne die Möglichkeit die Analysen auch zu gewichten.
-Das Kaptiel umfasst die Korrelationsanalyse, die Faktorenanalyse und Regressionsanalysen.
+Das Kaptiel umfasst die Korrelationsanalyse, Faktorenanalysen und Regressionsanalysen.
 
 ## Korrelationsmatrix
 
@@ -12,7 +12,7 @@ Das Kaptiel umfasst die Korrelationsanalyse, die Faktorenanalyse und Regressions
 
 ### `Wtd.cor()` {-}
 
-Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung wird der Korrelationskoeffizient, der Standardfehler, der t-Wert sowie der p-Wert ausgegeben.
+Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung werden die Korrelationskoeffizienten, die Standardfehler, die t-Werte sowie die p-Werte ausgegeben.
 
 ```{}
 library(weights)
@@ -85,10 +85,14 @@ corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle",
 
 ## Explorative Faktoranalyse und Hauptkomponentenanalyse
 
+Für die explorative Faktorenanalyse werdeb im folgenden zwei gängige Tests zur Prüfung der Voraussetzung (KMO, Bartlett), eine grafische Veranschaulichung zur Bestimmung der Anzahl der Faktoren (Screeplot), die Hauptkomponentenanalyse, die Faktorenanalyse sowie eine einfache Möglichkeit der grafischen Darstellung der Faktorenstruktur angeboten.
+
+Die notwendigen Funktionen entnehmen wir dabei überwiegend aus dem `psych` Paket.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | psych        | KMO()                   | Kaiser-Meyer-Olkin-Kriterium (MSA) |
-| psych        | bartlett.test()         | Bartlett-Test |
+| stats        | bartlett.test()         | Bartlett-Test |
 | psych        | scree()                 | Scree-Test |
 | psych        | principal()             | Hauptkomponentenanalyse |
 | psych        | fa()                    | Faktoranalyse |
@@ -102,6 +106,8 @@ library(psych)
 ```
 
 ### `KMO()` {-}
+
+Das Kaiser-Meyer-Olkin-Kriterium berechnen wir mit der Funktion `KMO()`. Ausgegeben wird KMO (bzw. MSA) gesamt sowie einzeln für jedes Item.
 
 Achtung! Ungewichtete Analyse.
 
@@ -133,6 +139,8 @@ allbus2018 %>%
 
 ### `Bartlett.test()` {-}
 
+Den Bartlett Test führen wir mit der Funktion `bartlett.test` aus. Ausgegeben werden die Test Statistics, die Freiheitsgrade sowie der p-wert.
+
 Achtung! Ungewichtete Analyse.
 
 **Syntax:** 
@@ -163,6 +171,8 @@ allbus2018 %>%
 
 ### `Scree()` {-}
 
+Einen Screeplot können wir mit der Funktion `scree()` abrufen. Im default wird dabei der Graph für Komponenten und Faktoren angezeigt und zur Lesehilfe eine horizontale Linie bei einem Eigenwert von 1.0 gezeichnet. 
+
 Achtung! Ungewichtete Analyse.
 
 **Syntax:** 
@@ -191,6 +201,8 @@ allbus2018 %>%
 ```
 
 ### `Principal()` {-}
+
+Für eine Hauptkomponentenanalyse verwenden wir die Funktion `principal()`. Über die Argumente können verschiedene Spezifikationen wie beispielweise die Anzahl der zu extrahierenden Komponenten (`nfactors`) oder die Rotationsmethode (`rotate`) festgelegt werden. 
 
 **Syntax:** 
 
@@ -227,6 +239,8 @@ print(pca$loadings, digits = 2, cutoff = .2)
 
 ### `Fa()` {-}
 
+Eine explorative Faktorenanalyse führen wir über die Funktion `fa()` aus. Auch wie bei der vorherigen Funktionen können die Spezifikationen der Analyse über die Argumente festgelegt werden.
+
 **Syntax:** 
 
 ```{}
@@ -260,7 +274,9 @@ fa
 print(fa$loadings, digits = 2, cutoff = .2)
 ```
 
-### `Fa_diagram()` {-}
+### `Fa.diagram()` {-}
+
+Eine einfache grafische Aufbereitung der durchgeführten Analysen (Hauptkomponenten- bzw. Faktorenanalysen) kann mit der Funktion `fa.diagram()` erstellt werden. Die folgenden Beispiele illustieren dies für die beiden vorherigen Analysen.
 
 **Syntax:** 
 
@@ -287,6 +303,10 @@ fa.diagram(fa)
 
 ## Konfirmatorische Faktorenanalyse
 
+Wir wollen an dieser Stelle kurz auf Möglichkeiten konfirmatorischer Faktorenanalyse eingehen. Dies geschieht hier vor allem aus dem Grund, da über diesen kleinen Umweg eine gewichtete Realiabilitätsanalyse durchführbar ist. Eine andere Möglichkeit gewichtete Realiabilitätsanalysen zu berechnen ist uns derzeit nicht bekannt.
+
+Zur Berechnung konfirmatorischen Faktorenanalyse verwenden wir die `cfa()` Funktion aus dem `lavaan`Paket, welches vor allem auch zur Strukturgleichungsmodellierung eignesetzt werden kann. Mit der `semPath()`Funktion (aus dem `semPlot` Paket) können wir die berechnete Faktorenanalyse grafisch aufbereiten.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | lavaan       | cfa()                   | Konfirmatorische Faktorenanalyse |
@@ -303,11 +323,15 @@ library(semPlot)
 
 #### Modellspezifikation
 
+Zur Berechnung der konfirmatorischen Faktorenanalyse müssen wir zunächst das Modell spezifizieren. Mit `faktorname`, `=~` und den folgenden Variablen legen wir die Faktorenstruktur fest. Für Details zur verwendeten Syntax kann sich auf den Hilfeseiten des `lavaan` Pakets weitergehend informiert werden.
+
 ```{r}
 m1 <- "faktor =~ im19 + im20 + im21 + id01"
 ```
 
 ### `Cfa()` {-}
+
+Mit der `cfa` Funktion berechnen wir unser Modell, welche wir unter `m1` spezifiziert haben. Wir speichern das Ergebnis als neues Objekt `cfa` ab und lassen uns die mit den Argumenten festgelegten Werte mit der `summary` Funktion ausgeben.
 
 **Syntax:**
 
@@ -338,6 +362,8 @@ summary(cfa, fit.measures = T, standardized = T, rsquar = T)
 
 ### `semPaths()` {-}
 
+Mit der `semPath` Funktion kann eine grafische Aufbereitung der Faktorenanalyse erstellt werden. Auch hier können über verschiedene Argumente der Funktion die Grafik den eigenen Wünschen angepasst werden.
+
 **Syntax:**
 
 ```{}
@@ -357,6 +383,8 @@ semPaths(cfa, whatLabels = "std", layout = "tree", edge.color = "black")
 
 ## Realiabilitätsanalyse
 
+Mit der `reliability()` Funktion aus dem `semTools` Paket können wir nun im Anschluss an die berechnete konfirmatorische Faktorenanalyse die Realiabilitätsanalyse durchführen.
+
 | Packet       | Funktion                | Verwendung                |
 | :----------- | :---------------------- | :------------------------ |
 | semTools       | reliability()         | Reliabilitätsmaße |
@@ -367,6 +395,10 @@ library(semTools)
 ```{r, include=F}
 library(semTools)
 ```
+
+### `reliability()` {-}
+
+Zur Berechnung der Realiabilität setzen wir einfach die im Objekt `cfa` gespeicherten Ergebnisse der konfirmatorischen Faktorenanalyse in die `realiability()` Funktion ein.
 
 **Syntax:**
 
@@ -387,7 +419,24 @@ reliability(cfa)
 
 ## Regressionsanalyse
 
+Im abschließenden Kapitel zur multivarianten Datenanalyse behandeln wir noch Möglichkeiten der Regressionsanalysen, verschiedene Möglichkeiten zum Testen der Modellgüte sowie der grafischen Aufbereitung der Modelle.
+
+| Packet       | Funktion                | Verwendung                |
+| :----------- | :---------------------- | :------------------------ |
+| stats        | lm()                    | lineare Regressionsmodelle |
+| parameters   | model_parameters()      | Modellparameter ausgeben |
+| stats        | anova()                 | F-Tests auf Gesamtsignifikanz |
+| performance  | model_performance()     | Modellgüte |
+| performance  | compare_performance()   | Vergleich der Modellgüte |
+| texreg       | screenreg()             | tabellarischer Modellvergleich |
+| sjplot       | plot_model()            | grafische Darstellungen von Regressionsmodellen |
+| sjplot       | plot_models()           | grafischer Modellvergleich |
+| sjplot       | check_model()           | 6 Grafiken zur Modellgüte |
+| stats        | glm()                   | logistische Regressionsmodelle (u.A.) |
+
 ### `Lm()` {-}
+
+Ein lineares Regressionsmodell können wir mit der `lm()` Funktion berechnen.
 
 **Syntax:** 
 
@@ -399,6 +448,8 @@ lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
 # Mit Pipe
 # Nicht gut zu handhaben!
 ```
+
+Zur Veranschaulichung ist im Beispiel dazu die Datenaufbereitung aufgeführt, dessen Ergebnis im neuen Datensatz `ds` gespeichert wird. Anschließend wird das Nullmodell spezifiziert, mit dem unser Modell verglichen werden soll. Dann folgt die Spezifikation unserer Modelle, ohne (`model1`) und mit Interaktion (`model2.1 und model2.2`, unterschiedliche Schreibweise).
 
 **Beispielcode:**
 
@@ -447,6 +498,8 @@ summary(model2.2)
 
 ### `Model_parameters()` {-}
 
+Mit der Funktion `model_parameters` können wir eine tabellarische Übersicht der Modellparameter erstellen. Mit der `plot` Funktion erstellen wir eine simple übersichtliche Grafik des Modells (Koeffizienten mit Konfidenzintervall).
+
 ```{r, include=F}
 library("easystats")
 ```
@@ -465,6 +518,8 @@ plot(m1Parameter)
 
 ### `Anova()` {-}
 
+Um zu überprüfen, ob unsere Modelle eine Verbesserung der Anpassung an die Daten darstellen (im Vergleich zum Nullmodell oder unter einander) verwenden wir die `anvoa()` Funktion. 
+
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
@@ -477,6 +532,8 @@ anova(model1, model2.1)
 
 ### `Model_performance()` {-}
 
+Mit der `model_performance ()` Funktion lassen wir uns verschiedene Kennzahlen ausgeben, um die Modellgüte zu beurteilen.
+
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
@@ -487,6 +544,8 @@ model_performance(model2.1)
 ```
 
 ### `Compare_performance()` {-}
+
+Die Kannzahlen der `model_performance()` Funktion könen wir uns mit der `compare_performance()` Funktion tabellarisch auch für mehrere Modell ausgeben lassen, sodass wir diese im direkten Vergleich betrachten können. Dieser berechnete Modellvergleich kann mit der `plot()` Funktion auch grafisch ausgegeben werden.
 
 **Beispielcode:**
 
@@ -501,6 +560,8 @@ plot(cperf)
 ```
 
 ### `Screenreg()` {-}
+
+Mit der `screenreg()` Funktion können wir uns mehrere vollständige Modelle mit verschiedenen Kennzahlen tabellarisch ausgeben lassen und direkt mit einander vergleichen.
 
 ```{}
 library(texreg)
@@ -518,6 +579,8 @@ screenreg(list(model1, model2.1), single.row = T)
 ```
 
 ### `Plot_model()` {-}
+
+Die `plot_model()` Funktion bietet sowohl die Möglichkeit sich die Regressionkoeffizienten sowie die Konfidenzintervalle des Gesamtmodells grafisch ausgeben zu lassen als auch die Schätzwärte einzelner Prädiktoren. Die folgenden Beispiele illustieren dies anhand des berechneten `model2.1`.
 
 **Beispielcode:**
 
@@ -547,6 +610,8 @@ plot_model(model2.1, type = "int")
 
 ### `Plot_models()` {-}
 
+Eine grafische Lösung des Modellvergleichs haben wir mit der `plot_models()` Funktion. Auch in dieser Darstellung werden Regressionskoeffizienten und Konfidenzintervalle ausgegeben.
+
 **Beispielcode:**
 
 ```{r, echo=T, collapse=T, comment="#>"}
@@ -556,6 +621,8 @@ plot_models(model1, model2.1)
 ```
 
 ### `Check_model()` {-}
+
+Zur visuellen Überprüfung der Modellannahmen können wir uns mit `check_model()` sechs Grafiken ausgeben lassen (u. A. Homogenität der Varianz, Kollinearität).
 
 **Beispielcode:**
 
@@ -567,7 +634,68 @@ check_model(model2.1)
 
 ### `Glm()` {-}
 
-Kommt in wenigen Tagen!
+Für die Analyse logistischer Regressionsmodelle verwenden wir die `glm` Funktion. Diese erlaubt mit dem Argument `family=binomial` die Analyse von Regressionsmodellen mit einer dichotomen abhängigen Variable.
+
+**Syntax:** 
+
+```{}
+# Ohne Pipe
+
+glm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, family = binomial, datensatz, weights = gewicht)
+
+# Mit Pipe
+# Nicht gut zu handhaben!
+```
+
+Das Vorgehen im Beispiel entspricht dabei den Beispielen der Funktion `lm()` weiter oben. Lediglich die abhängige Variable wurde ausgetauscht - hier wird `pp26` als abhängige Variable verwendet. Diese Variable misst, ob die befragte Person sich schon einmal bei Versammlungen an öffentlichen Diskussionen beteiligt hat.
+
+**Beispielcode:**
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Datensatz erstellen
+
+ds <- allbus2018 %>% 
+  select(pp26, sex, age, educ, di08, wghtpew) %>% 
+  # Rekodierung AV: Partizipation an öffent. Diskussion und Bildung
+  mutate(partDisk = rec(pp26, rec = "1=1 [ja]; 0=0 [nein]; 
+                                    else=NA")) %>% 
+  # Z-Standardisierung Einkommen
+   mutate(wMean = weighted_mean(di08, weights = wghtpew),
+         wSD = weighted_sd(di08, weights = wghtpew),
+         zEinkommen = (di08-wMean)/wSD) %>% 
+  # Rekodierung Geschlecht und Bildung
+  mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
+         bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
+                                    4:5=3 [hoch]; else=NA")) %>% 
+  # Konvertierung in Faktor Geschlecht und Bildung
+  to_label(sex, bildung) %>% 
+  # Refrenzkategorie Bildung auf mittel
+  ref_lvl(bildung, lvl = 2) %>% 
+  # Löschung NA 
+  drop_na()
+  
+# Nullmodell
+
+nullmodel2 <- glm(pp26 ~ 1, family = binomial, ds, weights = wghtpew)
+summary(nullmodel2)
+
+# Modellierung erstes Modell
+
+model3 <- glm(pp26 ~ sex + age + bildung + zEinkommen, family = binomial, ds, weights = ds$wghtpew)
+summary(model3)
+
+# Prüfung auf Interaktioneffekt zwischen Geschlecht und zEinkommen
+
+model4.1 <- glm(pp26 ~ zEinkommen + sex + age + bildung + zEinkommen:sex, family = binomial, ds, 
+               weights = ds$wghtpew)
+summary(model4.1)
+
+# ODER
+
+model4.2 <- glm(pp26 ~ zEinkommen*sex + age + bildung, family = binomial, ds, weights = ds$wghtpew)
+
+summary(model4.2)
+```
 
 
 
