@@ -865,7 +865,7 @@ datensatz %>%
   rename(variableA = variable1)
 ```
 
-Mit dem Befehl `rename()` haben wir in unserem Datensatz `ds` die Variable `variable1` in `variableA` umbenannt. Der neue Name muss folgend immer auf der *linken* Seite der Gleichung stehen.
+Mit dem Befehl `rename()` haben wir in unserem Datensatz `datensatz` die Variable `variable1` in `variableA` umbenannt. Der neue Name muss folgend immer auf der *linken* Seite der Gleichung stehen.
 
 **Beispielcode:**
 
@@ -1148,7 +1148,7 @@ ds %>% select(im19, im19_c)
 
 ### `Split_var()` {-}
 
-Mit dem Befehl `split_var()` können nummerische Variablen in gleich große Gruppen (Befragtenanzahl) aufgeteilt werden. Die Anzahl der Gruppen wird dabei im Befehl mit `n=` festgelegt.
+Mit dem Befehl `split_var()` können nummerische Variablen in gleich große Gruppen (Befragtenanzahl) aufgeteilt werden. Die Anzahl der Gruppen wird dabei mit dem Argument `n=` festgelegt.
 
 **Syntax:**
 
@@ -1178,7 +1178,7 @@ ds %>% frq(ageGrp, weights = allbus2018$wghtpew)
 
 ### `Group_var()` {-}
 
-Entgehgen dem vorherigen Befehl `split_var()`, ist hier der Fokus die Gruppen nach dem Wertebereich einzuteilen. Mit dem `group_var()` Befehl wird eine nummerische Variable in einer neuen Variable zu Gruppen mit gleichem Wertebereich gruppiert. Mit `size=` wird der Wertebreich der einzelnen Gruppen festgelegt.
+Entgehgen dem vorherigen Befehl `split_var()`, ist hier der Fokus die Gruppen nach dem Wertebereich einzuteilen. Mit dem `group_var()` Befehl wird eine nummerische Variable in einer neuen Variable zu Gruppen mit gleichgroßem Wertebereich gruppiert. Mit dem Argument `size=` wird der Wertebreich der einzelnen Gruppen festgelegt.
 
 **Syntax:**
 
@@ -1219,7 +1219,7 @@ attributes(ds$ageGrp)
 
 ### `Row_count()` {-}
 
-Befehl `count` in `SPSS`. Noch suchen: count für mehrere Werte!
+Mit dem `row_count()` Befehl können bestimmte festgelegte Ausprägungen zielenweise gezählt und die Anzahl dieser Ausprägungen in einer neue Variable abgelegt werden. Dieser Befehl ist daher mit dem `count` Befehl in `SPSS` vergleichbar.
 
 **Syntax:**
 
@@ -1231,6 +1231,8 @@ row_count(datensatz, count = 1)
 datensatz %>% 
   row_count(count = 1)
 ```
+
+In der Syntax wird für den `datensatz` über alle Variable hinweg mit dem Argument `count = 1` alle Ausprägungen mit dem Wert 1 gezählt. (In dieser From wird keine neue Variable mit der Anzahl gebildet, sondern das Ergebnis direkt in der Console ausgegeben. In der Form des folgenden Beispielcodes wird die Anzahl der gezählten Ausprägungen unter dem Variablenname `rowcount` im Datensatz `ds` abgelegt.)
 
 **Beispielcode:**
 
@@ -1246,7 +1248,7 @@ ds %>% frq(rowcount, weights = allbus2018$wghtpew)
 
 ### `Row_sums()` {-}
 
-Summenindex
+Zur Bildung eines Summenindexes kann der Befehl `row_sums()` verwendet werden. Dafür wird zeilenweise die Summe der Werte über alle Variablen eines Datensatzes gebildet.
 
 ```{}
 # Ohne Pipe
@@ -1256,6 +1258,10 @@ row_sums(datensatz, n = Inf)
 datensatz %>% 
   row_sums(n = Inf)
 ```
+
+**Wichtig!** Das Argument `n =` bestimmt die Anzahl der gültigen Werte, welche zur Bildung der Summe vorliegen müssen. Da es keinen Default für dieses Argument gibt, muss `n` definiert werden. Mit `n = Inf`, wie im Bespiel, wird definiert, dass für alle Variablen ein gültiger Wert vorliegen muss.
+
+In der Syntax wird für den `datensatz` über alle Variable zeilenweise die Summe der einzelnen Werte gebildet. (In dieser From wird keine neue Variable mit der Summe gebildet, sondern das Ergebnis direkt in der Console ausgegeben. In der Form des folgenden Beispielcodes wird die Summe der Werte unter dem Variablenname `rowsums` im Datensatz `ds` abgelegt.)
 
 **Beispielcode:**
 
@@ -1271,7 +1277,7 @@ ds %>% frq(rowsums, weights = allbus2018$wghtpew)
 
 ### `Row_means()` {-}
 
-Mittelwertindex
+Analog zum vorherigen Befehl, kann mit `row_means` ein Mittelwertindex gebildet werden. Dafür wird zeilenweise die Summe der Werte über alle Variablen eines Datensatzes gerechnet und durch die Anzahl der Variablen geteilt.
 
 ```{}
 # Ohne Pipe
@@ -1281,6 +1287,10 @@ row_means(datensatz, n = 1)
 datensatz %>% 
   row_means(n = 1)
 ```
+
+**Wichtig!** Wie auch bei dem vorherigen Befehl muss das Argument `n =` definiert werden.
+
+In der Syntax wird für den `datensatz` über alle Variable zeilenweise die Summe der einzelnen Werte und durch die Anzahl der Variablen geteilt. (In dieser From wird keine neue Variable mit der Summe gebildet, sondern das Ergebnis direkt in der Console ausgegeben. In der Form des folgenden Beispielcodes wird die Summe der Werte unter dem Variablenname `rowmeans` im Datensatz `ds` abgelegt.)
 
 **Beispielcode:**
 
@@ -1310,7 +1320,7 @@ datensatz %>%
   set_na(variable1, na = c(1, 3))
 ```
 
-Mit haben mit der Funktion `set_na()` in `variable1` die Ausprägungsmerkmale `1` und `3` als `NA` definiert. 
+Mit der Funktion `set_na()` haben wir in `variable1` die Ausprägungsmerkmale `1` und `3` als `NA` definiert. 
 
 **Beispielcode:**
 
@@ -1325,6 +1335,8 @@ view_df(ds)
 ```
 
 ### `Drop_na()` {-}
+
+Zum Ausschluss von Fällen (rows) aus dem Datensatz kann der Befehl `drop_na()` verwendet werden.
 
 **Syntax:**
 
@@ -1341,13 +1353,14 @@ datensatz %>%
 
 # Ganzer Datensatz
 # Ohne Pipe
-drop_na(variable1)
+drop_na(datensatz)
 
 # Mit Pipe
 datensatz %>% 
   drop_na()
 ```
 
+Wie in der Unterscheidung der Syntax deutlich wird, können Fälle dabei aufgrund fehlender Werte bei einzelnen Variable aussortiert werden oder aufgrund eines einzelnen fehlenden Wertes im ganzen Datensatz. Bspw. kann mit dem zweiten Ansatz (`#Ganzer Datensatz`) der ganze `datensatz` um Fälle mit fehlenden Werten bereinigt werden, sodass ausschließlich vollständige Fälle im `datensatz` vorliegen.
 
 **Beispielcode:**
 
