@@ -24,7 +24,11 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
+<<<<<<< HEAD
 <meta name="date" content="2022-05-03" />
+=======
+<meta name="date" content="2022-05-04" />
+>>>>>>> e689666472ab688cf478d4bffb6946f0d3998234
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -297,10 +301,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="multivariate-datenanalyse.html#cfa"><code>Cfa()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#sempaths"><code>semPaths()</code></a></li>
 </ul></li>
+<<<<<<< HEAD
 <li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#realiabilitätsanalyse"><i class="fa fa-check"></i><b>5.4</b> Realiabilitätsanalyse</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#reliability"><code>reliability()</code></a></li>
 </ul></li>
+=======
+<li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#realiabilitätsanalyse"><i class="fa fa-check"></i><b>5.4</b> Realiabilitätsanalyse</a></li>
+>>>>>>> e689666472ab688cf478d4bffb6946f0d3998234
 <li class="chapter" data-level="5.5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#regressionsanalyse"><i class="fa fa-check"></i><b>5.5</b> Regressionsanalyse</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#lm"><code>Lm()</code></a></li>
@@ -345,8 +353,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="grafiken-erstellen" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Grafiken erstellen</h1>
+<p>In diesem Kapitel werden wir lernen, welche Werkzeuge uns R zur Erstellung von Grafiken zur Verfügung stellt und
+wie uns das Paket <code>ggplot2</code> aus dem <code>tidyverse</code> ermöglicht durch explorative Datenanalyse verborgene Zusammenhänge zu entdecken, sowie
+Resultate darzustellen und zu kommunizieren.</p>
+<p>Im Gegensatz zum ursprünglichen Grafiksystem <code>R Base Graphics</code>, welches auf <code>Base R</code> aufsetzt, basiert <code>ggplot2</code> auf der intuitiven Syntax
+<code>Grammar of Graphics</code>. Hiermit lassen sich durch eleganten, flexiblen und konsistenten Code sehr komplexe Grafiken erstellen und nahtlos mit den
+Funktionen des <code>tidyverse</code> verbinden.</p>
+<p>Achtung! <code>ggplot2</code> benötigt Datensätze im <em>long</em> Format. (siehe hierzu: <a href="https://r4ds.had.co.nz/tidy-data.html">R for Data Science - Tidy Data</a>)</p>
+<p>Da Grafiken mit <code>ggplot2</code> immer nach dem gleichen Prinzip erstellt werden, ergeben sich immer folgende Schritte:</p>
+<p><strong>Schritt 1:</strong> Erstellung eines Objekts mit der Funktion <code>ggplot()</code>.</p>
+<p><strong>Schritt 2:</strong> Definition der Datengrundlage mit dem ersten Argument <code>data = datensatz</code>.</p>
+<p><strong>Schritt 2:</strong> Definition von “aesthetic mappings,” also der Wahl einer Variable für die x-Achse: <code>x = var1</code>, y-Achse: <code>y = var2</code>,
+Gewichtung: <code>weight = gewicht</code> und zur Gruppierung der Daten: <code>group bzw. colour, shape, linetype oder fill = var3</code> über die Funktion <code>mapping = aes()</code>.</p>
+<p><strong>Schritt 3:</strong> Definition verschiedener “Layer” bzw. “Schichten.” Hierbei definieren wir, was dargestellt werden soll - z.B. ein Histogramm oder Linien.
+Dabei wird uns in der Anzahl an Schichten kein Limit gesetzt. Die Funktionen beginnen dabei immer mit dem Präfix <code>geom_</code>, z.B. <code>geom_bar()</code> und werden über den
+Operator <code>+</code> hinzugefügt.</p>
+<p>Im Verlauf des Kapitels werden wir die einzelnen Schritte noch einmal vertiefen, gleichwohl wollen wir mit eingängigen Beispiel beginnen.</p>
+<p><strong>Beispiel 1:</strong></p>
+<p>Grundlage unserer Grafik und damit erstes Argument der Funktion <code>ggplot()</code> ist der <code>allbus2018</code>. Aufbauend definieren wir in der Funktion <code>aes()</code>, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable <code>im19</code> anstreben, müssen wir nur das Argument <code>x =</code> spezifizieren. Anschließend wird über das Argument <code>weight =</code> eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator <code>+</code> fügen wir nun weitere Schichte hinzu. Als erstes “Layer” fügen wir über die Funktion <code>geom_bar</code> das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument <code>stat = "count"</code> einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit <code>fill =</code> und das Auslassen fehlender Werte über <code>na.rm = T</code>. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion <code>labs()</code> ermöglicht alle Achsen frei zu Beschriften. Fertig!</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="grafiken-erstellen.html#cb220-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb220-2"><a href="grafiken-erstellen.html#cb220-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> im19, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb220-3"><a href="grafiken-erstellen.html#cb220-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">na.rm =</span> T) <span class="sc">+</span></span>
+<span id="cb220-4"><a href="grafiken-erstellen.html#cb220-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Anzahl&quot;</span>, <span class="at">title =</span> <span class="st">&quot;Häufigkeitsverteilung der Variable im19&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-154-1.png" width="672" /></p>
+<p>Die folgende Grafik erweitert unsere Fähigkeiten zusätzlich um vier Punkte. Durch die nahtlose Integration der Funktionen des <code>tidyverse</code> und <code>strengejacke</code> ist es uns möglich innerhalb eines Objekts sowohl die Daten zu manipulieren, als auch diese in die nachfolgende Grafik einzubeziehen. So war es in unserem Beispiel von Nöten die Grupperungsvariable <code>sex</code> (Geschlecht) erst zu einem Faktor zu konvertieren, um sie nachstehend nutzen zu können - Funktion <code>to_label()</code>. Weiterhin haben wir das Nettoeinkommen der Befragten mit dem Argument <code>y =</code> auf der y-Achse abgebildet und das Geschlecht der Befragten über das Argument <code>colour =</code> als Gruppierungvariable gewählt. Damit erlaubt uns <code>ggplot()</code> die einzelnen Datenpunkte farblich hervorzuheben, sowie über die Funktion <code>stat_summary()</code> einen Mittelwertvergleich zwischen beiden Gruppen über ein Liniendiagramm abzubilden.</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="grafiken-erstellen.html#cb221-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb221-2"><a href="grafiken-erstellen.html#cb221-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb221-3"><a href="grafiken-erstellen.html#cb221-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> inc, <span class="at">colour =</span> sex, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb221-4"><a href="grafiken-erstellen.html#cb221-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">na.rm =</span> T, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb221-5"><a href="grafiken-erstellen.html#cb221-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">na.rm =</span> T, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb221-6"><a href="grafiken-erstellen.html#cb221-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Alter&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Einkommen&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;Geschlecht&quot;</span>, </span>
+<span id="cb221-7"><a href="grafiken-erstellen.html#cb221-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Mittleres Einkommen nach Alter und Geschlecht&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
+<p>Nun wollen wir uns die einzelnen Schritte nochmal im Detail ansehen.</p>
 <div id="schritt-1" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Schritt 1:</h2>
+<p><img src="Bilder/ggplot-Funktion.png" width="75%" style="display: block; margin: auto;" /></p>
+<p>Wir beginnen mit einem Datensatz und erstellen ein Plot-Objekt mit der Funktion <code>ggplot()</code>. Als erstes Argument fügen wir unseren Datensatz ein. Hierbei bestehen zwei Möglichkeiten der Umsetzung.</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="grafiken-erstellen.html#cb222-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ohne Pipe</span></span>
+<span id="cb222-2"><a href="grafiken-erstellen.html#cb222-2" aria-hidden="true" tabindex="-1"></a>grafik1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> allbus2018)</span>
+<span id="cb222-3"><a href="grafiken-erstellen.html#cb222-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb222-4"><a href="grafiken-erstellen.html#cb222-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mit Pipe</span></span>
+<span id="cb222-5"><a href="grafiken-erstellen.html#cb222-5" aria-hidden="true" tabindex="-1"></a>grafik1 <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb222-6"><a href="grafiken-erstellen.html#cb222-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()</span></code></pre></div>
 </div>
 <div id="schritt-2" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Schritt 2:</h2>
