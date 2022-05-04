@@ -24,7 +24,11 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
+<<<<<<< HEAD
 <meta name="date" content="2022-05-03" />
+=======
+<meta name="date" content="2022-05-04" />
+>>>>>>> e689666472ab688cf478d4bffb6946f0d3998234
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -297,10 +301,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="multivariate-datenanalyse.html#cfa"><code>Cfa()</code></a></li>
 <li><a href="multivariate-datenanalyse.html#sempaths"><code>semPaths()</code></a></li>
 </ul></li>
+<<<<<<< HEAD
 <li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#realiabilitätsanalyse"><i class="fa fa-check"></i><b>5.4</b> Realiabilitätsanalyse</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#reliability"><code>reliability()</code></a></li>
 </ul></li>
+=======
+<li class="chapter" data-level="5.4" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#realiabilitätsanalyse"><i class="fa fa-check"></i><b>5.4</b> Realiabilitätsanalyse</a></li>
+>>>>>>> e689666472ab688cf478d4bffb6946f0d3998234
 <li class="chapter" data-level="5.5" data-path="multivariate-datenanalyse.html"><a href="multivariate-datenanalyse.html#regressionsanalyse"><i class="fa fa-check"></i><b>5.5</b> Regressionsanalyse</a>
 <ul>
 <li><a href="multivariate-datenanalyse.html#lm"><code>Lm()</code></a></li>
@@ -380,13 +388,14 @@ allbus2018 &lt;- read_sas(&quot;Datensatz.sas&quot;)</code></pre>
 <p><strong>Anmerkung:</strong> Sollten Sie andere Dateiformate nutzen wollen, bieten sich zudem die Pakete <code>haven</code>, <code>readxl</code> und <code>readr</code> an.</p>
 <p>Die Funktion <code>read_spss</code> besitzt vier für uns relevante Argumente. Einen Überblick über die möglichen Argumente findet sich unter: <code>?read_spss</code>.</p>
 <ul>
+<li><code>convert.factors = TRUE</code> &gt; Alle Variablen die in SPSS als nominal oder ordinale Datentypen erfasst wurden, werden zu Faktoren konvertiert. Kann in manchen Analysen zu Problemen führen. So empfehlen wir das Argument auf FALSE zu setzen und die Konvertierungen, falls nötig, händisch vorzunehmen.</li>
 <li><code>atomic.to.fac</code> = <code>TRUE</code> &gt; Alle Variablen mit beschrifteten Ausprägungsmerkmalen werden zu Faktoren konvertiert. Für uns ist dieses Argument offensichtlich unbrauchbar, da wir viele Items vom Likert-Typ im Allbus 2018 vorfinden und diese als pseudo-metrisch behandeln wollen.</li>
 <li><code>drop.labels</code> = <code>TRUE</code> &gt; Alle Ausprägungsmerkmale ohne Fälle werden gelöscht. Eine nützliche Funktion, sofern wir nicht mit fehlenden Werten arbeiten möchten. Durch <code>read_spss()</code> über das Packet sjlabelled wurden ohnehin alle vormalig fehlenden Werte zu <code>NA</code> konvertiert. So können wir die überflüssigen Ausprägungsmerkmale einfach löschen.</li>
 <li><code>verbose</code> = <code>TRUE</code> &gt; Es wird beim Verarbeiten der Daten ein Fortschrittsbalken eingeblendet. Nur bei großen Datensätzen relevant.</li>
 <li><code>tag.na</code> = <code>TRUE</code> &gt; Alle fehlenden Werte werden als <code>tagged_na</code> markiert. Damit werden sie in allen Berechnungen zwar als <code>NA</code> einbezogen, der große Vorteil dieses Vorgehens liegt aber im Erhalt der ursprünglichen Kodierung jener fehlenden Werte. Wir können also wie aus <code>SPSS</code> bekannt, jederzeit auf diese mit der Funktion <code>replace_na()</code> zugreifen und sie als reguläre Werte in unsere Berechungen aufnehmen. Leider funktioniert dieses Argument gegenwärtig nur mit positiven Kodierungsmerkmalen (z.B. 98, 99), aber nicht mit negativen Ausprägungsformen (-7, -8). <em>Wir hoffen auf eine baldige Anpassung und stehen mit dem Entwickler im Kontakt</em>.</li>
 </ul>
-<p>Damit empfehlen wir das Argument <code>dop.labels</code> mit <code>TRUE bzw. T</code> zu aktivieren.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="datenverarbeitung.html#cb52-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">&quot;ALLB2018.sav&quot;</span>, <span class="at">drop.labels =</span> T)</span>
+<p>Damit empfehlen wir das Argument <code>dop.labels</code> mit <code>TRUE bzw. T</code> zu aktivieren und convert.factors mit <code>FALSE bzw. F</code> zu deaktivieren, um die Kontrolle über die Daten zu behalten.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="datenverarbeitung.html#cb52-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">&quot;ALLB2018.sav&quot;</span>, <span class="at">drop.labels =</span> T, <span class="at">convert.factors =</span> F)</span>
 <span id="cb52-2"><a href="datenverarbeitung.html#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-3"><a href="datenverarbeitung.html#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Noch schnell den Allbus zum tibble transformieren</span></span>
 <span id="cb52-4"><a href="datenverarbeitung.html#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1140,21 +1149,23 @@ datensatz %&gt;%
 <span id="cb83-6"><a href="datenverarbeitung.html#cb83-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb83-7"><a href="datenverarbeitung.html#cb83-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Variablenbeschriftung wurde gelöscht</span></span>
 <span id="cb83-8"><a href="datenverarbeitung.html#cb83-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-9"><a href="datenverarbeitung.html#cb83-9" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">get_label</span>(sex)</span>
-<span id="cb83-10"><a href="datenverarbeitung.html#cb83-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sex </span></span>
-<span id="cb83-11"><a href="datenverarbeitung.html#cb83-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &quot;&quot;</span></span>
-<span id="cb83-12"><a href="datenverarbeitung.html#cb83-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-13"><a href="datenverarbeitung.html#cb83-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Löschung aller Variablenbeschriftungen im Datensatz</span></span>
-<span id="cb83-14"><a href="datenverarbeitung.html#cb83-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-15"><a href="datenverarbeitung.html#cb83-15" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb83-16"><a href="datenverarbeitung.html#cb83-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, im20) <span class="sc">%&gt;%</span> </span>
-<span id="cb83-17"><a href="datenverarbeitung.html#cb83-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">remove_label</span>()</span>
-<span id="cb83-18"><a href="datenverarbeitung.html#cb83-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-19"><a href="datenverarbeitung.html#cb83-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Variablenbeschriftungen wurden gelöscht</span></span>
-<span id="cb83-20"><a href="datenverarbeitung.html#cb83-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb83-21"><a href="datenverarbeitung.html#cb83-21" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> <span class="fu">get_label</span>(im19, im20)</span>
-<span id="cb83-22"><a href="datenverarbeitung.html#cb83-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 im20 </span></span>
-<span id="cb83-23"><a href="datenverarbeitung.html#cb83-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &quot;&quot;   &quot;&quot;</span></span></code></pre></div>
+<span id="cb83-9"><a href="datenverarbeitung.html#cb83-9" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> </span>
+<span id="cb83-10"><a href="datenverarbeitung.html#cb83-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_label</span>(sex)</span>
+<span id="cb83-11"><a href="datenverarbeitung.html#cb83-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sex </span></span>
+<span id="cb83-12"><a href="datenverarbeitung.html#cb83-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  &quot;&quot;</span></span>
+<span id="cb83-13"><a href="datenverarbeitung.html#cb83-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-14"><a href="datenverarbeitung.html#cb83-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Löschung aller Variablenbeschriftungen im Datensatz</span></span>
+<span id="cb83-15"><a href="datenverarbeitung.html#cb83-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-16"><a href="datenverarbeitung.html#cb83-16" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb83-17"><a href="datenverarbeitung.html#cb83-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(im19, im20) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-18"><a href="datenverarbeitung.html#cb83-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">remove_label</span>()</span>
+<span id="cb83-19"><a href="datenverarbeitung.html#cb83-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-20"><a href="datenverarbeitung.html#cb83-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Variablenbeschriftungen wurden gelöscht</span></span>
+<span id="cb83-21"><a href="datenverarbeitung.html#cb83-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-22"><a href="datenverarbeitung.html#cb83-22" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">%&gt;%</span> </span>
+<span id="cb83-23"><a href="datenverarbeitung.html#cb83-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_label</span>(im19, im20)</span>
+<span id="cb83-24"><a href="datenverarbeitung.html#cb83-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; im19 im20 </span></span>
+<span id="cb83-25"><a href="datenverarbeitung.html#cb83-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &quot;&quot;   &quot;&quot;</span></span></code></pre></div>
 </div>
 <div id="remove_labels" class="section level3 unnumbered">
 <h3><code>Remove_labels()</code></h3>
