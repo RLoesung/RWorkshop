@@ -16,10 +16,10 @@ Da Grafiken mit `ggplot2` immer nach dem gleichen Prinzip erstellt werden, ergeb
 
 **Schritt 2:** Definition der Datengrundlage mit dem ersten Argument `data = datensatz`.
 
-**Schritt 2:** Definition von “aesthetic mappings”, also der Wahl einer Variable für die x-Achse: `x = var1`, y-Achse: `y = var2`, 
+**Schritt 3:** Definition von “aesthetic mappings”, also der Wahl einer Variable für die x-Achse: `x = var1`, y-Achse: `y = var2`, 
 Gewichtung: `weight = gewicht` und zur Gruppierung der Daten: `group bzw. colour, shape, linetype oder fill = var3` über die Funktion `mapping = aes()`. 
 
-**Schritt 3:** Definition verschiedener "Layer" bzw. "Schichten". Hierbei definieren wir, was dargestellt werden soll - z.B. ein Histogramm oder Linien. 
+**Schritt 4:** Definition verschiedener "Layer" bzw. "Schichten". Hierbei definieren wir, was dargestellt werden soll - z.B. ein Histogramm oder Linien. 
 Dabei wird uns in der Anzahl an Schichten kein Limit gesetzt. Die Funktionen beginnen dabei immer mit dem Präfix `geom_`, z.B. `geom_bar()` und werden über den
 Operator `+` hinzugefügt.
 
@@ -56,18 +56,102 @@ Nun wollen wir uns die einzelnen Schritte nochmal im Detail ansehen.
 knitr::include_graphics("Bilder/ggplot-Funktion.png")
 ```
 
-Wir beginnen mit einem Datensatz und erstellen ein Plot-Objekt mit der Funktion `ggplot()`. Als erstes Argument fügen wir unseren Datensatz ein. Hierbei bestehen zwei Möglichkeiten der Umsetzung.
+Wir beginnen mit einem Datensatz und erstellen ein Plot-Objekt mit der Funktion `ggplot()`. Als erstes Argument fügen wir unseren Datensatz ein `data = datensatz`. Hierbei bestehen zwei Möglichkeiten der Umsetzung.
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Ohne Pipe
-grafik1 <- ggplot(data = allbus2018)
+g <- ggplot(data = allbus2018)
 
 # Mit Pipe
-grafik1 <- allbus2018 %>% 
+g <- allbus2018 %>% 
   ggplot()
 ```
 
 
-## Schritt 2:
+## Schritt 2: Aesthetic mapping
 
-## Schritt 3:
+Im zweiten Schritt definieren wir das zweite Argument `mapping =` über die Funktion `aes()` - "aesthetic mappings". Damit bestimmen wir welche Variablen benutzt werden sollen, um die Daten darzustellen. Im Folgenden wollen wir ergründen, inwieweit das Geschlecht der Befragten einen Einfluss auf ihr individuelles Nettoeinkommen `(inc)` hat. So definieren wir `sex` als Variable auf der x-Achse mit `x = sex` und die Variable `inc` mit `y = inc` auf der y-Achse. Da wir Gesamtdeutschland betrachten wollen, definieren wir noch mit `weight = wghtpew` das nötige Designgewicht. Der vorläufiger Befehl lautet entsprechend: `mapping = aes(x = sex, y = im21, weight = wghtpew)`. 
+Zusätzlich erlaubt die Funktion `aes()` weitere Anpassungen über `fill =`, `colour =`, `shape =`, `linetype =` und `group =`. Diese Argumente helfen zum Einen der Gruppierungsvariable auf der x-Achse eine Farbe, Form oder Zugehörigkeit zuzuweisen, zum Anderen lässt sich damit aber auch eine dritte Variable `(z)` als Gruppierungsvariable (siehe Beispiel 2) zuweisen.
+
+In unserem Beispiel wollen wir, dass die beiden Ausprägungsmerkmale von Geschlecht verschiedene Farben zugewiesen bekommen und die nachfolgenden Objekte entsprechend ausgefülllt werden. Der fertige Befehl lautet damit: `mapping = aes(x = sex, y = inc, weight = wghtpew, fill = sex, colour = sex)`. Das Argument `colour =` ist folglich ein Attribut für Linien und Punkte; das Argument `fill =` ist ein Attribut für Flächen.
+
+**Wichtig!** Wenn wir die Funktion `aes()` innerhalb der Funktion `ggplot()` definieren, gelten sie für alle Schichten, d.h. für alle Elemente der Grafik. Wir können später die "mappings" auch für jede Schicht einzeln definieren und damit auf verschiedene Datensätze zugreifen, oder andere Variablen verwenden.
+
+```{r, echo=T, collapse=T, comment="#>"}
+g <- allbus2018 %>% 
+  to_label(sex) %>% 
+  ggplot(mapping = aes(
+    x = sex,
+    y = inc,
+    weight = wghtpew,
+    fill = sex,
+    colour = sex
+    ))
+```
+
+`g` ist damit ein "leeres" Plot-Objekt, dass noch nichts anzeigt, da wir noch keine "Layer" definiert haben. Das Objekt ist damit ein `ggplot2`-Objekt, welches im R-Studio Fenster `Plots` ausgegeben werden kann. Wir sehen folglich ein Grafikgerüst mit der richtigen Achsenzuweisung.
+
+```{r, echo=T, collapse=T, comment="#>"}
+g
+```
+
+## Schritt 3: Schichten ("Geoms") hinzufügen
+
+Dem Plot-Objekt `g` wollen wir nun mit den Funktionstypen `geom_` weitere Schichten beifügen. So addieren wir mit dem `+` Operator einfach ein weiteres "Layer" - `g + geom_`.
+
+### Punktdiagramm
+
+Als erstes möchten wir die einzelnen Beobachtungen als Datenpunkte abgetragen haben. Hierbei können wir entweder unsere Ausgangssytax optimieren, oder das Objekt `g` einfach erweitern.
+
+**Anmerkung:** Mit dem Argument `na.rm = T` werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Ausgangssyntax optimieren
+allbus2018 %>% 
+  to_label(sex) %>% 
+  ggplot(mapping = aes(x = sex, y = inc, weight = wghtpew, fill = sex, colour = sex)) +
+  geom_point(na.rm = T)
+  
+# Objekt erweitern
+g +
+  geom_point(na.rm = T)
+```
+
+Wollen wir das Überlagern der Datenpunkte (overplotting) verhindern, können wir auch auf die Funktion `geom_jitter()` zurückgreifen. In Anwendung werden uns die Punkte nebeneinander gezeigt.
+
+```{r, echo=T, collapse=T, comment="#>"}
+g +
+  geom_jitter(na.rm = T)
+```
+
+Mit dem Argument `width =` können wir zusätzlich bestimmen, wie breit die Streuung der Punkte sein soll.
+
+```{r, echo=T, collapse=T, comment="#>"}
+g +
+  geom_jitter(width = 0.5, na.rm = T)
+```
+
+Weitere Argumente sind `size =` für die größe der Punkte und `alpha =` zur Bestimmung der Transparenz. Weitere Argumente lassen sich wie immer im Fenster `Help` über den Befehl `?geom_jitter` in der Konsole einsehen. 
+
+```{r, echo=T, collapse=T, comment="#>"}
+g +
+  geom_jitter(size = 1, alpha = 0.3, na.rm = T)
+```
+
+### Zentrale Tendent und Streuung abbilden
+
+Zur Darstellung der zentralen Tendenz und Streuung gibt uns `ggplot2` zusätzliche Schichten an die Hand. Genannt seien hier `geom_boxplot()` zur Darstellung von Boxplot-Diagrammen und `geom_violin()` für Violin-Diagramme.
+
+```{r, echo=T, collapse=T, comment="#>"}
+g +
+  geom_boxplot(na.rm = T)
+```
+
+
+
+
+
+
+
+
+
