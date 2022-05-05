@@ -95,7 +95,7 @@ g <- allbus2018 %>%
 g
 ```
 
-## Schritt 3: Schichten ("Geoms") hinzufügen
+## Schritt 3: Schichten ("Layer") hinzufügen
 
 Dem Plot-Objekt `g` wollen wir nun mit den Funktionstypen `geom_` weitere Schichten beifügen. So addieren wir mit dem `+` Operator einfach ein weiteres "Layer" - `g + geom_`.
 
@@ -138,7 +138,7 @@ g +
   geom_jitter(size = 1, alpha = 0.3, na.rm = T)
 ```
 
-### Zentrale Tendent und Streuung abbilden
+### Zentrale Tendenz und Streuung abbilden
 
 Zur Darstellung der zentralen Tendenz und Streuung gibt uns `ggplot2` zusätzliche Schichten an die Hand. Genannt seien hier `geom_boxplot()` zur Darstellung von Boxplot-Diagrammen und `geom_violin()` für Violin-Diagramme.
 
@@ -147,11 +147,60 @@ g +
   geom_boxplot(na.rm = T)
 ```
 
+In einem Boxplot wird der Median abgetragen, d.h. das Rechteck repräsentiert die mittleren 50% und die Striche ("whiskers") zeigen den 1,5 * IQR (Interquantilbereich). Die einzelnen Punkte stellen Ausreisser dar. 
 
+Wollen wir den Median sehen, müssen wir das Argument `fill = sex` weglassen.
 
+```{r, echo=T, collapse=T, comment="#>"}
+g <- allbus2018 %>% 
+  to_label(sex) %>% 
+  ggplot(mapping = aes(x = sex,
+                       y = inc,
+                       weight = wghtpew,
+                       colour = sex))
 
+g +
+  geom_boxplot(na.rm = T)
+```
 
+Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht die Quantile, sondern ein "kernel density estimate" zeigen - d.h. eine Abbildung der Kerndichte. Hier bietet sich das Argument `fill = sex` zudem ideal an. 
 
+```{r, echo=T, collapse=T, comment="#>"}
+g <- allbus2018 %>% 
+  to_label(sex) %>% 
+  ggplot(mapping = aes(x = sex,
+                       y = inc,
+                       weight = wghtpew,
+                       fill = sex))
+
+g +
+  geom_violin(na.rm = T)
+```
+
+Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, sollten wir das mapping entsprechend anpassen.
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Ausgang
+g <- allbus2018 %>% 
+  to_label(sex) %>% 
+  ggplot(mapping = aes(x = sex,
+                       y = inc,
+                       weight = wghtpew))
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Boxplot
+g +
+  geom_boxplot(aes(colour = sex), na.rm = T)
+```
+
+```{r, echo=T, collapse=T, comment="#>"}
+# Violin
+g +
+  geom_violin(aes(fill = sex), na.rm = T)
+```
+
+### Mehrere Schichten kombinieren
 
 
 

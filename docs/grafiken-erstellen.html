@@ -319,10 +319,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="6.1" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#schritt-1-plot-objekt-erstellen"><i class="fa fa-check"></i><b>6.1</b> Schritt 1: Plot-Objekt erstellen</a></li>
 <li class="chapter" data-level="6.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#schritt-2-aesthetic-mapping"><i class="fa fa-check"></i><b>6.2</b> Schritt 2: Aesthetic mapping</a></li>
-<li class="chapter" data-level="6.3" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#schritt-3-schichten-geoms-hinzufügen"><i class="fa fa-check"></i><b>6.3</b> Schritt 3: Schichten (“Geoms”) hinzufügen</a>
+<li class="chapter" data-level="6.3" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#schritt-3-schichten-layer-hinzufügen"><i class="fa fa-check"></i><b>6.3</b> Schritt 3: Schichten (“Layer”) hinzufügen</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#punktdiagramm"><i class="fa fa-check"></i><b>6.3.1</b> Punktdiagramm</a></li>
-<li class="chapter" data-level="6.3.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#zentrale-tendent-und-streuung-abbilden"><i class="fa fa-check"></i><b>6.3.2</b> Zentrale Tendent und Streuung abbilden</a></li>
+<li class="chapter" data-level="6.3.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#zentrale-tendenz-und-streuung-abbilden"><i class="fa fa-check"></i><b>6.3.2</b> Zentrale Tendenz und Streuung abbilden</a></li>
+<li class="chapter" data-level="6.3.3" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#mehrere-schichten-kombinieren"><i class="fa fa-check"></i><b>6.3.3</b> Mehrere Schichten kombinieren</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -407,8 +408,8 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 <div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="grafiken-erstellen.html#cb229-1" aria-hidden="true" tabindex="-1"></a>g</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-162-1.png" width="672" /></p>
 </div>
-<div id="schritt-3-schichten-geoms-hinzufügen" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> Schritt 3: Schichten (“Geoms”) hinzufügen</h2>
+<div id="schritt-3-schichten-layer-hinzufügen" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Schritt 3: Schichten (“Layer”) hinzufügen</h2>
 <p>Dem Plot-Objekt <code>g</code> wollen wir nun mit den Funktionstypen <code>geom_</code> weitere Schichten beifügen. So addieren wir mit dem <code>+</code> Operator einfach ein weiteres “Layer” - <code>g + geom_</code>.</p>
 <div id="punktdiagramm" class="section level3" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Punktdiagramm</h3>
@@ -438,12 +439,53 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 <span id="cb234-2"><a href="grafiken-erstellen.html#cb234-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">na.rm =</span> T)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-166-1.png" width="672" /></p>
 </div>
-<div id="zentrale-tendent-und-streuung-abbilden" class="section level3" number="6.3.2">
-<h3><span class="header-section-number">6.3.2</span> Zentrale Tendent und Streuung abbilden</h3>
+<div id="zentrale-tendenz-und-streuung-abbilden" class="section level3" number="6.3.2">
+<h3><span class="header-section-number">6.3.2</span> Zentrale Tendenz und Streuung abbilden</h3>
 <p>Zur Darstellung der zentralen Tendenz und Streuung gibt uns <code>ggplot2</code> zusätzliche Schichten an die Hand. Genannt seien hier <code>geom_boxplot()</code> zur Darstellung von Boxplot-Diagrammen und <code>geom_violin()</code> für Violin-Diagramme.</p>
 <div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="grafiken-erstellen.html#cb235-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
 <span id="cb235-2"><a href="grafiken-erstellen.html#cb235-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-167-1.png" width="672" /></p>
+<p>In einem Boxplot wird der Median abgetragen, d.h. das Rechteck repräsentiert die mittleren 50% und die Striche (“whiskers”) zeigen den 1,5 * IQR (Interquantilbereich). Die einzelnen Punkte stellen Ausreisser dar.</p>
+<p>Wollen wir den Median sehen, müssen wir das Argument <code>fill = sex</code> weglassen.</p>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="grafiken-erstellen.html#cb236-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb236-2"><a href="grafiken-erstellen.html#cb236-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb236-3"><a href="grafiken-erstellen.html#cb236-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb236-4"><a href="grafiken-erstellen.html#cb236-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb236-5"><a href="grafiken-erstellen.html#cb236-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
+<span id="cb236-6"><a href="grafiken-erstellen.html#cb236-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">colour =</span> sex))</span>
+<span id="cb236-7"><a href="grafiken-erstellen.html#cb236-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb236-8"><a href="grafiken-erstellen.html#cb236-8" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb236-9"><a href="grafiken-erstellen.html#cb236-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-168-1.png" width="672" /></p>
+<p>Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht die Quantile, sondern ein “kernel density estimate” zeigen - d.h. eine Abbildung der Kerndichte. Hier bietet sich das Argument <code>fill = sex</code> zudem ideal an.</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="grafiken-erstellen.html#cb237-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb237-2"><a href="grafiken-erstellen.html#cb237-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb237-3"><a href="grafiken-erstellen.html#cb237-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb237-4"><a href="grafiken-erstellen.html#cb237-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb237-5"><a href="grafiken-erstellen.html#cb237-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
+<span id="cb237-6"><a href="grafiken-erstellen.html#cb237-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fill =</span> sex))</span>
+<span id="cb237-7"><a href="grafiken-erstellen.html#cb237-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-8"><a href="grafiken-erstellen.html#cb237-8" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb237-9"><a href="grafiken-erstellen.html#cb237-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-169-1.png" width="672" /></p>
+<p>Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, sollten wir das mapping entsprechend anpassen.</p>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="grafiken-erstellen.html#cb238-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ausgang</span></span>
+<span id="cb238-2"><a href="grafiken-erstellen.html#cb238-2" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb238-3"><a href="grafiken-erstellen.html#cb238-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb238-4"><a href="grafiken-erstellen.html#cb238-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb238-5"><a href="grafiken-erstellen.html#cb238-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb238-6"><a href="grafiken-erstellen.html#cb238-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew))</span></code></pre></div>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="grafiken-erstellen.html#cb239-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb239-2"><a href="grafiken-erstellen.html#cb239-2" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb239-3"><a href="grafiken-erstellen.html#cb239-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">colour =</span> sex), <span class="at">na.rm =</span> T)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-171-1.png" width="672" /></p>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="grafiken-erstellen.html#cb240-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Violin</span></span>
+<span id="cb240-2"><a href="grafiken-erstellen.html#cb240-2" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb240-3"><a href="grafiken-erstellen.html#cb240-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sex), <span class="at">na.rm =</span> T)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-172-1.png" width="672" /></p>
+</div>
+<div id="mehrere-schichten-kombinieren" class="section level3" number="6.3.3">
+<h3><span class="header-section-number">6.3.3</span> Mehrere Schichten kombinieren</h3>
 
 </div>
 </div>
