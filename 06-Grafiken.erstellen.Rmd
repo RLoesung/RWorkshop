@@ -27,12 +27,13 @@ Im Verlauf des Kapitels werden wir die einzelnen Schritte noch einmal vertiefen,
 
 **Beispiel 1:** 
 
-Grundlage unserer Grafik und damit erstes Argument der Funktion `ggplot()` ist der `allbus2018`. Aufbauend definieren wir in der Funktion `aes()`, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable `im19` anstreben, müssen wir nur das Argument `x =` spezifizieren. Anschließend wird über das Argument `weight =` eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator `+` fügen wir nun weitere Schichte hinzu. Als erstes "Layer" fügen wir über die Funktion `geom_bar` das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument `stat = "count"` einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit `fill =` und das Auslassen fehlender Werte über `na.rm = T`. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion `labs()` ermöglicht alle Achsen frei zu Beschriften. Fertig!
+Grundlage unserer Grafik und damit erstes Argument der Funktion `ggplot()` ist der `allbus2018`. Aufbauend definieren wir in der Funktion `aes()`, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable `im19` anstreben, müssen wir nur das Argument `x =` spezifizieren. Anschließend wird über das Argument `weight =` eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator `+` fügen wir nun weitere Schichte hinzu. Als erstes "Layer" fügen wir über die Funktion `geom_bar` das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument `stat = "count"` einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit `fill =` und das Auslassen fehlender Werte über ``. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion `labs()` ermöglicht alle Achsen frei zu Beschriften. Fertig!
 
 ```{r}
 allbus2018 %>% 
+  drop_na(im19) %>% 
   ggplot(aes(x = im19, weight = wghtpew)) +
-  geom_bar(fill = "steelblue", na.rm = T) +
+  geom_bar(fill = "steelblue") +
   labs(y = "Anzahl", title = "Häufigkeitsverteilung der Variable im19")
 ```
 
@@ -41,9 +42,10 @@ Die folgende Grafik erweitert unsere Fähigkeiten zusätzlich um vier Punkte. Du
 ```{r}
 allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(age, inc, sex) %>% 
   ggplot(aes(x = age, y = inc, colour = sex, weight = wghtpew)) +
-  geom_point(na.rm = T, alpha = 0.1) +
-  stat_summary(fun = "mean", geom = "line", na.rm = T, size = 0.8) +
+  geom_point(alpha = 0.1) +
+  stat_summary(fun = "mean", geom = "line", size = 0.8) +
   labs(x = "Alter", y = "Einkommen", colour = "Geschlecht", 
        title = "Mittleres Einkommen nach Alter und Geschlecht")
 ```
@@ -80,6 +82,7 @@ In unserem Beispiel wollen wir, dass die beiden Ausprägungsmerkmale von Geschle
 ```{r, echo=T, collapse=T, comment="#>"}
 g <- allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
   ggplot(mapping = aes(
     x = sex,
     y = inc,
@@ -103,39 +106,40 @@ Dem Plot-Objekt `g` wollen wir nun mit den Funktionstypen `geom_` weitere Schich
 
 Als erstes möchten wir die einzelnen Beobachtungen als Datenpunkte abgetragen haben. Hierbei können wir entweder unsere Ausgangssytax optimieren, oder das Objekt `g` einfach erweitern.
 
-**Anmerkung:** Mit dem Argument `na.rm = T` werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung. 
+**Anmerkung:** Mit dem Argument `` werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung. 
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Ausgangssyntax optimieren
 allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
   ggplot(mapping = aes(x = sex, y = inc, weight = wghtpew, fill = sex, colour = sex)) +
-  geom_point(na.rm = T)
+  geom_point()
   
 # Objekt erweitern
 g +
-  geom_point(na.rm = T)
+  geom_point()
 ```
 
 Wollen wir das Überlagern der Datenpunkte (overplotting) verhindern, können wir auch auf die Funktion `geom_jitter()` zurückgreifen. In Anwendung werden uns die Punkte nebeneinander gezeigt.
 
 ```{r, echo=T, collapse=T, comment="#>"}
 g +
-  geom_jitter(na.rm = T)
+  geom_jitter()
 ```
 
 Mit dem Argument `width =` können wir zusätzlich bestimmen, wie breit die Streuung der Punkte sein soll.
 
 ```{r, echo=T, collapse=T, comment="#>"}
 g +
-  geom_jitter(width = 0.5, na.rm = T)
+  geom_jitter(width = 0.5, )
 ```
 
 Weitere Argumente sind `size =` für die größe der Punkte und `alpha =` zur Bestimmung der Transparenz. Zudem lassen sich wie gehabt im Fenster `Help` über den Befehl `?geom_jitter` in der Konsole weitere Argumente einsehen. 
 
 ```{r, echo=T, collapse=T, comment="#>"}
 g +
-  geom_jitter(size = 1, alpha = 0.3, na.rm = T)
+  geom_jitter(size = 1, alpha = 0.3, )
 ```
 
 ### Zentrale Tendenz und Streuung abbilden
@@ -144,7 +148,7 @@ Zur Darstellung der zentralen Tendenz und Streuung gibt uns `ggplot2` zusätzlic
 
 ```{r, echo=T, collapse=T, comment="#>"}
 g +
-  geom_boxplot(na.rm = T)
+  geom_boxplot()
 ```
 
 In einem Boxplot wird der Median abgetragen, d.h. das Rechteck repräsentiert die mittleren 50% und die Striche ("whiskers") zeigen den 1,5 * IQR (Interquantilbereich). Die einzelnen Punkte stellen Ausreisser dar. 
@@ -154,13 +158,14 @@ Wollen wir den Median sehen, müssen wir das Argument `fill = sex` weglassen.
 ```{r, echo=T, collapse=T, comment="#>"}
 g <- allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
   ggplot(mapping = aes(x = sex,
                        y = inc,
                        weight = wghtpew,
                        colour = sex))
 
 g +
-  geom_boxplot(na.rm = T)
+  geom_boxplot()
 ```
 
 Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht die Quantile, sondern ein "kernel density estimate" zeigen - d.h. eine Abbildung der Kerndichte. Hier bietet sich das Argument `fill = sex` zudem ideal an. 
@@ -168,13 +173,14 @@ Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht d
 ```{r, echo=T, collapse=T, comment="#>"}
 g <- allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
   ggplot(mapping = aes(x = sex,
                        y = inc,
                        weight = wghtpew,
                        fill = sex))
 
 g +
-  geom_violin(na.rm = T)
+  geom_violin()
 ```
 
 Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, sollten wir das mapping entsprechend anpassen.
@@ -183,6 +189,7 @@ Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, so
 # Ausgang
 g <- allbus2018 %>% 
   to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
   ggplot(mapping = aes(x = sex,
                        y = inc,
                        weight = wghtpew))
@@ -191,13 +198,13 @@ g <- allbus2018 %>%
 ```{r, echo=T, collapse=T, comment="#>"}
 # Boxplot
 g +
-  geom_boxplot(aes(colour = sex), na.rm = T)
+  geom_boxplot(aes(colour = sex), )
 ```
 
 ```{r, echo=T, collapse=T, comment="#>"}
 # Violin
 g +
-  geom_violin(aes(fill = sex), na.rm = T)
+  geom_violin(aes(fill = sex), )
 ```
 
 ### Mehrere Schichten kombinieren
@@ -206,26 +213,169 @@ So ist es uns auch möglich mehrere "Layer" zu kombinieren. So müssen wir ledig
 
 ```{r, echo=T, collapse=T, comment="#>"}
 g +
-  geom_violin(aes(fill = sex), na.rm = T) +
-  geom_jitter(aes(colour = sex), alpha = 0.2, width = 0.4, na.rm = T)
+  geom_violin(aes(fill = sex), ) +
+  geom_jitter(aes(colour = sex), alpha = 0.2, width = 0.4, )
 ```
 
 ## Verschiedene Grafiken für verschiedene Datentypen
 
+In diesem Kapitel wollen wir uns eine Übersicht über die diversen `Geoms` in `ggplot2` für verschiedene Kombinationen von Variablen ansehen. So können wir entweder eine Variable auf der x-Achse oder y-Achse darstellen oder jeweils eine Variable auf der x-Achse und y-Achse. Diese Variablen können sowohl kontinuierlich (metrisch) oder kategorial (nominal/ordinal) sein. 
 
+**Wichtig!** Wir können in diesem Kapitel nur eine spezifische Auswahl der möglichen `Geoms` betrachten, da `ggplot2` sehr umfangreich ist. Für eine umfassende Dokumentation aller Funktionen siehe: [ggplot2 Dokumentation](https://ggplot2.tidyverse.org/reference/). Unser Ziel ist lediglich eine Befähigung zum eigenverantwortlichen Arbeiten und Problemlösung herzustellen und den kreativen Prozess der Datenvisualisierung einzuleiten.
 
+### Eine Variable
 
+Sofern wir nur eine Variable auf der x-Achse abtragen möchten, müssen wir dennoch Werte auf der y-Achse definieren. In diesem Zusammenhang wird es sich mehrheitlich um z.B. Häufigkeitsverteilungen etc. handeln.
 
+#### Kategoriale Variablen
 
+Handelt es sich bei unserer Analyse um eine kategoriale Variable, dann verwenden wir oft einen *bar chart bzw. bar graph*. Hierbei wird die betreffende Variable anhand eines Rechtecks auf der x-Achse abgetragen, wobei es sich häufig um absolute bzw. relative Häufigkeitsverteilungen handelt. Die Funktion, die hierfür verwendet wird, heißt `geom_bar()`.
 
+Als Beispiel ziehen wir die Alterskategorien der Befragten heran.
 
+```{r}
+allbus2018 %>% 
+  to_label(agec) %>% 
+  drop_na(agec) %>% 
+  ggplot(aes(x = agec, weight = wghtpew)) +
+  geom_bar(fill = "steelblue", colour = "red") 
+```
 
+**Merke:** Sofern wir `fill = "steelblue", colour = "red"` nicht innerhalb der `aes()` Funktion verwenden, dann handelt es sich nicht um Gruppierungsvariablen, sondern ausschließlich um Farbgebungen der Grafikobjekte. So färben wir mit `fill = "steelblue"` lediglich die Balken in Stahlblau ein. Eine Übersicht über die verschiedenen Farbvarianten erhalten wir mit der Funktion `colours()`. Es gibt 657, wenn gleich nur Zwanzig im folgenden Output dargestellt werden.
 
+```{r}
+colours() %>% sample(20)
+```
 
+Im nächsten Schritt wollen wir unser Balkendiagramm nicht mit absoluten Werten ausgeben, sondern mit relativen Häufigkeiten. Hierzu ist es wichtig zu wissen, dass in der vorherigen Grafik ein entscheidendes Argument mit Standardwert eingegangen ist, das wir nun anpassen müssen. So fügen wir der vorherigen Grafik die Argumente `aes(y = ..count..)` hinzu. Wir definieren also auf der y-Achse eine Variable, die unmittelbar aus der x-Achse errechnet werden soll. Mit dem Befehl `..count..` handelt es sich um eine absolute Auszählung der Häufigkeiten. Wollen wir eine relative Häufigkeitsverteilung verwenden wir den Befehl `aes(y = ..prop..)`, also eine proportionale Auszählung. Zudem müssen wir noch definieren aus welcher bzw. wie vielen Gruppe/n die Werte relational geschöpft werden sollen. Dies geschieht über den Befehl `aes(y = ..prop.., group = 1)`. Damit werden die Werte relational bzw. proportinal aus einer Gruppe gebildet und bilden damit Prozentwerte zu 100% ab (die Darstellungsform auf der y-Achse lernen wir in den kommenden Kapiteln)
 
+```{r}
+allbus2018 %>% 
+  to_label(agec) %>% 
+  drop_na(agec) %>% 
+  ggplot(aes(x = agec, weight = wghtpew)) +
+  geom_bar(aes(y = ..prop.., group = 1), fill = "steelblue", colour = "red") 
+```
 
+Weiterhin können wir zusätzliche Gruppierungvariablen angeben, anhand derer die Balken farblich kodiert werden. Im gewählten Beispiel: Geschlecht.
 
+```{r}
+allbus2018 %>% 
+  to_label(agec, sex) %>% 
+  drop_na(agec, sex) %>% 
+  ggplot(aes(x = agec, weight = wghtpew, fill = sex)) +
+  geom_bar(aes(y = ..prop.., group = sex)) 
+```
 
+Standardmäßig kreiert `ggplot2` einen *stacked* Bar Chart, die Balken werden also "gestapelt". Wollen wir hingegen die Balken nebeneinander stehen sehen, können wir das Argument `position = "dodge"` verwenden.
+
+```{r}
+allbus2018 %>% 
+  to_label(agec, sex) %>% 
+  drop_na(agec, sex) %>% 
+  ggplot(aes(x = agec, weight = wghtpew, fill = sex)) +
+  geom_bar(aes(y = ..prop.., group = sex), position = "dodge") 
+```
+
+Kontinuierliche Variablen
+
+Für kategoriale Variablen bieten sich eine Vielzahl von Grafikobjekten an. Beginnen möchten wir mit dem Histogramm, welches die Verteilung einer numerischen Variable idealen abträgt. Dazu werden die Werte einer Variable in diskrete Intervalle (`bins`) eingeteilt. Auf der y-Achse werden dazu, analog zu einem Bar Chart, die Häufigkeiten in den Intervallen abgebildet. Von besonderer Bedeutung ist hier die Bestimmung der Intervallgrößen (`binwidth`), da hierüber die Verteilung maßgeblich beeinflusst wird - die Grundeinstellung liegt bei `bins = 30`. 
+
+Hier ein Beispiel anhand der Altersverteilung in unserer Stichprobe mit den Grundeinstellungen.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  ggplot(aes(x = age, weight = wghtpew)) +
+  geom_histogram(colour = "red")
+```
+
+Wir bestimmen die `binwidth` selbst. Wir legen eine Altersspanne von 2 Jahren pro Balken fest - `binwidth = 1`.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  ggplot(aes(x = age, weight = wghtpew)) +
+  geom_histogram(binwidth = 1, colour = "red")
+```
+
+Die Bestimmung der `binwidth` sollte natürlich immer von der Skala der Variable abhängen und damit weder zu fein noch zu grob ausfallen.
+
+Im nächsten Schritt wollen wir auf der y-Achse die relativen Werte abgetragen sehen. Hierfür verwenden wir das Argument `aes(y = )` mit der zugehörigen Funktion `..density..`, damit `geom_histogram(aes(y = ..density..))`.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  ggplot(aes(x = age, weight = wghtpew)) +
+  geom_histogram(aes(y = ..density..), binwidth = 5, fill = "steelblue", colour = "black")
+```
+
+Zudem lassen sich auch in Histogrammen Gruppierungsvariablen verwenden. 
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  to_label(sex) %>% 
+  ggplot(aes(x = age, weight = wghtpew)) +
+  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, colour = "black")
+```
+
+Wir können die Balken auch über das Argument `position =` übereinander legen mit `position = "identity"`. 
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  to_label(sex) %>% 
+  ggplot(aes(x = age, weight = wghtpew)) +
+  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, position = "identity", alpha = 0.4)
+```
+
+Oder sie nebeneinander behalten `position = "dodge"`.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age) %>% 
+  to_label(sex) %>% 
+  ggplot(aes(x = age, weight = wghtpew, fill = sex)) +
+  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, position = "dodge")
+```
+
+### Zwei Variablen 
+
+Jetzt wollen wir zwei Variablen auf der x-Achse und y-Achse abbilden. Auch hier hängen die Möglichkeiten der `geoms` vom Datentyp der Variable ab.
+
+#### X und Y kategorial
+
+Diese Konbination der Datentypen hält recht wenige Möglichkeiten der grafischen Aufbereitung bereit. Legitim ist in jedem Fall der grafische Abtrag der gemeinsamen Häufigkeiten. Hierfür gibt es die Funktion `geom_count()`.
+
+Als interessantes Beispiel dient die gemeinsame Häufigkeit zwischen Alterskategorie und Bildungsabschluss.
+
+```{r}
+allbus2018 %>% 
+  to_label(agec, educ) %>% 
+  drop_na(agec, educ) %>% 
+  mutate(agec = str_remove(agec, "JAHRE")) %>%
+  ggplot(aes(x = agec, y = educ, weight = wghtpew)) +
+  geom_count()
+```
+
+Die gemeinsamen Häufigkeiten werden durch `geom_count` vor allem über den Durchmesser der Punkte dargestellt (vgl. Funktion `crosstab()`).
+
+#### X kategorial und Y kontinuierlich
+
+Wenn eine der Variablen kategorial ist, dann können wir diese statt als Gruppierungsvariable auf der x-Achse verwenden. Gute Beispiele waren hierfür die in Kapitel 6.3.2 gezeigten Box- und Violindiagramme. Zudem können wir auch die Funktion `geom_col()` für zwei Variablen nutzen. Diese Funktion ist eng mit `geom_bar()` verwandt, wenngleich sie keine Aggregation der Daten über `stat = "count"` vornimmt, sondern nativ zwei Variablen zulässt und als Grundeinstellung mit `stat = identity` arbeitet. Die Variable auf der y-Achse bildet entsprechend alle Beobachtungen in den Kategorien auf der x-Achse ab. 
+
+Als Beispiel dient uns das Geschlecht der Befragten und ihr individuelles Nettoeinkommen.
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(sex, inc) %>% 
+  ggplot(aes(x = sex, y = inc, weight = wghtpew, fill = inc)) +
+  geom_col(position = "dodge")
+```
+
+#### X und Y kontinuierlich
 
 
 

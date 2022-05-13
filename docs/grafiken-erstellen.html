@@ -24,7 +24,7 @@
 <meta name="author" content="Yannick Diehl und Daniel Moosdorf" />
 
 
-<meta name="date" content="2022-05-11" />
+<meta name="date" content="2022-05-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -325,7 +325,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.3.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#zentrale-tendenz-und-streuung-abbilden"><i class="fa fa-check"></i><b>6.3.2</b> Zentrale Tendenz und Streuung abbilden</a></li>
 <li class="chapter" data-level="6.3.3" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#mehrere-schichten-kombinieren"><i class="fa fa-check"></i><b>6.3.3</b> Mehrere Schichten kombinieren</a></li>
 </ul></li>
-<li class="chapter" data-level="6.4" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#verschiedene-grafiken-für-verschiedene-datentypen"><i class="fa fa-check"></i><b>6.4</b> Verschiedene Grafiken für verschiedene Datentypen</a></li>
+<li class="chapter" data-level="6.4" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#verschiedene-grafiken-für-verschiedene-datentypen"><i class="fa fa-check"></i><b>6.4</b> Verschiedene Grafiken für verschiedene Datentypen</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#eine-variable"><i class="fa fa-check"></i><b>6.4.1</b> Eine Variable</a></li>
+<li class="chapter" data-level="6.4.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#zwei-variablen"><i class="fa fa-check"></i><b>6.4.2</b> Zwei Variablen</a></li>
+</ul></li>
 </ul></li>
 </ul>
 
@@ -363,20 +367,22 @@ Dabei wird uns in der Anzahl an Schichten kein Limit gesetzt. Die Funktionen beg
 Operator <code>+</code> hinzugefügt.</p>
 <p>Im Verlauf des Kapitels werden wir die einzelnen Schritte noch einmal vertiefen, gleichwohl wollen wir mit eingängigen Beispiel beginnen.</p>
 <p><strong>Beispiel 1:</strong></p>
-<p>Grundlage unserer Grafik und damit erstes Argument der Funktion <code>ggplot()</code> ist der <code>allbus2018</code>. Aufbauend definieren wir in der Funktion <code>aes()</code>, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable <code>im19</code> anstreben, müssen wir nur das Argument <code>x =</code> spezifizieren. Anschließend wird über das Argument <code>weight =</code> eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator <code>+</code> fügen wir nun weitere Schichte hinzu. Als erstes “Layer” fügen wir über die Funktion <code>geom_bar</code> das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument <code>stat = "count"</code> einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit <code>fill =</code> und das Auslassen fehlender Werte über <code>na.rm = T</code>. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion <code>labs()</code> ermöglicht alle Achsen frei zu Beschriften. Fertig!</p>
+<p>Grundlage unserer Grafik und damit erstes Argument der Funktion <code>ggplot()</code> ist der <code>allbus2018</code>. Aufbauend definieren wir in der Funktion <code>aes()</code>, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable <code>im19</code> anstreben, müssen wir nur das Argument <code>x =</code> spezifizieren. Anschließend wird über das Argument <code>weight =</code> eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator <code>+</code> fügen wir nun weitere Schichte hinzu. Als erstes “Layer” fügen wir über die Funktion <code>geom_bar</code> das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument <code>stat = "count"</code> einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit <code>fill =</code> und das Auslassen fehlender Werte über `<code>. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion</code>labs()` ermöglicht alle Achsen frei zu Beschriften. Fertig!</p>
 <div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="grafiken-erstellen.html#cb225-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
-<span id="cb225-2"><a href="grafiken-erstellen.html#cb225-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> im19, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
-<span id="cb225-3"><a href="grafiken-erstellen.html#cb225-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">na.rm =</span> T) <span class="sc">+</span></span>
-<span id="cb225-4"><a href="grafiken-erstellen.html#cb225-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Anzahl&quot;</span>, <span class="at">title =</span> <span class="st">&quot;Häufigkeitsverteilung der Variable im19&quot;</span>)</span></code></pre></div>
+<span id="cb225-2"><a href="grafiken-erstellen.html#cb225-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(im19) <span class="sc">%&gt;%</span> </span>
+<span id="cb225-3"><a href="grafiken-erstellen.html#cb225-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> im19, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb225-4"><a href="grafiken-erstellen.html#cb225-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb225-5"><a href="grafiken-erstellen.html#cb225-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Anzahl&quot;</span>, <span class="at">title =</span> <span class="st">&quot;Häufigkeitsverteilung der Variable im19&quot;</span>)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-157-1.png" width="672" /></p>
 <p>Die folgende Grafik erweitert unsere Fähigkeiten zusätzlich um vier Punkte. Durch die nahtlose Integration der Funktionen des <code>tidyverse</code> und <code>strengejacke</code> ist es uns möglich innerhalb eines Objekts sowohl die Daten zu manipulieren, als auch diese in die nachfolgende Grafik einzubeziehen. So war es in unserem Beispiel von Nöten die Grupperungsvariable <code>sex</code> (Geschlecht) erst zu einem Faktor zu konvertieren, um sie nachstehend nutzen zu können - Funktion <code>to_label()</code>. Weiterhin haben wir das Nettoeinkommen der Befragten mit dem Argument <code>y =</code> auf der y-Achse abgebildet und das Geschlecht der Befragten über das Argument <code>colour =</code> als Gruppierungvariable gewählt. Damit erlaubt uns <code>ggplot()</code> die einzelnen Datenpunkte farblich hervorzuheben, sowie über die Funktion <code>stat_summary()</code> einen Mittelwertvergleich zwischen beiden Gruppen über ein Liniendiagramm abzubilden.</p>
 <div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="grafiken-erstellen.html#cb226-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb226-2"><a href="grafiken-erstellen.html#cb226-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb226-3"><a href="grafiken-erstellen.html#cb226-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> inc, <span class="at">colour =</span> sex, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
-<span id="cb226-4"><a href="grafiken-erstellen.html#cb226-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">na.rm =</span> T, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb226-5"><a href="grafiken-erstellen.html#cb226-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">na.rm =</span> T, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb226-6"><a href="grafiken-erstellen.html#cb226-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Alter&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Einkommen&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;Geschlecht&quot;</span>, </span>
-<span id="cb226-7"><a href="grafiken-erstellen.html#cb226-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Mittleres Einkommen nach Alter und Geschlecht&quot;</span>)</span></code></pre></div>
+<span id="cb226-3"><a href="grafiken-erstellen.html#cb226-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, inc, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb226-4"><a href="grafiken-erstellen.html#cb226-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> inc, <span class="at">colour =</span> sex, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb226-5"><a href="grafiken-erstellen.html#cb226-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb226-6"><a href="grafiken-erstellen.html#cb226-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">size =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb226-7"><a href="grafiken-erstellen.html#cb226-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Alter&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Einkommen&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;Geschlecht&quot;</span>, </span>
+<span id="cb226-8"><a href="grafiken-erstellen.html#cb226-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">&quot;Mittleres Einkommen nach Alter und Geschlecht&quot;</span>)</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-158-1.png" width="672" /></p>
 <p>Nun wollen wir uns die einzelnen Schritte nochmal im Detail ansehen.</p>
 <div id="schritt-1-plot-objekt-erstellen" class="section level2" number="6.1">
@@ -398,13 +404,14 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 <p><strong>Wichtig!</strong> Wenn wir die Funktion <code>aes()</code> innerhalb der Funktion <code>ggplot()</code> definieren, gelten sie für alle Schichten, d.h. für alle Elemente der Grafik. Wir können später die “mappings” auch für jede Schicht einzeln definieren und damit auf verschiedene Datensätze zugreifen, oder andere Variablen verwenden.</p>
 <div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="grafiken-erstellen.html#cb228-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb228-2"><a href="grafiken-erstellen.html#cb228-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb228-3"><a href="grafiken-erstellen.html#cb228-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
-<span id="cb228-4"><a href="grafiken-erstellen.html#cb228-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> sex,</span>
-<span id="cb228-5"><a href="grafiken-erstellen.html#cb228-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> inc,</span>
-<span id="cb228-6"><a href="grafiken-erstellen.html#cb228-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight =</span> wghtpew,</span>
-<span id="cb228-7"><a href="grafiken-erstellen.html#cb228-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> sex,</span>
-<span id="cb228-8"><a href="grafiken-erstellen.html#cb228-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> sex</span>
-<span id="cb228-9"><a href="grafiken-erstellen.html#cb228-9" aria-hidden="true" tabindex="-1"></a>    ))</span></code></pre></div>
+<span id="cb228-3"><a href="grafiken-erstellen.html#cb228-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb228-4"><a href="grafiken-erstellen.html#cb228-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(</span>
+<span id="cb228-5"><a href="grafiken-erstellen.html#cb228-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> sex,</span>
+<span id="cb228-6"><a href="grafiken-erstellen.html#cb228-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> inc,</span>
+<span id="cb228-7"><a href="grafiken-erstellen.html#cb228-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">weight =</span> wghtpew,</span>
+<span id="cb228-8"><a href="grafiken-erstellen.html#cb228-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> sex,</span>
+<span id="cb228-9"><a href="grafiken-erstellen.html#cb228-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> sex</span>
+<span id="cb228-10"><a href="grafiken-erstellen.html#cb228-10" aria-hidden="true" tabindex="-1"></a>    ))</span></code></pre></div>
 <p><code>g</code> ist damit ein “leeres” Plot-Objekt, dass noch nichts anzeigt, da wir noch keine “Layer” definiert haben. Das Objekt ist damit ein <code>ggplot2</code>-Objekt, welches im R-Studio Fenster <code>Plots</code> ausgegeben werden kann. Wir sehen folglich ein Grafikgerüst mit der richtigen Achsenzuweisung.</p>
 <div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb229-1"><a href="grafiken-erstellen.html#cb229-1" aria-hidden="true" tabindex="-1"></a>g</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-162-1.png" width="672" /></p>
@@ -415,88 +422,211 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 <div id="punktdiagramm" class="section level3" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Punktdiagramm</h3>
 <p>Als erstes möchten wir die einzelnen Beobachtungen als Datenpunkte abgetragen haben. Hierbei können wir entweder unsere Ausgangssytax optimieren, oder das Objekt <code>g</code> einfach erweitern.</p>
-<p><strong>Anmerkung:</strong> Mit dem Argument <code>na.rm = T</code> werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung.</p>
+<p><strong>Anmerkung:</strong> Mit dem Argument `` werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung.</p>
 <div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="grafiken-erstellen.html#cb230-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ausgangssyntax optimieren</span></span>
 <span id="cb230-2"><a href="grafiken-erstellen.html#cb230-2" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb230-3"><a href="grafiken-erstellen.html#cb230-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb230-4"><a href="grafiken-erstellen.html#cb230-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> inc, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> sex, <span class="at">colour =</span> sex)) <span class="sc">+</span></span>
-<span id="cb230-5"><a href="grafiken-erstellen.html#cb230-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb230-4"><a href="grafiken-erstellen.html#cb230-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb230-5"><a href="grafiken-erstellen.html#cb230-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> inc, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> sex, <span class="at">colour =</span> sex)) <span class="sc">+</span></span>
+<span id="cb230-6"><a href="grafiken-erstellen.html#cb230-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
 <div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="grafiken-erstellen.html#cb231-1" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb231-2"><a href="grafiken-erstellen.html#cb231-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Objekt erweitern</span></span>
 <span id="cb231-3"><a href="grafiken-erstellen.html#cb231-3" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb231-4"><a href="grafiken-erstellen.html#cb231-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb231-4"><a href="grafiken-erstellen.html#cb231-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-163-2.png" width="672" /></p>
 <p>Wollen wir das Überlagern der Datenpunkte (overplotting) verhindern, können wir auch auf die Funktion <code>geom_jitter()</code> zurückgreifen. In Anwendung werden uns die Punkte nebeneinander gezeigt.</p>
 <div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="grafiken-erstellen.html#cb232-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb232-2"><a href="grafiken-erstellen.html#cb232-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb232-2"><a href="grafiken-erstellen.html#cb232-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-164-1.png" width="672" /></p>
 <p>Mit dem Argument <code>width =</code> können wir zusätzlich bestimmen, wie breit die Streuung der Punkte sein soll.</p>
 <div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="grafiken-erstellen.html#cb233-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb233-2"><a href="grafiken-erstellen.html#cb233-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb233-2"><a href="grafiken-erstellen.html#cb233-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, )</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-165-1.png" width="672" /></p>
 <p>Weitere Argumente sind <code>size =</code> für die größe der Punkte und <code>alpha =</code> zur Bestimmung der Transparenz. Zudem lassen sich wie gehabt im Fenster <code>Help</code> über den Befehl <code>?geom_jitter</code> in der Konsole weitere Argumente einsehen.</p>
 <div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="grafiken-erstellen.html#cb234-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb234-2"><a href="grafiken-erstellen.html#cb234-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb234-2"><a href="grafiken-erstellen.html#cb234-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, )</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-166-1.png" width="672" /></p>
 </div>
 <div id="zentrale-tendenz-und-streuung-abbilden" class="section level3" number="6.3.2">
 <h3><span class="header-section-number">6.3.2</span> Zentrale Tendenz und Streuung abbilden</h3>
 <p>Zur Darstellung der zentralen Tendenz und Streuung gibt uns <code>ggplot2</code> zusätzliche Schichten an die Hand. Genannt seien hier <code>geom_boxplot()</code> zur Darstellung von Boxplot-Diagrammen und <code>geom_violin()</code> für Violin-Diagramme.</p>
 <div class="sourceCode" id="cb235"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb235-1"><a href="grafiken-erstellen.html#cb235-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb235-2"><a href="grafiken-erstellen.html#cb235-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb235-2"><a href="grafiken-erstellen.html#cb235-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-167-1.png" width="672" /></p>
 <p>In einem Boxplot wird der Median abgetragen, d.h. das Rechteck repräsentiert die mittleren 50% und die Striche (“whiskers”) zeigen den 1,5 * IQR (Interquantilbereich). Die einzelnen Punkte stellen Ausreisser dar.</p>
 <p>Wollen wir den Median sehen, müssen wir das Argument <code>fill = sex</code> weglassen.</p>
 <div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="grafiken-erstellen.html#cb236-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb236-2"><a href="grafiken-erstellen.html#cb236-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb236-3"><a href="grafiken-erstellen.html#cb236-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
-<span id="cb236-4"><a href="grafiken-erstellen.html#cb236-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
-<span id="cb236-5"><a href="grafiken-erstellen.html#cb236-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
-<span id="cb236-6"><a href="grafiken-erstellen.html#cb236-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">colour =</span> sex))</span>
-<span id="cb236-7"><a href="grafiken-erstellen.html#cb236-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb236-8"><a href="grafiken-erstellen.html#cb236-8" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb236-9"><a href="grafiken-erstellen.html#cb236-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb236-3"><a href="grafiken-erstellen.html#cb236-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb236-4"><a href="grafiken-erstellen.html#cb236-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb236-5"><a href="grafiken-erstellen.html#cb236-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb236-6"><a href="grafiken-erstellen.html#cb236-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
+<span id="cb236-7"><a href="grafiken-erstellen.html#cb236-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">colour =</span> sex))</span>
+<span id="cb236-8"><a href="grafiken-erstellen.html#cb236-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb236-9"><a href="grafiken-erstellen.html#cb236-9" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb236-10"><a href="grafiken-erstellen.html#cb236-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-168-1.png" width="672" /></p>
 <p>Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht die Quantile, sondern ein “kernel density estimate” zeigen - d.h. eine Abbildung der Kerndichte. Hier bietet sich das Argument <code>fill = sex</code> zudem ideal an.</p>
 <div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="grafiken-erstellen.html#cb237-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb237-2"><a href="grafiken-erstellen.html#cb237-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb237-3"><a href="grafiken-erstellen.html#cb237-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
-<span id="cb237-4"><a href="grafiken-erstellen.html#cb237-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
-<span id="cb237-5"><a href="grafiken-erstellen.html#cb237-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
-<span id="cb237-6"><a href="grafiken-erstellen.html#cb237-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fill =</span> sex))</span>
-<span id="cb237-7"><a href="grafiken-erstellen.html#cb237-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb237-8"><a href="grafiken-erstellen.html#cb237-8" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb237-9"><a href="grafiken-erstellen.html#cb237-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb237-3"><a href="grafiken-erstellen.html#cb237-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb237-4"><a href="grafiken-erstellen.html#cb237-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb237-5"><a href="grafiken-erstellen.html#cb237-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb237-6"><a href="grafiken-erstellen.html#cb237-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew,</span>
+<span id="cb237-7"><a href="grafiken-erstellen.html#cb237-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fill =</span> sex))</span>
+<span id="cb237-8"><a href="grafiken-erstellen.html#cb237-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb237-9"><a href="grafiken-erstellen.html#cb237-9" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
+<span id="cb237-10"><a href="grafiken-erstellen.html#cb237-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>()</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-169-1.png" width="672" /></p>
 <p>Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, sollten wir das mapping entsprechend anpassen.</p>
 <div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="grafiken-erstellen.html#cb238-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ausgang</span></span>
 <span id="cb238-2"><a href="grafiken-erstellen.html#cb238-2" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb238-3"><a href="grafiken-erstellen.html#cb238-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
-<span id="cb238-4"><a href="grafiken-erstellen.html#cb238-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
-<span id="cb238-5"><a href="grafiken-erstellen.html#cb238-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
-<span id="cb238-6"><a href="grafiken-erstellen.html#cb238-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew))</span></code></pre></div>
+<span id="cb238-4"><a href="grafiken-erstellen.html#cb238-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb238-5"><a href="grafiken-erstellen.html#cb238-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> sex,</span>
+<span id="cb238-6"><a href="grafiken-erstellen.html#cb238-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> inc,</span>
+<span id="cb238-7"><a href="grafiken-erstellen.html#cb238-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weight =</span> wghtpew))</span></code></pre></div>
 <div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="grafiken-erstellen.html#cb239-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
 <span id="cb239-2"><a href="grafiken-erstellen.html#cb239-2" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb239-3"><a href="grafiken-erstellen.html#cb239-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">colour =</span> sex), <span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb239-3"><a href="grafiken-erstellen.html#cb239-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">colour =</span> sex), )</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-171-1.png" width="672" /></p>
 <div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="grafiken-erstellen.html#cb240-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Violin</span></span>
 <span id="cb240-2"><a href="grafiken-erstellen.html#cb240-2" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb240-3"><a href="grafiken-erstellen.html#cb240-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sex), <span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb240-3"><a href="grafiken-erstellen.html#cb240-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sex), )</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-172-1.png" width="672" /></p>
 </div>
 <div id="mehrere-schichten-kombinieren" class="section level3" number="6.3.3">
 <h3><span class="header-section-number">6.3.3</span> Mehrere Schichten kombinieren</h3>
 <p>So ist es uns auch möglich mehrere “Layer” zu kombinieren. So müssen wir lediglich mehrere <code>geom_</code> Funktionen mit dem <code>+</code> Operator verbinden:</p>
 <div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="grafiken-erstellen.html#cb241-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span></span>
-<span id="cb241-2"><a href="grafiken-erstellen.html#cb241-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sex), <span class="at">na.rm =</span> T) <span class="sc">+</span></span>
-<span id="cb241-3"><a href="grafiken-erstellen.html#cb241-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">colour =</span> sex), <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">width =</span> <span class="fl">0.4</span>, <span class="at">na.rm =</span> T)</span></code></pre></div>
+<span id="cb241-2"><a href="grafiken-erstellen.html#cb241-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sex), ) <span class="sc">+</span></span>
+<span id="cb241-3"><a href="grafiken-erstellen.html#cb241-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">colour =</span> sex), <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">width =</span> <span class="fl">0.4</span>, )</span></code></pre></div>
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-173-1.png" width="672" /></p>
 </div>
 </div>
 <div id="verschiedene-grafiken-für-verschiedene-datentypen" class="section level2" number="6.4">
 <h2><span class="header-section-number">6.4</span> Verschiedene Grafiken für verschiedene Datentypen</h2>
+<p>In diesem Kapitel wollen wir uns eine Übersicht über die diversen <code>Geoms</code> in <code>ggplot2</code> für verschiedene Kombinationen von Variablen ansehen. So können wir entweder eine Variable auf der x-Achse oder y-Achse darstellen oder jeweils eine Variable auf der x-Achse und y-Achse. Diese Variablen können sowohl kontinuierlich (metrisch) oder kategorial (nominal/ordinal) sein.</p>
+<p><strong>Wichtig!</strong> Wir können in diesem Kapitel nur eine spezifische Auswahl der möglichen <code>Geoms</code> betrachten, da <code>ggplot2</code> sehr umfangreich ist. Für eine umfassende Dokumentation aller Funktionen siehe: <a href="https://ggplot2.tidyverse.org/reference/">ggplot2 Dokumentation</a>. Unser Ziel ist lediglich eine Befähigung zum eigenverantwortlichen Arbeiten und Problemlösung herzustellen und den kreativen Prozess der Datenvisualisierung einzuleiten.</p>
+<div id="eine-variable" class="section level3" number="6.4.1">
+<h3><span class="header-section-number">6.4.1</span> Eine Variable</h3>
+<p>Sofern wir nur eine Variable auf der x-Achse abtragen möchten, müssen wir dennoch Werte auf der y-Achse definieren. In diesem Zusammenhang wird es sich mehrheitlich um z.B. Häufigkeitsverteilungen etc. handeln.</p>
+<div id="kategoriale-variablen" class="section level4" number="6.4.1.1">
+<h4><span class="header-section-number">6.4.1.1</span> Kategoriale Variablen</h4>
+<p>Handelt es sich bei unserer Analyse um eine kategoriale Variable, dann verwenden wir oft einen <em>bar chart bzw. bar graph</em>. Hierbei wird die betreffende Variable anhand eines Rechtecks auf der x-Achse abgetragen, wobei es sich häufig um absolute bzw. relative Häufigkeitsverteilungen handelt. Die Funktion, die hierfür verwendet wird, heißt <code>geom_bar()</code>.</p>
+<p>Als Beispiel ziehen wir die Alterskategorien der Befragten heran.</p>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="grafiken-erstellen.html#cb242-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb242-2"><a href="grafiken-erstellen.html#cb242-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec) <span class="sc">%&gt;%</span> </span>
+<span id="cb242-3"><a href="grafiken-erstellen.html#cb242-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(agec) <span class="sc">%&gt;%</span> </span>
+<span id="cb242-4"><a href="grafiken-erstellen.html#cb242-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agec, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb242-5"><a href="grafiken-erstellen.html#cb242-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>) </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-174-1.png" width="672" /></p>
+<p><strong>Merke:</strong> Sofern wir <code>fill = "steelblue", colour = "red"</code> nicht innerhalb der <code>aes()</code> Funktion verwenden, dann handelt es sich nicht um Gruppierungsvariablen, sondern ausschließlich um Farbgebungen der Grafikobjekte. So färben wir mit <code>fill = "steelblue"</code> lediglich die Balken in Stahlblau ein. Eine Übersicht über die verschiedenen Farbvarianten erhalten wir mit der Funktion <code>colours()</code>. Es gibt 657, wenn gleich nur Zwanzig im folgenden Output dargestellt werden.</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="grafiken-erstellen.html#cb243-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colours</span>() <span class="sc">%&gt;%</span> <span class="fu">sample</span>(<span class="dv">20</span>)</span></code></pre></div>
+<pre><code>##  [1] &quot;navajowhite&quot;     &quot;mediumorchid3&quot;   &quot;orangered&quot;       &quot;lightblue&quot;      
+##  [5] &quot;antiquewhite3&quot;   &quot;antiquewhite2&quot;   &quot;gray60&quot;          &quot;gray97&quot;         
+##  [9] &quot;gray36&quot;          &quot;aliceblue&quot;       &quot;grey86&quot;          &quot;orangered1&quot;     
+## [13] &quot;darkolivegreen2&quot; &quot;gray&quot;            &quot;gray3&quot;           &quot;lightyellow1&quot;   
+## [17] &quot;sienna&quot;          &quot;hotpink2&quot;        &quot;gray88&quot;          &quot;grey73&quot;</code></pre>
+<p>Im nächsten Schritt wollen wir unser Balkendiagramm nicht mit absoluten Werten ausgeben, sondern mit relativen Häufigkeiten. Hierzu ist es wichtig zu wissen, dass in der vorherigen Grafik ein entscheidendes Argument mit Standardwert eingegangen ist, das wir nun anpassen müssen. So fügen wir der vorherigen Grafik die Argumente <code>aes(y = ..count..)</code> hinzu. Wir definieren also auf der y-Achse eine Variable, die unmittelbar aus der x-Achse errechnet werden soll. Mit dem Befehl <code>..count..</code> handelt es sich um eine absolute Auszählung der Häufigkeiten. Wollen wir eine relative Häufigkeitsverteilung verwenden wir den Befehl <code>aes(y = ..prop..)</code>, also eine proportionale Auszählung. Zudem müssen wir noch definieren aus welcher bzw. wie vielen Gruppe/n die Werte relational geschöpft werden sollen. Dies geschieht über den Befehl <code>aes(y = ..prop.., group = 1)</code>. Damit werden die Werte relational bzw. proportinal aus einer Gruppe gebildet und bilden damit Prozentwerte zu 100% ab (die Darstellungsform auf der y-Achse lernen wir in den kommenden Kapiteln)</p>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="grafiken-erstellen.html#cb245-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb245-2"><a href="grafiken-erstellen.html#cb245-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec) <span class="sc">%&gt;%</span> </span>
+<span id="cb245-3"><a href="grafiken-erstellen.html#cb245-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(agec) <span class="sc">%&gt;%</span> </span>
+<span id="cb245-4"><a href="grafiken-erstellen.html#cb245-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agec, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb245-5"><a href="grafiken-erstellen.html#cb245-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..prop.., <span class="at">group =</span> <span class="dv">1</span>), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>) </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-176-1.png" width="672" /></p>
+<p>Weiterhin können wir zusätzliche Gruppierungvariablen angeben, anhand derer die Balken farblich kodiert werden. Im gewählten Beispiel: Geschlecht.</p>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="grafiken-erstellen.html#cb246-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb246-2"><a href="grafiken-erstellen.html#cb246-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb246-3"><a href="grafiken-erstellen.html#cb246-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(agec, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb246-4"><a href="grafiken-erstellen.html#cb246-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agec, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb246-5"><a href="grafiken-erstellen.html#cb246-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..prop.., <span class="at">group =</span> sex)) </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
+<p>Standardmäßig kreiert <code>ggplot2</code> einen <em>stacked</em> Bar Chart, die Balken werden also “gestapelt.” Wollen wir hingegen die Balken nebeneinander stehen sehen, können wir das Argument <code>position = "dodge"</code> verwenden.</p>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="grafiken-erstellen.html#cb247-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb247-2"><a href="grafiken-erstellen.html#cb247-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb247-3"><a href="grafiken-erstellen.html#cb247-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(agec, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb247-4"><a href="grafiken-erstellen.html#cb247-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agec, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb247-5"><a href="grafiken-erstellen.html#cb247-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..prop.., <span class="at">group =</span> sex), <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>) </span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
+<p>Kontinuierliche Variablen</p>
+<p>Für kategoriale Variablen bieten sich eine Vielzahl von Grafikobjekten an. Beginnen möchten wir mit dem Histogramm, welches die Verteilung einer numerischen Variable idealen abträgt. Dazu werden die Werte einer Variable in diskrete Intervalle (<code>bins</code>) eingeteilt. Auf der y-Achse werden dazu, analog zu einem Bar Chart, die Häufigkeiten in den Intervallen abgebildet. Von besonderer Bedeutung ist hier die Bestimmung der Intervallgrößen (<code>binwidth</code>), da hierüber die Verteilung maßgeblich beeinflusst wird - die Grundeinstellung liegt bei <code>bins = 30</code>.</p>
+<p>Hier ein Beispiel anhand der Altersverteilung in unserer Stichprobe mit den Grundeinstellungen.</p>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="grafiken-erstellen.html#cb248-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb248-2"><a href="grafiken-erstellen.html#cb248-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb248-3"><a href="grafiken-erstellen.html#cb248-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb248-4"><a href="grafiken-erstellen.html#cb248-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">colour =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
+<p>Wir bestimmen die <code>binwidth</code> selbst. Wir legen eine Altersspanne von 2 Jahren pro Balken fest - <code>binwidth = 1</code>.</p>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="grafiken-erstellen.html#cb250-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb250-2"><a href="grafiken-erstellen.html#cb250-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb250-3"><a href="grafiken-erstellen.html#cb250-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb250-4"><a href="grafiken-erstellen.html#cb250-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-180-1.png" width="672" /></p>
+<p>Die Bestimmung der <code>binwidth</code> sollte natürlich immer von der Skala der Variable abhängen und damit weder zu fein noch zu grob ausfallen.</p>
+<p>Im nächsten Schritt wollen wir auf der y-Achse die relativen Werte abgetragen sehen. Hierfür verwenden wir das Argument <code>aes(y = )</code> mit der zugehörigen Funktion <code>..density..</code>, damit <code>geom_histogram(aes(y = ..density..))</code>.</p>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="grafiken-erstellen.html#cb251-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb251-2"><a href="grafiken-erstellen.html#cb251-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb251-3"><a href="grafiken-erstellen.html#cb251-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb251-4"><a href="grafiken-erstellen.html#cb251-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;black&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
+<p>Zudem lassen sich auch in Histogrammen Gruppierungsvariablen verwenden.</p>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="grafiken-erstellen.html#cb252-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb252-2"><a href="grafiken-erstellen.html#cb252-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb252-3"><a href="grafiken-erstellen.html#cb252-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb252-4"><a href="grafiken-erstellen.html#cb252-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb252-5"><a href="grafiken-erstellen.html#cb252-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density.., <span class="at">fill =</span> sex), <span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">colour =</span> <span class="st">&quot;black&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-182-1.png" width="672" /></p>
+<p>Wir können die Balken auch über das Argument <code>position =</code> übereinander legen mit <code>position = "identity"</code>.</p>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="grafiken-erstellen.html#cb253-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb253-2"><a href="grafiken-erstellen.html#cb253-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb253-3"><a href="grafiken-erstellen.html#cb253-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb253-4"><a href="grafiken-erstellen.html#cb253-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb253-5"><a href="grafiken-erstellen.html#cb253-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density.., <span class="at">fill =</span> sex), <span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">position =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-183-1.png" width="672" /></p>
+<p>Oder sie nebeneinander behalten <code>position = "dodge"</code>.</p>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="grafiken-erstellen.html#cb254-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb254-2"><a href="grafiken-erstellen.html#cb254-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age) <span class="sc">%&gt;%</span> </span>
+<span id="cb254-3"><a href="grafiken-erstellen.html#cb254-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb254-4"><a href="grafiken-erstellen.html#cb254-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb254-5"><a href="grafiken-erstellen.html#cb254-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density.., <span class="at">fill =</span> sex), <span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-184-1.png" width="672" /></p>
+</div>
+</div>
+<div id="zwei-variablen" class="section level3" number="6.4.2">
+<h3><span class="header-section-number">6.4.2</span> Zwei Variablen</h3>
+<p>Jetzt wollen wir zwei Variablen auf der x-Achse und y-Achse abbilden. Auch hier hängen die Möglichkeiten der <code>geoms</code> vom Datentyp der Variable ab.</p>
+<div id="x-und-y-kategorial" class="section level4" number="6.4.2.1">
+<h4><span class="header-section-number">6.4.2.1</span> X und Y kategorial</h4>
+<p>Diese Konbination der Datentypen hält recht wenige Möglichkeiten der grafischen Aufbereitung bereit. Legitim ist in jedem Fall der grafische Abtrag der gemeinsamen Häufigkeiten. Hierfür gibt es die Funktion <code>geom_count()</code>.</p>
+<p>Als interessantes Beispiel dient die gemeinsame Häufigkeit zwischen Alterskategorie und Bildungsabschluss.</p>
+<div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="grafiken-erstellen.html#cb255-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb255-2"><a href="grafiken-erstellen.html#cb255-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb255-3"><a href="grafiken-erstellen.html#cb255-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(agec, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb255-4"><a href="grafiken-erstellen.html#cb255-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agec =</span> <span class="fu">str_remove</span>(agec, <span class="st">&quot;JAHRE&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb255-5"><a href="grafiken-erstellen.html#cb255-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> agec, <span class="at">y =</span> educ, <span class="at">weight =</span> wghtpew)) <span class="sc">+</span></span>
+<span id="cb255-6"><a href="grafiken-erstellen.html#cb255-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_count</span>()</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
+<p>Die gemeinsamen Häufigkeiten werden durch <code>geom_count</code> vor allem über den Durchmesser der Punkte dargestellt (vgl. Funktion <code>crosstab()</code>).</p>
+</div>
+<div id="x-kategorial-und-y-kontinuierlich" class="section level4" number="6.4.2.2">
+<h4><span class="header-section-number">6.4.2.2</span> X kategorial und Y kontinuierlich</h4>
+<p>Wenn eine der Variablen kategorial ist, dann können wir diese statt als Gruppierungsvariable auf der x-Achse verwenden. Gute Beispiele waren hierfür die in Kapitel 6.3.2 gezeigten Box- und Violindiagramme. Zudem können wir auch die Funktion <code>geom_col()</code> für zwei Variablen nutzen. Diese Funktion ist eng mit <code>geom_bar()</code> verwandt, wenngleich sie keine Aggregation der Daten über <code>stat = "count"</code> vornimmt, sondern nativ zwei Variablen zulässt und als Grundeinstellung mit <code>stat = identity</code> arbeitet. Die Variable auf der y-Achse bildet entsprechend alle Beobachtungen in den Kategorien auf der x-Achse ab.</p>
+<p>Als Beispiel dient uns das Geschlecht der Befragten und ihr individuelles Nettoeinkommen.</p>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="grafiken-erstellen.html#cb256-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb256-2"><a href="grafiken-erstellen.html#cb256-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb256-3"><a href="grafiken-erstellen.html#cb256-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(sex, inc) <span class="sc">%&gt;%</span> </span>
+<span id="cb256-4"><a href="grafiken-erstellen.html#cb256-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sex, <span class="at">y =</span> inc, <span class="at">weight =</span> wghtpew, <span class="at">fill =</span> inc)) <span class="sc">+</span></span>
+<span id="cb256-5"><a href="grafiken-erstellen.html#cb256-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-186-1.png" width="672" /></p>
+</div>
+<div id="x-und-y-kontinuierlich" class="section level4" number="6.4.2.3">
+<h4><span class="header-section-number">6.4.2.3</span> X und Y kontinuierlich</h4>
 
+</div>
+</div>
 </div>
 </div>
             </section>
