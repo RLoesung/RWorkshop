@@ -492,9 +492,140 @@ In Anbetracht der erklärten Varianz in Verhältnis zur Komplexität der Regress
 
 ## Facets
 
+Nun wollen wir uns verschiedene Möglichkeiten ansehen, um Zusammenhänge besser hervorheben oder gut sichtbar zu machen. 
 
+So kommt es häufig vor, dass Gruppierungsvariablen mehr als drei oder vier Kategorien besitzen. Folgen wir unseren bisherigen Darstellungstechniken ist es uns zwar möglich Farben/Formen/Linien für die Kategorien der Gruppierungsvariable anzupassen, gleichwohl wird es dann schnell unübersichtlich.
 
+Beispielhaft wollen wir uns den Zusammenhang zwischen (berufstätigen) Alter und individuellem Nettoeinkommen nach Schulabschlüssen ansehen.
 
+```{r}
+allbus2018 %>% 
+  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
+  set_na(educ, na = c(6,7)) %>% 
+  to_label(educ) %>% 
+  drop_na(age, inc, educ) %>% 
+  group_by(age, educ) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm, colour = educ)) +
+  geom_point() +
+  geom_line()
+```
+
+Wir könne nur sehr schwer die Zusammenhänge erkennen. Ein geeignetes Instrument für dieses Problem sind die Funktionen `facet_wrap()` und `facet_grid()`. 
+
+Mit `facet_wrap()` erstellen wir eine Grafik für jede Kategorie der Gruppierungsvariable.
+
+```{r}
+allbus2018 %>% 
+  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
+  set_na(educ, na = c(6,7)) %>% 
+  to_label(educ) %>% 
+  drop_na(age, inc, educ) %>% 
+  group_by(age, educ) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm, colour = educ)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~ educ) +
+  theme(legend.position="none")
+```
+
+Haben wir zwei Gruppierungsvriablen nutzen wir `facet_grid()`.
+
+```{r}
+allbus2018 %>% 
+  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
+  set_na(educ, na = c(6,7)) %>% 
+  to_label(educ, sex) %>% 
+  drop_na(age, inc, educ) %>% 
+  group_by(age, educ) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm, colour = educ)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(sex ~ educ) +
+  theme(legend.position="none")
+```
+
+Hier werden die Stufen von `sex` in den Zeilen dargestellt, die Stufen von `educ` in den Spalten.
+
+Wenn wir die Gruppierung in den Zeilen haben wollen, schreiben wir facet_grid(Gruppierungsvariable ~ .), wenn sie in den Spalten wollen, schreiben wir facet_grid(. ~ Gruppierungsvariable). Der Punkt . bedeutet hier, dass wir für die Zeilen/Spalten keine Gruppierungsvariable verwenden.
+
+```{r}
+allbus2018 %>% 
+  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
+  set_na(educ, na = c(6,7)) %>% 
+  to_label(educ, sex) %>% 
+  drop_na(age, inc, educ) %>% 
+  group_by(age, educ) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm, colour = educ)) +
+  geom_point() +
+  geom_line() +
+  facet_grid(sex ~ .) +
+  theme(legend.position="none")
+```
+
+## Farben und Themes
+
+Nachstehend wollen wir uns ansehen, wie wir Farben und Hintergründe unserer Grafiken anpassen können. Bisher hat ggplot2 automatisch für uns Farben gewählt, wenn wir Farben für eine Gruppierung verlangt haben. Die Standard Farbpalette ist jedoch für Farbenblinde äusserst schlecht geeignet. Es gibt viele Farbpaletten, welche wir verwenden könnten.
+
+So können wir auch eigene Farbpaletten definieren, die auch für Farbblinde geeignet sind - in unserem Beispiel acht Farben für maximal acht Kategorien.
+
+```{r}
+farben <- c("#000000", "#E69F00",
+            "#56B4E9", "#009E73", 
+            "#F0E442", "#0072B2", 
+            "#D55E00", "#CC79A7")
+```
+
+Zur Umsetzungen brauchen wir die Funktionen `sclale_fill_manual()` bei Formen und `scale_colour_manual()` bei Punkten und Linien mit dem Argument `value =`.
+
+Als Beispiel nutzen wir wieder das Beispiel Alter und wöchentlicher Arbeitszeit zwischen den Geschlechtern.
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = farben)
+```
+
+Wir können die Farben auch gleich per Hand bestimmen. 
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = c("green", "black"))
+```
+
+Hintergründe lassen sich zudem mit der Funktion `theme()` anpassen. Eine vordefinierte Auswahl findet sich unter [complete themes - ggplot2](https://ggplot2.tidyverse.org/reference/ggtheme.html), sowie eine Anleitung zur selbständigen Anpassung [Modify components of a theme - ggplot2](https://ggplot2.tidyverse.org/reference/theme.html). Hiermit können wir auch bestimmen, welche Komponenten wo und wie gezeigt werden sollen - z.B. theme(legend.position="none").
+
+Zwei kleine Beispiele.
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = farben) +
+  theme_bw()
+```
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = farben) +
+  theme_classic()
+```
 
 
 
