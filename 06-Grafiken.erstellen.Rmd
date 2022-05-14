@@ -377,6 +377,130 @@ allbus2018 %>%
 
 #### X und Y kontinuierlich
 
+**Scatterplot**
+
+Wenn beide Variablen kontinuierlich sind, haben wir eine ganze Reihe an Möglichkeiten der Zusammenhang zwischen beiden abzubilden. Nachstehend wollen wir uns exemplarisch mit der Darstellung eines "Scatterplots" und Liniendiagramms beschäftigen. Hierfür verwenden wir die Funktionen `geom_point()` bzw. `geom_line()`.
+
+Als Beispiel wollen wir den Zusammenhang zwischen Alter und Arbeitsstunden pro Woche betrachten. 
+
+```{r}
+allbus2018 %>% 
+  drop_na(age, dw15) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew)) +
+  geom_point()
+```
+
+Im nächsten Schritt wollen wir die Daten grafisch aufbereiten und eine Gruppierungsvariable einbringen, um noch tiefer in die Zusammenhänge einzutauchen. Die Gruppierung nehmen wir hier wieder anhand des Geschlechts vor. Zudem passen wir die Größe über das Argument `size =` und die Transparenz über `alpha =` an. Auch die Form der Punkte kann bei der Visualisierung von Zusammenhängen wichtig sein. Diese passen wir über das Argument `shape =` in der Funktion `aes()` an.
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8)
+```
+
+Wir können unschwer ein auffächern der beiden Geschlechtergruppen hinsichtlich der wöchentlichen Arbeitszeit erkennen, die wir in einem zweiten Schritt durch eine Mittellinie verdeutlichen möchten. Hierfür nutzen wir die Funktion `stat_summary()`, die uns über ihre Argumente `fun =` für "function" und `geom =` die Zusammenfassung von Daten erlaubt. 
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.4) +
+  stat_summary(fun = "mean", geom = "line", size = 1) 
+```
+
+**Liniendiagramm**
+
+Mit der Funktion `geom_line()` könne wir auch Liniendiagramme bilden. Diese Funktion bietet sich vor allem bei aggregierten Daten an, da die sinnvolle Darstellung eines Liniendiagramms einen spezifischen y-Wert zu jedem x-Wert verlangt. Unter dieser Voraussetzung sind `geom_line()` und `stat_summary()` in ihrer Darstellung äquivalent.
+
+Als Beispiel soll uns wieder der Zusammenhang zwischen Alter und wöchentlicher Arbeitszeit dienen.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age, inc) %>% 
+  group_by(age) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm)) +
+  geom_line()
+```
+
+Wir können den vorliegenden Graphen auch mit Punkten ergänzen und das Aussehen der Linie verändern.
+
+```{r}
+allbus2018 %>% 
+  drop_na(age, inc) %>% 
+  group_by(age) %>% 
+  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
+  ggplot(aes(x = age, y = incm)) +
+  geom_line(linetype = "dashed") +
+  geom_point(size = 2)
+```
+
+**Regression**
+
+Abschließend können wir auch Regressionen innerhalb der Grafiken berechnen lassen. 
+
+Da wir folgend mit polynomial Regressionen arbeiten möchten, empfehlen wir das Paket `splines` und `ggpmisc` zu installieren.
+
+```{r}
+library(splines)
+library(ggpmisc)
+```
+
+Wir wollen folglich anhand des Alters das individuelle Nettoeinkommen prognostizieren.
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, inc, sex) %>% 
+  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
+  geom_point(size = 2, alpha = 0.1) +
+  geom_smooth(method = "lm", formula = y ~ ns(x, 1)) +
+  stat_poly_eq(formula = y ~ ns(x, 1), 
+                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                parse = TRUE) 
+```
+
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, inc, sex) %>% 
+  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
+  geom_point(size = 2, alpha = 0.1) +
+  geom_smooth(method = "lm", formula = y ~ ns(x, 2)) +
+  stat_poly_eq(formula = y ~ ns(x, 2), 
+                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                parse = TRUE) 
+```
+
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, inc, sex) %>% 
+  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
+  geom_point(size = 2, alpha = 0.1) +
+  geom_smooth(method = "lm", formula = y ~ ns(x, 3)) +
+  stat_poly_eq(formula = y ~ ns(x, 3), 
+                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                parse = TRUE) 
+```
+
+In Anbetracht der erklärten Varianz in Verhältnis zur Komplexität der Regression scheint eine Polynomfunktion 2. Grades den Zusammenhang am Besten abzubilden. Bei den Männern handelt es sich immerhin um eine Varianzaufklärung von fast 10%. 
+
+## Facets
+
+
+
+
+
+
+
+
+
+
 
 
 
