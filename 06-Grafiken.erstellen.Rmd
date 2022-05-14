@@ -496,12 +496,11 @@ Nun wollen wir uns verschiedene Möglichkeiten ansehen, um Zusammenhänge besser
 
 So kommt es häufig vor, dass Gruppierungsvariablen mehr als drei oder vier Kategorien besitzen. Folgen wir unseren bisherigen Darstellungstechniken ist es uns zwar möglich Farben/Formen/Linien für die Kategorien der Gruppierungsvariable anzupassen, gleichwohl wird es dann schnell unübersichtlich.
 
-Beispielhaft wollen wir uns den Zusammenhang zwischen (berufstätigen) Alter und individuellem Nettoeinkommen nach Schulabschlüssen ansehen.
+Beispielhaft wollen wir uns den Zusammenhang zwischen Alter und individuellem Nettoeinkommen nach Schulabschlüssen ansehen.
 
 ```{r}
 allbus2018 %>% 
-  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
-  set_na(educ, na = c(6,7)) %>% 
+  set_na(educ, na = c(1,6,7)) %>% 
   to_label(educ) %>% 
   drop_na(age, inc, educ) %>% 
   group_by(age, educ) %>% 
@@ -517,8 +516,7 @@ Mit `facet_wrap()` erstellen wir eine Grafik für jede Kategorie der Gruppierung
 
 ```{r}
 allbus2018 %>% 
-  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
-  set_na(educ, na = c(6,7)) %>% 
+  set_na(educ, na = c(1,6,7)) %>% 
   to_label(educ) %>% 
   drop_na(age, inc, educ) %>% 
   group_by(age, educ) %>% 
@@ -534,8 +532,7 @@ Haben wir zwei Gruppierungsvriablen nutzen wir `facet_grid()`.
 
 ```{r}
 allbus2018 %>% 
-  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
-  set_na(educ, na = c(6,7)) %>% 
+  set_na(educ, na = c(1,6,7)) %>% 
   to_label(educ, sex) %>% 
   drop_na(age, inc, educ) %>% 
   group_by(age, educ) %>% 
@@ -553,8 +550,7 @@ Wenn wir die Gruppierung in den Zeilen haben wollen, schreiben wir facet_grid(Gr
 
 ```{r}
 allbus2018 %>% 
-  mutate(age = rec(age, rec = "65:max=NA; else=copy")) %>% 
-  set_na(educ, na = c(6,7)) %>% 
+  set_na(educ, na = c(1,6,7)) %>% 
   to_label(educ, sex) %>% 
   drop_na(age, inc, educ) %>% 
   group_by(age, educ) %>% 
@@ -600,7 +596,7 @@ allbus2018 %>%
   drop_na(age, dw15, sex) %>% 
   ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
   geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = c("green", "black"))
+  scale_colour_manual(values = c("green", "grey"))
 ```
 
 Hintergründe lassen sich zudem mit der Funktion `theme()` anpassen. Eine vordefinierte Auswahl findet sich unter [complete themes - ggplot2](https://ggplot2.tidyverse.org/reference/ggtheme.html), sowie eine Anleitung zur selbständigen Anpassung [Modify components of a theme - ggplot2](https://ggplot2.tidyverse.org/reference/theme.html). Hiermit können wir auch bestimmen, welche Komponenten wo und wie gezeigt werden sollen - z.B. theme(legend.position="none").
@@ -629,11 +625,63 @@ allbus2018 %>%
 
 ## Beschriftungen
 
+Sobald es darum geht Grafiken in Publikationen einzubringen oder deren Inhalt zu kommunizieren, braucht es Beschriftungen. Mit der Funktion `labs()` können wir die Beschriftung auf der x-Achse, y-Achse, den Titel und den Legendentitel anpassen. 
 
+```{r}
+allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = farben) +
+  labs(x = "Alter der Befragten", y = "Wöchentliche Arbeitszeit", 
+       title = "Wöchentliche Arbeitszeit nach Alter und Geschlecht", subtitle = "Dazu eine Grafik",
+       colour = "Geschlecht", shape = "Geschlecht", tag = "Nr. 1", caption = "Quelle:")
+```
 
+## Grafiken speichern
 
+Haben wir eine Grafik zu unserer Zufriedenheit erstellt, dann können wir diese über `ggsave()` in verschiedenen Formaten, Auflösungen und Größen (cm oder units) speichern. 
 
+Hierbei können wir entweder die Grafik einem Objekt zuweisen und dann speichern.
 
+```{r}
+grafik1 <- allbus2018 %>% 
+  to_label(sex) %>% 
+  drop_na(age, dw15, sex) %>% 
+  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = farben) +
+  labs(x = "Alter der Befragten", y = "Wöchentliche Arbeitszeit", 
+       title = "Wöchentliche Arbeitszeit nach Alter und Geschlecht", subtitle = "Dazu eine Grafik",
+       colour = "Geschlecht", shape = "Geschlecht", tag = "Nr. 1", caption = "Quelle:")
+```
+
+```{r}
+ggsave(
+  plot = grafik1,
+  filename = "grafik1.png",
+  path = "Bilder/",
+  height = 6,
+  width = 8,
+  dpi = 300
+)
+```
+
+Oder wir definieren die letzte Ausgabe als Input.
+
+```{r}
+ggsave(
+  plot = last_plot(),
+  filename = "grafik1.png",
+  path = "Bilder/",
+  height = 6,
+  width = 8,
+  dpi = 300
+)
+```
+
+voilà! Nun haben wir das Werkzeug um selbständig eine explorative Datenanalyse vorzunehmen oder bekannte Zusammenhänge aufzuzeigen.
 
 
 
