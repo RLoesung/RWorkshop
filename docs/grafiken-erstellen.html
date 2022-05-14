@@ -331,6 +331,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.2" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#zwei-variablen"><i class="fa fa-check"></i><b>6.4.2</b> Zwei Variablen</a></li>
 </ul></li>
 <li class="chapter" data-level="6.5" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#facets"><i class="fa fa-check"></i><b>6.5</b> Facets</a></li>
+<li class="chapter" data-level="6.6" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#farben-und-themes"><i class="fa fa-check"></i><b>6.6</b> Farben und Themes</a></li>
+<li class="chapter" data-level="6.7" data-path="grafiken-erstellen.html"><a href="grafiken-erstellen.html#beschriftungen"><i class="fa fa-check"></i><b>6.7</b> Beschriftungen</a></li>
 </ul></li>
 </ul>
 
@@ -525,10 +527,11 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 <p><img src="RWorkshop_files/figure-html/unnamed-chunk-174-1.png" width="672" /></p>
 <p><strong>Merke:</strong> Sofern wir <code>fill = "steelblue", colour = "red"</code> nicht innerhalb der <code>aes()</code> Funktion verwenden, dann handelt es sich nicht um Gruppierungsvariablen, sondern ausschließlich um Farbgebungen der Grafikobjekte. So färben wir mit <code>fill = "steelblue"</code> lediglich die Balken in Stahlblau ein. Eine Übersicht über die verschiedenen Farbvarianten erhalten wir mit der Funktion <code>colours()</code>. Es gibt 657, wenn gleich nur Zwanzig im folgenden Output dargestellt werden.</p>
 <div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="grafiken-erstellen.html#cb243-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colours</span>() <span class="sc">%&gt;%</span> <span class="fu">sample</span>(<span class="dv">20</span>)</span></code></pre></div>
-<pre><code>##  [1] &quot;grey90&quot;       &quot;firebrick1&quot;   &quot;mistyrose1&quot;   &quot;gray&quot;         &quot;navajowhite2&quot;
-##  [6] &quot;indianred&quot;    &quot;gray93&quot;       &quot;maroon&quot;       &quot;darkkhaki&quot;    &quot;grey73&quot;      
-## [11] &quot;gray66&quot;       &quot;orange&quot;       &quot;gray61&quot;       &quot;gray40&quot;       &quot;lightblue3&quot;  
-## [16] &quot;skyblue3&quot;     &quot;gold&quot;         &quot;seashell4&quot;    &quot;gray31&quot;       &quot;grey16&quot;</code></pre>
+<pre><code>##  [1] &quot;lavenderblush1&quot; &quot;grey60&quot;         &quot;grey67&quot;         &quot;deepskyblue&quot;   
+##  [5] &quot;darkturquoise&quot;  &quot;grey75&quot;         &quot;magenta2&quot;       &quot;mediumpurple&quot;  
+##  [9] &quot;khaki&quot;          &quot;green4&quot;         &quot;thistle3&quot;       &quot;palegoldenrod&quot; 
+## [13] &quot;deepskyblue1&quot;   &quot;gray76&quot;         &quot;lightskyblue1&quot;  &quot;darkslategrey&quot; 
+## [17] &quot;gray83&quot;         &quot;slateblue2&quot;     &quot;sienna1&quot;        &quot;tomato&quot;</code></pre>
 <p>Im nächsten Schritt wollen wir unser Balkendiagramm nicht mit absoluten Werten ausgeben, sondern mit relativen Häufigkeiten. Hierzu ist es wichtig zu wissen, dass in der vorherigen Grafik ein entscheidendes Argument mit Standardwert eingegangen ist, das wir nun anpassen müssen. So fügen wir der vorherigen Grafik die Argumente <code>aes(y = ..count..)</code> hinzu. Wir definieren also auf der y-Achse eine Variable, die unmittelbar aus der x-Achse errechnet werden soll. Mit dem Befehl <code>..count..</code> handelt es sich um eine absolute Auszählung der Häufigkeiten. Wollen wir eine relative Häufigkeitsverteilung verwenden wir den Befehl <code>aes(y = ..prop..)</code>, also eine proportionale Auszählung. Zudem müssen wir noch definieren aus welcher bzw. wie vielen Gruppe/n die Werte relational geschöpft werden sollen. Dies geschieht über den Befehl <code>aes(y = ..prop.., group = 1)</code>. Damit werden die Werte relational bzw. proportinal aus einer Gruppe gebildet und bilden damit Prozentwerte zu 100% ab (die Darstellungsform auf der y-Achse lernen wir in den kommenden Kapiteln)</p>
 <div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="grafiken-erstellen.html#cb245-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
 <span id="cb245-2"><a href="grafiken-erstellen.html#cb245-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(agec) <span class="sc">%&gt;%</span> </span>
@@ -714,6 +717,111 @@ Zusätzlich erlaubt die Funktion <code>aes()</code> weitere Anpassungen über <c
 </div>
 <div id="facets" class="section level2" number="6.5">
 <h2><span class="header-section-number">6.5</span> Facets</h2>
+<p>Nun wollen wir uns verschiedene Möglichkeiten ansehen, um Zusammenhänge besser hervorheben oder gut sichtbar zu machen.</p>
+<p>So kommt es häufig vor, dass Gruppierungsvariablen mehr als drei oder vier Kategorien besitzen. Folgen wir unseren bisherigen Darstellungstechniken ist es uns zwar möglich Farben/Formen/Linien für die Kategorien der Gruppierungsvariable anzupassen, gleichwohl wird es dann schnell unübersichtlich.</p>
+<p>Beispielhaft wollen wir uns den Zusammenhang zwischen (berufstätigen) Alter und individuellem Nettoeinkommen nach Schulabschlüssen ansehen.</p>
+<div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="grafiken-erstellen.html#cb269-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb269-2"><a href="grafiken-erstellen.html#cb269-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">rec</span>(age, <span class="at">rec =</span> <span class="st">&quot;65:max=NA; else=copy&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-3"><a href="grafiken-erstellen.html#cb269-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(educ, <span class="at">na =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-4"><a href="grafiken-erstellen.html#cb269-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-5"><a href="grafiken-erstellen.html#cb269-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, inc, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-6"><a href="grafiken-erstellen.html#cb269-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-7"><a href="grafiken-erstellen.html#cb269-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incm =</span> <span class="fu">weighted_mean</span>(inc, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
+<span id="cb269-8"><a href="grafiken-erstellen.html#cb269-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> incm, <span class="at">colour =</span> educ)) <span class="sc">+</span></span>
+<span id="cb269-9"><a href="grafiken-erstellen.html#cb269-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb269-10"><a href="grafiken-erstellen.html#cb269-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-196-1.png" width="672" /></p>
+<p>Wir könne nur sehr schwer die Zusammenhänge erkennen. Ein geeignetes Instrument für dieses Problem sind die Funktionen <code>facet_wrap()</code> und <code>facet_grid()</code>.</p>
+<p>Mit <code>facet_wrap()</code> erstellen wir eine Grafik für jede Kategorie der Gruppierungsvariable.</p>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="grafiken-erstellen.html#cb270-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb270-2"><a href="grafiken-erstellen.html#cb270-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">rec</span>(age, <span class="at">rec =</span> <span class="st">&quot;65:max=NA; else=copy&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-3"><a href="grafiken-erstellen.html#cb270-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(educ, <span class="at">na =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-4"><a href="grafiken-erstellen.html#cb270-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-5"><a href="grafiken-erstellen.html#cb270-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, inc, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-6"><a href="grafiken-erstellen.html#cb270-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-7"><a href="grafiken-erstellen.html#cb270-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incm =</span> <span class="fu">weighted_mean</span>(inc, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
+<span id="cb270-8"><a href="grafiken-erstellen.html#cb270-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> incm, <span class="at">colour =</span> educ)) <span class="sc">+</span></span>
+<span id="cb270-9"><a href="grafiken-erstellen.html#cb270-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb270-10"><a href="grafiken-erstellen.html#cb270-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb270-11"><a href="grafiken-erstellen.html#cb270-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> educ) <span class="sc">+</span></span>
+<span id="cb270-12"><a href="grafiken-erstellen.html#cb270-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-197-1.png" width="672" /></p>
+<p>Haben wir zwei Gruppierungsvriablen nutzen wir <code>facet_grid()</code>.</p>
+<div class="sourceCode" id="cb271"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb271-1"><a href="grafiken-erstellen.html#cb271-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb271-2"><a href="grafiken-erstellen.html#cb271-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">rec</span>(age, <span class="at">rec =</span> <span class="st">&quot;65:max=NA; else=copy&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-3"><a href="grafiken-erstellen.html#cb271-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(educ, <span class="at">na =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-4"><a href="grafiken-erstellen.html#cb271-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(educ, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-5"><a href="grafiken-erstellen.html#cb271-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, inc, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-6"><a href="grafiken-erstellen.html#cb271-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-7"><a href="grafiken-erstellen.html#cb271-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incm =</span> <span class="fu">weighted_mean</span>(inc, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
+<span id="cb271-8"><a href="grafiken-erstellen.html#cb271-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> incm, <span class="at">colour =</span> educ)) <span class="sc">+</span></span>
+<span id="cb271-9"><a href="grafiken-erstellen.html#cb271-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb271-10"><a href="grafiken-erstellen.html#cb271-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb271-11"><a href="grafiken-erstellen.html#cb271-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(sex <span class="sc">~</span> educ) <span class="sc">+</span></span>
+<span id="cb271-12"><a href="grafiken-erstellen.html#cb271-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-198-1.png" width="672" /></p>
+<p>Hier werden die Stufen von <code>sex</code> in den Zeilen dargestellt, die Stufen von <code>educ</code> in den Spalten.</p>
+<p>Wenn wir die Gruppierung in den Zeilen haben wollen, schreiben wir facet_grid(Gruppierungsvariable ~ .), wenn sie in den Spalten wollen, schreiben wir facet_grid(. ~ Gruppierungsvariable). Der Punkt . bedeutet hier, dass wir für die Zeilen/Spalten keine Gruppierungsvariable verwenden.</p>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="grafiken-erstellen.html#cb272-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb272-2"><a href="grafiken-erstellen.html#cb272-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">rec</span>(age, <span class="at">rec =</span> <span class="st">&quot;65:max=NA; else=copy&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-3"><a href="grafiken-erstellen.html#cb272-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(educ, <span class="at">na =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-4"><a href="grafiken-erstellen.html#cb272-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(educ, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-5"><a href="grafiken-erstellen.html#cb272-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, inc, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-6"><a href="grafiken-erstellen.html#cb272-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(age, educ) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-7"><a href="grafiken-erstellen.html#cb272-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incm =</span> <span class="fu">weighted_mean</span>(inc, <span class="at">weights =</span> wghtpew)) <span class="sc">%&gt;%</span> </span>
+<span id="cb272-8"><a href="grafiken-erstellen.html#cb272-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> incm, <span class="at">colour =</span> educ)) <span class="sc">+</span></span>
+<span id="cb272-9"><a href="grafiken-erstellen.html#cb272-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb272-10"><a href="grafiken-erstellen.html#cb272-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb272-11"><a href="grafiken-erstellen.html#cb272-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(sex <span class="sc">~</span> .) <span class="sc">+</span></span>
+<span id="cb272-12"><a href="grafiken-erstellen.html#cb272-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-199-1.png" width="672" /></p>
+</div>
+<div id="farben-und-themes" class="section level2" number="6.6">
+<h2><span class="header-section-number">6.6</span> Farben und Themes</h2>
+<p>Nachstehend wollen wir uns ansehen, wie wir Farben und Hintergründe unserer Grafiken anpassen können. Bisher hat ggplot2 automatisch für uns Farben gewählt, wenn wir Farben für eine Gruppierung verlangt haben. Die Standard Farbpalette ist jedoch für Farbenblinde äusserst schlecht geeignet. Es gibt viele Farbpaletten, welche wir verwenden könnten.</p>
+<p>So können wir auch eigene Farbpaletten definieren, die auch für Farbblinde geeignet sind - in unserem Beispiel acht Farben für maximal acht Kategorien.</p>
+<div class="sourceCode" id="cb273"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb273-1"><a href="grafiken-erstellen.html#cb273-1" aria-hidden="true" tabindex="-1"></a>farben <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#000000&quot;</span>, <span class="st">&quot;#E69F00&quot;</span>,</span>
+<span id="cb273-2"><a href="grafiken-erstellen.html#cb273-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;#56B4E9&quot;</span>, <span class="st">&quot;#009E73&quot;</span>, </span>
+<span id="cb273-3"><a href="grafiken-erstellen.html#cb273-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;#F0E442&quot;</span>, <span class="st">&quot;#0072B2&quot;</span>, </span>
+<span id="cb273-4"><a href="grafiken-erstellen.html#cb273-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;#D55E00&quot;</span>, <span class="st">&quot;#CC79A7&quot;</span>)</span></code></pre></div>
+<p>Zur Umsetzungen brauchen wir die Funktionen <code>sclale_fill_manual()</code> bei Formen und <code>scale_colour_manual()</code> bei Punkten und Linien mit dem Argument <code>value =</code>.</p>
+<p>Als Beispiel nutzen wir wieder das Beispiel Alter und wöchentlicher Arbeitszeit zwischen den Geschlechtern.</p>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="grafiken-erstellen.html#cb274-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb274-2"><a href="grafiken-erstellen.html#cb274-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb274-3"><a href="grafiken-erstellen.html#cb274-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, dw15, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb274-4"><a href="grafiken-erstellen.html#cb274-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> dw15, <span class="at">weight =</span> wghtpew, <span class="at">colour =</span> sex, <span class="at">shape =</span> sex)) <span class="sc">+</span></span>
+<span id="cb274-5"><a href="grafiken-erstellen.html#cb274-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb274-6"><a href="grafiken-erstellen.html#cb274-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> farben)</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-201-1.png" width="672" /></p>
+<p>Wir können die Farben auch gleich per Hand bestimmen.</p>
+<div class="sourceCode" id="cb275"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb275-1"><a href="grafiken-erstellen.html#cb275-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb275-2"><a href="grafiken-erstellen.html#cb275-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb275-3"><a href="grafiken-erstellen.html#cb275-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, dw15, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb275-4"><a href="grafiken-erstellen.html#cb275-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> dw15, <span class="at">weight =</span> wghtpew, <span class="at">colour =</span> sex, <span class="at">shape =</span> sex)) <span class="sc">+</span></span>
+<span id="cb275-5"><a href="grafiken-erstellen.html#cb275-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb275-6"><a href="grafiken-erstellen.html#cb275-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;black&quot;</span>))</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-202-1.png" width="672" /></p>
+<p>Hintergründe lassen sich zudem mit der Funktion <code>theme()</code> anpassen. Eine vordefinierte Auswahl findet sich unter <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">complete themes - ggplot2</a>, sowie eine Anleitung zur selbständigen Anpassung <a href="https://ggplot2.tidyverse.org/reference/theme.html">Modify components of a theme - ggplot2</a>. Hiermit können wir auch bestimmen, welche Komponenten wo und wie gezeigt werden sollen - z.B. theme(legend.position=“none”).</p>
+<p>Zwei kleine Beispiele.</p>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="grafiken-erstellen.html#cb276-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb276-2"><a href="grafiken-erstellen.html#cb276-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb276-3"><a href="grafiken-erstellen.html#cb276-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, dw15, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb276-4"><a href="grafiken-erstellen.html#cb276-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> dw15, <span class="at">weight =</span> wghtpew, <span class="at">colour =</span> sex, <span class="at">shape =</span> sex)) <span class="sc">+</span></span>
+<span id="cb276-5"><a href="grafiken-erstellen.html#cb276-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb276-6"><a href="grafiken-erstellen.html#cb276-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> farben) <span class="sc">+</span></span>
+<span id="cb276-7"><a href="grafiken-erstellen.html#cb276-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-203-1.png" width="672" /></p>
+<div class="sourceCode" id="cb277"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb277-1"><a href="grafiken-erstellen.html#cb277-1" aria-hidden="true" tabindex="-1"></a>allbus2018 <span class="sc">%&gt;%</span> </span>
+<span id="cb277-2"><a href="grafiken-erstellen.html#cb277-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_label</span>(sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb277-3"><a href="grafiken-erstellen.html#cb277-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(age, dw15, sex) <span class="sc">%&gt;%</span> </span>
+<span id="cb277-4"><a href="grafiken-erstellen.html#cb277-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> dw15, <span class="at">weight =</span> wghtpew, <span class="at">colour =</span> sex, <span class="at">shape =</span> sex)) <span class="sc">+</span></span>
+<span id="cb277-5"><a href="grafiken-erstellen.html#cb277-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb277-6"><a href="grafiken-erstellen.html#cb277-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> farben) <span class="sc">+</span></span>
+<span id="cb277-7"><a href="grafiken-erstellen.html#cb277-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div>
+<p><img src="RWorkshop_files/figure-html/unnamed-chunk-204-1.png" width="672" /></p>
+</div>
+<div id="beschriftungen" class="section level2" number="6.7">
+<h2><span class="header-section-number">6.7</span> Beschriftungen</h2>
 
 </div>
 </div>
