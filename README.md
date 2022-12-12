@@ -2,4 +2,4 @@
 
 Willkommen!
 
-Link: https://yannickdiehl.github.io/RWorkshop/index.html
+Link: https://rloesung.github.io/RWorkshop/
