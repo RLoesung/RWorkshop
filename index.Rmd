@@ -1,4 +1,4 @@
---- 
+---
 title: "R Workshop - Sozialwissenschaften"
 author: "Yannick Diehl und Daniel Moosdorf"
 date: "`r Sys.Date()`"
@@ -7,83 +7,154 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-description: "Einführung in R"
+description: "Eine Einführung in die statistische Datenanalyse mit R und mariposa für die Sozialwissenschaften."
 ---
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  comment = "##", collapse = TRUE,
+  fig.align = "center", out.width = "90%",
+  dpi = 150
+)
+
+library(tidyverse)
+library(mariposa)
+library(patchwork)
+
+theme_rworkshop <- function(base_size = 12) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold"),
+      plot.caption = element_text(color = "grey40", hjust = 0),
+      panel.grid.minor = element_blank(),
+      legend.position = "bottom"
+    )
+}
+theme_set(theme_rworkshop())
+
+# Automatische Bibliographie der genutzten Pakete
 knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
+  .packages(), "bookdown", "knitr", "rmarkdown", "mariposa", "tidyverse", "patchwork"
+), "packages.bib")
 ```
 
 # Vorwort {-}
 
-Dieser Workshop richtet sich insbesondere an Studierende der Sozialwissenschaften und möchte einen einfachen und verständlichen Einstieg in statistische Auswertungen mit R bieten.
+Dieses Buch ist eine Einführung in die statistische Datenanalyse mit R für die Sozialwissenschaften. Es richtet sich an Studierende, die R neu kennenlernen — oft mit Vorerfahrung in SPSS — und einen einfachen, modernen Einstieg suchen. Du arbeitest dich vom ersten Datenimport über deskriptive und inferenzstatistische Verfahren bis zu Faktorenanalyse und Regression. Dein Werkzeugkasten ist dabei bewusst klein gehalten: das **tidyverse** für Datenmanipulation und Visualisierung und das Marburger Paket **mariposa** für die statistische Analyse.
 
-Ein besonderer Augenmerk liegt auf Anwender:innen die eine neue Heimat zur Lösung statistischer Aufgaben- und Problemstellungen suchen und folgend Kenntnisse im Umgang mit (u.a. kommerziellen) Statistik- und Analyse-Software besitzen (v.a. SPSS). 
+Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erhebungsstandards — exemplarisch arbeiten wir mit dem **ALLBUS 2023**. Auch unstandardisierte Datensätze lassen sich mit denselben Techniken bearbeiten, und Survey-Gewichtung ist von Anfang an mit dabei.
 
-Anwendungsziel der kommenden Analysetechniken sind insbesondere sozialwissenschaftliche Studien/Bevölkerungsumfragen mit wissenschaftlichen Erhebungsstandards, wenngleich auch "unstandartisierte" Datensätze mit den vorzustellenden Techniken verarbeitet werden können. Zudem soll den künftigen Anwender:innen eine umfassende Funktionsbibliothek an die Hand gegeben werden, welche eine komplexe Gewichtung von Studiendaten erlaubt.
+## Was du nach diesem Buch kannst {-}
 
-## Voraussetzungen
+- Datensätze aus SPSS, Stata oder Excel einlesen und mit Labels und fehlenden Werten umgehen.
+- Daten transformieren, rekodieren und Skalen aus Items bilden.
+- Univariate, bivariate und multivariate Analysen durchführen — auch mit Survey-Gewichten.
+- Korrelationen, Faktorenanalysen, lineare und logistische Regressionen rechnen und interpretieren.
+- Befunde mit ggplot2 in publikationsfähige Grafiken bringen.
+- Eine Analyse so dokumentieren, dass sie reproduzierbar ist.
 
-Bitte installieren Sie hierfür die aktuelle Version von R unter: [R Programm - Version 4.0.5 (17.05.2021)](https://stat.ethz.ch/CRAN/)
+## Voraussetzungen {-}
 
-Darüber hinaus werden wir mit der *integrierten Entwicklungsumgebung* (IDE) RStudio arbeiten. Die aktuelle Version findet sich unter: [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/) 
+**R** (Programmiersprache, Open Source). Die jeweils aktuelle Version findest du unter [cran.r-project.org](https://cran.r-project.org/). Dieses Buch setzt mindestens **R 4.3** voraus; empfohlen ist **R 4.5 oder höher**, damit alle hier gezeigten Funktionen ohne Anpassungen laufen.
 
-Intergrierte Entwicklungsumgebungen wie RStudio vereinfachen den Arbeitprozess mit der Programmiersprache R ungemein, wenngleich auch schon im ersten Installationsschritt über das R Programm die gleichen Funktionsanwendungen ausführbar sind. So stellt RStudio vor allem eine Vereinfachung des Arbeitsprozesses dar, obgleich mit weitreichenden Implikationen bei der Nachvollziehbarkeit von Ablaufschritten und Anwendungsverfahren.
+**RStudio** als integrierte Entwicklungsumgebung (IDE). Die IDE selbst heißt weiterhin RStudio, die Firma dahinter heißt seit 2022 [Posit](https://posit.co/). Du brauchst die Desktop-Version: [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/). Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](https://posit.cloud/) (vormals RStudio Cloud) im Browser nutzen.
 
-## Warum R?
+**Pakete.** Wir installieren am Anfang einmal die zwei Ökosysteme, die uns durch das ganze Buch tragen:
 
-* R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten konzipiert ist.
-* R ist eine der führenden Lösungen für die statistische Datenanalyse und kann auch für das Data Mining oder Predictive Analytics eingesetzt werden.
-* Daten lassen sich mit der Sprache sehr flexibel auswerten und visualisieren.
-* Sowohl wissenschaftliche Organisationen als auch große Unternehmen wie Oracle oder Microsoft verwenden R umfassend.
-* R kann problemlos in alle Ebenen der Analyse und Präsentation von Daten integriert werden.
-* Dank der Flexibilität von R ist der gleiche Code sowohl für kleinere Datenanalysen als auch für umfangreiches Data Mining im Big-Data-Umfeld geeignet.
-* Die Plattformunabhängigkeit sorgt dafür, dass R in verschiedenste IT-Strukturen leicht integrierbar und universell nutzbar ist.
+```{r install, eval=FALSE}
+install.packages("tidyverse")
+install.packages("remotes")
+remotes::install_github("YannickDiehl/mariposa")
+install.packages("patchwork")  # nur fuer Multi-Plot-Komposition in Kap. 6
+```
 
-Und zuletzt:
+Aktivierung in jeder R-Sitzung:
 
-* Im Gegensatz zu anderen Lösungen für die Analyse und Visualisierung von Daten ist R Open Source. Es fallen keine Lizenzkosten an, auch nicht für den Großteil der verfügbaren Erweiterungspakete.
+```{r activate, eval=FALSE}
+library(tidyverse)
+library(mariposa)
+library(patchwork)
+```
 
-## Was ist R?
+Mehr brauchen wir nicht. Für die konfirmatorische Faktorenanalyse in Kap. 5 fügen wir später noch `lavaan` und `semPlot` hinzu — das sind die einzigen weiteren Pakete, die wir bewusst zulassen.
 
-R wurde 1992 von **R**oss Ihaka und **R**obert Gentleman an der Universität Auckland entwickelt und wird als Open Source-Software unter der GNU General Public License durch die in Wien ansässige R Foundation for Statistical Computing verwaltet und verbreitet.
+## Warum R? {-}
 
-R stammt direkt von der kommerziellen statistischen Programmiersprache S ab und während das Herz von R durch das R (Development) Core Team (aus dem auch die Stiftung hervorgegangen ist) weiterentwickelt wird, liegt die eigentliche Stärke von R in der Verfügbarkeit von Zusatzfunktionen, in Form sogenannter Packages (dt. Packete). So erweitern unabhängige Entwickler überall auf der Welt durch unzählige Packages mit unterschiedlichsten Ausrichtungen die Funktionsmöglichkeit von R, angefangen von der klassichen Regression bis zum maschinellen Lernen. Mehr als 12.000 dieser Funktionspakete, die geschätzt mehr als 220.000 Funktionen beinhalten, stehen über das Comprehensive R Archive Network (CRAN) und einige weitere Hubs zur kostenfreien Verfügung. Folglich gibt es praktisch kein statistisches Problem, dass noch nicht eine entsprechende Lösung in R gefunden hat und damit gebrauchsfertig heruntergeladen und nach eigenen Vorstellungen modifiziert werden kann. 
+- R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten entwickelt wurde.
+- R ist Open Source: keine Lizenzkosten, auch nicht für die Erweiterungspakete.
+- Daten lassen sich sehr flexibel auswerten und visualisieren — kleine Datenanalysen und große Pipelines folgen demselben Code-Stil.
+- Wissenschaftliche Organisationen, Unternehmen und Behörden setzen R weltweit ein. Wer R lernt, lernt eine Sprache, die in der Praxis gefragt ist.
+- R lässt sich plattformunabhängig in beliebige IT-Strukturen integrieren.
 
-## Aller Einstieg ist schwer?!
+## Warum tidyverse und mariposa? {-}
 
-Wir werden uns primär mit R als Statistikumgebung und weniger als klassische Programmierumgebung beschäftigen, wenngleich kleinere Exkurse in die Fundamente dieser Sprache nicht vermieden werden können. Unser Anspruch bleibt dabei immer eine einfache, konsistente und übersichtliche Lösung zu geben, um dem freien und selbstbestimmten Lernen und Arbeiten aller Teilnehmenden Sorge zu tragen. 
+Statt einer langen Liste von Spezialpaketen arbeiten wir mit zwei klar abgegrenzten Ökosystemen.
 
-Um diesem Anspruch gerecht werden zu können, werden wir uns vornehmlich in relativ "abgeschlossenen" Ökosystemen (Ecosystems) bewegen, also Sammlungen von Paketen, die aufeinander abgestimmt wurden. Das bekannteste Beispiel ist hierfür sicherlich das *tidyverse*, welches maßgebend von einem der großen R-Pioniere und RStudio chief scientist Hadley Wickham entwickelt wurde. Auf Grundlage des selbigen werden wir noch die Pakete von Daniel Lüdecke *strengejacke* und die beeindruckenden Modellaufbereitungen in *easystats* kennen lernen. So repräsentieren diese Pakete in vollem Umfang den "state-of-the-art" sozialwissenschaftlicher Datenanalysetechniken, obgleich der Lernprozess damit deutlich vereinfacht ist. Zudem werden alle genannten Pakete, vor allem das tidyverse, auch in nicht-universitären Kontexten weitreichend genutzt.
+**Tidyverse.** Eine Sammlung aufeinander abgestimmter Pakete (`dplyr`, `tidyr`, `ggplot2`, `readr`, `purrr`, `tibble`, `stringr`, `forcats`, `lubridate`), die einen gemeinsamen Stil für Datenmanipulation und Visualisierung definieren. Wer das tidyverse einmal verstanden hat, kann fast alle modernen R-Skripte lesen.
 
-## Typographie
+**mariposa.** Ein in Marburg entwickeltes Paket (Marburg Initiative for Political and Social Analysis), das die für sozialwissenschaftliche Analysen typischen Verfahren in einer konsistenten, tidyverse-nahen Syntax bereitstellt: Datenimport aus SPSS, Umgang mit Labels und Missing-Werten, deskriptive Statistik, t-Tests, ANOVA, Korrelation, Faktorenanalyse, Regression. Die Ergebnisse sind SPSS-kongruent — wer aus SPSS umsteigt, erkennt die Ausgaben wieder.
 
-Die folgenden Kapitel bestehen zu einem großen Teil aus `R Code` und damit aus den entsprechenden *chunks*. Damit können sie leicht erkannt und für den eigenen Gebrauch in das persönliche *R Script* kopiert werden. Ein Beispiel:
+## Beispieldatensatz: ALLBUS 2023 {-}
 
-```{r, echo=T, results='hide'}
+Wir arbeiten durchgehend mit dem [ALLBUS](https://www.gesis.org/allbus) — der Allgemeinen Bevölkerungsumfrage der Sozialwissenschaften. Die Welle 2023 ist die aktuell verfügbare Hauptbefragung mit 5246 Befragten und 579 Variablen. Als roten Faden durch die Methoden-Kapitel verwenden wir die Frage:
+
+> *Wer trägt islamfeindliche Einstellungen in Deutschland 2023, und wie hängen sie mit politischen Orientierungen und Soziostruktur zusammen?*
+
+Diese Frage ist nicht zufällig gewählt: Sie ermöglicht uns, eine **latente Skala** aus sechs Einzelitems zu bilden, die Skala anschließend deskriptiv zu beschreiben, mit anderen Variablen in Beziehung zu setzen und schließlich in Regressionsmodellen zu erklären. So lernst du nicht nur einzelne Methoden, sondern siehst, wie sie zu einer kompletten Analyse zusammenfließen.
+
+## Typographie {-}
+
+Die folgenden Kapitel bestehen zu einem großen Teil aus R-Code in sogenannten **Code-Chunks**. Sie sehen so aus:
+
+```{r, results='hide'}
 x <- seq(from = 1, to = 100, by = 10)
 x
 ```
 
-Das Ergebnis lässt sich folgend in der Konsole ablesen.
+Das Ergebnis erscheint direkt darunter:
 
-```{r, echo=F}
+```{r, echo=FALSE}
 x
 ```
 
-Damit ist `x` unser Input und `## [1]  1 11 21 31 41 51 61 71 81 91` unser Output nachdem wir `x` eine Zahlensequenz zwischen 1 und 100 in 10er Schritten zugewiesen haben.
+`x` ist hier dein Input, das Ergebnis dein Output. Den Code kannst du jederzeit in dein eigenes R-Script übernehmen — Copy-and-Paste ist ausdrücklich erwünscht.
 
-## Weiterführende Literatur
+**Pipe-Operator.** Du wirst durchgehend den nativen Pipe-Operator `|>` sehen. Er reicht das Ergebnis einer Funktion in die nächste weiter und macht aus verschachteltem Code einen lesbaren Arbeitsfluss:
 
-Wir orientieren uns vor allem in den ersten beiden Kapiteln unseres Workshops an dem Kurs: [Einführung in R](https://methodenlehre.github.io/einfuehrung-in-R/index.html) von Andrew Ellis und Boris Mayer. 
+```{r, eval=FALSE}
+allbus |>
+  filter(eastwest == 1) |>
+  describe(ls01)
+```
 
-Grundständige Literatur, die auch zu diesem Workshop passt, findet sich als freie Publikation von Garrett Grolemund und Hadley Wickham unter dem Titel [R for Data Science](http://r4ds.had.co.nz/). 
+In älterem Code findest du oft `%>%` (aus dem Paket `magrittr`). Beide tun fast dasselbe; wir erklären den Unterschied kurz in Kapitel 2.
 
-Zur Vertiefung bieten sich die Bücher [Hands-On Programming with R](http://shop.oreilly.com/product/0636920028574.do) von Garrett Grolemund und [Advanced R](http://adv-r.had.co.nz/) von Hadley Wickham an.
+## Konventionen in diesem Buch {-}
 
+Du erkennst wiederkehrende Bausteine:
 
+::: {.callout-tip}
+**SPSS → R.** Direkte Übersetzungshilfe für Umsteiger:innen — links der SPSS-Befehl, rechts das R-Pendant.
+:::
 
+::: {.callout-warning}
+**Vorsicht.** Typische Fallstricke und Stolpersteine.
+:::
 
+::: {.callout-note}
+**Hintergrund.** Kurze konzeptionelle Einschübe zur Theorie hinter einer Methode.
+:::
+
+::: {.callout-important}
+**mariposa-Tipp.** Stellen, an denen mariposa eine besonders kompakte Lösung anbietet.
+:::
+
+## Weiterführende Literatur {-}
+
+Wenn du tiefer einsteigen möchtest:
+
+- Hadley Wickham & Garrett Grolemund, [R for Data Science (2. Auflage)](https://r4ds.hadley.nz/) — das Standardwerk für das tidyverse, frei online.
+- Hadley Wickham, [Advanced R](https://adv-r.hadley.nz/) — für alle, die R als Programmiersprache verstehen wollen.
+- mariposa-Dokumentation: [yannickdiehl.github.io/mariposa](https://yannickdiehl.github.io/mariposa/) — Funktionsreferenz und Vignetten.
+- Yihui Xie, [bookdown: Authoring Books and Technical Documents with R Markdown](https://bookdown.org/yihui/bookdown/) — falls du selbst ein Buch oder Skript wie dieses schreiben möchtest.
