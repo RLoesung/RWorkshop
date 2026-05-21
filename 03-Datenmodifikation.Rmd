@@ -518,7 +518,7 @@ Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
 **Übung 1 — Skala Politische Effizienz.** Die `pe`-Items (`pe01`, `pe04`, `pe05`, `pe06`, `pe07`, `pe08`) messen politische Selbstwirksamkeit (kognitive Komponente). Prüfe zuerst die Variablenlabels mit `var_label()`, identifiziere ob Items umgepolt werden müssen, und baue analog eine Skala `polit_effizienz` mit `min_valid = 5`. *Tipp: schaue dir die Wortlaute genau an.*
 
 **Lösung:**
-```{r ex1-loesung, eval=FALSE}
+```{r ex1-kap3-loesung, eval=FALSE}
 allbus |>
   select(pe01, pe04, pe05, pe06, pe07, pe08) |>
   var_label()
@@ -537,7 +537,7 @@ allbus <- allbus |>
 **Übung 2 — ISCED-Bildung kategorisieren.** Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isced97` (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig", 3–4 = „mittel", 5–6 = „hoch".
 
 **Lösung:**
-```{r ex2-loesung, eval=FALSE}
+```{r ex2-kap3-loesung, eval=FALSE}
 allbus |>
   rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
       as.factor = TRUE) |>
@@ -549,7 +549,7 @@ allbus |>
 **Übung 3 — Analyse-Subset bilden.** Erstelle einen Datensatz `analyse`, der nur die für die Mini-Studie nötigen Variablen enthält (`islamophobie`, `populismus`, `eastwest`, `sex`, `age`, `educ`, `wghtpew`) und nur Fälle, in denen sowohl die Islamophobie-Skala als auch die Populismus-Skala gültige Werte haben.
 
 **Lösung:**
-```{r ex3-loesung, eval=FALSE}
+```{r ex3-kap3-loesung, eval=FALSE}
 analyse <- allbus |>
   select(islamophobie, populismus, eastwest, sex, age, educ, wghtpew) |>
   drop_na(islamophobie, populismus)

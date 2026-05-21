@@ -201,7 +201,7 @@ allbus |>
 
 Histogramm mit `geom_histogram()`. Die wichtigste Stellschraube ist `binwidth`:
 
-```{r hist}
+```{r hist-kap6}
 allbus |>
   filter(!is.na(islamophobie)) |>
   ggplot(aes(x = islamophobie, weight = wghtpew)) +
@@ -223,7 +223,7 @@ allbus |>
 
 Streudiagramm mit Regressionsgerade — der Klassiker:
 
-```{r scatter}
+```{r scatter-kap6}
 allbus |>
   filter(!is.na(islamophobie), !is.na(populismus), !is.na(sex)) |>
   ggplot(aes(x = populismus, y = islamophobie, color = sex)) +
@@ -374,7 +374,7 @@ Tipp für die Praxis: **PDF für LaTeX-Reports** (`filename = "....pdf"`), **PNG
 **Übung 1 — Eigene Verteilung.** Erstelle ein Histogramm der Populismus-Skala (`populismus`) mit Binwidth 0.25, gewichtet, mit eigenem Titel und Achsenbeschriftung.
 
 **Lösung:**
-```{r ex1-loesung, eval=FALSE}
+```{r ex1-kap6-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(populismus)) |>
   ggplot(aes(x = populismus, weight = wghtpew)) +
@@ -389,7 +389,7 @@ allbus |>
 **Übung 2 — Subgruppen-Boxplot.** Erstelle einen Boxplot der Islamfeindlichkeit nach `eastwest`, *gefiltert* nach Bildungsgruppen `educ_kat` (per `facet_wrap`).
 
 **Lösung:**
-```{r ex2-loesung, eval=FALSE}
+```{r ex2-kap6-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(islamophobie), !is.na(eastwest), !is.na(educ_kat)) |>
   ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
@@ -404,7 +404,7 @@ allbus |>
 **Übung 3 — Koeffizienten-Plot bauen.** Aus dem `summary()`-Output deines Regressions-Modells in Kap. 5 kannst du dir einen Koeffizienten-Plot bauen — Punkt für Schätzwert, Linie für Konfidenzintervall. Versuche es selbst (Tipp: schreibe die Werte in ein eigenes Tibble und benutze `geom_pointrange()`).
 
 **Lösung-Skizze:**
-```{r ex3-loesung, eval=FALSE}
+```{r ex3-kap6-loesung, eval=FALSE}
 tibble(
   term = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
   beta = c(-0.13, 0.30, 0.10, 0.05, 0.33),

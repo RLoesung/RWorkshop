@@ -239,7 +239,7 @@ Die volle Grafik-Schulung kommt in Kap. 6. Hier zeige ich dir drei kompakte Stan
 
 **Frage:** Wie verteilt sich Islamfeindlichkeit über die Stichprobe?
 
-```{r hist}
+```{r hist-kap4}
 allbus |>
   filter(!is.na(islamophobie)) |>
   ggplot(aes(x = islamophobie, weight = wghtpew)) +
@@ -266,7 +266,7 @@ allbus_bildung |>
 
 **Frage:** Wie sieht der Zusammenhang Islamfeindlichkeit ↔ Populismus aus?
 
-```{r scatter}
+```{r scatter-kap4}
 allbus |>
   filter(!is.na(islamophobie), !is.na(populismus)) |>
   ggplot(aes(x = populismus, y = islamophobie)) +
@@ -286,7 +286,7 @@ allbus |>
 **Übung 1 — Demokratiezufriedenheit beschreiben.** Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken. Beschreibe in einem Satz, was du siehst.
 
 **Lösung:**
-```{r ex1-loesung, eval=FALSE}
+```{r ex1-kap4-loesung, eval=FALSE}
 allbus |> frequency(ps03, weights = wghtpew)
 allbus |> describe(ps03, weights = wghtpew)
 ```
@@ -296,7 +296,7 @@ allbus |> describe(ps03, weights = wghtpew)
 **Übung 2 — Subgruppen-Vergleich.** Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
 
 **Lösung:**
-```{r ex2-loesung, eval=FALSE}
+```{r ex2-kap4-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(sex)) |>
   summarise(
@@ -313,7 +313,7 @@ allbus |>
 **Übung 3 — Drei Korrelate.** Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten?
 
 **Lösung:**
-```{r ex3-loesung, eval=FALSE}
+```{r ex3-kap4-loesung, eval=FALSE}
 allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
