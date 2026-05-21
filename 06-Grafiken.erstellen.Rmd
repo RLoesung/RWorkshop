@@ -1,689 +1,438 @@
-# Grafiken erstellen
+# Grafiken erstellen {#sec-grafiken}
 
-In diesem Kapitel werden wir lernen, welche Werkzeuge uns R zur Erstellung von Grafiken zur Verfügung stellt und
-wie uns das Paket `ggplot2` aus dem `tidyverse` ermöglicht durch explorative Datenanalyse verborgene Zusammenhänge zu entdecken, sowie 
-Resultate darzustellen und zu kommunizieren. 
+```{r setup-kap6, include=FALSE}
+library(tidyverse)
+library(mariposa)
+library(patchwork)
 
-Im Gegensatz zum ursprünglichen Grafiksystem `R Base Graphics`, welches auf `Base R` aufsetzt, basiert `ggplot2` auf der intuitiven Syntax
-`Grammar of Graphics`. Hiermit lassen sich durch eleganten, flexiblen und konsistenten Code sehr komplexe Grafiken erstellen und nahtlos mit den 
-Funktionen des `tidyverse` verbinden. 
-
-Achtung! `ggplot2` benötigt Datensätze im *long* Format. (siehe hierzu: [R for Data Science - Tidy Data](https://r4ds.had.co.nz/tidy-data.html))
-
-Da Grafiken mit `ggplot2` immer nach dem gleichen Prinzip erstellt werden, ergeben sich immer folgende Schritte:
-
-**Schritt 1:** Erstellung eines Objekts mit der Funktion `ggplot()`.
-
-**Schritt 2:** Definition der Datengrundlage mit dem ersten Argument `data = datensatz`.
-
-**Schritt 3:** Definition von “aesthetic mappings”, also der Wahl einer Variable für die x-Achse: `x = var1`, y-Achse: `y = var2`, 
-Gewichtung: `weight = gewicht` und zur Gruppierung der Daten: `group bzw. colour, shape, linetype oder fill = var3` über die Funktion `mapping = aes()`. 
-
-**Schritt 4:** Definition verschiedener "Layer" bzw. "Schichten". Hierbei definieren wir, was dargestellt werden soll - z.B. ein Histogramm oder Linien. 
-Dabei wird uns in der Anzahl an Schichten kein Limit gesetzt. Die Funktionen beginnen dabei immer mit dem Präfix `geom_`, z.B. `geom_bar()` und werden über den
-Operator `+` hinzugefügt.
-
-Im Verlauf des Kapitels werden wir die einzelnen Schritte noch einmal vertiefen, gleichwohl wollen wir mit eingängigen Beispiel beginnen.
-
-**Beispiel 1:** 
-
-Grundlage unserer Grafik und damit erstes Argument der Funktion `ggplot()` ist der `allbus2018`. Aufbauend definieren wir in der Funktion `aes()`, welche Variablen in unserer Grafik auf welcher Achse abgebildet werden sollen. Da wir lediglich eine Abbildung der Häufigkeitsverteilung der Variable `im19` anstreben, müssen wir nur das Argument `x =` spezifizieren. Anschließend wird über das Argument `weight =` eine Gewichtung vorgenommen. Damit haben wir unser Fundament gelegt. Über den Operator `+` fügen wir nun weitere Schichte hinzu. Als erstes "Layer" fügen wir über die Funktion `geom_bar` das gewünschte Balkendiagramm hinzu. Die Funktion führt dabei voreingestellt über das Argument `stat = "count"` einen Zählbefehl aus, welcher uns in Folge die Häufigkeitswerte der einzelnen Ausprägungen ausgibt. Als weitere Argumente definieren wir noch die Farbe der Balken mit `fill =` und das Auslassen fehlender Werte über ``. Als Endpunkt fügen wir noch eine zweite Schicht hinzu, die uns mit der Funktion `labs()` ermöglicht alle Achsen frei zu Beschriften. Fertig!
-
-```{r}
-allbus2018 %>% 
-  drop_na(im19) %>% 
-  ggplot(aes(x = im19, weight = wghtpew)) +
-  geom_bar(fill = "steelblue") +
-  labs(y = "Anzahl", title = "Häufigkeitsverteilung der Variable im19")
+allbus <- read_spss("ALLBUS2023.sav") |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5),
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r), min_valid = 6)
+  ) |>
+  to_label(eastwest, sex)
 ```
 
-Die folgende Grafik erweitert unsere Fähigkeiten zusätzlich um vier Punkte. Durch die nahtlose Integration der Funktionen des `tidyverse` und `strengejacke` ist es uns möglich innerhalb eines Objekts sowohl die Daten zu manipulieren, als auch diese in die nachfolgende Grafik einzubeziehen. So war es in unserem Beispiel von Nöten die Grupperungsvariable `sex` (Geschlecht) erst zu einem Faktor zu konvertieren, um sie nachstehend nutzen zu können - Funktion `to_label()`. Weiterhin haben wir das Nettoeinkommen der Befragten mit dem Argument `y =` auf der y-Achse abgebildet und das Geschlecht der Befragten über das Argument `colour =` als Gruppierungvariable gewählt. Damit erlaubt uns `ggplot()` die einzelnen Datenpunkte farblich hervorzuheben, sowie über die Funktion `stat_summary()` einen Mittelwertvergleich zwischen beiden Gruppen über ein Liniendiagramm abzubilden. 
+Mit diesem Kapitel kommst du zum eigentlichen *Sichtbar-Machen* deiner Befunde. Das tidyverse bietet dir mit **ggplot2** ein Grafik-System, das aus *einer* konsistenten Grammatik komplexe Visualisierungen baut — die *Grammar of Graphics*. Du legst nicht einzelne Plot-Funktionen aufeinander wie in SPSS, sondern beschreibst, *wie* deine Daten *welche* visuellen Aspekte einer Grafik füllen sollen.
 
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, inc, sex) %>% 
-  ggplot(aes(x = age, y = inc, colour = sex, weight = wghtpew)) +
-  geom_point(alpha = 0.1) +
-  stat_summary(fun = "mean", geom = "line", size = 0.8) +
-  labs(x = "Alter", y = "Einkommen", colour = "Geschlecht", 
-       title = "Mittleres Einkommen nach Alter und Geschlecht")
+Wir bauen das Kapitel an unserer Mini-Studie auf: Du visualisierst die Islamfeindlichkeits- und Populismus-Skala, vergleichst Subgruppen und kombinierst am Ende mehrere Grafiken zu einer publikationsfähigen Komposition.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Den **Grammar of Graphics**-Ansatz von ggplot2 erklären.
+- Häufigkeiten, Verteilungen und Zusammenhänge mit den passenden `geom_*()`-Schichten visualisieren.
+- Subgruppen mit `facet_wrap()` und `facet_grid()` aufteilen.
+- Farben, Themes und Beschriftungen anpassen.
+- Mehrere Plots mit **patchwork** zu einer Komposition zusammenfügen.
+- Grafiken mit `ggsave()` in publikationsfähiger Auflösung exportieren.
+
+## Die Grammar of Graphics in drei Schritten
+
+Jede ggplot2-Grafik folgt demselben Aufbau:
+
+1. **Datengrundlage** — welcher Datensatz?
+2. **Aesthetic Mapping** — welche Spalten füllen welche visuellen Eigenschaften (x, y, Farbe, Form, Gewicht)?
+3. **Layer (`geom_*`)** — was wird gezeichnet? Balken, Punkte, Linien, Boxen?
+
+Jede Schicht kommt mit `+` dazu — das ist *kein* tidyverse-Pipe, sondern ggplot2-eigen.
+
+### Erste Grafik: Häufigkeitsverteilung eines Items
+
+**Frage:** Wie verteilen sich die Antworten auf das Item `mm03` („Anwesenheit von Muslimen bringt Konflikt")?
+
+```{r first}
+allbus |>
+  filter(!is.na(mm03)) |>
+  ggplot(aes(x = mm03, weight = wghtpew)) +
+  geom_bar(fill = "#2563eb") +
+  labs(x = "mm03: Anwesenheit von Muslimen bringt Konflikt",
+       y = "Anzahl (gewichtet)",
+       caption = "ALLBUS 2023, gewichtet mit wghtpew") +
+  scale_x_continuous(breaks = 1:7)
 ```
 
-Nun wollen wir uns die einzelnen Schritte nochmal im Detail ansehen.
+**Lesart.** Die Skala läuft von 1 („stimme gar nicht zu") bis 7 („stimme voll und ganz zu"). Die Verteilung zeigt, in welche Richtung die Befragten tendieren.
+
+### Zweite Grafik: Subgruppen-Vergleich
+
+**Frage:** Wie unterscheidet sich Islamfeindlichkeit nach Bildungsniveau?
+
+```{r first2}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(x = "Bildungsgruppe", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023") +
+  scale_fill_brewer(palette = "Blues") +
+  theme(legend.position = "none")
+```
+
+Beide Grafiken folgen dem gleichen Drei-Schritt-Aufbau. Den schauen wir uns jetzt im Detail an.
 
 ## Schritt 1: Plot-Objekt erstellen
 
-```{r, echo=F, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/ggplot-Funktion.png")
+Das Plot-Objekt entsteht mit `ggplot()`. Erstes Argument ist der Datensatz.
+
+```{r empty, eval=FALSE}
+g <- ggplot(allbus)                # ohne Pipe
+g <- allbus |> ggplot()            # mit Pipe (gleichwertig)
 ```
 
-Wir beginnen mit einem Datensatz und erstellen ein Plot-Objekt mit der Funktion `ggplot()`. Als erstes Argument fügen wir unseren Datensatz ein `data = datensatz`. Hierbei bestehen zwei Möglichkeiten der Umsetzung.
+Allein ist `g` ein „leeres" Plot-Objekt — es weiß noch nichts über Achsen oder Inhalte.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Ohne Pipe
-g <- ggplot(data = allbus2018)
+## Schritt 2: Aesthetic Mapping
 
-# Mit Pipe
-g <- allbus2018 %>% 
-  ggplot()
+Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften der Grafik** zu. Die wichtigsten Eigenschaften:
+
+| Argument | Wozu |
+|---|---|
+| `x =`, `y =` | Achsen |
+| `weight =` | Survey-Gewichtung |
+| `fill =` | Füllfarbe (Flächen — Balken, Boxen) |
+| `colour =` | Linien- oder Punktfarbe |
+| `shape =` | Punktform |
+| `linetype =` | Strichstil |
+| `size =`, `alpha =` | Größe / Transparenz |
+| `group =` | unsichtbare Gruppierung |
+
+**Wichtig:** Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
+
+```{r mapping, eval=FALSE}
+g <- allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, weight = wghtpew, fill = eastwest))
 ```
 
+`g` ist jetzt ein Plot-Objekt mit Achsenzuweisungen — du siehst aber noch nichts, weil kein Layer existiert.
 
-## Schritt 2: Aesthetic mapping
+## Schritt 3: Layer hinzufügen
 
-Im zweiten Schritt definieren wir das zweite Argument `mapping =` über die Funktion `aes()` - "aesthetic mappings". Damit bestimmen wir welche Variablen benutzt werden sollen, um die Daten darzustellen. Im Folgenden wollen wir ergründen, inwieweit das Geschlecht der Befragten einen Einfluss auf ihr individuelles Nettoeinkommen `(inc)` hat. So definieren wir `sex` als Variable auf der x-Achse mit `x = sex` und die Variable `inc` mit `y = inc` auf der y-Achse. Da wir Gesamtdeutschland betrachten wollen, definieren wir noch mit `weight = wghtpew` das nötige Designgewicht. Der vorläufiger Befehl lautet entsprechend: `mapping = aes(x = sex, y = im21, weight = wghtpew)`. 
-Zusätzlich erlaubt die Funktion `aes()` weitere Anpassungen über `fill =`, `colour =`, `shape =`, `linetype =` und `group =`. Diese Argumente helfen zum Einen der Gruppierungsvariable auf der x-Achse eine Farbe, Form oder Zugehörigkeit zuzuweisen, zum Anderen lässt sich damit aber auch eine dritte Variable `(z)` als Gruppierungsvariable (siehe Beispiel 2) zuweisen.
+Layer kommen mit `+` dazu. Die Layer-Funktionen beginnen alle mit dem Präfix `geom_`.
 
-In unserem Beispiel wollen wir, dass die beiden Ausprägungsmerkmale von Geschlecht verschiedene Farben zugewiesen bekommen und die nachfolgenden Objekte entsprechend ausgefülllt werden. Der fertige Befehl lautet damit: `mapping = aes(x = sex, y = inc, weight = wghtpew, fill = sex, colour = sex)`. Das Argument `colour =` ist folglich ein Attribut für Linien und Punkte; das Argument `fill =` ist ein Attribut für Flächen.
+### Punktdiagramm / Jitter
 
-**Wichtig!** Wenn wir die Funktion `aes()` innerhalb der Funktion `ggplot()` definieren, gelten sie für alle Schichten, d.h. für alle Elemente der Grafik. Wir können später die "mappings" auch für jede Schicht einzeln definieren und damit auf verschiedene Datensätze zugreifen, oder andere Variablen verwenden.
-
-```{r, echo=T, collapse=T, comment="#>"}
-g <- allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(mapping = aes(
-    x = sex,
-    y = inc,
-    weight = wghtpew,
-    fill = sex,
-    colour = sex
-    ))
+```{r jitter}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(width = 0.08, height = 0.08, alpha = 0.2, color = "#1f77b4") +
+  labs(x = "Populismus (1–5, umgepolt)",
+       y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
 ```
 
-`g` ist damit ein "leeres" Plot-Objekt, dass noch nichts anzeigt, da wir noch keine "Layer" definiert haben. Das Objekt ist damit ein `ggplot2`-Objekt, welches im R-Studio Fenster `Plots` ausgegeben werden kann. Wir sehen folglich ein Grafikgerüst mit der richtigen Achsenzuweisung.
+`geom_jitter()` verteilt überlappende Punkte leicht — das ist bei zwei diskreten Achsen (Skalen mit wenigen Ausprägungen) unverzichtbar, sonst sehen alle Befragten wie *ein* Punkt aus.
 
-```{r, echo=T, collapse=T, comment="#>"}
-g
+### Boxplot und Violinplot
+
+```{r boxviolin}
+g_base <- allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat))
+
+g_base + geom_boxplot()
 ```
 
-## Schritt 3: Schichten ("Layer") hinzufügen
+Boxplots zeigen Median (Linie in der Box), die mittleren 50% (Box) und Whisker (1.5 × IQR). Violinplots zeigen stattdessen die Dichte:
 
-Dem Plot-Objekt `g` wollen wir nun mit den Funktionstypen `geom_` weitere Schichten beifügen. So addieren wir mit dem `+` Operator einfach ein weiteres "Layer" - `g + geom_`.
-
-### Punktdiagramm
-
-Als erstes möchten wir die einzelnen Beobachtungen als Datenpunkte abgetragen haben. Hierbei können wir entweder unsere Ausgangssytax optimieren, oder das Objekt `g` einfach erweitern.
-
-**Anmerkung:** Mit dem Argument `` werden fehlende Werte in den Schichten außen vor gelassen und wir verhindern eine Warnmeldung. 
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Ausgangssyntax optimieren
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(mapping = aes(x = sex, y = inc, weight = wghtpew, fill = sex, colour = sex)) +
-  geom_point()
-  
-# Objekt erweitern
-g +
-  geom_point()
+```{r violin}
+g_base + geom_violin()
 ```
 
-Wollen wir das Überlagern der Datenpunkte (overplotting) verhindern, können wir auch auf die Funktion `geom_jitter()` zurückgreifen. In Anwendung werden uns die Punkte nebeneinander gezeigt.
+Ein häufiger Trick: beide Schichten kombinieren — Violin als Hintergrund, dünnen Boxplot darüber:
 
-```{r, echo=T, collapse=T, comment="#>"}
-g +
-  geom_jitter()
+```{r combo}
+g_base +
+  geom_violin(alpha = 0.4) +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme(legend.position = "none")
 ```
 
-Mit dem Argument `width =` können wir zusätzlich bestimmen, wie breit die Streuung der Punkte sein soll.
+## Verschiedene Geoms für verschiedene Datentypen
 
-```{r, echo=T, collapse=T, comment="#>"}
-g +
-  geom_jitter(width = 0.5, )
+Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab.
+
+### Eine kategoriale Variable
+
+Klassischer Bar Chart mit `geom_bar()`:
+
+```{r bar-cat}
+allbus |>
+  filter(!is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew)) +
+  geom_bar(fill = "steelblue") +
+  labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)")
 ```
 
-Weitere Argumente sind `size =` für die größe der Punkte und `alpha =` zur Bestimmung der Transparenz. Zudem lassen sich wie gehabt im Fenster `Help` über den Befehl `?geom_jitter` in der Konsole weitere Argumente einsehen. 
+**Relative Häufigkeiten.** In modernem ggplot2 (ab Version 3.4) benutzt du `after_stat()` statt der alten `..count..`/`..prop..`-Syntax:
 
-```{r, echo=T, collapse=T, comment="#>"}
-g +
-  geom_jitter(size = 1, alpha = 0.3, )
+```{r bar-prop}
+allbus |>
+  filter(!is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew)) +
+  geom_bar(aes(y = after_stat(prop), group = 1), fill = "steelblue") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "Bildungsgruppe", y = "Anteil")
 ```
 
-### Zentrale Tendenz und Streuung abbilden
+Mit `fill =` als zweiter Gruppierungsvariable bekommst du gestapelte Balken — und mit `position = "dodge"` nebeneinander:
 
-Zur Darstellung der zentralen Tendenz und Streuung gibt uns `ggplot2` zusätzliche Schichten an die Hand. Genannt seien hier `geom_boxplot()` zur Darstellung von Boxplot-Diagrammen und `geom_violin()` für Violin-Diagramme.
-
-```{r, echo=T, collapse=T, comment="#>"}
-g +
-  geom_boxplot()
+```{r bar-stacked}
+allbus |>
+  filter(!is.na(educ_kat), !is.na(sex)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew, fill = sex)) +
+  geom_bar(position = "dodge") +
+  labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)", fill = "Geschlecht")
 ```
 
-In einem Boxplot wird der Median abgetragen, d.h. das Rechteck repräsentiert die mittleren 50% und die Striche ("whiskers") zeigen den 1,5 * IQR (Interquantilbereich). Die einzelnen Punkte stellen Ausreisser dar. 
+### Eine kontinuierliche Variable
 
-Wollen wir den Median sehen, müssen wir das Argument `fill = sex` weglassen.
+Histogramm mit `geom_histogram()`. Die wichtigste Stellschraube ist `binwidth`:
 
-```{r, echo=T, collapse=T, comment="#>"}
-g <- allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(mapping = aes(x = sex,
-                       y = inc,
-                       weight = wghtpew,
-                       colour = sex))
-
-g +
-  geom_boxplot()
+```{r hist}
+allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "steelblue", color = "white") +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Anzahl (gewichtet)")
 ```
 
-Violin-Diagramme sind Boxplot-Diagrammen sehr ähnlichen, wenngleich sie nicht die Quantile, sondern ein "kernel density estimate" zeigen - d.h. eine Abbildung der Kerndichte. Hier bietet sich das Argument `fill = sex` zudem ideal an. 
+Mit `geom_density()` bekommst du stattdessen eine geglättete Dichteschätzung:
 
-```{r, echo=T, collapse=T, comment="#>"}
-g <- allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(mapping = aes(x = sex,
-                       y = inc,
-                       weight = wghtpew,
-                       fill = sex))
-
-g +
-  geom_violin()
+```{r density}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(sex)) |>
+  ggplot(aes(x = islamophobie, fill = sex)) +
+  geom_density(alpha = 0.4) +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Dichte", fill = "Geschlecht")
 ```
 
-Stellen wir fest, dass die Farbgebung immer wieder neu angepasst werden muss, sollten wir das mapping entsprechend anpassen.
+### Zwei kontinuierliche Variablen
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Ausgang
-g <- allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(mapping = aes(x = sex,
-                       y = inc,
-                       weight = wghtpew))
+Streudiagramm mit Regressionsgerade — der Klassiker:
+
+```{r scatter}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus), !is.na(sex)) |>
+  ggplot(aes(x = populismus, y = islamophobie, color = sex)) +
+  geom_jitter(alpha = 0.2, width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit",
+       color = "Geschlecht", caption = "ALLBUS 2023")
 ```
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Boxplot
-g +
-  geom_boxplot(aes(colour = sex), )
+`geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`.
+
+## Facets — Subgruppen aufteilen
+
+Wenn eine Gruppierungsvariable mehr als drei oder vier Ausprägungen hat, wird die Überlagerung in einer Grafik unübersichtlich. Mit `facet_wrap()` bekommt jede Ausprägung ihr eigenes Panel:
+
+```{r facet-wrap}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus), !is.na(educ_kat)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4") +
+  geom_smooth(method = "lm", color = "black") +
+  facet_wrap(~ educ_kat) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit")
 ```
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Violin
-g +
-  geom_violin(aes(fill = sex), )
-```
-
-### Mehrere Schichten kombinieren
-
-So ist es uns auch möglich mehrere "Layer" zu kombinieren. So müssen wir lediglich mehrere `geom_` Funktionen mit dem `+` Operator verbinden:
-
-```{r, echo=T, collapse=T, comment="#>"}
-g +
-  geom_violin(aes(fill = sex), ) +
-  geom_jitter(aes(colour = sex), alpha = 0.2, width = 0.4, )
-```
-
-## Verschiedene Grafiken für verschiedene Datentypen
-
-In diesem Kapitel wollen wir uns eine Übersicht über die diversen `Geoms` in `ggplot2` für verschiedene Kombinationen von Variablen ansehen. So können wir entweder eine Variable auf der x-Achse oder y-Achse darstellen oder jeweils eine Variable auf der x-Achse und y-Achse. Diese Variablen können sowohl kontinuierlich (metrisch) oder kategorial (nominal/ordinal) sein. 
-
-**Wichtig!** Wir können in diesem Kapitel nur eine spezifische Auswahl der möglichen `Geoms` betrachten, da `ggplot2` sehr umfangreich ist. Für eine umfassende Dokumentation aller Funktionen siehe: [ggplot2 Dokumentation](https://ggplot2.tidyverse.org/reference/). Unser Ziel ist lediglich eine Befähigung zum eigenverantwortlichen Arbeiten und Problemlösung herzustellen und den kreativen Prozess der Datenvisualisierung einzuleiten.
-
-### Eine Variable
-
-Sofern wir nur eine Variable auf der x-Achse abtragen möchten, müssen wir dennoch Werte auf der y-Achse definieren. In diesem Zusammenhang wird es sich mehrheitlich um z.B. Häufigkeitsverteilungen etc. handeln.
-
-#### Kategoriale Variablen
-
-Handelt es sich bei unserer Analyse um eine kategoriale Variable, dann verwenden wir oft einen *bar chart bzw. bar graph*. Hierbei wird die betreffende Variable anhand eines Rechtecks auf der x-Achse abgetragen, wobei es sich häufig um absolute bzw. relative Häufigkeitsverteilungen handelt. Die Funktion, die hierfür verwendet wird, heißt `geom_bar()`.
-
-Als Beispiel ziehen wir die Alterskategorien der Befragten heran.
-
-```{r}
-allbus2018 %>% 
-  to_label(agec) %>% 
-  drop_na(agec) %>% 
-  ggplot(aes(x = agec, weight = wghtpew)) +
-  geom_bar(fill = "steelblue", colour = "red") 
-```
-
-**Merke:** Sofern wir `fill = "steelblue", colour = "red"` nicht innerhalb der `aes()` Funktion verwenden, dann handelt es sich nicht um Gruppierungsvariablen, sondern ausschließlich um Farbgebungen der Grafikobjekte. So färben wir mit `fill = "steelblue"` lediglich die Balken in Stahlblau ein. Eine Übersicht über die verschiedenen Farbvarianten erhalten wir mit der Funktion `colours()`. Es gibt 657, wenn gleich nur Zwanzig im folgenden Output dargestellt werden.
-
-```{r}
-colours() %>% sample(20)
-```
-
-Im nächsten Schritt wollen wir unser Balkendiagramm nicht mit absoluten Werten ausgeben, sondern mit relativen Häufigkeiten. Hierzu ist es wichtig zu wissen, dass in der vorherigen Grafik ein entscheidendes Argument mit Standardwert eingegangen ist, das wir nun anpassen müssen. So fügen wir der vorherigen Grafik die Argumente `aes(y = ..count..)` hinzu. Wir definieren also auf der y-Achse eine Variable, die unmittelbar aus der x-Achse errechnet werden soll. Mit dem Befehl `..count..` handelt es sich um eine absolute Auszählung der Häufigkeiten. Wollen wir eine relative Häufigkeitsverteilung verwenden wir den Befehl `aes(y = ..prop..)`, also eine proportionale Auszählung. Zudem müssen wir noch definieren aus welcher bzw. wie vielen Gruppe/n die Werte relational geschöpft werden sollen. Dies geschieht über den Befehl `aes(y = ..prop.., group = 1)`. Damit werden die Werte relational bzw. proportinal aus einer Gruppe gebildet und bilden damit Prozentwerte zu 100% ab (die Darstellungsform auf der y-Achse lernen wir in den kommenden Kapiteln)
-
-```{r}
-allbus2018 %>% 
-  to_label(agec) %>% 
-  drop_na(agec) %>% 
-  ggplot(aes(x = agec, weight = wghtpew)) +
-  geom_bar(aes(y = ..prop.., group = 1), fill = "steelblue", colour = "red") 
-```
-
-Weiterhin können wir zusätzliche Gruppierungvariablen angeben, anhand derer die Balken farblich kodiert werden. Im gewählten Beispiel: Geschlecht.
-
-```{r}
-allbus2018 %>% 
-  to_label(agec, sex) %>% 
-  drop_na(agec, sex) %>% 
-  ggplot(aes(x = agec, weight = wghtpew, fill = sex)) +
-  geom_bar(aes(y = ..prop.., group = sex)) 
-```
-
-Standardmäßig kreiert `ggplot2` einen *stacked* Bar Chart, die Balken werden also "gestapelt". Wollen wir hingegen die Balken nebeneinander stehen sehen, können wir das Argument `position = "dodge"` verwenden.
-
-```{r}
-allbus2018 %>% 
-  to_label(agec, sex) %>% 
-  drop_na(agec, sex) %>% 
-  ggplot(aes(x = agec, weight = wghtpew, fill = sex)) +
-  geom_bar(aes(y = ..prop.., group = sex), position = "dodge") 
-```
-
-Kontinuierliche Variablen
-
-Für kategoriale Variablen bieten sich eine Vielzahl von Grafikobjekten an. Beginnen möchten wir mit dem Histogramm, welches die Verteilung einer numerischen Variable idealen abträgt. Dazu werden die Werte einer Variable in diskrete Intervalle (`bins`) eingeteilt. Auf der y-Achse werden dazu, analog zu einem Bar Chart, die Häufigkeiten in den Intervallen abgebildet. Von besonderer Bedeutung ist hier die Bestimmung der Intervallgrößen (`binwidth`), da hierüber die Verteilung maßgeblich beeinflusst wird - die Grundeinstellung liegt bei `bins = 30`. 
-
-Hier ein Beispiel anhand der Altersverteilung in unserer Stichprobe mit den Grundeinstellungen.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  ggplot(aes(x = age, weight = wghtpew)) +
-  geom_histogram(colour = "red")
-```
-
-Wir bestimmen die `binwidth` selbst. Wir legen eine Altersspanne von 2 Jahren pro Balken fest - `binwidth = 1`.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  ggplot(aes(x = age, weight = wghtpew)) +
-  geom_histogram(binwidth = 1, colour = "red")
-```
-
-Die Bestimmung der `binwidth` sollte natürlich immer von der Skala der Variable abhängen und damit weder zu fein noch zu grob ausfallen.
-
-Im nächsten Schritt wollen wir auf der y-Achse die relativen Werte abgetragen sehen. Hierfür verwenden wir das Argument `aes(y = )` mit der zugehörigen Funktion `..density..`, damit `geom_histogram(aes(y = ..density..))`.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  ggplot(aes(x = age, weight = wghtpew)) +
-  geom_histogram(aes(y = ..density..), binwidth = 5, fill = "steelblue", colour = "black")
-```
-
-Zudem lassen sich auch in Histogrammen Gruppierungsvariablen verwenden. 
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  to_label(sex) %>% 
-  ggplot(aes(x = age, weight = wghtpew)) +
-  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, colour = "black")
-```
-
-Wir können die Balken auch über das Argument `position =` übereinander legen mit `position = "identity"`. 
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  to_label(sex) %>% 
-  ggplot(aes(x = age, weight = wghtpew)) +
-  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, position = "identity", alpha = 0.4)
-```
-
-Oder sie nebeneinander behalten `position = "dodge"`.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age) %>% 
-  to_label(sex) %>% 
-  ggplot(aes(x = age, weight = wghtpew, fill = sex)) +
-  geom_histogram(aes(y = ..density.., fill = sex), binwidth = 5, position = "dodge")
-```
-
-### Zwei Variablen 
-
-Jetzt wollen wir zwei Variablen auf der x-Achse und y-Achse abbilden. Auch hier hängen die Möglichkeiten der `geoms` vom Datentyp der Variable ab.
-
-#### X und Y kategorial
-
-Diese Konbination der Datentypen hält recht wenige Möglichkeiten der grafischen Aufbereitung bereit. Legitim ist in jedem Fall der grafische Abtrag der gemeinsamen Häufigkeiten. Hierfür gibt es die Funktion `geom_count()`.
-
-Als interessantes Beispiel dient die gemeinsame Häufigkeit zwischen Alterskategorie und Bildungsabschluss.
-
-```{r}
-allbus2018 %>% 
-  to_label(agec, educ) %>% 
-  drop_na(agec, educ) %>% 
-  mutate(agec = str_remove(agec, "JAHRE")) %>%
-  ggplot(aes(x = agec, y = educ, weight = wghtpew)) +
-  geom_count()
-```
-
-Die gemeinsamen Häufigkeiten werden durch `geom_count` vor allem über den Durchmesser der Punkte dargestellt (vgl. Funktion `crosstab()`).
-
-#### X kategorial und Y kontinuierlich
-
-Wenn eine der Variablen kategorial ist, dann können wir diese statt als Gruppierungsvariable auf der x-Achse verwenden. Gute Beispiele waren hierfür die in Kapitel 6.3.2 gezeigten Box- und Violindiagramme. Zudem können wir auch die Funktion `geom_col()` für zwei Variablen nutzen. Diese Funktion ist eng mit `geom_bar()` verwandt, wenngleich sie keine Aggregation der Daten über `stat = "count"` vornimmt, sondern nativ zwei Variablen zulässt und als Grundeinstellung mit `stat = identity` arbeitet. Die Variable auf der y-Achse bildet entsprechend alle Beobachtungen in den Kategorien auf der x-Achse ab. 
-
-Als Beispiel dient uns das Geschlecht der Befragten und ihr individuelles Nettoeinkommen.
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(sex, inc) %>% 
-  ggplot(aes(x = sex, y = inc, weight = wghtpew, fill = inc)) +
-  geom_col(position = "dodge")
-```
-
-#### X und Y kontinuierlich
-
-**Scatterplot**
-
-Wenn beide Variablen kontinuierlich sind, haben wir eine ganze Reihe an Möglichkeiten der Zusammenhang zwischen beiden abzubilden. Nachstehend wollen wir uns exemplarisch mit der Darstellung eines "Scatterplots" und Liniendiagramms beschäftigen. Hierfür verwenden wir die Funktionen `geom_point()` bzw. `geom_line()`.
-
-Als Beispiel wollen wir den Zusammenhang zwischen Alter und Arbeitsstunden pro Woche betrachten. 
-
-```{r}
-allbus2018 %>% 
-  drop_na(age, dw15) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew)) +
-  geom_point()
-```
-
-Im nächsten Schritt wollen wir die Daten grafisch aufbereiten und eine Gruppierungsvariable einbringen, um noch tiefer in die Zusammenhänge einzutauchen. Die Gruppierung nehmen wir hier wieder anhand des Geschlechts vor. Zudem passen wir die Größe über das Argument `size =` und die Transparenz über `alpha =` an. Auch die Form der Punkte kann bei der Visualisierung von Zusammenhängen wichtig sein. Diese passen wir über das Argument `shape =` in der Funktion `aes()` an.
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8)
-```
-
-Wir können unschwer ein auffächern der beiden Geschlechtergruppen hinsichtlich der wöchentlichen Arbeitszeit erkennen, die wir in einem zweiten Schritt durch eine Mittellinie verdeutlichen möchten. Hierfür nutzen wir die Funktion `stat_summary()`, die uns über ihre Argumente `fun =` für "function" und `geom =` die Zusammenfassung von Daten erlaubt. 
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.4) +
-  stat_summary(fun = "mean", geom = "line", size = 1) 
-```
-
-**Liniendiagramm**
-
-Mit der Funktion `geom_line()` könne wir auch Liniendiagramme bilden. Diese Funktion bietet sich vor allem bei aggregierten Daten an, da die sinnvolle Darstellung eines Liniendiagramms einen spezifischen y-Wert zu jedem x-Wert verlangt. Unter dieser Voraussetzung sind `geom_line()` und `stat_summary()` in ihrer Darstellung äquivalent.
-
-Als Beispiel soll uns wieder der Zusammenhang zwischen Alter und wöchentlicher Arbeitszeit dienen.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age, inc) %>% 
-  group_by(age) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm)) +
-  geom_line()
-```
-
-Wir können den vorliegenden Graphen auch mit Punkten ergänzen und das Aussehen der Linie verändern.
-
-```{r}
-allbus2018 %>% 
-  drop_na(age, inc) %>% 
-  group_by(age) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm)) +
-  geom_line(linetype = "dashed") +
-  geom_point(size = 2)
-```
-
-**Regression**
-
-Abschließend können wir auch Regressionen innerhalb der Grafiken berechnen lassen. 
-
-Da wir folgend mit polynomial Regressionen arbeiten möchten, empfehlen wir das Paket `splines` und `ggpmisc` zu installieren.
-
-```{r}
-library(splines)
-library(ggpmisc)
-```
-
-Wir wollen folglich anhand des Alters das individuelle Nettoeinkommen prognostizieren.
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, inc, sex) %>% 
-  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
-  geom_point(size = 2, alpha = 0.1) +
-  geom_smooth(method = "lm", formula = y ~ ns(x, 1)) +
-  stat_poly_eq(formula = y ~ ns(x, 1), 
-                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
-                parse = TRUE) 
-```
-
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, inc, sex) %>% 
-  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
-  geom_point(size = 2, alpha = 0.1) +
-  geom_smooth(method = "lm", formula = y ~ ns(x, 2)) +
-  stat_poly_eq(formula = y ~ ns(x, 2), 
-                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
-                parse = TRUE) 
-```
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, inc, sex) %>% 
-  ggplot(aes(x = age, y = inc, weight = wghtpew, group = sex, colour = sex)) +
-  geom_point(size = 2, alpha = 0.1) +
-  geom_smooth(method = "lm", formula = y ~ ns(x, 3)) +
-  stat_poly_eq(formula = y ~ ns(x, 3), 
-                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
-                parse = TRUE) 
-```
-
-In Anbetracht der erklärten Varianz in Verhältnis zur Komplexität der Regression scheint eine Polynomfunktion 2. Grades den Zusammenhang am Besten abzubilden. Bei den Männern handelt es sich immerhin um eine Varianzaufklärung von fast 10%. 
-
-## Facets
-
-Nun wollen wir uns verschiedene Möglichkeiten ansehen, um Zusammenhänge besser hervorheben oder gut sichtbar zu machen. 
-
-So kommt es häufig vor, dass Gruppierungsvariablen mehr als drei oder vier Kategorien besitzen. Folgen wir unseren bisherigen Darstellungstechniken ist es uns zwar möglich Farben/Formen/Linien für die Kategorien der Gruppierungsvariable anzupassen, gleichwohl wird es dann schnell unübersichtlich.
-
-Beispielhaft wollen wir uns den Zusammenhang zwischen Alter und individuellem Nettoeinkommen nach Schulabschlüssen ansehen.
-
-```{r}
-allbus2018 %>% 
-  set_na(educ, na = c(1,6,7)) %>% 
-  to_label(educ) %>% 
-  drop_na(age, inc, educ) %>% 
-  group_by(age, educ) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm, colour = educ)) +
-  geom_point() +
-  geom_line()
-```
-
-Wir könne nur sehr schwer die Zusammenhänge erkennen. Ein geeignetes Instrument für dieses Problem sind die Funktionen `facet_wrap()` und `facet_grid()`. 
-
-Mit `facet_wrap()` erstellen wir eine Grafik für jede Kategorie der Gruppierungsvariable.
-
-```{r}
-allbus2018 %>% 
-  set_na(educ, na = c(1,6,7)) %>% 
-  to_label(educ) %>% 
-  drop_na(age, inc, educ) %>% 
-  group_by(age, educ) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm, colour = educ)) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(~ educ) +
-  theme(legend.position="none")
-```
-
-Haben wir zwei Gruppierungsvriablen nutzen wir `facet_grid()`.
-
-```{r}
-allbus2018 %>% 
-  set_na(educ, na = c(1,6,7)) %>% 
-  to_label(educ, sex) %>% 
-  drop_na(age, inc, educ) %>% 
-  group_by(age, educ) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm, colour = educ)) +
-  geom_point() +
-  geom_line() +
-  facet_grid(sex ~ educ) +
-  theme(legend.position="none")
-```
-
-Hier werden die Stufen von `sex` in den Zeilen dargestellt, die Stufen von `educ` in den Spalten.
-
-Wenn wir die Gruppierung in den Zeilen haben wollen, schreiben wir facet_grid(Gruppierungsvariable ~ .), wenn sie in den Spalten wollen, schreiben wir facet_grid(. ~ Gruppierungsvariable). Der Punkt . bedeutet hier, dass wir für die Zeilen/Spalten keine Gruppierungsvariable verwenden.
-
-```{r}
-allbus2018 %>% 
-  set_na(educ, na = c(1,6,7)) %>% 
-  to_label(educ, sex) %>% 
-  drop_na(age, inc, educ) %>% 
-  group_by(age, educ) %>% 
-  mutate(incm = weighted_mean(inc, weights = wghtpew)) %>% 
-  ggplot(aes(x = age, y = incm, colour = educ)) +
-  geom_point() +
-  geom_line() +
-  facet_grid(sex ~ .) +
-  theme(legend.position="none")
+Bei *zwei* Gruppierungsvariablen ist `facet_grid()` die richtige Wahl — Zeilen × Spalten:
+
+```{r facet-grid}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus),
+         !is.na(educ_kat), !is.na(eastwest)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4") +
+  geom_smooth(method = "lm", color = "black") +
+  facet_grid(eastwest ~ educ_kat) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit")
 ```
 
 ## Farben und Themes
 
-Nachstehend wollen wir uns ansehen, wie wir Farben und Hintergründe unserer Grafiken anpassen können. Bisher hat ggplot2 automatisch für uns Farben gewählt, wenn wir Farben für eine Gruppierung verlangt haben. Die Standard Farbpalette ist jedoch für Farbenblinde äusserst schlecht geeignet. Es gibt viele Farbpaletten, welche wir verwenden könnten.
+Der Default-Farbverlauf von ggplot2 ist nicht barrierefrei. Eine kleine Sammlung Standard-Lösungen:
 
-So können wir auch eigene Farbpaletten definieren, die auch für Farbblinde geeignet sind - in unserem Beispiel acht Farben für maximal acht Kategorien.
+```{r colors-themes, eval=FALSE}
+# Diskrete kategoriale Variablen — Brewer-Paletten
+scale_color_brewer(palette = "Set1")     # für Linien/Punkte
+scale_fill_brewer(palette = "Blues")     # für Flächen
 
-```{r}
-farben <- c("#000000", "#E69F00",
-            "#56B4E9", "#009E73", 
-            "#F0E442", "#0072B2", 
-            "#D55E00", "#CC79A7")
+# Kontinuierlich — Viridis (barrierearm)
+scale_color_viridis_c()
+scale_fill_viridis_c()
+
+# Eigene Palette
+farben <- c("#2563eb", "#16a34a", "#dc2626")
+scale_color_manual(values = farben)
 ```
 
-Zur Umsetzungen brauchen wir die Funktionen `sclale_fill_manual()` bei Formen und `scale_colour_manual()` bei Punkten und Linien mit dem Argument `value =`.
+Komplette Themes ersetzen mit einer Zeile das Standard-Aussehen:
 
-Als Beispiel nutzen wir wieder das Beispiel Alter und wöchentlicher Arbeitszeit zwischen den Geschlechtern.
+```{r themes}
+p <- allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat)) +
+  geom_boxplot() +
+  labs(x = "Bildung", y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
 
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = farben)
+p + theme_minimal()
 ```
 
-Wir können die Farben auch gleich per Hand bestimmen. 
+`theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen. In `index.Rmd` haben wir `theme_rworkshop()` als globalen Default gesetzt, sodass alle Grafiken dieses Buchs einheitlich aussehen.
 
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = c("green", "grey"))
-```
-
-Hintergründe lassen sich zudem mit der Funktion `theme()` anpassen. Eine vordefinierte Auswahl findet sich unter [complete themes - ggplot2](https://ggplot2.tidyverse.org/reference/ggtheme.html), sowie eine Anleitung zur selbständigen Anpassung [Modify components of a theme - ggplot2](https://ggplot2.tidyverse.org/reference/theme.html). Hiermit können wir auch bestimmen, welche Komponenten wo und wie gezeigt werden sollen - z.B. theme(legend.position="none").
-
-Zwei kleine Beispiele.
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = farben) +
-  theme_bw()
-```
-
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = farben) +
-  theme_classic()
-```
+::: {.callout-tip}
+**SPSS → R: Klick vs. Code.** In SPSS klickst du Farben in einem Dialogfeld an, und die nächste Grafik fängt wieder bei Null an. In ggplot2 *speicherst* du Theme und Farbpalette als Code — und kannst sie auf jede neue Grafik anwenden, ohne dich zu wiederholen.
+:::
 
 ## Beschriftungen
 
-Sobald es darum geht Grafiken in Publikationen einzubringen oder deren Inhalt zu kommunizieren, braucht es Beschriftungen. Mit der Funktion `labs()` können wir die Beschriftung auf der x-Achse, y-Achse, den Titel und den Legendentitel anpassen. 
+`labs()` setzt alle Texte einer Grafik in einem Funktionsaufruf:
 
-```{r}
-allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = farben) +
-  labs(x = "Alter der Befragten", y = "Wöchentliche Arbeitszeit", 
-       title = "Wöchentliche Arbeitszeit nach Alter und Geschlecht", subtitle = "Dazu eine Grafik",
-       colour = "Geschlecht", shape = "Geschlecht", tag = "Nr. 1", caption = "Quelle:")
+```{r labs}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(
+    title    = "Islamfeindlichkeit und Populismus in Deutschland 2023",
+    subtitle = "Bivariater Zusammenhang, ungewichtet",
+    x        = "Populismus (1–5, umgepolt)",
+    y        = "Islamfeindlichkeit (1–7)",
+    caption  = "Quelle: ALLBUS 2023, GESIS Leibniz-Institut"
+  )
 ```
+
+## Mehrere Grafiken kombinieren mit patchwork
+
+`patchwork` ist der moderne Ersatz für `gridExtra::grid.arrange()`. Du speicherst Grafiken als Objekte und kombinierst sie mit `+`, `/` und `|`:
+
+```{r patchwork}
+p1 <- allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
+  labs(title = "Verteilung", x = "Islamfeindlichkeit", y = "Häufigkeit")
+
+p2 <- allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Ost vs. West", x = NULL, y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
+
+p3 <- allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(title = "Mit Populismus", x = "Populismus", y = NULL)
+
+(p1 | p2) / p3
+```
+
+`p1 | p2` legt nebeneinander, `/` untereinander. Klammern setzen Gruppierungen — fast wie ein arithmetischer Ausdruck.
+
+::: {.callout-important}
+**mariposa-Tipp: Statistik aus mariposa, Komposition aus patchwork.** Die Trennung ist absichtlich. mariposa liefert dir die Inferenz-Outputs (Koeffizienten, χ², r, F), ggplot2 die Visualisierung — und patchwork hält ggplot2-typisch nichts dazwischen, sondern lässt dich Plots so kombinieren, als wären sie Bausteine.
+:::
 
 ## Grafiken speichern
 
-Haben wir eine Grafik zu unserer Zufriedenheit erstellt, dann können wir diese über `ggsave()` in verschiedenen Formaten, Auflösungen und Größen (cm oder units) speichern. 
+`ggsave()` exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:
 
-Hierbei können wir entweder die Grafik einem Objekt zuweisen und dann speichern.
-
-```{r}
-grafik1 <- allbus2018 %>% 
-  to_label(sex) %>% 
-  drop_na(age, dw15, sex) %>% 
-  ggplot(aes(x = age, y = dw15, weight = wghtpew, colour = sex, shape = sex)) +
-  geom_point(size = 2, alpha = 0.8) +
-  scale_colour_manual(values = farben) +
-  labs(x = "Alter der Befragten", y = "Wöchentliche Arbeitszeit", 
-       title = "Wöchentliche Arbeitszeit nach Alter und Geschlecht", subtitle = "Dazu eine Grafik",
-       colour = "Geschlecht", shape = "Geschlecht", tag = "Nr. 1", caption = "Quelle:")
-```
-
-```{r}
+```{r save, eval=FALSE}
 ggsave(
-  plot = grafik1,
-  filename = "grafik1.png",
-  path = "Bilder/",
-  height = 6,
-  width = 8,
-  dpi = 300
+  filename = "befunde_mini_studie.png",
+  plot     = (p1 | p2) / p3,
+  width    = 10,
+  height   = 7,
+  dpi      = 300
 )
 ```
 
-Oder wir definieren die letzte Ausgabe als Input.
+Tipp für die Praxis: **PDF für LaTeX-Reports** (`filename = "....pdf"`), **PNG mit dpi ≥ 300 für Word/Folien**, **SVG für Web** (skalierbar).
 
-```{r}
-ggsave(
-  plot = last_plot(),
-  filename = "grafik1.png",
-  path = "Bilder/",
-  height = 6,
-  width = 8,
-  dpi = 300
-)
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — Eigene Verteilung.** Erstelle ein Histogramm der Populismus-Skala (`populismus`) mit Binwidth 0.25, gewichtet, mit eigenem Titel und Achsenbeschriftung.
+
+**Lösung:**
+```{r ex1-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(populismus)) |>
+  ggplot(aes(x = populismus, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.25, fill = "#7c3aed", color = "white") +
+  labs(x = "Populismus (umgepolt)", y = "Anzahl (gewichtet)",
+       title = "Verteilung der Populismus-Einstellung",
+       caption = "ALLBUS 2023")
 ```
+:::
 
-voilà! Nun haben wir das Werkzeug um selbständig eine explorative Datenanalyse vorzunehmen oder bekannte Zusammenhänge aufzuzeigen.
+::: {.callout-tip collapse="true"}
+**Übung 2 — Subgruppen-Boxplot.** Erstelle einen Boxplot der Islamfeindlichkeit nach `eastwest`, *gefiltert* nach Bildungsgruppen `educ_kat` (per `facet_wrap`).
 
+**Lösung:**
+```{r ex2-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest), !is.na(educ_kat)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
+  geom_boxplot() +
+  facet_wrap(~ educ_kat) +
+  labs(x = NULL, y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
+```
+:::
 
+::: {.callout-tip collapse="true"}
+**Übung 3 — Koeffizienten-Plot bauen.** Aus dem `summary()`-Output deines Regressions-Modells in Kap. 5 kannst du dir einen Koeffizienten-Plot bauen — Punkt für Schätzwert, Linie für Konfidenzintervall. Versuche es selbst (Tipp: schreibe die Werte in ein eigenes Tibble und benutze `geom_pointrange()`).
 
+**Lösung-Skizze:**
+```{r ex3-loesung, eval=FALSE}
+tibble(
+  term = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
+  beta = c(-0.13, 0.30, 0.10, 0.05, 0.33),
+  lower = c(-0.18, 0.26, 0.04, -0.01, 0.27),
+  upper = c(-0.08, 0.34, 0.16, 0.10, 0.39)
+) |>
+  ggplot(aes(x = beta, y = fct_reorder(term, beta), xmin = lower, xmax = upper)) +
+  geom_pointrange() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(x = "Standardisierter Koeffizient (Beta)", y = NULL,
+       title = "Was erklärt Islamfeindlichkeit 2023?")
+```
+:::
 
+## Was du jetzt weißt {-}
 
+- Du baust ggplot2-Grafiken in drei Schritten: Daten, Mapping, Layer.
+- Du wählst passende `geom_*`-Schichten nach Datentyp (kategorial/kontinuierlich, eine/zwei Variablen).
+- Du teilst Subgruppen mit `facet_wrap()` und `facet_grid()` auf.
+- Du benutzt Brewer- und Viridis-Paletten für barrierearme Farbgebung.
+- Du fasst mehrere Plots mit `patchwork` zu Kompositionen zusammen.
+- Du exportierst Grafiken mit `ggsave()` in publikationsfähiger Qualität.
+
+Damit hast du den gesamten Werkzeugkasten dieses Buchs zusammen: SPSS-Daten → Datenmodifikation → Univariate, Bivariate, Multivariate Analyse → Visualisierung. Was als Nächstes? Wende es an. Auf deine eigene Forschungsfrage, mit deinen eigenen Daten.
+
+## Weiterführend {-}
+
+- Hadley Wickham et al., [ggplot2 Reference](https://ggplot2.tidyverse.org/reference/) — Funktionsreferenz mit Beispielen für jede `geom_*` und `scale_*`.
+- [R Graph Gallery](https://r-graph-gallery.com/) — Inspiration und Cookbook für tausende Grafiktypen.
+- Claus Wilke, [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) — Theorie der Datenvisualisierung, frei online.
+- [patchwork-Dokumentation](https://patchwork.data-imaginist.com/) für die Komposition komplexerer Layouts.
