@@ -1,852 +1,339 @@
-# Uni- und Bivariate Datenanalyse
+# Uni- und Bivariate Datenanalyse {#sec-univbivar}
 
-In diesem Kapitel behandeln wir die gängigsten Verfahren zur uni- und bivariaten Datenanalyse und wie diese in den verwendeten Ökosystemen umgesetzt sind. Damit kann sich ein Überblick über die Datenstruktur verschafft und erste Zusammenhänge überprüft werden.
-Zur Veranschaulichung dieser Analyseschritte werden am Ende dieses Kapitels erste vereinfachte Möglichkeiten angeboten, diese grafisch aufzubereiten.
+```{r setup-kap4, include=FALSE}
+library(tidyverse)
+library(mariposa)
 
-## Gewichtung
-
-Sozialwissenschaftlich arbeiten wir vielfach mit Umfragedaten, mit denen Aussagen über eine größere Grundgesamtheit gemacht werden sollen (wie bspw. der in den Beispielen verwendete Allbus-Datensatz). Diese Daten beinhalten aber oft Verzerrungen (gewollt (Oversample) oder ungewollt (Non-Response)), welche ihre Repräsentativität einschränken. Um diesem Problem zu begegnen, ist es erforderlich die Daten zu gewichten. Bei der Auswahl der Codes, welche wir für die einzelnen Analyseschritte für dieses e-Book zusammengestellt haben, haben wir daher durchgehend darauf geachtet, dass die Verfahren gewichtet möglich sind.
-
-Hinweis an bisherigen SPSS-Nutzer:innen: Die Gewichtung erfolgt in R für jede Analyse einzeln (und nicht einmal für die ganze Analyse-Session wie in SPSS). Bei jedem Analyseschritt muss daher angegeben werden, ob gewichtet werden soll.
-
-Die Gewichtung erfolgt bei den einzelnen Funktionen i.d.R. mit dem Argument `weights=`. Bei jeder Funktion ist dies aber noch einmal ausgewiesen.
-
-## Univariate Statistiken
-
-Für univariate Statistiken haben wir die gängigsten Verfahren zusammengestellt (Häufigkeitsverteilungnen sowie Lage- und Streuungsmaße).
-
-| Packet         | Funktion            | Verwendung                |
-| :------------- | :------------------ | :------------------------ |
-| sjmisc         | frq()               | Häufigkeitstabelle |
-| sjmisc         | descr()             | Despriptive Statistiken ausgeben |
-| sjstats        | weighted_mean()     | Mittelwert berechnen |
-| sjstats        | weighted_median()   | Median berechnen |
-| sjstats        | weighted_sd()       | Standardabweichung berechnen |
-| sjstats        | weighted_se()       | Standardfehler berechnen |
-| weights        | wtd.quantile()      | Quantile berechnen |
-
-### `Frq()` {-}
-
-Mit der Funktion `frq()` können Häufigkeitstabellen ausgegeben werden, welche die Informationen: Value, Valuelabel, N, RaW %, Valid % und CUm. % umfassen. (Sie entsprechen damit dem SPSS-oUtput).
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-frq(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-
-datensatz %>% 
-  frq(variable1, weights = gewicht)
+# Pipeline aus Kap. 3 (verkuerzt reproduziert, damit das Kapitel
+# eigenstaendig rendert)
+allbus <- read_spss("ALLBUS2023.sav") |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                             min_valid = 5),
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                             min_valid = 6)
+  )
 ```
 
-**Beispielcode:**
+Nachdem du in Kap. 3 die Datenpräp-Pipeline gebaut hast, beginnt jetzt die eigentliche Analyse. Wir gehen Schritt für Schritt von der einzelnen Variable bis zu Zusammenhängen zwischen zwei Variablen — und beantworten dabei die ersten Teilfragen unserer Mini-Studie:
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Häufigkeitstabelle Leistungsprinzip (im19)
+> *Wie sieht die Verteilung von Islamfeindlichkeit in Deutschland 2023 aus? Unterscheiden sich Ost und West? Hängt Islamfeindlichkeit mit Populismus zusammen?*
 
-allbus2018 %>% frq(im19, weights = wghtpew)
+## Was du nach diesem Kapitel kannst {-}
+
+- Häufigkeitsverteilungen einer Variable berichten — gewichtet und ungewichtet.
+- Mittelwert, Median, Streuung und Standardfehler bestimmen.
+- Kreuztabellen mit Chi-Quadrat-Test und Effektgrößen lesen.
+- Pearson-, Spearman- und Kendall-Korrelationen berechnen und interpretieren.
+- Mittelwerte zweier Gruppen mit einem **t-Test** vergleichen.
+- Mittelwerte mehrerer Gruppen mit einer **einfaktoriellen ANOVA** vergleichen.
+- Nicht-parametrische Alternativen anwenden, wenn Voraussetzungen verletzt sind.
+- Erste Grafiken zu deinen Befunden erstellen.
+
+## Über Gewichtung — kurz und einprägsam
+
+In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsentiert**, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das **personenbezogene Ost-West-Gewicht** `wghtpew`. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen" verzerrt.
+
+::: {.callout-tip}
+**SPSS → R.** In SPSS aktivierst du Gewichtung einmal session-weit mit `WEIGHT BY wghtpew.` In R ist das anders: **jede Funktion**, die Gewichtung braucht, bekommt das Argument `weights =` einzeln. Das wirkt am Anfang umständlich, ist aber transparent — du siehst auf einen Blick, ob eine Analyse gewichtet ist.
+:::
+
+In mariposa heißt das Argument durchgängig `weights = wghtpew` — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.
+
+## Univariate Statistik
+
+### Häufigkeitstabellen mit `frequency()`
+
+`frequency()` aus mariposa ist das R-Pendant zu SPSS' `FREQUENCIES` — gleicher Output (Wert, Label, N, Prozent, gültige Prozent, kumulierte Prozent) plus oben kurz die Streumaße.
+
+**Frage:** Wie ist die Verteilung von Ost und West im gewichteten Sample?
+
+```{r freq-eastwest}
+allbus |> frequency(eastwest, weights = wghtpew)
 ```
 
-### `Descr()` {-}
+**Lesart.** Die gewichteten Häufigkeiten spiegeln das tatsächliche Verhältnis Ost/West in der deutschen Bevölkerung — ca. 83% West, 17% Ost. In den ungewichteten Rohdaten wäre Ost stärker vertreten gewesen.
 
-Mit `descr()` werden die wesentlichen deskriptiven Statistiken ausgegeben: prozentuale Angabe fehlender Werten, Mittelwert, Standardabweichung, Standardfehler, Wertebereich, Interquartilsabstand, Scheife. 
+Für eine ganze Itembatterie kombinierst du `frequency()` mit `tidyselect`-Helfern:
 
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-descr(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-
-datensatz %>% 
-  descr(variable1, weights = gewicht)
+```{r freq-mm, eval=FALSE}
+allbus |> frequency(mm01:mm06, weights = wghtpew)
 ```
 
-Mit dem Argument `show = "short"` wird die Ausgabe verkürzt und nur noch: prozentuale Angabe fehlender Werten, Mittelwert, Standardabweichung ausgegeben.
+### Deskriptive Statistik mit `describe()`
 
-**Beispielcode:**
+Mit `describe()` bekommst du Mittelwert, Median, Standardabweichung, Range, IQR und Schiefe für eine oder mehrere Variablen.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Deskriptive Statistiken Leistungsprinzip (im19)
+**Frage:** Wo liegt der durchschnittliche Skalenwert für Islamfeindlichkeit?
 
-allbus2018 %>% descr(im19, weights = wghtpew)
-
-allbus2018 %>% descr(im19, weights = wghtpew, show = "short")
+```{r describe-islam}
+allbus |> describe(islamophobie, weights = wghtpew)
 ```
 
-### `Weighted_mean()` {-}
+**Lesart.** Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5).
 
-`weighted_mean()` wird verwendet um lediglich den Mittelwert zu berechnen. Dies hat den Vorteil, dass das Ergebnis direkt als neue Variable abgespreichert werden kann (siehe dazu den Beispielcode unten).
+Mehrere Variablen gleichzeitig:
 
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_mean(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  weighted_mean(variable1, weights = gewicht)
+```{r describe-multi}
+allbus |> describe(islamophobie, populismus, age, weights = wghtpew)
 ```
 
-**Beispielcode:**
+### Einzelne Kennwerte
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Mittelwert Leistungsprinzip (im19) 
+Manchmal brauchst du nicht eine ganze Tabelle, sondern *einen* Wert — etwa für eine `summarise()`-Pipeline oder eine Caption. mariposa hat dafür gewichtete Einzel-Funktionen:
 
-allbus2018 %$% 
-  weighted_mean(im19, weights = wghtpew)
+| Funktion | Was sie liefert |
+|---|---|
+| `w_mean()` | gewichteter Mittelwert |
+| `w_median()` | gewichteter Median |
+| `w_sd()` | gewichtete Standardabweichung |
+| `w_se()` | gewichteter Standardfehler |
+| `w_quantile()` | gewichtete Quantile |
+| `w_var()` | gewichtete Varianz |
 
-# Mittelwert Leistungsprinzip (im19) als neue Variable
-
-ds <- allbus2018 %>% 
-  transmute(mittelLeistung = weighted_mean(im19, weights = wghtpew)) 
-
-ds
+```{r w-mean}
+allbus |> w_mean(islamophobie, weights = wghtpew)
 ```
 
-### `Weighted_median()` {-}
+Im Zusammenspiel mit `group_by()`/`summarise()` baust du dir eigene Subgruppen-Tabellen:
 
-Analog zur vorherigen Funktion wird mit `weighted_median()` nur der Median berechnet.
-
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_median(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  weighted_median(variable1, weights = gewicht)
+```{r summarise-group}
+allbus |>
+  filter(!is.na(eastwest)) |>
+  summarise(
+    n = n(),
+    mittelwert = w_mean(islamophobie, weights = wghtpew),
+    sd         = w_sd(islamophobie, weights = wghtpew),
+    se         = w_se(islamophobie, weights = wghtpew),
+    .by = eastwest
+  )
 ```
 
-**Beispielcode:**
+Das ist die R-Variante zum SPSS-`AGGREGATE` mit `WEIGHT BY` — alles in *einem* Block, in einem Pipe-Fluss.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Median Leistungsprinzip (im19)
+## Bivariate Statistik
 
-allbus2018 %$% 
-  weighted_median(im19, weights = wghtpew)
+### Kreuztabellen mit `crosstab()`
 
-# Median Leistungsprinzip (im19) als neue Variable
+`crosstab()` aus mariposa erzeugt eine Kreuztabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung.
 
-ds <- allbus2018 %>% 
-  mutate(medianLeistung = weighted_median(im19, weights = wghtpew)) %>% 
-  distinct(medianLeistung)
+**Frage:** Verteilt sich Bildung anders in Ost und West?
 
-ds
+```{r crosstab}
+allbus |>
+  crosstab(eastwest, educ, weights = wghtpew)
 ```
 
-### `Weighted_sd()` {-}
+Mit `prop = "col"` oder `prop = "total"` änderst du die Prozentuierungs-Richtung; mit `show = "n"` siehst du nur die Zellenzahlen.
 
-Mit `weighted_sd` kann die Standardabweichung berechnet werden.
+### Chi-Quadrat-Test mit `chi_square()`
 
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
+Statt erst eine Kreuztabelle zu rechnen und *dann* den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgröße (Cramérs *V*):
 
-**Syntax:** 
+**Frage:** Hängt Bildung und Region statistisch zusammen?
 
-```{}
-# Ohne Pipe
-
-weighted_sd(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  weighted_sd(variable1, weights = gewicht)
+```{r chi-sq}
+allbus |> chi_square(eastwest, educ, weights = wghtpew)
 ```
 
-**Beispielcode:**
+**Lesart.** Du erhältst χ² mit Freiheitsgraden, *p*-Wert und Cramérs *V*. Faustregel für *V*: `< 0.1` vernachlässigbar, `0.1–0.3` schwach, `0.3–0.5` moderat, `> 0.5` stark.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Mittelwert und Standardabweichung Leistungprinzip nach Ost-West (Fälle)
+### Korrelation
 
-ds <- allbus2018 %>% 
-  select(eastwest, im19, wghtpew) %>% 
-  group_by(eastwest) %>% 
-  mutate(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
-         leistungSDOstWest = weighted_sd(im19, weights = wghtpew)) %>% 
-  ungroup() 
+Drei Korrelationskoeffizienten, drei Funktionen — alle akzeptieren `weights =`:
 
-ds %>% 
-  select(eastwest, leistungMittelOstWest, leistungSDOstWest)
+| Funktion | Skalenniveau | Wann sinnvoll |
+|---|---|---|
+| `pearson_cor()` | intervall, normalverteilt | klassischer linearer Zusammenhang |
+| `spearman_rho()` | ordinal oder schief | wenn Linearität / Normalverteilung fragwürdig |
+| `kendall_tau()` | ordinal, kleine N | robuste Variante, gut bei Bindungen |
+
+**Frage:** Hängen Islamfeindlichkeit und Populismus zusammen?
+
+```{r pearson}
+allbus |> pearson_cor(islamophobie, populismus, weights = wghtpew)
 ```
 
-### `Weighted_se()` {-}
+**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa **+0.41** — das ist ein klar positiver, moderater Zusammenhang. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit.
 
-`weighted_se()` wird verwendet, um nur den Standardfehler zu berechnen.
+Eine ganze Korrelationsmatrix bekommst du, indem du mehrere Variablen oder einen `tidyselect`-Ausdruck übergibst:
 
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_se(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  weighted_se(variable1, weights = gewicht)
+```{r pearson-matrix, eval=FALSE}
+allbus |> pearson_cor(starts_with("mm0"), weights = wghtpew)
 ```
 
-**Beispielcode:**
+## Mittelwertvergleiche
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Mittelwert, Standardabweichung und Standardfehler 
-# Leistungprinzip nach Ost-West (Gruppen)
+### t-Test mit `t_test()`
 
-ds <- allbus2018 %>% 
-  select(eastwest, im19, wghtpew) %>% 
-  group_by(eastwest) %>% 
-  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
-            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
-            leistungSEOstWest = weighted_se(im19, weights = wghtpew)) %>% 
-  ungroup()
+Der unabhängige t-Test prüft, ob sich die Mittelwerte zweier Gruppen unterscheiden.
 
-ds
+**Frage:** Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?
 
-# Mittelwert, Standardabweichung, Standardfehler und .95 Konfidenzintervall 
-# Leistungprinzip nach Ost-West (Gruppen)
-
-ds <- allbus2018 %>% 
-  group_by(eastwest) %>% 
-  summarise(leistungMittelOstWest = weighted_mean(im19, weights = wghtpew),
-            leistungSDOstWest = weighted_sd(im19, weights = wghtpew),
-            leistungSEOstWest = weighted_se(im19, weights = wghtpew),
-            CI.95.down = leistungMittelOstWest-1.96*(leistungSDOstWest/sqrt(n())),
-            CI.95.up = leistungMittelOstWest+1.96*(leistungSDOstWest/sqrt(n()))) %>% 
-  ungroup()
-
-ds
-
-
+```{r t-test}
+allbus |> t_test(islamophobie, group = eastwest, weights = wghtpew)
 ```
 
-### `wtd.quantile()` {-}
+**Lesart.** Du erhältst *t*, df, *p*-Wert und Hedges' *g* (eine Effektgröße ähnlich Cohens *d*, aber für kleine N robuster). Die Reihenfolge der Gruppen in der Ausgabe verrät dir die Richtung des Unterschieds.
 
-Für die Berchnung der Quantile müssen wir auf das Paket `weights` zurückgreifen. Bitte installieren und laden. Wir verwenden davon die Funktion `wtd.quantile`.
+::: {.callout-note}
+**Hintergrund: Welcher t-Test?** Standardmäßig rechnet `t_test()` den **Welch-t-Test**, der ungleiche Varianzen erlaubt. Wenn du den klassischen Student-t möchtest, setze `var.equal = TRUE`. Für die Praxis gilt: der Welch-Test ist fast immer die sichere Wahl.
+:::
 
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
+### ANOVA mit `oneway_anova()`
 
-```{}
-library(weights)
-```
-```{r, include=F}
-library(weights)
-```
+Für *drei oder mehr* Gruppen ist die einfaktorielle ANOVA dein Standardwerkzeug.
 
-**Syntax:** 
+**Frage:** Hängt Islamfeindlichkeit mit Bildung zusammen?
 
-```{}
-# Ohne Pipe
+```{r anova}
+allbus_bildung <- allbus |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat")
 
-wtd.quantile(datensatz$variable1, weights = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  wtd.quantile(variable1, weights = gewicht)
+allbus_bildung |>
+  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew)
 ```
 
-**Beispielcode:**
+**Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird. Faustregeln für η²: `< 0.01` vernachlässigbar, `0.01–0.06` klein, `0.06–0.14` mittel, `> 0.14` groß.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Quantile Alter
+Wenn die ANOVA signifikant ist, willst du *welche* Gruppen sich unterscheiden — mit `tukey_test()`:
 
-allbus2018 %$% 
-  wtd.quantile(age, weights = wghtpew)
+```{r tukey, eval=FALSE}
+allbus_bildung |>
+  tukey_test(islamophobie, group = educ_kat, weights = wghtpew)
 ```
 
-## Bivariate Statistiken
+### Nicht-parametrisch
 
-Für bivariate Statistiken schauen wir uns zunächst mit der Funktion `crosstab()` die gemeinsame Verteilung zweier Variablen in einer Kreuztabelle an. Die Zusammenhangsmaße können wir überwiegend mit `crosstable_statistics()` abrufen. Für den Chi-Quadart-Test und den Korrelataionskoeffizienten nach Pearson verwenden wir spezifisch dafür geschriebene Funktionen. 
+Wenn die Voraussetzungen für *t*-Test oder ANOVA nicht erfüllt sind (z. B. stark schiefe Verteilungen, ordinale AV), gibt es Alternativen:
 
-| Packet         | Funktion                | Verwendung                |
-| :------------- | :---------------------- | :------------------------ |
-| dscr           | crosstab()              | Kreuztabellen |
-| sjstats        | weighted_chisqtest()    | Chi-Quadrat-Test |
-| sjstats        | crosstable_statistics() | Zusammenhangsmaße |
-| sjmisc         | weighted_correlation()  | Pearson`s r |
+| parametrisch | nicht-parametrisch |
+|---|---|
+| `t_test()` (zwei Gruppen) | `mann_whitney()` |
+| `oneway_anova()` (n Gruppen) | `kruskal_wallis()` |
+| `t_test()` (verbunden) | `wilcoxon_test()` |
 
-### `Crosstab()` {-}
-
-Für die Berechung einer Kreuztabelle verwenden wir das Paket `descr`, welches installiert und geladen werden muss.
-
-```{}
-library(descr)
-
-# Achtung! Überschreibt sjmisc::descr
-# Paket sjmisc deaktivieren und nochmal aktivieren
-
-detach("package:sjmisc", unload = TRUE)
-library(sjmisc)
-```
-```{r, include=F}
-library(descr)
-detach("package:sjmisc", unload = TRUE)
-library(sjmisc)
+```{r mw, eval=FALSE}
+allbus |> mann_whitney(islamophobie, group = eastwest, weights = wghtpew)
 ```
 
-**Syntax:** 
+::: {.callout-warning}
+**Vorsicht: Nicht reflexhaft zu non-parametrisch greifen.** Bei großen Stichproben sind *t*-Test und ANOVA gegenüber Verteilungsabweichungen sehr robust. Die nicht-parametrischen Tests verlieren etwas an statistischer Power. Wechsele die Methode bewusst, nicht als Sicherheits-Ritual.
+:::
 
-Mit der Funktion `crosstab` aus dem `descr`-Paket berechnen wir die Kreuztabelle. Mit der ersten Variable definieren wir die Zeilen und mit der Zweiten die Spalten. Im default ohne weitere Spezifikation erhalten wir eine Kreuztabelle mit den absoluten Häufigkeiten und eine Mosaik-Plot der Verteilung. Für andere Angaben müssen entsprechende Argumente benannt werden. Siehe dazu die folgenden Beispiele oder die Hilfeseite der Funktion mit `?crosstab`.
+## Erste Grafiken zu deinen Befunden
 
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
+Die volle Grafik-Schulung kommt in Kap. 6. Hier zeige ich dir drei kompakte Standard-Visualisierungen, die du nach jeder Bi-/Univariat-Analyse einsetzen kannst.
 
-```{}
-# Ohne Pipe
+### Histogramm
 
-crosstab(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
+**Frage:** Wie verteilt sich Islamfeindlichkeit über die Stichprobe?
 
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  crosstab(variable1, variable2, weight = gewicht)
+```{r hist}
+allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Häufigkeit (gewichtet)",
+       title = "Verteilung der Islamfeindlichkeit",
+       caption = "ALLBUS 2023, gewichtet mit wghtpew")
 ```
 
-**Beispielcode:**
+### Boxplot nach Gruppen
 
-```{r echo=T, collapse=T, comment="#>"}
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# Absolute Häufigkeit
-# ohne Grafik
+**Frage:** Wie verteilt sich Islamfeindlichkeit nach Bildungsgruppen?
 
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, plot = F)
-
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# relative Häufigkeit nach Spalten
-# ohne Grafik
-
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.c = T, plot = F)
-
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# relative Häufigkeit nach Zeilen
-# ohne Grafik
-
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.r = T, plot = F)
-
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# relative Häufigkeit nach Gesamthäufigkeit
-# ohne Grafik
-
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.t = T, plot = F)
-
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# relative Häufigkeit mit Chi-Quadrat nach Zellen
-# ohne Grafik
-
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.chisq = T, plot = F)
-
-# Kreuztabelle Geschlecht (sex) und Bildung (educ) - 
-# relative Häufigkeit nach Spalten
-# mit Chi-Quadrat-Test 
-# mit Grafik
-
-allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
-
-# Grafik
+```{r boxplot}
+allbus_bildung |>
+  filter(!is.na(educ_kat), !is.na(islamophobie)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie)) +
+  geom_boxplot(fill = "#e8f5ec") +
+  labs(x = "Bildungsgruppe", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
 ```
 
-```{r, echo=F}
-x <- allbus2018 %$% 
-  crosstab(sex, educ, weight = wghtpew, prop.c = T, chisq = T, plot = F)
+### Streudiagramm mit Regressionsgerade
 
-plot(x)
+**Frage:** Wie sieht der Zusammenhang Islamfeindlichkeit ↔ Populismus aus?
+
+```{r scatter}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(x = "Populismus (1–5, umgepolt)", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
 ```
 
-### `Weighted_chisqtest()` {-}
+::: {.callout-important}
+**mariposa-Tipp: Statistik in mariposa, Grafik in ggplot2.** mariposa hat bewusst keine eigene Plotting-Funktion. Das hat einen guten Grund: ggplot2 ist mächtig genug, dass jede:r Sozialwissenschaftler:in damit eigene Grafiken bauen kann — und du verstehst dabei, was wirklich passiert, statt einen Plotter-Wrapper-Output zu importieren.
+:::
 
-Der Chi-Quadrat-Test kann mit der `crosstab`-Funktion direkt unterhalb der Kreuztabelle berechnet oder direkt mit der `weighted_chisqtest()`-Funktion.
+## Übungen {-}
 
-**Syntax:** 
+::: {.callout-tip collapse="true"}
+**Übung 1 — Demokratiezufriedenheit beschreiben.** Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken. Beschreibe in einem Satz, was du siehst.
 
-```{}
-# Ohne Pipe
-
-weighted_chisqtest(datensatz$variable1, datensatz$variable2, weights = datensatz$gewicht)
-
-# Mit Pipe
-
-datensatz %>% 
-  weighted_chisqtest(variable1, variable2, weights = gewicht)
+**Lösung:**
+```{r ex1-loesung, eval=FALSE}
+allbus |> frequency(ps03, weights = wghtpew)
+allbus |> describe(ps03, weights = wghtpew)
 ```
+:::
 
-**Beispielcode:**
+::: {.callout-tip collapse="true"}
+**Übung 2 — Subgruppen-Vergleich.** Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Chi-Quadrat-Test Geschlecht (sex) und Bildung (educ)
-
-allbus2018 %>% 
-  weighted_chisqtest(sex, educ, weights = wghtpew)
+**Lösung:**
+```{r ex2-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(sex)) |>
+  summarise(
+    n  = n(),
+    mw = w_mean(islamophobie, weights = wghtpew),
+    sd = w_sd(islamophobie, weights = wghtpew),
+    se = w_se(islamophobie, weights = wghtpew),
+    .by = sex
+  )
 ```
+:::
 
-### `Crosstable_statistiscs()` {-}
+::: {.callout-tip collapse="true"}
+**Übung 3 — Drei Korrelate.** Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten?
 
-Die Funktion `crosstable_statistics()` können gängige Zusammenhangsmaße berechnet werden. 
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-crosstable_statistics(datensatz$vaiable1, datensatz$variable2, weights = datensatz$gewicht,
-                      statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
-
-# Mit Pipe
-
-allbus2018 %>% 
-  crosstable_statistics(variable1, variable2, weights = gewicht, 
-                        statistics = c("phi", "cramer", "spearman", "kendall", "fisher"))
+**Lösung:**
+```{r ex3-loesung, eval=FALSE}
+allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
+allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
+allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
 ```
+:::
 
-**Beispielcode:**
+## Was du jetzt weißt {-}
 
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Phi Geschlecht (sex) und Ost West (eastwest)
+- Du erzeugst gewichtete Häufigkeiten und deskriptive Statistiken mit `frequency()` und `describe()`.
+- Du berechnest gewichtete Einzelkennwerte (`w_mean`, `w_median`, `w_sd`, `w_se`, `w_quantile`).
+- Du baust Subgruppen-Tabellen mit `summarise()` und `.by =`.
+- Du kombinierst Kreuztabellen und Chi-Quadrat-Test in einer Funktion.
+- Du wählst zwischen Pearson, Spearman und Kendall passend zum Skalenniveau.
+- Du vergleichst Gruppenmittelwerte mit `t_test()` und `oneway_anova()` — und kennst nicht-parametrische Alternativen.
+- Du bringst deine Ergebnisse mit drei ggplot2-Standard-Grafiken zu Papier.
 
-allbus2018 %>% 
-  crosstable_statistics(sex, eastwest, weights = wghtpew, statistics = "phi")
+Im nächsten Kapitel weiten wir den Blick auf multivariate Verfahren aus: Faktorenanalyse, Reliabilität und multiple Regression.
 
-# Cramers V Geschlecht (sex) und Bildung (educ)
+## Weiterführend {-}
 
-allbus2018 %>% 
-  crosstable_statistics(sex, educ, weights = wghtpew, statistics = "cramer")
-
-# Spearman`s rho Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
-
-allbus2018 %>% 
-  crosstable_statistics(im19, im20, weights = wghtpew, statistics = "spearman")
-```
-
-### `Weighted_correlation()` {-}
-
-Mit `weighted_correlation` berechnen wir den Korrelationskoeffizienten nach Pearson. Ausgeben wird der Wert des Korrelationskoeffizienten, die Werte für ein Konfidenzintervall von 95% in eckigen Klammern und der p-Wert,
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_correlation(datensatz$variable1, datensatz$variable2, 
-                     weights = datensatz$gewicht)
-
-# Mit Pipe
-
-datensatz %>% 
-  weighted_correlation(variable1, variable2, weights = gewicht)
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Pearson`s r Leistungsprinzip (im19) und Befürwortung von Ungleichheit (im20)
-
-allbus2018 %>% 
-  weighted_correlation(im19, im20, weights = wghtpew)
-```
-
-
-## Mittelwertvergleiche (unabhängig)
-
-Für Mittelwertvergleiche können mit folgenden Funktionen t-Tests, einfaktorielle ANOVAs und der Mann-Whitney-Test bzw. Kruskall-Wallis-Test berechnet werden.
-
-| Packet         | Funktion                | Verwendung                |
-| :------------- | :---------------------- | :------------------------ |
-| sjstats        | weighted_ttest()        | T-Test |
-| sjstats        | grpmean()               | Einfaktorielle ANOVA |
-| sjstats        | weighted_mannwhitney()  | Mann-Whitney-Test / Kruskall-Wallis-Test |
-
-### `Weighted_ttest()` {-}
-
-Den t-Test berechnen wir mit der Funktion `weighted_ttest()`. Als Testergebnis werden der t-Wert, die Freiheitsgrade (df) und der P-Wert ausgegeben. Darunter wird der Mittelwert für beide Gruppen, die Mittelwertdifferenz sowie das 95%-Konfidenzintervall der Mittelwertdifferenz (in eckigen Klammern) ausgegeben.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_ttest(variable1 ~ gruppenvariable + gewicht, datensatz)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# T-Test zu Leistungsprinzip (im19) zwischen Geschlecht (sex)
-
-weighted_ttest(im19 ~ sex + wghtpew, allbus2018)
-```
-
-### `Grpmean()` {-}
-
-Für einen Mittelwertvergleich über mehr als zwei Gruppen können wir mit der `grpmean`-Funktion eine einfaktorielle ANOVA berechnen. Ausgeben werden für jede Gruppe der Mittelwert, das N, die Standardabweichung, der Standardfehler sowie der p-Wert für den Mittelwertunterschied zum Mittelwert des gesamten Samples. Für die ANOVA werden der R-Quadrat-Wert, der korregierte R-Quadart-Wert, der F-Wert und der p-Wert ausgegeben.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-grpmean(datensatz$variable1, datensatz$gruppenvariable, weights = datensatz$gewicht)
-
-# Mit Pipe
-
-datensatz %>% 
-  grpmean(variable1, gruppenvariable, gewicht)
-
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ)
-# P-Wert in Relation zu absolutem Mittelwert
-
-allbus2018 %>% 
-  grpmean(im19, educ, weights = wghtpew)
-
-# Einfaktorielle Anova Leistungsprinzip (im19) zwischen Bildungsniveau (educ) 
-# nach Geschlecht (sex)
-# P-Wert in Relation zu absolutem Mittelwert
-
-allbus2018 %>% 
-  group_by(sex) %>% 
-  grpmean(im19, educ, weights = wghtpew)
-```
-
-### `Weighted_mannwhitney()` {-}
-
-Zur Berechnung des Mann-Whitney-Tests bzw. des Kruskall-Wallis-Tests verwenden wir die Funktion `weighted_mannwhitney()`.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-weighted_mannwhitney(variable1 ~ gruppenvariable + gewicht, datensatz)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Mann-Whitney-Test Leistungsprinzip (im19) nach Geschlecht (sex)
-
-weighted_mannwhitney(im19 ~ sex + wghtpew, allbus2018)
-
-# Kruskall-Wallis-Test Leistungsprinzip (im19) nach Geschlecht (sex)
-
-weighted_mannwhitney(im19 ~ educ + wghtpew, allbus2018)
-```
-
-## Grafiken
-
-Zur grafischen Aufbereitung einiger der vorhergehenden univariaten und bivariaten Analysen bietet das Paket `sjplot` verschiedene Möglichkeiten an, mit wenigen Zielen Code Grafiken zu erstellen. Diese können exportiert und direkt in Ergebnisberichte verwendet werden.
-
-| Packet         | Funktion           | Verwendung                |
-| :------------- | :----------------- | :------------------------ |
-| sjplot         | plot_frq()         | Grafiken zu univariaten Häufigkeitsverteilungen |
-| sjplot         | plot_likert()      | Grafiken zu univariaten Häufigkeitsverteilungen bei Likert-Items |
-| sjplot         | plot_stackfrq()    | Grafiken als univariate Balkenschichtungsdiagramme |
-| sjplot         | plot_grpfrq()      | Grafiken zu univariaten Häufigkeitsverteilungen nach Gruppen |
-| sjplot         | plot_xtab()        | Grafiken als Kreuztabellendiagramme |
- 
-
-### `Plot_frq()` {-}
-
-Mit der Funktion `plot_frq()` können verschiedene Grafiken zu univariaten Häufigkeitsverteilungen erstellt werden. Im default wird dabei ein einfaches Balkendiagramm erstellt, welches die absolute Anzahl der Befragten pro Kategorie sowie deren prozentualen Anteil an der Gesamtverteilung abbildet. Mit verschiedenen Argumenten (Übersicht mit `?plot_frq` abrufbar) kann die Grafik entsprechend den eigenen Wünschen angepasst werden. In den Beispiele sind hierfür verschiedene Möglichkeiten aufgeführt.
-
-ACHTUNG: In der Pipe-Schreibeweise muss hier der %$%-Operator verwendet werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-plot_frq(datensatz$variable1, weight.by = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$% 
-  plot_frq(variable1, weight.by = gewicht)
-
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Grafik zur Häufigkeitsverteilung Bildung (educ)
-
-allbus2018 %$% 
-  plot_frq(educ, weight.by = wghtpew, coord.flip = T, hjust = "left", type = "dot",
-           show.ci = T, expand.grid = T, vjust = "bottom", sort.frq = "desc")
-```
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Grafik zur Häufigkeitsverteilung Alter (age) 
-# mit Normalverteilungskurve, Mittelwert und Standardabweichung
-
-allbus2018 %$% 
-  plot_frq(age, weight.by = wghtpew, type = "h", show.mean = TRUE, 
-           show.mean.val = TRUE, normal.curve = TRUE, show.sd = TRUE, 
-           normal.curve.color = "black", geom.size = .3, xlim = c(15, 100))
-```
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Grafik zur Häufigkeitsverteilung Alter (age) 
-
-allbus2018 %$% 
-  plot_frq(age, weight.by = wghtpew, type = "violin", show.values = F)
-```
-
-### `Plot_likert()` {-}
-
-Um Häufigkeitsverteilungen verschiedener Likert-Items im Vergleich zu darzustellen bietet das `sjplot`-Paket mit der `plot_likert` Funktion eine sehr praktische Lösung an. Wie bei der vorherigen Funktion können über diverse Argumente die Grafik entsprechend den eigenen Vorstellungen angepasst werden. Auch hier bieten die aufgeführten Beispiele erste Orientierungen, welche Möglichkeiten bestehen.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-plot_likert(datensatz$variable1, weight.by = datensatz$gewicht)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items
-
-plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], grid.range = c(.8, .8), 
-            wrap.legend.labels = 11, wrap.labels = 12, values = "sum.inside", 
-            show.prc.sign = T, weight.by = allbus2018$wghtpew)
-```
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Grafik zur Verteilung von Ausprägungsmerkmalen bei Likert-Items nach Komponenten
-
-plot_likert(allbus2018[c("im19", "im20", "im21", "id01")], c(1,1,2,2),
-            grid.range = c(1.1, 1.1), values = "sum.outside",
-            show.prc.sign = T, weight.by = allbus2018$wghtpew, legend.pos = "none")
-```
-
-### `Plot_stackfrq()` {-}
-
-Mit der `plot_stackfrq()` Funktion können Balkenschichtungsdiagramme erstellt werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-plot_stackfrq(datensatz$variable1, weight.by = datensatz$gewicht)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Verteilung von Ausprägungsmerkmalen in einem Balkenschichtungsdiagramm 
-# Farbauswahl mit RColorBrewer::display.brewer.all()
-
-plot_stackfrq(allbus2018[c("im19", "im20", "im21", "id01")],
-              weight.by = allbus2018$wghtpew, expand.grid = T, geom.colors = "Greens", 
-              wrap.labels = 12, wrap.legend.labels = 11)
-```
-
-### `Plot_grpfrq()` {-}
-
-Um die Häufigkeitsverteilung für verschiedene Gruppen im Vergleich abzubilden, verwenden wir die Funktion `plot_grpfrq()`. Diese Funktion bietet mit dem Argument `show.summary` auch an, die Chi-Quadart Statistiken in die Grafik zu integrieren. Auch für diese Funktion bieten die aufgeführten Beispiele einen ersten Überblick über die verschieden Möglichkeiten.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-plot_frq(datensatz$variable1, datensatz$gruppenvariable, weight.by = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$%
-  plot_frq(variable1, gruppenvariable, weight.by = gewicht)
-```
-
-**Beispielcode:**
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Alter (age) nach Geschlecht (sex) und Statistiken
-
-allbus2018 %$% 
-  plot_grpfrq(age, sex, weight.by = wghtpew, show.values = F, type = "line",
-              show.summary = T, summary.pos = 1)
-```
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip (im19) nach Schichtzugehörigkeit (id02) 
-
-allbus2018 %$% 
-  plot_grpfrq(im19, id02, weight.by = wghtpew, show.values = F, type = "boxplot")
-```
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Statistiken
-
-allbus2018 %$% 
-  plot_grpfrq(im19, sex, weight.by = wghtpew, type = "bar", show.summary = T,
-              summary.pos = "1", ylim = c(0, 850))
-```
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Leistungsprinzip (im19) nach Geschlecht (sex) und Ost West (eastwest)
-# und Statistiken
-
-allbus2018 %$% 
-  plot_grpfrq(im19, sex, intr.var = eastwest, weight.by = wghtpew, 
-              type = "violin", show.summary = T, summary.pos = "1")
-```
-
-### `Plot_xtab()` {-}
-
-Mit der Funktion `plot_xtab()` können Kreuztabellen grafisch dargestellt werden. Auch diese Funktion bietet verschiedene Möglichkeiten über Argumente die Grafik den eigenen Bedürfnissen anzupassen.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-plot_xtab(datensatz$variable1, datensatz$variable2, weight.by = datensatz$gewicht)
-
-# Mit Pipe
-# Achtung! %$% Operator
-
-datensatz %$%
-  plot_xtab(variable1, variable2, weight.by = gewicht)
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Verteilung soziale Ungleichheit aus Makroperspektive (im21) nach Ost West (eastwest)
-# und Statistiken
-
-allbus2018 %$% 
-  plot_xtab(im21, eastwest, weight.by = wghtpew, type = "line", show.total = F, 
-            show.n = F, show.summary = T, summary.pos = "1")
-```
-
-### `Grid.arrange()` {-}
-
-Wenn wir mehrere Plots erstellen, welche zusammen berichtet werden sollen, bietet es sich mitunter an, sie mit der Funktion `grid.arrange()` in einer Grafik vor dem Exportieren zusammen zu fassen.
-
-Die Funktion `grid.arrange()` entnehmen wir aus dem Paket `gridExtra`.
-
-Zur Anordnung der gewünschten Plots erstellen wir zunächst die einzelnen Plots als neues Objekt. Anschließend definieren wir mit der Funktion `grid.arrange()` wie diese zueinander angeordnet werden sollen. 
-
-```{}
-library(gridExtra)
-```
-```{r, include=FALSE}
-library(gridExtra)
-```
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-grid.arrange(arrangeGrob(abbildung1, abbildung2))
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Verteilung Alter (age) nach Geschlecht (sex) zwischen Ost West (eastwest)
-
-p1 <- allbus2018 %>% 
-  filter(eastwest == 1) %$% 
-  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
-              summary.pos = "1", title = "ALTER nach GESCHLECHT - WEST",
-              geom.colors = "Blues")
-
-p2 <- allbus2018 %>% 
-  filter(eastwest == 2) %$% 
-  plot_grpfrq(age, sex, weight.by = wghtpew, type = "violin", show.summary = T,
-              summary.pos = "1", title = "ALTER nach GESCHLECHT - OST",
-              geom.colors = "Greens")
-  
-
-# --------
-
-pp1 <- grid.arrange(arrangeGrob(p1, p2, nrow = 1))
-
-pp1
-```
-
-
-### `Ggsave()` {-}
-
-Wenn wir mit der grafischen Aufbereitung unserer Ergebnisse zufrieden sind, können wir diese mit der Funktion `ggsave()` exportieren.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-ggsave("Grafik.png", plot = last_plot(), dpi = 300)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-
-ggsave("grid.plot.png", plot = pp1, dpi = 300)
-
-```
-
-
-
-
-
-
+- mariposa-Vignetten [„Descriptive Statistics"](https://yannickdiehl.github.io/mariposa/articles/descriptive-statistics.html), [„Hypothesis Testing"](https://yannickdiehl.github.io/mariposa/articles/hypothesis-testing.html) und [„Correlation Analysis"](https://yannickdiehl.github.io/mariposa/articles/correlation-analysis.html).
+- Andy Field et al., *Discovering Statistics Using R* — Kapitel zu Mittelwertvergleichen und Korrelation.
+- ALLBUS-Methodenbericht 2023 (GESIS): Erläuterung der Gewichtungsvariablen und Stichprobenarchitektur.
