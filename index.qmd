@@ -1,0 +1,145 @@
+---
+description: "Eine Einführung in die statistische Datenanalyse mit R, tidyverse und mariposa für die Sozialwissenschaften — mit ALLBUS 2023."
+---
+
+```{r setup-global, include=FALSE}
+library(tidyverse)
+library(mariposa)
+library(patchwork)
+
+theme_rworkshop <- function(base_size = 12) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.title = element_text(face = "bold"),
+      plot.caption = element_text(color = "grey40", hjust = 0),
+      panel.grid.minor = element_blank(),
+      legend.position = "bottom"
+    )
+}
+theme_set(theme_rworkshop())
+
+# Automatische Bibliographie der genutzten Pakete
+knitr::write_bib(c(
+  .packages(), "knitr", "rmarkdown", "mariposa", "tidyverse", "patchwork", "quarto"
+), "packages.bib")
+```
+
+# Vorwort {.unnumbered}
+
+Dieses Buch ist eine Einführung in die statistische Datenanalyse mit R für die Sozialwissenschaften. Es richtet sich an Studierende, die R neu kennenlernen — oft mit Vorerfahrung in SPSS — und einen einfachen, modernen Einstieg suchen. Du arbeitest dich vom ersten Datenimport über deskriptive und inferenzstatistische Verfahren bis zu Faktorenanalyse und Regression. Dein Werkzeugkasten ist dabei bewusst klein gehalten: das **tidyverse** für Datenmanipulation und Visualisierung und das Marburger Paket **mariposa** für die statistische Analyse.
+
+Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erhebungsstandards — exemplarisch arbeiten wir mit dem **ALLBUS 2023**. Auch unstandardisierte Datensätze lassen sich mit denselben Techniken bearbeiten, und Survey-Gewichtung ist von Anfang an mit dabei.
+
+## Was du nach diesem Buch kannst {-}
+
+- Datensätze aus SPSS, Stata oder Excel einlesen und mit Labels und fehlenden Werten umgehen.
+- Daten transformieren, rekodieren und Skalen aus Items bilden.
+- Univariate, bivariate und multivariate Analysen durchführen — auch mit Survey-Gewichten.
+- Korrelationen, Faktorenanalysen, lineare und logistische Regressionen rechnen und interpretieren.
+- Befunde mit ggplot2 in publikationsfähige Grafiken bringen.
+- Eine Analyse so dokumentieren, dass sie reproduzierbar ist.
+
+## Voraussetzungen {-}
+
+**R** (Programmiersprache, Open Source). Die jeweils aktuelle Version findest du unter [cran.r-project.org](https://cran.r-project.org/). Dieses Buch setzt mindestens **R 4.3** voraus; empfohlen ist **R 4.5 oder höher**, damit alle hier gezeigten Funktionen ohne Anpassungen laufen.
+
+**RStudio** als integrierte Entwicklungsumgebung (IDE). Die IDE selbst heißt weiterhin RStudio, die Firma dahinter heißt seit 2022 [Posit](https://posit.co/). Du brauchst die Desktop-Version: [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/). Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](https://posit.cloud/) (vormals RStudio Cloud) im Browser nutzen.
+
+**Pakete.** Wir installieren am Anfang einmal die zwei Ökosysteme, die uns durch das ganze Buch tragen:
+
+```{r install, eval=FALSE}
+install.packages("tidyverse")
+install.packages("remotes")
+remotes::install_github("YannickDiehl/mariposa")
+install.packages("patchwork")  # nur fuer Multi-Plot-Komposition in Kap. 6
+```
+
+Aktivierung in jeder R-Sitzung:
+
+```{r activate, eval=FALSE}
+library(tidyverse)
+library(mariposa)
+library(patchwork)
+```
+
+Mehr brauchen wir nicht. Für die konfirmatorische Faktorenanalyse in Kap. 5 fügen wir später noch `lavaan` und `semPlot` hinzu — das sind die einzigen weiteren Pakete, die wir bewusst zulassen.
+
+## Warum R? {-}
+
+- R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten entwickelt wurde.
+- R ist Open Source: keine Lizenzkosten, auch nicht für die Erweiterungspakete.
+- Daten lassen sich sehr flexibel auswerten und visualisieren — kleine Datenanalysen und große Pipelines folgen demselben Code-Stil.
+- Wissenschaftliche Organisationen, Unternehmen und Behörden setzen R weltweit ein. Wer R lernt, lernt eine Sprache, die in der Praxis gefragt ist.
+- R lässt sich plattformunabhängig in beliebige IT-Strukturen integrieren.
+
+## Warum tidyverse und mariposa? {-}
+
+Statt einer langen Liste von Spezialpaketen arbeiten wir mit zwei klar abgegrenzten Ökosystemen.
+
+**Tidyverse.** Eine Sammlung aufeinander abgestimmter Pakete (`dplyr`, `tidyr`, `ggplot2`, `readr`, `purrr`, `tibble`, `stringr`, `forcats`, `lubridate`), die einen gemeinsamen Stil für Datenmanipulation und Visualisierung definieren. Wer das tidyverse einmal verstanden hat, kann fast alle modernen R-Skripte lesen.
+
+**mariposa.** Ein in Marburg entwickeltes Paket (Marburg Initiative for Political and Social Analysis), das die für sozialwissenschaftliche Analysen typischen Verfahren in einer konsistenten, tidyverse-nahen Syntax bereitstellt: Datenimport aus SPSS, Umgang mit Labels und Missing-Werten, deskriptive Statistik, t-Tests, ANOVA, Korrelation, Faktorenanalyse, Regression. Die Ergebnisse sind SPSS-kongruent — wer aus SPSS umsteigt, erkennt die Ausgaben wieder.
+
+## Beispieldatensatz: ALLBUS 2023 {-}
+
+Wir arbeiten durchgehend mit dem [ALLBUS](https://www.gesis.org/allbus) — der Allgemeinen Bevölkerungsumfrage der Sozialwissenschaften. Die Welle 2023 ist die aktuell verfügbare Hauptbefragung mit 5246 Befragten und 579 Variablen. Als roten Faden durch die Methoden-Kapitel verwenden wir die Frage:
+
+> *Wer trägt islamfeindliche Einstellungen in Deutschland 2023, und wie hängen sie mit politischen Orientierungen und Soziostruktur zusammen?*
+
+Diese Frage ist nicht zufällig gewählt: Sie ermöglicht uns, eine **latente Skala** aus sechs Einzelitems zu bilden, die Skala anschließend deskriptiv zu beschreiben, mit anderen Variablen in Beziehung zu setzen und schließlich in Regressionsmodellen zu erklären. So lernst du nicht nur einzelne Methoden, sondern siehst, wie sie zu einer kompletten Analyse zusammenfließen.
+
+## Typographie {-}
+
+Die folgenden Kapitel bestehen zu einem großen Teil aus R-Code in sogenannten **Code-Chunks**. Sie sehen so aus:
+
+```{r, results='hide'}
+x <- seq(from = 1, to = 100, by = 10)
+x
+```
+
+Das Ergebnis erscheint direkt darunter:
+
+```{r, echo=FALSE}
+x
+```
+
+`x` ist hier dein Input, das Ergebnis dein Output. Den Code kannst du jederzeit in dein eigenes R-Script übernehmen — Copy-and-Paste ist ausdrücklich erwünscht.
+
+**Pipe-Operator.** Du wirst durchgehend den nativen Pipe-Operator `|>` sehen. Er reicht das Ergebnis einer Funktion in die nächste weiter und macht aus verschachteltem Code einen lesbaren Arbeitsfluss:
+
+```{r, eval=FALSE}
+allbus |>
+  filter(eastwest == 1) |>
+  describe(ls01)
+```
+
+In älterem Code findest du oft `%>%` (aus dem Paket `magrittr`). Beide tun fast dasselbe; wir erklären den Unterschied kurz in Kapitel 2.
+
+## Konventionen in diesem Buch {-}
+
+Du erkennst wiederkehrende Bausteine:
+
+::: {.callout-tip}
+**SPSS → R.** Direkte Übersetzungshilfe für Umsteiger:innen — links der SPSS-Befehl, rechts das R-Pendant.
+:::
+
+::: {.callout-warning}
+**Vorsicht.** Typische Fallstricke und Stolpersteine.
+:::
+
+::: {.callout-note}
+**Hintergrund.** Kurze konzeptionelle Einschübe zur Theorie hinter einer Methode.
+:::
+
+::: {.callout-important}
+**mariposa-Tipp.** Stellen, an denen mariposa eine besonders kompakte Lösung anbietet.
+:::
+
+## Weiterführende Literatur {-}
+
+Wenn du tiefer einsteigen möchtest:
+
+- Hadley Wickham & Garrett Grolemund, [R for Data Science (2. Auflage)](https://r4ds.hadley.nz/) — das Standardwerk für das tidyverse, frei online.
+- Hadley Wickham, [Advanced R](https://adv-r.hadley.nz/) — für alle, die R als Programmiersprache verstehen wollen.
+- mariposa-Dokumentation: [yannickdiehl.github.io/mariposa](https://yannickdiehl.github.io/mariposa/) — Funktionsreferenz und Vignetten.
+- Yihui Xie, [bookdown: Authoring Books and Technical Documents with R Markdown](https://bookdown.org/yihui/bookdown/) — falls du selbst ein Buch oder Skript wie dieses schreiben möchtest.
