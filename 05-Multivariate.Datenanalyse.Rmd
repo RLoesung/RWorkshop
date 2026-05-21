@@ -1,702 +1,319 @@
-# Multivariate Datenanalyse
+# Multivariate Datenanalyse {#sec-multivar}
 
-In diesem Kapitel werden unsere Ansätze vorgestellt, um multivariate Datenanalysen in R durchzuführen. Dabei müssen wir an verschiedenen Stellen auf andere Pakete zurück greifen, um die Analysen durchzuführen. Zwar beinhalten auch die bisher verwendeten Pakete tw. multivariate Analysemöglichkeiten, doch häufig ohne die Möglichkeit die Analysen auch zu gewichten.
-Das Kaptiel umfasst die Korrelationsanalyse, Faktorenanalysen und Regressionsanalysen.
+```{r setup-kap5, include=FALSE}
+library(tidyverse)
+library(mariposa)
+
+allbus <- read_spss("ALLBUS2023.sav") |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5),
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r), min_valid = 6)
+  ) |>
+  to_label(eastwest, sex)
+```
+
+In diesem Kapitel verdichten wir die Befunde aus Kap. 4 zu einem **multivariaten Modell**. Wir fragen:
+
+> *Welche soziodemografischen und politischen Merkmale erklären Islamfeindlichkeit am besten?*
+
+Dafür brauchen wir drei Werkzeugkästen: die **explorative Faktorenanalyse**, um die Struktur unserer Skala zu prüfen, die **Reliabilitätsanalyse** für die Skalenqualität, und die **multiple Regression** für die eigentliche Erklärung. Am Ende werfen wir noch einen kurzen Blick auf die konfirmatorische Faktorenanalyse mit `lavaan` — das ist der einzige Punkt, an dem wir aus dem tidyverse-/mariposa-Universum heraustreten.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Eine Korrelationsmatrix für eine Itembatterie aufstellen und interpretieren.
+- Eine **explorative Faktorenanalyse** durchführen — inklusive KMO, Bartlett, Anzahl-Faktoren-Entscheidung und Rotation.
+- **Cronbachs α** berechnen und Item-Statistiken lesen.
+- Eine **multiple lineare Regression** rechnen, gewichten und interpretieren — Koeffizienten, Beta, R², Modell-F.
+- Eine **logistische Regression** rechnen, die einem dichotomen Outcome folgt.
+- Ein Strukturgleichungsmodell mit `lavaan` als Ausblick verstehen.
 
 ## Korrelationsmatrix
 
-| Packet       | Funktion                | Verwendung                |
-| :----------- | :---------------------- | :------------------------ |
-| weights      | wtd.cor()               | Korrelationsmatrix |
-| corrplot     | corrplot()              | Grafiken zu Korrelationsanalysen |
+Bevor du eine EFA rechnest, schaust du dir die Korrelationen aller Skala-Items an. Hohe Inter-Item-Korrelationen sind die Grundvoraussetzung jeder sinnvollen Faktorisierung.
 
-### `Wtd.cor()` {-}
+**Frage:** Wie stark hängen die sechs Islamfeindlichkeits-Items untereinander zusammen?
 
-Zur Berechnung der Korrelationsmatrix verwenden wir die `wtd.cor()` Funktion aus dem `weights` Paket. In getrennter tabellarischen Darstellung werden die Korrelationskoeffizienten, die Standardfehler, die t-Werte sowie die p-Werte ausgegeben.
-
-```{}
-library(weights)
+```{r cor-matrix}
+allbus |>
+  pearson_cor(mm01, mm02r, mm03, mm04, mm05r, mm06, weights = wghtpew)
 ```
 
-```{r, include=F}
-library(weights)
+**Lesart.** mariposa gibt dir eine sauber formatierte Matrix mit Pearson-*r*, *p*-Werten und N pro Zelle. Werte zwischen 0.3 und 0.7 sind in einer gut funktionierenden Skala typisch — zu niedrig (< 0.2) deutet auf ein Fremdkörper-Item hin, zu hoch (> 0.85) auf Redundanz.
+
+::: {.callout-tip}
+**Eine schnelle Heatmap.** Wenn du die Matrix visualisieren willst, geht das mit ggplot2:
+
+```{r cor-heatmap, eval=FALSE}
+allbus |>
+  select(mm01, mm02r, mm03, mm04, mm05r, mm06) |>
+  cor(use = "pairwise") |>
+  as_tibble(rownames = "Item1") |>
+  pivot_longer(-Item1, names_to = "Item2", values_to = "r") |>
+  ggplot(aes(Item1, Item2, fill = r)) +
+  geom_tile() +
+  geom_text(aes(label = round(r, 2)), color = "white") +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red",
+                       midpoint = 0, limits = c(-1, 1)) +
+  coord_fixed()
+```
+Das ist die tidyverse-Alternative zum klassischen `corrplot()` — du baust dir die Visualisierung selbst, hast aber volle Kontrolle.
+:::
+
+## Explorative Faktorenanalyse
+
+Die EFA prüft, ob hinter mehreren beobachteten Variablen wenige **latente Dimensionen** stehen. mariposas `efa()` integriert in einem Aufruf alles, was du brauchst: KMO-Test, Bartlett-Test, Eigenwerte, Faktorladungen und (auf Wunsch) Rotation.
+
+**Frage:** Bilden die sechs Items eine *eindimensionale* Islamfeindlichkeits-Skala, oder gibt es Sub-Faktoren?
+
+### Einfaktor-Lösung
+
+```{r efa-1}
+allbus |>
+  efa(mm01, mm02r, mm03, mm04, mm05r, mm06, n_factors = 1)
 ```
 
-**Syntax:** 
+**Lesart.** Du bekommst:
 
-```{}
-# Ohne Pipe
+- **KMO** — Stichprobeneignung. Faustregel: ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut.
+- **Varianzanteil** — wie viel der gemeinsamen Varianz die extrahierten Faktoren erklären.
+- Die **Ladungen** zeigen, wie stark jedes Item mit dem Faktor zusammenhängt. Werte ≥ 0.5 sind brauchbar, ≥ 0.7 hoch.
 
-wtd.cor(datensatz[c("Variable1", "variable2", "variable3")], weight = datensatz$gewicht)
+### Zwei-Faktor-Lösung als Vergleich
 
-# Mit Pipe
-# Nicht gut zu handhaben!
+In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen **kognitiv-stereotyper** (z. B. `mm06` „Fanatiker") und **politisch-restriktiver** (z. B. `mm04` „beobachten lassen") Komponente unterschieden. Probieren wir es aus:
+
+```{r efa-2}
+allbus |>
+  efa(mm01, mm02r, mm03, mm04, mm05r, mm06,
+      n_factors = 2, rotation = "varimax")
 ```
 
-**Beispielcode:**
+**Lesart.** Du siehst eine zweite Spalte mit Ladungen. Wenn sich die Items klar auf je *einen* Faktor verteilen (hohe Ladung auf F1 *oder* F2, nicht beide), ist die Zwei-Faktor-Lösung interpretierbar. Wenn die Trennung unscharf bleibt, ist die Einfaktor-Lösung die sparsamere Wahl.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
+::: {.callout-note}
+**Hintergrund: PCA, EFA, CFA — was unterscheidet sie?**
+- **PCA** (`method = "pca"`) sucht *Komponenten*, die maximal Varianz erklären — gut für Datenreduktion.
+- **EFA** (`method = "ml"` oder `"minres"`) modelliert *latente Faktoren* hinter den Items — gut für Theoriebildung.
+- **CFA** (mit `lavaan`, siehe unten) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
 
-ds <- allbus2018 %>% 
-  select(im19:im21, id01, wghtpew)
+In der Praxis: EFA, wenn du *erkundest*, CFA wenn du *bestätigst*.
+:::
 
-#Berechnung der Korrelationsmatrix
+## Reliabilitätsanalyse
 
-corMatrix <- wtd.cor(ds[1:4], weight = ds$wghtpew)
+Bevor du eine Skala in einer Regression einsetzt, prüfst du ihre **interne Konsistenz** mit Cronbachs α.
 
-corMatrix
+**Frage:** Wie reliabel ist unsere Islamfeindlichkeits-Skala?
 
+```{r reliability}
+allbus |> reliability(mm01, mm02r, mm03, mm04, mm05r, mm06)
 ```
 
-### `Corrplot()` {-}
+**Lesart.** Faustregeln für Cronbachs α: < 0.5 ungenügend, 0.5–0.7 fragwürdig, 0.7–0.8 akzeptabel, 0.8–0.9 gut, > 0.9 exzellent (manchmal zu hoch, deutet auf Redundanz hin). Werte ≥ 0.8 sind in den Sozialwissenschaften üblich für gute Skalen.
 
-Für die grafische Aufbereitung der Korrelationsmatrix bietet das Paket `corrplot` mit der Funktion `corrplot` eine einfache, aber anschauliche Möglichkeit. Auch für diese Funktion stehen eine Reihe verschiedener Argumente zur Verfügung, mit denen die Grafik angepasst werden kann.
+Wenn die Funktion Item-Statistiken ausgibt, achte besonders auf die Spalte „α if item deleted": Steigt α deutlich, wenn ein Item entfernt wird, ist das Item ein Kandidat zum Streichen.
 
-```{}
-library(corrplot)
+::: {.callout-warning}
+**Vorsicht: Cronbachs α ist eine Untergrenze.** Das berühmte α unterschätzt die wahre Reliabilität in fast allen Modellannahmen. In der modernen Methodenliteratur gilt **McDonalds ω** als sauberere Wahl, ist aber rechentechnisch aufwendiger (über `lavaan`-Modelle). Für ein Einsteigerbuch reicht α — wisse aber, dass es das gibt.
+:::
+
+## Lineare Regression
+
+Jetzt die zentrale Methode des Kapitels: die **multiple lineare Regression**. Wir nutzen die Skalen und Variablen, die wir in Kap. 3 und 4 vorbereitet haben.
+
+**Frage:** Welche Variablen erklären Islamfeindlichkeit am besten — Bildung, Alter, Region, Geschlecht, Populismus?
+
+```{r lm}
+modell <- allbus |>
+  linear_regression(
+    formula = islamophobie ~ educ_kat + age + eastwest + sex + populismus,
+    weights = wghtpew
+  )
+
+modell
 ```
 
-```{r, include=F}
-library(corrplot)
+Die Kurzfassung zeigt dir R², adjustiertes R², den F-Test des Gesamtmodells und das N. Die volle SPSS-Style-Tabelle bekommst du mit `summary()`:
+
+```{r lm-summary}
+summary(modell)
 ```
 
-**Syntax:** 
+**Lesart.** Die `Coefficients`-Tabelle ist das Herzstück:
 
-```{}
-# Ohne Pipe
+- **B** — unstandardisierte Koeffizienten. Interpretation: „Wenn x um eine Einheit steigt, ändert sich y um B Einheiten."
+- **Std. Error** und **t-Wert** — Präzision der Schätzung.
+- **Beta** — standardisierte Koeffizienten. Direkt vergleichbar zwischen den Prädiktoren.
+- **Sig.** — *p*-Werte.
 
-corrplot(korrelationsmatrix, method=number)
+In unserem Modell ist `populismus` mit einem Beta von rund 0.33 der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher. Bildung wirkt negativ (höhere Bildung → weniger Islamfeindlichkeit), Alter und Ost-Region positiv.
 
-# Mit Pipe
-# Nicht gut zu handhaben!
+### Modelle vergleichen
+
+Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell *signifikant* verbessert, rechnest du beide Modelle und vergleichst sie mit `anova()`:
+
+```{r model-compare, eval=FALSE}
+m_basis <- allbus |>
+  linear_regression(islamophobie ~ educ_kat + age + eastwest + sex,
+                    weights = wghtpew)
+m_voll <- allbus |>
+  linear_regression(islamophobie ~ educ_kat + age + eastwest + sex + populismus,
+                    weights = wghtpew)
+
+anova(m_basis$model, m_voll$model)  # F-Test auf inkrementelle Varianzaufklaerung
 ```
 
-**Beispielcode:**
+::: {.callout-tip}
+**SPSS → R: Hierarchische Regression.** In SPSS klickst du in `Linear Regression` mehrere `Block`-Stufen und bekommst die Modellvergleichsstatistik gratis. In R rechnest du jedes Modell einzeln und vergleichst sie explizit — das ist mehr Code, aber sichtbarer.
+:::
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Grafik der Korrelationsmatrix erstellen
-# Achtung! Die Funktionen corrplot() und corrplot.mixed laufen noch nicht 100% stabil
+## Logistische Regression
 
-corrplot(corMatrix$correlation, p.mat = corMatrix$p.value, method = "circle", 
-         tl.col = "black", addCoef.col = "black", cl.cex = .7, number.cex = .7, 
-         insig = "pch")
+Wenn deine AV **dichotom** ist (ja/nein, hoch/niedrig), brauchst du eine **logistische Regression**. Wir konstruieren dafür eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
+
+**Frage:** Welche Merkmale unterscheiden Befragte mit hoher Islamfeindlichkeit von den anderen?
+
+```{r logreg}
+allbus_dummy <- allbus |>
+  mutate(islam_hoch = as.integer(islamophobie >= 4))
+
+modell_log <- allbus_dummy |>
+  logistic_regression(
+    formula = islam_hoch ~ educ_kat + age + eastwest + sex,
+    weights = wghtpew
+  )
+
+modell_log
 ```
 
-## Explorative Faktoranalyse und Hauptkomponentenanalyse
+**Lesart.** Die Kurzfassung zeigt:
 
-Für die explorative Faktorenanalyse werdeb im folgenden zwei gängige Tests zur Prüfung der Voraussetzung (KMO, Bartlett), eine grafische Veranschaulichung zur Bestimmung der Anzahl der Faktoren (Screeplot), die Hauptkomponentenanalyse, die Faktorenanalyse sowie eine einfache Möglichkeit der grafischen Darstellung der Faktorenstruktur angeboten.
+- **Nagelkerke R²** — Pseudo-R², grob mit dem R² einer linearen Regression vergleichbar.
+- **χ² des Modells** — Likelihood-Ratio-Test gegen das Null-Modell.
+- **Accuracy** — Anteil korrekt klassifizierter Fälle.
 
-Die notwendigen Funktionen entnehmen wir dabei überwiegend aus dem `psych` Paket.
+Die volle Tabelle mit Koeffizienten, **Odds Ratios** und Konfidenzintervallen wieder mit `summary()`:
 
-| Packet       | Funktion                | Verwendung                |
-| :----------- | :---------------------- | :------------------------ |
-| psych        | KMO()                   | Kaiser-Meyer-Olkin-Kriterium (MSA) |
-| stats        | bartlett.test()         | Bartlett-Test |
-| psych        | scree()                 | Scree-Test |
-| psych        | principal()             | Hauptkomponentenanalyse |
-| psych        | fa()                    | Faktoranalyse |
-| psych        | fa_diagram()            | Grafik |
-
-```{}
-library(psych)
-```
-```{r, include=F}
-library(psych)
+```{r logreg-summary, eval=FALSE}
+summary(modell_log)
 ```
 
-### `KMO()` {-}
+Odds Ratios > 1 erhöhen, < 1 verringern die Wahrscheinlichkeit des Outcomes.
 
-Das Kaiser-Meyer-Olkin-Kriterium berechnen wir mit der Funktion `KMO()`. Ausgegeben wird KMO (bzw. MSA) gesamt sowie einzeln für jedes Item.
+## Konfirmatorische Faktorenanalyse — Ausblick
 
-Achtung! Ungewichtete Analyse.
+Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine **konfirmatorische Faktorenanalyse**. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`.
 
-**Syntax:** 
+::: {.callout-important}
+**mariposa-Tipp: Bewusste Grenze.** mariposa deckt EFA, Reliabilität und (logistische) Regression ab. Für CFA und Strukturgleichungsmodelle bleiben `lavaan` und `semPlot` die Standardpakete — auch in modernen Lehrbüchern. Das ist eine bewusste Spezialisierung: jedes Werkzeug für die Aufgabe, für die es gemacht ist.
+:::
 
-```{}
-# Ohne Pipe
+Installation einmalig:
 
-KMO(datensatz[c("Variable1", "variable2", "variable3")])
-
-# Mit Pipe
-
-datensatz %>% 
-  select(variable1, variable2, variable3) %>% 
-  KMO()
-
+```{r lavaan-install, eval=FALSE}
+install.packages(c("lavaan", "semPlot"))
 ```
 
-**Beispielcode:**
+Aktivieren und Modell aufstellen:
 
-```{r, echo=T, collapse=T, comment="#>"}
-# KMO/MSA 
-
-allbus2018 %>% 
-  select(im19:im21, id01) %>% 
-  KMO() 
-  
-```
-
-### `Bartlett.test()` {-}
-
-Den Bartlett Test führen wir mit der Funktion `bartlett.test` aus. Ausgegeben werden die Test Statistics, die Freiheitsgrade sowie der p-wert.
-
-Achtung! Ungewichtete Analyse.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-bartlett.test(datensatz[c("Variable1", "variable2", "variable3")])
-
-# Mit Pipe
-
-datensatz %>% 
-  select(variable1, variable2, variable3) %>% 
-  bartlett.test()
-
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Bartlett-Test 
-
-allbus2018 %>% 
-  select(im19:im21, id01) %>% 
-  bartlett.test() 
-  
-```
-
-### `Scree()` {-}
-
-Einen Screeplot können wir mit der Funktion `scree()` abrufen. Im default wird dabei der Graph für Komponenten und Faktoren angezeigt und zur Lesehilfe eine horizontale Linie bei einem Eigenwert von 1.0 gezeichnet. 
-
-Achtung! Ungewichtete Analyse.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-scree(datensatz[c("Variable1", "variable2", "variable3")])
-
-# Mit Pipe
-
-datensatz %>% 
-  select(variable1, variable2, variable3) %>% 
-  scree()
-
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Scree-Plot
-
-allbus2018 %>% 
-  select(im19:im21, id01) %>% 
-  scree() 
-```
-
-### `Principal()` {-}
-
-Für eine Hauptkomponentenanalyse verwenden wir die Funktion `principal()`. Über die Argumente können verschiedene Spezifikationen wie beispielweise die Anzahl der zu extrahierenden Komponenten (`nfactors`) oder die Rotationsmethode (`rotate`) festgelegt werden. 
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-principal(datensatz[c("Variable1", "variable2", "variable3")], 
-          weight = datensatz$gewicht, nfactors = 1, rotate = "varimax",
-          use = "pairwise", scores = T)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
-
-ds <- allbus2018 %>% 
-  select(im19:im21, id01, wghtpew)
-
-# Hauptkomponentenanalyse
-
-pca <- principal(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
-          use = "pairwise")
-
-pca
-
-# Ladungen (Übersichtlicher)
-
-print(pca$loadings, digits = 2, cutoff = .2)
-```
-
-### `Fa()` {-}
-
-Eine explorative Faktorenanalyse führen wir über die Funktion `fa()` aus. Auch wie bei der vorherigen Funktionen können die Spezifikationen der Analyse über die Argumente festgelegt werden.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-fa(datensatz[c("Variable1", "variable2", "variable3")], 
-   weight = datensatz$gewicht, nfactors = 1, rotate = "varimax", 
-   use = "pairwise", scores = "regression")
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
-
-ds <- allbus2018 %>% 
-  select(im19:im21, id01, wghtpew)
-
-# Hauptkomponentenanalyse
-
-fa <- fa(ds[1:4], weight = ds$wghtpew, nfactors = 2, rotate = "varimax",
-         use = "pairwise", scores = "regression")
-
-fa
-
-# Ladungen (Übersichtlicher)
-
-print(fa$loadings, digits = 2, cutoff = .2)
-```
-
-### `Fa.diagram()` {-}
-
-Eine einfache grafische Aufbereitung der durchgeführten Analysen (Hauptkomponenten- bzw. Faktorenanalysen) kann mit der Funktion `fa.diagram()` erstellt werden. Die folgenden Beispiele illustieren dies für die beiden vorherigen Analysen.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-fa.diagram(modell)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# PCA
-
-fa.diagram(pca)
-
-# FA
-
-fa.diagram(fa)
-```
-
-## Konfirmatorische Faktorenanalyse
-
-Wir wollen an dieser Stelle kurz auf Möglichkeiten konfirmatorischer Faktorenanalyse eingehen. Dies geschieht hier vor allem aus dem Grund, da über diesen kleinen Umweg eine gewichtete Realiabilitätsanalyse durchführbar ist. Eine andere Möglichkeit gewichtete Realiabilitätsanalysen zu berechnen ist uns derzeit nicht bekannt.
-
-Zur Berechnung konfirmatorischen Faktorenanalyse verwenden wir die `cfa()` Funktion aus dem `lavaan`Paket, welches vor allem auch zur Strukturgleichungsmodellierung eignesetzt werden kann. Mit der `semPath()`Funktion (aus dem `semPlot` Paket) können wir die berechnete Faktorenanalyse grafisch aufbereiten.
-
-| Packet       | Funktion                | Verwendung                |
-| :----------- | :---------------------- | :------------------------ |
-| lavaan       | cfa()                   | Konfirmatorische Faktorenanalyse |
-| semPlot      | semPaths()              | Grafik |
-
-```{}
+```{r cfa-setup, eval=FALSE}
 library(lavaan)
 library(semPlot)
-```
-```{r, include=F}
-library(lavaan)
-library(semPlot)
-```
 
-#### Modellspezifikation
+modell_cfa <- "islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"
 
-Zur Berechnung der konfirmatorischen Faktorenanalyse müssen wir zunächst das Modell spezifizieren. Mit `faktorname`, `=~` und den folgenden Variablen legen wir die Faktorenstruktur fest. Für Details zur verwendeten Syntax kann sich auf den Hilfeseiten des `lavaan` Pakets weitergehend informiert werden.
+fit <- cfa(modell_cfa, data = allbus,
+           sampling.weights = "wghtpew", estimator = "MLR")
 
-```{r}
-m1 <- "faktor =~ im19 + im20 + im21 + id01"
+summary(fit, fit.measures = TRUE, standardized = TRUE)
 ```
 
-### `Cfa()` {-}
+`fit.measures = TRUE` gibt dir CFI, TLI, RMSEA, SRMR — die Standard-Modellgüte-Indizes. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08.
 
-Mit der `cfa` Funktion berechnen wir unser Modell, welche wir unter `m1` spezifiziert haben. Wir speichern das Ergebnis als neues Objekt `cfa` ab und lassen uns die mit den Argumenten festgelegten Werte mit der `summary` Funktion ausgeben.
+Eine Pfaddiagramm-Grafik:
 
-**Syntax:**
-
-```{}
-# ohne Pipe
-
-cfa(model = modell, data = datensatz[c("Variable1", "variable2", "variable3")], sampling.weights = "gewicht",
-    estimator = "MLR")
-    
-# Mit Pipe
-# Nicht gut zu handhaben!
+```{r cfa-plot, eval=FALSE}
+semPaths(fit, whatLabels = "std", layout = "tree", edge.color = "black")
 ```
 
-**Beispielcode:**
+::: {.callout-note}
+**Hintergrund: Wann CFA, wann nicht?** Eine CFA macht Sinn, wenn:
+1. Du eine *konkrete* theoretische Hypothese über die Faktorstruktur hast.
+2. Deine Stichprobe groß genug ist (Faustregel: N ≥ 200).
+3. Du *Modellgüte* in Maß und Zahl ausweisen willst.
 
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
+Wenn du Items einfach zu einer Skala zusammenfassen willst und keine Strukturhypothese prüfst, ist EFA + α der pragmatischere Weg.
+:::
 
-ds <- allbus2018 %>% 
-  select(im19:im21, id01, wghtpew)
+## Übungen {-}
 
-# Faktorenanalyse
+::: {.callout-tip collapse="true"}
+**Übung 1 — EFA der pa-Items.** Die Forschungsdebatte zu Populismus diskutiert, ob es sich um eine *eindimensionale* Einstellung handelt oder um *drei* Komponenten (Anti-Elitismus, People-Centrism, Manichäisches Weltbild). Führe eine EFA der sieben umgepolten `pa`-Items durch — zuerst mit `n_factors = 1`, dann mit `n_factors = 3` und Varimax-Rotation. Welche Lösung passt besser?
 
-cfa <- cfa(model = m1, data = ds, sampling.weights = "wghtpew", estimator = "MLR")
-
-summary(cfa, fit.measures = T, standardized = T, rsquar = T)
+**Lösung:**
+```{r ex1-loesung, eval=FALSE}
+allbus |>
+  efa(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r,
+      n_factors = 1)
+allbus |>
+  efa(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r,
+      n_factors = 3, rotation = "varimax")
 ```
+:::
 
-### `semPaths()` {-}
+::: {.callout-tip collapse="true"}
+**Übung 2 — Modell mit Interaktion.** Erweitere das Hauptmodell um einen **Interaktionsterm** zwischen Bildung und Populismus. Lädt der Bildungseffekt unterschiedlich stark, je nach Populismus-Wert?
 
-Mit der `semPath` Funktion kann eine grafische Aufbereitung der Faktorenanalyse erstellt werden. Auch hier können über verschiedene Argumente der Funktion die Grafik den eigenen Wünschen angepasst werden.
-
-**Syntax:**
-
-```{}
-# ohne Pipe
-
-semPaths(object = cfa-Objekt, whatLabels = "std", layout = "tree", edge.color = "black")
-    
-# Mit Pipe
-# Nicht gut zu handhaben!
+**Lösung:**
+```{r ex2-loesung, eval=FALSE}
+allbus |>
+  linear_regression(
+    formula = islamophobie ~ educ_kat * populismus + age + eastwest + sex,
+    weights = wghtpew
+  ) |>
+  summary()
 ```
+:::
 
-**Beispielcode:**
+::: {.callout-tip collapse="true"}
+**Übung 3 — Logistische Regression mit dichotomer Outcome.** Erzeuge eine Dummy-Variable für „hohe Demokratiezufriedenheit" (`ps03` ≤ 2, da niedrige Werte hier Zufriedenheit bedeuten) und prüfe, welche Merkmale damit zusammenhängen.
 
-```{r}
-semPaths(cfa, whatLabels = "std", layout = "tree", edge.color = "black")
+**Lösung:**
+```{r ex3-loesung, eval=FALSE}
+allbus |>
+  mutate(demo_zufrieden = as.integer(ps03 <= 2)) |>
+  logistic_regression(
+    formula = demo_zufrieden ~ educ_kat + age + eastwest + sex + islamophobie + populismus,
+    weights = wghtpew
+  ) |>
+  summary()
 ```
+:::
 
-## Realiabilitätsanalyse
+## Was du jetzt weißt {-}
 
-Mit der `reliability()` Funktion aus dem `semTools` Paket können wir nun im Anschluss an die berechnete konfirmatorische Faktorenanalyse die Realiabilitätsanalyse durchführen.
+- Du erstellst gewichtete Korrelationsmatrizen mit `pearson_cor()` und visualisierst sie über ggplot2.
+- Du führst eine EFA mit `efa()` durch — inklusive KMO, Bartlett und Rotation.
+- Du berechnest Cronbachs α mit `reliability()` und beurteilst die interne Konsistenz einer Skala.
+- Du rechnest eine multiple lineare Regression mit `linear_regression()` und interpretierst Beta-Koeffizienten.
+- Du rechnest eine logistische Regression mit `logistic_regression()` und liest Odds Ratios.
+- Du weißt, wann CFA mit `lavaan` sinnvoll ist und wie eine Minimalspezifikation aussieht.
 
-| Packet       | Funktion                | Verwendung                |
-| :----------- | :---------------------- | :------------------------ |
-| semTools       | reliability()         | Reliabilitätsmaße |
+Im nächsten Kapitel widmen wir uns ganz der **grafischen Aufbereitung** deiner Ergebnisse mit ggplot2 und patchwork.
 
-```{}
-library(semTools)
-```
-```{r, include=F}
-library(semTools)
-```
+## Weiterführend {-}
 
-### `reliability()` {-}
-
-Zur Berechnung der Realiabilität setzen wir einfach die im Objekt `cfa` gespeicherten Ergebnisse der konfirmatorischen Faktorenanalyse in die `realiability()` Funktion ein.
-
-**Syntax:**
-
-```{}
-# ohne Pipe
-
-reliability(object = cfa-Objekt)
-    
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-**Beispielcode:**
-
-```{r}
-reliability(cfa)
-```
-
-## Regressionsanalyse
-
-Im abschließenden Kapitel zur multivarianten Datenanalyse behandeln wir noch Möglichkeiten der Regressionsanalysen, verschiedene Möglichkeiten zum Testen der Modellgüte sowie der grafischen Aufbereitung der Modelle.
-
-| Packet       | Funktion                | Verwendung                |
-| :----------- | :---------------------- | :------------------------ |
-| stats        | lm()                    | lineare Regressionsmodelle |
-| parameters   | model_parameters()      | Modellparameter ausgeben |
-| stats        | anova()                 | F-Tests auf Gesamtsignifikanz |
-| performance  | model_performance()     | Modellgüte |
-| performance  | compare_performance()   | Vergleich der Modellgüte |
-| texreg       | screenreg()             | tabellarischer Modellvergleich |
-| sjplot       | plot_model()            | grafische Darstellungen von Regressionsmodellen |
-| sjplot       | plot_models()           | grafischer Modellvergleich |
-| sjplot       | check_model()           | 6 Grafiken zur Modellgüte |
-| stats        | glm()                   | logistische Regressionsmodelle (u.A.) |
-
-### `Lm()` {-}
-
-Ein lineares Regressionsmodell können wir mit der `lm()` Funktion berechnen.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-lm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, datensatz, weights = gewicht)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-Zur Veranschaulichung ist im Beispiel dazu die Datenaufbereitung aufgeführt, dessen Ergebnis im neuen Datensatz `ds` gespeichert wird. Anschließend wird das Nullmodell spezifiziert, mit dem unser Modell verglichen werden soll. Dann folgt die Spezifikation unserer Modelle, ohne (`model1`) und mit Interaktion (`model2.1 und model2.2`, unterschiedliche Schreibweise).
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
-
-ds <- allbus2018 %>% 
-  select(im19, sex, age, educ, di08, wghtpew) %>% 
-  # Z-Standardisierung Einkommen
-   mutate(wMean = weighted_mean(di08, weights = wghtpew),
-         wSD = weighted_sd(di08, weights = wghtpew),
-         zEinkommen = (di08-wMean)/wSD) %>% 
-  # Rekodierung Geschlecht und Bildung
-  mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
-         bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
-                                    4:5=3 [hoch]; else=NA")) %>% 
-  # Konvertierung in Faktor Geschlecht und Bildung
-  to_label(sex, bildung) %>% 
-  # Refrenzkategorie Bildung auf mittel
-  ref_lvl(bildung, lvl = 2) %>% 
-  # Löschung NA 
-  drop_na()
-  
-# Nullmodell
-
-nullmodel <- lm(im19 ~ 1, ds, weights = wghtpew)
-summary(nullmodel)
-
-# Modellierung erstes Modell
-
-model1 <- lm(im19 ~ sex + age + bildung + zEinkommen, ds, weights = ds$wghtpew)
-summary(model1)
-
-# Prüfung auf Interaktioneffekt zwischen Geschlecht und zEinkommen
-
-model2.1 <- lm(im19 ~ zEinkommen + sex + age + bildung + zEinkommen:sex, ds, 
-               weights = ds$wghtpew)
-summary(model2.1)
-
-# ODER
-
-model2.2 <- lm(im19 ~ zEinkommen*sex + age + bildung, ds, weights = ds$wghtpew)
-
-summary(model2.2)
-```
-
-### `Model_parameters()` {-}
-
-Mit der Funktion `model_parameters` können wir eine tabellarische Übersicht der Modellparameter erstellen. Mit der `plot` Funktion erstellen wir eine simple übersichtliche Grafik des Modells (Koeffizienten mit Konfidenzintervall).
-
-```{r, include=F}
-library("easystats")
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Modellparameter in übersichtlicher Darstellung
-
-m1Parameter <- model_parameters(model2.1)
-
-m1Parameter
-
-plot(m1Parameter)
-```
-
-### `Anova()` {-}
-
-Um zu überprüfen, ob unsere Modelle eine Verbesserung der Anpassung an die Daten darstellen (im Vergleich zum Nullmodell oder unter einander) verwenden wir die `anvoa()` Funktion. 
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# F-Tests auf Gesamtsignifikanz (Anpassung an Daten)
-
-anova(nullmodel, model1)
-
-anova(model1, model2.1)
-```
-
-### `Model_performance()` {-}
-
-Mit der `model_performance ()` Funktion lassen wir uns verschiedene Kennzahlen ausgeben, um die Modellgüte zu beurteilen.
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Modellgüte nach verschiedenen Kennzahlen 
-
-model_performance(model2.1)
-
-```
-
-### `Compare_performance()` {-}
-
-Die Kannzahlen der `model_performance()` Funktion könen wir uns mit der `compare_performance()` Funktion tabellarisch auch für mehrere Modell ausgeben lassen, sodass wir diese im direkten Vergleich betrachten können. Dieser berechnete Modellvergleich kann mit der `plot()` Funktion auch grafisch ausgegeben werden.
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vergleich von Modellgüte
-
-cperf <- compare_performance(model1, model2.1)
-
-cperf
-
-plot(cperf)
-```
-
-### `Screenreg()` {-}
-
-Mit der `screenreg()` Funktion können wir uns mehrere vollständige Modelle mit verschiedenen Kennzahlen tabellarisch ausgeben lassen und direkt mit einander vergleichen.
-
-```{}
-library(texreg)
-```
-```{r, include=F}
-library(texreg)
-```
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Tabellarische Darstellung im Modellvergleich mit Kennzahlen der Modellgüte
-
-screenreg(list(model1, model2.1), single.row = T)
-```
-
-### `Plot_model()` {-}
-
-Die `plot_model()` Funktion bietet sowohl die Möglichkeit sich die Regressionkoeffizienten sowie die Konfidenzintervalle des Gesamtmodells grafisch ausgeben zu lassen als auch die Schätzwärte einzelner Prädiktoren. Die folgenden Beispiele illustieren dies anhand des berechneten `model2.1`.
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Regressionskoeffizienten
-
-plot_model(model2.1)
-```
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Schätzwerte (predicted values)
-
-plot_model(model2.1, type = "pred")
-```
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Gruppierung von Effekten
-
-plot_model(model2.1, type = "pred", terms = c("zEinkommen","bildung"))
-```
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Interaktion
-
-plot_model(model2.1, type = "int")
-```
-
-### `Plot_models()` {-}
-
-Eine grafische Lösung des Modellvergleichs haben wir mit der `plot_models()` Funktion. Auch in dieser Darstellung werden Regressionskoeffizienten und Konfidenzintervalle ausgegeben.
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Vergleich Regressionskoeffizienten
-
-plot_models(model1, model2.1)
-```
-
-### `Check_model()` {-}
-
-Zur visuellen Überprüfung der Modellannahmen können wir uns mit `check_model()` sechs Grafiken ausgeben lassen (u. A. Homogenität der Varianz, Kollinearität).
-
-**Beispielcode:**
-
-```{r echo=T, message=FALSE, warning=FALSE, collapse=T, comment="#>"}
-# Annahmenprüfung
-
-check_model(model2.1)
-```
-
-### `Glm()` {-}
-
-Für die Analyse logistischer Regressionsmodelle verwenden wir die `glm` Funktion. Diese erlaubt mit dem Argument `family=binomial` die Analyse von Regressionsmodellen mit einer dichotomen abhängigen Variable.
-
-**Syntax:** 
-
-```{}
-# Ohne Pipe
-
-glm(av ~ uv1 + uv2*uv3 + uv4 + uv1:uv4, family = binomial, datensatz, weights = gewicht)
-
-# Mit Pipe
-# Nicht gut zu handhaben!
-```
-
-Das Vorgehen im Beispiel entspricht dabei den Beispielen der Funktion `lm()` weiter oben. Lediglich die abhängige Variable wurde ausgetauscht - hier wird `pp26` als abhängige Variable verwendet. Diese Variable misst, ob die befragte Person sich schon einmal bei Versammlungen an öffentlichen Diskussionen beteiligt hat.
-
-**Beispielcode:**
-
-```{r, echo=T, collapse=T, comment="#>"}
-# Datensatz erstellen
-
-ds <- allbus2018 %>% 
-  select(pp26, sex, age, educ, di08, wghtpew) %>% 
-  # Rekodierung AV: Partizipation an öffent. Diskussion und Bildung
-  mutate(partDisk = rec(pp26, rec = "1=1 [ja]; 0=0 [nein]; 
-                                    else=NA")) %>% 
-  # Z-Standardisierung Einkommen
-   mutate(wMean = weighted_mean(di08, weights = wghtpew),
-         wSD = weighted_sd(di08, weights = wghtpew),
-         zEinkommen = (di08-wMean)/wSD) %>% 
-  # Rekodierung Geschlecht und Bildung
-  mutate(sex = rec(sex, rec = "1=1 [Mann]; 2=0 [Frau]"),
-         bildung = rec(educ, rec = "1:2=1 [niedrig]; 3=2 [mittel]; 
-                                    4:5=3 [hoch]; else=NA")) %>% 
-  # Konvertierung in Faktor Geschlecht und Bildung
-  to_label(sex, bildung) %>% 
-  # Refrenzkategorie Bildung auf mittel
-  ref_lvl(bildung, lvl = 2) %>% 
-  # Löschung NA 
-  drop_na()
-  
-# Nullmodell
-
-nullmodel2 <- glm(pp26 ~ 1, family = binomial, ds, weights = wghtpew)
-summary(nullmodel2)
-
-# Modellierung erstes Modell
-
-model3 <- glm(pp26 ~ sex + age + bildung + zEinkommen, family = binomial, ds, weights = ds$wghtpew)
-summary(model3)
-
-# Prüfung auf Interaktioneffekt zwischen Geschlecht und zEinkommen
-
-model4.1 <- glm(pp26 ~ zEinkommen + sex + age + bildung + zEinkommen:sex, family = binomial, ds, 
-               weights = ds$wghtpew)
-summary(model4.1)
-
-# ODER
-
-model4.2 <- glm(pp26 ~ zEinkommen*sex + age + bildung, family = binomial, ds, weights = ds$wghtpew)
-
-summary(model4.2)
-```
-
-
-
-
+- mariposa-Vignetten [„Regression Analysis"](https://yannickdiehl.github.io/mariposa/articles/regression-analysis.html) und [„Scale Analysis"](https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html).
+- Yves Rosseel et al., [lavaan-Dokumentation](https://lavaan.ugent.be/) — sehr lesbare Einführung in SEM mit R.
+- Andy Field et al., *Discovering Statistics Using R*, Kapitel zu multipler Regression und Faktorenanalyse.
