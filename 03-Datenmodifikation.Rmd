@@ -451,17 +451,36 @@ allbus |> describe(islamophobie)
 
 ### Populismus-Skala
 
-Dasselbe Schema, aber ohne Umpolung — die sieben `pa`-Items sind alle gleich gepolt:
+Hier wartet eine zweite Polungs-Falle — und genau die ist der Grund, warum du dich vor jeder Skalenbildung mit dem Codebook beschäftigst. Schau dir zuerst die Wertelabels eines `pa`-Items an:
+
+```{r pa-labels}
+val_labels(allbus$pa29)
+```
+
+Das `pa`-Modul nutzt eine **5-stufige Skala**, bei der **1 = „stimme voll zu" und 5 = „lehne ganz ab"** steht. Das ist die *umgekehrte* Logik zu den `mm`-Items, wo `1` Ablehnung und `7` Zustimmung bedeutete. Folglich heißt für `pa29` „Abgeordnete nur dem Volk verpflichtet" ein **niedriger** Wert = populistisch.
+
+Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben Items um:
 
 ```{r scale-pop}
 allbus <- allbus |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
   mutate(
-    populismus = row_means(pick(pa29, pa30, pa31, pa32, pa33, pa34, pa35),
+    populismus = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
                            min_valid = 6)
   )
 
 allbus |> describe(populismus)
 ```
+
+::: {.callout-warning}
+**Vorsicht: Polung wird in der Praxis öfter übersehen, als du denkst.** Items in einer Itembatterie sind nicht immer in dieselbe Richtung kodiert — selbst nicht innerhalb derselben Welle desselben Datensatzes. Die `mm`-Items von ALLBUS 2023 nutzen 7-stufig (`1 = nicht zu, 7 = voll zu`), die `pa`-Items 5-stufig (`1 = voll zu, 5 = lehne ab`). Wenn du auf eine neue Skala stößt, gilt ausnahmslos: **erst Wertelabels prüfen, dann Skala bauen**.
+:::
 
 ## Die komplette Datenpräp-Pipeline {#sec-pipeline}
 
@@ -471,17 +490,25 @@ Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer
 allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
   rec(mm02, rules = "rev", suffix = "r") |>                       # <2>
   rec(mm05, rules = "rev", suffix = "r") |>                       # <2>
+  rec(pa29, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa30, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa31, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa32, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa33, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa34, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa35, rules = "rev", suffix = "r") |>                       # <3>
   mutate(
     islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
-                             min_valid = 5),                       # <3>
-    populismus   = row_means(pick(pa29, pa30, pa31, pa32, pa33, pa34, pa35),
-                             min_valid = 6)                        # <4>
+                             min_valid = 5),                       # <4>
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                             min_valid = 6)                        # <5>
   )
 ```
 1. ALLBUS 2023 einlesen — fehlende Werte sind automatisch als tagged NAs gesetzt.
-2. Umpolen der inversen Items `mm02` und `mm05` zu `mm02r` und `mm05r` mit dem `"rev"`-Shortcut.
-3. Skala **Islamfeindlichkeit** als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.
-4. Skala **Populismus** als Mittelwert der sieben `pa`-Items — mindestens 6 von 7 müssen valide sein.
+2. Umpolen der inversen `mm`-Items (`mm02`, `mm05`) zu `mm02r`/`mm05r` — Skala 7-stufig.
+3. Umpolen aller `pa`-Items, weil sie 5-stufig **invers** kodiert sind (`1 = stimme zu`, `5 = lehne ab`) — nach Umpolung gilt hoch = populistisch.
+4. Skala **Islamfeindlichkeit** als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.
+5. Skala **Populismus** als Mittelwert der sieben umgepolten `pa`-Items — mindestens 6 von 7 müssen valide sein.
 
 Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
 

@@ -69,26 +69,27 @@ Das, was in Kap. 3 verbindlich erzeugt wird und in Kap. 4–6 als Voraussetzung 
 library(tidyverse)
 library(mariposa)
 
-allbus <- read_spss("ALLBUS2023.sav")
-
-allbus <- allbus |>
-  # Fehlende Werte deklarieren (Datenfehler, TNZ, KA, weiss-nicht)
-  set_na(mm01, mm02, mm03, mm04, mm05, mm06,
-         ls01, st01, ps03,
-         pa29, pa30, pa31, pa32, pa33, pa34, pa35,
-         pt03, pt15,
-         sex, age, educ, isced97, incc,
-         tag = TRUE) |>
-  # Umpolen der inversen Items
-  rec(mm02, rules = "1=7; 2=6; 3=5; 4=4; 5=3; 6=2; 7=1", suffix = "r") |>
-  rec(mm05, rules = "1=7; 2=6; 3=5; 4=4; 5=3; 6=2; 7=1", suffix = "r") |>
-  # Islamophobie-Skala
-  row_means(mm01, mm02r, mm03, mm04, mm05r, mm06,
-            min_valid = 5) |>
-  # Populismus-Skala (alle in derselben Richtung)
-  row_means(pa29, pa30, pa31, pa32, pa33, pa34, pa35,
-            min_valid = 6)
+allbus <- read_spss("ALLBUS2023.sav") |>
+  # mm-Items: 7-stufig, 1=lehne ab, 7=stimme zu. mm02 und mm05 umpolen.
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  # pa-Items: 5-stufig INVERS, 1=stimme zu, 5=lehne ab. Alle 7 umpolen.
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                             min_valid = 5),
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                             min_valid = 6)
+  )
 ```
+
+**Polungs-Hinweis.** Die `mm`-Items sind 7-stufig (`1=lehne ab` → `7=stimme zu`); die `pa`-Items sind 5-stufig und **invers** (`1=stimme zu` → `5=lehne ab`). Beide Skalen werden so umgepolt, dass am Ende einheitlich hoch = mehr von der gemessenen Einstellung (Islamfeindlichkeit bzw. Populismus) gilt. Dieser Schritt ist Pflicht *vor* der Skalenbildung — er wird in Kap. 3 als Lehrstück eingeführt.
 
 **Lehrbuch-Klammer.** Diese Pipeline wird in Kap. 3 schrittweise aufgebaut, mit Halt für Erklärungen nach jedem Schritt (Frage → Code → Lesart). In Kap. 4–6 wird sie am Kapitelanfang in einem versteckten Setup-Chunk erneut ausgeführt, damit jedes Kapitel reproduzierbar bleibt.
 
