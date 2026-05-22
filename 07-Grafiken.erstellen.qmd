@@ -19,8 +19,10 @@ allbus <- read_spss("ALLBUS2023.sav") |>
   rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
       as.factor = TRUE, suffix = "_kat") |>
   mutate(
-    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5),
-    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r), min_valid = 6)
+    islamophobie   = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5),
+    populismus     = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r), min_valid = 6),
+    islamophobie_p = pomps(islamophobie, scale_min = 1, scale_max = 7),
+    populismus_p   = pomps(populismus,   scale_min = 1, scale_max = 5)
   ) |>
   to_label(eastwest, sex)
 ```
@@ -29,16 +31,24 @@ Mit diesem Kapitel kommst du zum eigentlichen *Sichtbar-Machen* deiner Befunde. 
 
 Wir bauen das Kapitel an unserer Mini-Studie auf: Du visualisierst die Islamfeindlichkeits- und Populismus-Skala, vergleichst Subgruppen und kombinierst am Ende mehrere Grafiken zu einer publikationsfähigen Komposition.
 
+## Worum es geht
+
+Wenn deine Analyse fertig ist, ist die Hälfte der Arbeit getan — die andere Hälfte ist, sie *zu kommunizieren*. Grafiken sind dabei das mächtigste Werkzeug: ein gut gewähltes Diagramm beantwortet eine Forschungsfrage auf einen Blick, wo ein Absatz Fließtext drei Lese-Anläufe braucht.
+
+Dieses Kapitel führt dich durch das ggplot2-System: die *Grammar of Graphics*, mit der du jede Grafik in drei Schritten beschreiben kannst — Daten, Aesthetic Mapping, Layer. Du lernst, welche `geom_*()`-Variante zu welchem Datentyp passt, wie du Subgruppen mit Facets aufteilst, wie du mehrere Grafiken zu einer publikationsfähigen Komposition kombinierst und wie du das fertige Ergebnis exportierst.
+
 ## Was du nach diesem Kapitel kannst {-}
 
 - Den **Grammar of Graphics**-Ansatz von ggplot2 erklären.
 - Häufigkeiten, Verteilungen und Zusammenhänge mit den passenden `geom_*()`-Schichten visualisieren.
 - Subgruppen mit `facet_wrap()` und `facet_grid()` aufteilen.
-- Farben, Themes und Beschriftungen anpassen.
+- Farben, Themes und Beschriftungen anpassen — inklusive lesbarer Achsenlabels über `to_label()`.
+- Das buchweite Theme `theme_rworkshop()` einordnen.
+- Regressionsergebnisse als **Coefficient-Plot** visualisieren.
 - Mehrere Plots mit **patchwork** zu einer Komposition zusammenfügen.
 - Grafiken mit `ggsave()` in publikationsfähiger Auflösung exportieren.
 
-## Die Grammar of Graphics in drei Schritten
+## Die Grammar of Graphics {#sec-grammar}
 
 Jede ggplot2-Grafik folgt demselben Aufbau:
 
@@ -82,31 +92,32 @@ allbus |>
 
 Beide Grafiken folgen dem gleichen Drei-Schritt-Aufbau. Den schauen wir uns jetzt im Detail an.
 
-## Schritt 1: Plot-Objekt erstellen
+## Aufbau einer Grafik {#sec-aufbau}
 
-Das Plot-Objekt entsteht mit `ggplot()`. Erstes Argument ist der Datensatz.
+### Plot-Objekt erstellen
+
+Das Plot-Objekt entsteht mit `ggplot()`. Erstes Argument ist der Datensatz:
 
 ```{r empty, eval=FALSE}
-g <- ggplot(allbus)                # ohne Pipe
-g <- allbus |> ggplot()            # mit Pipe (gleichwertig)
+g <- allbus |> ggplot()
 ```
 
 Allein ist `g` ein „leeres" Plot-Objekt — es weiß noch nichts über Achsen oder Inhalte.
 
-## Schritt 2: Aesthetic Mapping
+### Aesthetic Mapping
 
 Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften der Grafik** zu. Die wichtigsten Eigenschaften:
 
-| Argument | Wozu |
-|---|---|
-| `x =`, `y =` | Achsen |
-| `weight =` | Survey-Gewichtung |
-| `fill =` | Füllfarbe (Flächen — Balken, Boxen) |
-| `colour =` | Linien- oder Punktfarbe |
-| `shape =` | Punktform |
-| `linetype =` | Strichstil |
-| `size =`, `alpha =` | Größe / Transparenz |
-| `group =` | unsichtbare Gruppierung |
+| Argument           | Wozu                                  |
+| ------------------ | ------------------------------------- |
+| `x =`, `y =`       | Achsen                                |
+| `weight =`         | Survey-Gewichtung                     |
+| `fill =`           | Füllfarbe (Flächen — Balken, Boxen)   |
+| `colour =`         | Linien- oder Punktfarbe               |
+| `shape =`          | Punktform                             |
+| `linetype =`       | Strichstil                            |
+| `size =`, `alpha =`| Größe / Transparenz                   |
+| `group =`          | unsichtbare Gruppierung               |
 
 **Wichtig:** Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
 
@@ -118,11 +129,11 @@ g <- allbus |>
 
 `g` ist jetzt ein Plot-Objekt mit Achsenzuweisungen — du siehst aber noch nichts, weil kein Layer existiert.
 
-## Schritt 3: Layer hinzufügen
+### Layer hinzufügen
 
 Layer kommen mit `+` dazu. Die Layer-Funktionen beginnen alle mit dem Präfix `geom_`.
 
-### Punktdiagramm / Jitter
+**Punktdiagramm / Jitter:**
 
 ```{r jitter}
 allbus |>
@@ -136,7 +147,7 @@ allbus |>
 
 `geom_jitter()` verteilt überlappende Punkte leicht — das ist bei zwei diskreten Achsen (Skalen mit wenigen Ausprägungen) unverzichtbar, sonst sehen alle Befragten wie *ein* Punkt aus.
 
-### Boxplot und Violinplot
+**Boxplot und Violinplot:**
 
 ```{r boxviolin}
 g_base <- allbus |>
@@ -146,7 +157,7 @@ g_base <- allbus |>
 g_base + geom_boxplot()
 ```
 
-Boxplots zeigen Median (Linie in der Box), die mittleren 50% (Box) und Whisker (1.5 × IQR). Violinplots zeigen stattdessen die Dichte:
+Boxplots zeigen Median (Linie in der Box), die mittleren 50 % (Box) und Whisker (1.5 × IQR). Violinplots zeigen stattdessen die Dichte:
 
 ```{r violin}
 g_base + geom_violin()
@@ -161,9 +172,18 @@ g_base +
   theme(legend.position = "none")
 ```
 
-## Verschiedene Geoms für verschiedene Datentypen
+## Geoms für verschiedene Datentypen {#sec-geoms}
 
-Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab.
+Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab. Eine Schnellübersicht:
+
+| Datentyp                                  | Empfohlene Geoms                                           |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| Eine kategoriale Variable                 | `geom_bar()`                                               |
+| Eine kontinuierliche Variable             | `geom_histogram()`, `geom_density()`                        |
+| Zwei kategoriale Variablen                | `geom_bar(position = "dodge")` oder `position = "fill"`     |
+| Eine kategoriale + eine kontinuierliche   | `geom_boxplot()`, `geom_violin()`                          |
+| Zwei kontinuierliche Variablen            | `geom_point()`, `geom_jitter()`, `geom_smooth()`           |
+| Zeitreihe                                 | `geom_line()`                                              |
 
 ### Eine kategoriale Variable
 
@@ -236,7 +256,7 @@ allbus |>
 
 `geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`.
 
-## Subgruppen aufteilen mit Facets
+## Subgruppen aufteilen mit Facets {#sec-facets}
 
 Wenn eine Gruppierungsvariable mehr als drei oder vier Ausprägungen hat, wird die Überlagerung in einer Grafik unübersichtlich. Mit `facet_wrap()` bekommt jede Ausprägung ihr eigenes Panel:
 
@@ -263,7 +283,7 @@ allbus |>
   labs(x = "Populismus", y = "Islamfeindlichkeit")
 ```
 
-## Farben und Themes
+## Farben und Themes {#sec-themes}
 
 Der Default-Farbverlauf von ggplot2 ist nicht barrierefrei. Eine kleine Sammlung Standard-Lösungen:
 
@@ -294,7 +314,11 @@ p <- allbus |>
 p + theme_minimal()
 ```
 
-`theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen. In `index.Rmd` haben wir `theme_rworkshop()` als globalen Default gesetzt, sodass alle Grafiken dieses Buchs einheitlich aussehen.
+`theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen.
+
+::: {.callout-important}
+**mariposa-Tipp / `theme_rworkshop()`.** Alle Grafiken in diesem Buch nutzen automatisch das Theme `theme_rworkshop()`, das in `R/_common.R` definiert und per `theme_set()` global gesetzt ist. So sehen alle Plots im Quarto-Projekt einheitlich aus, ohne dass du das Theme in jedem Chunk explizit angeben musst. Für dein eigenes Projekt definierst du dir ein passendes Theme einmal und referenzierst es per `source("R/_common.R")` aus jedem Kapitel-Setup-Chunk.
+:::
 
 ::: {.callout-tip}
 **SPSS → R: Klick vs. Code.** In SPSS klickst du Farben in einem Dialogfeld an, und die nächste Grafik fängt wieder bei Null an. In ggplot2 *speicherst* du Theme und Farbpalette als Code — und kannst sie auf jede neue Grafik anwenden, ohne dich zu wiederholen.
@@ -319,7 +343,43 @@ allbus |>
   )
 ```
 
-## Mehrere Grafiken kombinieren mit patchwork
+**Lesbare Achsen über `to_label()`.** Bei `<haven_labelled>`-Variablen aus SPSS willst du im Plot meist die *Wertelabels* sehen, nicht die numerischen Codes. Im Setup-Chunk dieses Kapitels haben wir genau das gemacht — `to_label(eastwest, sex)` hat die beiden Variablen in Faktoren verwandelt:
+
+```{r to-label-axis, eval=FALSE}
+allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
+  geom_boxplot()
+# Achse zeigt jetzt 'Alte Bundeslaender' / 'Neue Bundeslaender'
+# statt 1 / 2 — weil eastwest schon im Setup-Chunk to_label-konvertiert wurde.
+```
+
+Wenn du eine zusätzliche labelled-Variable im Plot brauchst, wendest du `to_label()` einfach in der Pipeline an, bevor du `ggplot()` aufrufst.
+
+## Coefficient-Plots: Regressionsergebnisse visualisieren {#sec-coefplot}
+
+Wenn du in Kap. 6 eine Regression gerechnet hast, willst du das Ergebnis kommunizieren — und das geht am wirkungsvollsten als **Coefficient-Plot**: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht eine direkt aus dem Modell der Mini-Studie motivierte Visualisierung aus:
+
+```{r coef-plot}
+tibble(
+  term  = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
+  beta  = c(-0.13, 0.30, 0.10, 0.05, 0.33),
+  lower = c(-0.18, 0.26, 0.04, -0.01, 0.27),
+  upper = c(-0.08, 0.34, 0.16, 0.10, 0.39)
+) |>
+  ggplot(aes(x = beta, y = fct_reorder(term, beta), xmin = lower, xmax = upper)) +
+  geom_pointrange() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(x = "Standardisierter Koeffizient (Beta)", y = NULL,
+       title = "Was erklärt Islamfeindlichkeit in Deutschland 2023?",
+       caption = "Multiple lineare Regression, ALLBUS 2023, gewichtet")
+```
+
+**Lesart.** Auf einen Blick siehst du *welcher* Prädiktor *wie stark* wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die Null-Linie überschneiden, sind statistisch unsicher (im Beispiel: Geschlecht).
+
+In der Praxis ziehst du die Werte (`beta`, `lower`, `upper`) nicht händisch aus dem Modell — du extrahierst sie mit `broom::tidy(modell, conf.int = TRUE)`. Die Logik des Plots bleibt aber dieselbe.
+
+## Mehrere Grafiken kombinieren mit patchwork {#sec-patchwork}
 
 `patchwork` ist der moderne Ersatz für `gridExtra::grid.arrange()`. Du speicherst Grafiken als Objekte und kombinierst sie mit `+`, `/` und `|`:
 
@@ -402,21 +462,30 @@ allbus |>
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 3 — Koeffizienten-Plot bauen.** Aus dem `summary()`-Output deines Regressions-Modells in Kap. 6 kannst du dir einen Koeffizienten-Plot bauen — Punkt für Schätzwert, Linie für Konfidenzintervall. Versuche es selbst (Tipp: schreibe die Werte in ein eigenes Tibble und benutze `geom_pointrange()`).
+**Übung 3 — Komposition für deinen Mini-Report.** Baue eine 2 × 1-Komposition mit patchwork: oben das Histogramm der Islamfeindlichkeit, unten den Coefficient-Plot aus dem Kapitel. Exportiere das Ganze mit `ggsave()` als PNG mit 300 dpi.
 
-**Lösung-Skizze:**
+**Lösungs-Skizze:**
 ```{r ex3-kap7-loesung, eval=FALSE}
-tibble(
-  term = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
-  beta = c(-0.13, 0.30, 0.10, 0.05, 0.33),
+p_hist <- allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
+  labs(title = "Verteilung der Islamfeindlichkeit", x = NULL, y = "Häufigkeit")
+
+p_coef <- tibble(
+  term  = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
+  beta  = c(-0.13, 0.30, 0.10, 0.05, 0.33),
   lower = c(-0.18, 0.26, 0.04, -0.01, 0.27),
   upper = c(-0.08, 0.34, 0.16, 0.10, 0.39)
 ) |>
   ggplot(aes(x = beta, y = fct_reorder(term, beta), xmin = lower, xmax = upper)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
-  labs(x = "Standardisierter Koeffizient (Beta)", y = NULL,
-       title = "Was erklärt Islamfeindlichkeit 2023?")
+  labs(title = "Was erklärt Islamfeindlichkeit?",
+       x = "Beta", y = NULL)
+
+p_hist / p_coef
+ggsave("befunde.png", width = 8, height = 7, dpi = 300)
 ```
 :::
 
@@ -426,6 +495,9 @@ tibble(
 - Du wählst passende `geom_*`-Schichten nach Datentyp (kategorial/kontinuierlich, eine/zwei Variablen).
 - Du teilst Subgruppen mit `facet_wrap()` und `facet_grid()` auf.
 - Du benutzt Brewer- und Viridis-Paletten für barrierearme Farbgebung.
+- Du kennst `theme_rworkshop()` als buchweites Default-Theme und kannst es in eigene Projekte übernehmen.
+- Du setzt Variablenlabels auf Achsen über `to_label()` für lesbare Beschriftungen.
+- Du visualisierst Regressionsergebnisse als Coefficient-Plot mit `geom_pointrange()`.
 - Du fasst mehrere Plots mit `patchwork` zu Kompositionen zusammen.
 - Du exportierst Grafiken mit `ggsave()` in publikationsfähiger Qualität.
 
@@ -437,3 +509,4 @@ Damit hast du den gesamten Werkzeugkasten dieses Buchs zusammen: SPSS-Daten → 
 - [R Graph Gallery](https://r-graph-gallery.com/) — Inspiration und Cookbook für tausende Grafiktypen.
 - Claus Wilke, [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) — Theorie der Datenvisualisierung, frei online.
 - [patchwork-Dokumentation](https://patchwork.data-imaginist.com/) für die Komposition komplexerer Layouts.
+- David Robinson, [broom-Paket](https://broom.tidymodels.org/) — extrahiert Modellergebnisse als Tibble, ideale Vorbereitung für Coefficient-Plots.
