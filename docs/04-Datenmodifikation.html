@@ -734,19 +734,30 @@ Hinweis
 </tbody>
 </table>
 <p>Beim Einlesen werden diese in SPSS als <em>user-missing</em> deklarierten Codes automatisch zu <strong>tagged NAs</strong>. Das bedeutet: Sie zählen in Berechnungen als <code>NA</code>, behalten aber ihre ursprüngliche Information.</p>
+<p>Wie viele Fälle pro Missing-Code in einer konkreten Variable stecken, zeigt dir <code>na_frequencies()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">na_frequencies</span>(allbus<span class="sc">$</span>mm01)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="do">##    tag    n code            label</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="do">## 1    b 1647  -11       TNZ: SPLIT</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="do">## 2    d  123   -8      WEISS NICHT</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="do">## 3    c   73   -9     KEINE ANGABE</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 4    a    2  -42 DATENFEHLER: MFN</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 &lt;NA&gt;    0 &lt;NA&gt; (System Missing)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Du siehst die Aufschlüsselung: wie viele „weiß nicht”, wie viele „keine Angabe”, wie viele „trifft nicht zu” — alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.</p>
 <p>Wenn du eine Variable hast, in der bestimmte Werte <em>erst nachträglich</em> als fehlend gelten sollen — etwa Altersangaben über 100 als unplausibel —, deklarierst du sie mit <code>set_na()</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(age, <span class="at">na_values =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>, <span class="sc">-</span><span class="dv">8</span>), <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_na</span>(age, <span class="at">na_values =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">9</span>, <span class="sc">-</span><span class="dv">8</span>), <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Mit <code>verbose = TRUE</code> zeigt mariposa dir an, wie viele Fälle pro Wert zu <code>NA</code> wurden — kontrolliert und nachvollziehbar.</p>
 <p>Mit <code>drop_na()</code> (aus tidyr) entfernst du Fälle mit <code>NA</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(mm01, mm02, mm03) <span class="sc">|&gt;</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3285</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(mm01, mm02, mm03) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3285</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -810,86 +821,86 @@ Warnung
 <section id="neue-variablen-mit-mutate" class="level3" data-number="4.9.1">
 <h3 data-number="4.9.1" class="anchored" data-anchor-id="neue-variablen-mit-mutate"><span class="header-section-number">4.9.1</span> Neue Variablen mit <code>mutate()</code></h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age) <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geburtsjahr =</span> <span class="dv">2023</span> <span class="sc">-</span> age) <span class="sc">|&gt;</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   age       geburtsjahr</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;       &lt;dbl&gt;</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 50               1973</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 51               1972</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 69               1954</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age) <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">geburtsjahr =</span> <span class="dv">2023</span> <span class="sc">-</span> age) <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   age       geburtsjahr</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 50               1973</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 51               1972</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 69               1954</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Soll dieselbe Transformation auf <em>mehrere</em> Variablen wirken, hilft <code>across()</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mm01, mm02, mm03), as.numeric))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mm01, mm02, mm03), as.numeric))</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="bedingungslogik-mit-case_when-und-if_else" class="level3" data-number="4.9.2">
 <h3 data-number="4.9.2" class="anchored" data-anchor-id="bedingungslogik-mit-case_when-und-if_else"><span class="header-section-number">4.9.2</span> Bedingungslogik mit <code>case_when()</code> und <code>if_else()</code></h3>
 <p><code>case_when()</code> ist das R-Äquivalent zu SPSS’ <code>IF</code>. Du listest Bedingungen in der Form <code>bedingung ~ wert</code> auf — die erste zutreffende gewinnt.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(educ) <span class="sc">|&gt;</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bildung =</span> <span class="fu">case_when</span>(</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span> <span class="sc">~</span> <span class="st">"niedrig"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">7</span>) <span class="sc">~</span> <span class="st">"mittel"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">5</span> <span class="sc">~</span> <span class="st">"hoch"</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="cn">NA</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(bildung)</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 2</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   bildung     n</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;   &lt;int&gt;</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 hoch     2472</span></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 mittel   1665</span></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 niedrig   982</span></span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 &lt;NA&gt;      127</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(educ) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bildung =</span> <span class="fu">case_when</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span> <span class="sc">~</span> <span class="st">"niedrig"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">7</span>) <span class="sc">~</span> <span class="st">"mittel"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>      educ <span class="sc">%in%</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">5</span> <span class="sc">~</span> <span class="st">"hoch"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="cn">NA</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(bildung)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 2</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="do">##   bildung     n</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;   &lt;int&gt;</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 hoch     2472</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 mittel   1665</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 niedrig   982</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 &lt;NA&gt;      127</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Bei nur <strong>zwei</strong> Ausprägungen ist <code>if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)</code> knapper:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jung =</span> <span class="fu">if_else</span>(age <span class="sc">&lt;</span> <span class="dv">30</span>, <span class="st">"jung"</span>, <span class="st">"30+"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(jung)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   jung      n</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt; &lt;int&gt;</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 30+    4529</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 jung    694</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 &lt;NA&gt;     23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jung =</span> <span class="fu">if_else</span>(age <span class="sc">&lt;</span> <span class="dv">30</span>, <span class="st">"jung"</span>, <span class="st">"30+"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(jung)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   jung      n</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt; &lt;int&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 30+    4529</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 jung    694</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 &lt;NA&gt;     23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Seit dplyr 1.1 gibt es zusätzlich <code>case_match()</code> — knapper als <code>case_when()</code>, wenn du nur Werte mappst (ohne Vergleichsoperatoren):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(eastwest) <span class="sc">|&gt;</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">region =</span> <span class="fu">case_match</span>(eastwest, <span class="dv">1</span> <span class="sc">~</span> <span class="st">"West"</span>, <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Ost"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(region)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 2</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   region     n</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;  &lt;int&gt;</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Ost     1679</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 West    3567</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(eastwest) <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">region =</span> <span class="fu">case_match</span>(eastwest, <span class="dv">1</span> <span class="sc">~</span> <span class="st">"West"</span>, <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Ost"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(region)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 2</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   region     n</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;  &lt;int&gt;</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Ost     1679</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 West    3567</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="aggregation-mit-group_by-und-summarise" class="level3" data-number="4.9.3">
 <h3 data-number="4.9.3" class="anchored" data-anchor-id="aggregation-mit-group_by-und-summarise"><span class="header-section-number">4.9.3</span> Aggregation mit <code>group_by()</code> und <code>summarise()</code></h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">|&gt;</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_faelle           =</span> <span class="fu">n</span>(),</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_einz_bildung     =</span> <span class="fu">n_distinct</span>(educ),</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">durchschnitt_alter =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 4</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest               n_faelle n_einz_bildung durchschnitt_alter</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;                 &lt;int&gt;          &lt;int&gt;              &lt;dbl&gt;</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]     3567              8               51.7</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]     1679              8               54.3</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(eastwest) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_faelle           =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_einz_bildung     =</span> <span class="fu">n_distinct</span>(educ),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">durchschnitt_alter =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 4</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest               n_faelle n_einz_bildung durchschnitt_alter</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;                 &lt;int&gt;          &lt;int&gt;              &lt;dbl&gt;</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]     3567              8               51.7</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]     1679              8               54.3</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>n()</code> zählt alle Fälle in der Gruppe, <code>n_distinct()</code> zählt <strong>einzigartige</strong> Werte einer Variablen.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -904,16 +915,16 @@ Tipp
 <div class="callout-body-container callout-body">
 <p><strong><code>.by</code> als Alternative.</strong> Seit dplyr 1.1 kannst du die Gruppierung auch direkt im Aufruf von <code>summarise()</code> oder <code>mutate()</code> setzen, ohne <code>group_by()</code> davor:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">durchschnitt_alter =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> eastwest</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 2</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest               durchschnitt_alter</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;                           &lt;dbl&gt;</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]               51.7</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]               54.3</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">durchschnitt_alter =</span> <span class="fu">mean</span>(age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> eastwest</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 2</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest               durchschnitt_alter</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;                           &lt;dbl&gt;</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]               51.7</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]               54.3</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Das ist kürzer und vermeidet, dass du <code>ungroup()</code> vergisst.</p>
 </div>
@@ -923,26 +934,26 @@ Tipp
 <h3 data-number="4.9.4" class="anchored" data-anchor-id="distinct-und-rename"><span class="header-section-number">4.9.4</span> <code>distinct()</code> und <code>rename()</code></h3>
 <p><code>distinct()</code> zeigt dir alle einzigartigen Ausprägungen einer Variable — die schnellste Antwort auf „welche Codes gibt es eigentlich?“:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(eastwest)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 1</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest              </span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;             </span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]</span></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(eastwest)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 2 × 1</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   eastwest              </span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;             </span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [ALTE BUNDESLAENDER]</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2 [NEUE BUNDESLAENDER]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>rename()</code> benennt Variablen um — neuer Name links, alter Name rechts:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">geschlecht =</span> sex, <span class="at">alter =</span> age) <span class="sc">|&gt;</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(geschlecht, alter) <span class="sc">|&gt;</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   geschlecht alter    </span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;  &lt;dbl+lbl&gt;</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [MANN]   50       </span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 1 [MANN]   51       </span></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 2 [FRAU]   69</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">geschlecht =</span> sex, <span class="at">alter =</span> age) <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(geschlecht, alter) <span class="sc">|&gt;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   geschlecht alter    </span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;  &lt;dbl+lbl&gt;</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1 [MANN]   50       </span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 1 [MANN]   51       </span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 2 [FRAU]   69</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Übersetzen von kryptischen ALLBUS-Namen in sprechende Kürzel für deinen Analyse-Datensatz.</p>
 </section>
@@ -951,8 +962,8 @@ Tipp
 <h2 data-number="4.10" class="anchored" data-anchor-id="sec-rekodierung"><span class="header-section-number">4.10</span> Rekodierung mit <code>rec()</code></h2>
 <p>Die wichtigste Funktion in diesem Kapitel: <code>rec()</code> aus mariposa. Sie ersetzt das, was du in SPSS unter <code>RECODE</code> kennst, kann aber mehr — sie versteht eine kompakte <strong>Regel-Syntax</strong>, behält Labels und arbeitet pipe-freundlich.</p>
 <p><strong>Syntax:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(variable, <span class="at">rules =</span> <span class="st">"1=1; 2:3=2; else=NA"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(variable, <span class="at">rules =</span> <span class="st">"1=1; 2:3=2; else=NA"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Die Regel-Syntax im Überblick:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1039,17 +1050,17 @@ Tipp
 <section id="beispiel-bildung-kategorisieren" class="level3" data-number="4.10.1">
 <h3 data-number="4.10.1" class="anchored" data-anchor-id="beispiel-bildung-kategorisieren"><span class="header-section-number">4.10.1</span> Beispiel: Bildung kategorisieren</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(educ, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA"</span>,</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(educ)</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 2</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   educ        n</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;fct&gt;   &lt;int&gt;</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 niedrig   982</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 mittel   1639</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 hoch     2472</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 &lt;NA&gt;      153</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(educ, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA"</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(educ)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 2</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   educ        n</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;fct&gt;   &lt;int&gt;</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 niedrig   982</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 mittel   1639</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 hoch     2472</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 &lt;NA&gt;      153</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Mit <code>as.factor = TRUE</code> wird die rekodierte Variable direkt ein Faktor; die <code>[…]</code>-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.</p>
 </section>
@@ -1057,29 +1068,29 @@ Tipp
 <h3 data-number="4.10.2" class="anchored" data-anchor-id="spezial-modi-dichotomisieren-und-quartile"><span class="header-section-number">4.10.2</span> Spezial-Modi: Dichotomisieren und Quartile</h3>
 <p>Statt eine Regel-Kette zu schreiben, kannst du eine Variable in einem Aufruf am Median, an einem festen Cut-Punkt, am Mittelwert oder in Quartile zerlegen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(age, <span class="at">rules =</span> <span class="st">"dicho(50)"</span>, <span class="at">suffix =</span> <span class="st">"_d"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(age_d)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   age_d     n</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl&gt; &lt;int&gt;</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     0  2281</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2     1  2942</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3    NA    23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(age, <span class="at">rules =</span> <span class="st">"dicho(50)"</span>, <span class="at">suffix =</span> <span class="st">"_d"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(age_d)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   age_d     n</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     0  2281</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2     1  2942</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3    NA    23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Hier wird <code>age_d</code> zu 0 für unter 50, zu 1 für 50+. Mit <code>suffix = "_d"</code> bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(age, <span class="at">rules =</span> <span class="st">"quart"</span>, <span class="at">suffix =</span> <span class="st">"_q"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(age_q)</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 5 × 2</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   age_q     n</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl&gt; &lt;int&gt;</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     1  1322</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2     2  1344</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3     3  1259</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 4     4  1298</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 5    NA    23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(age, <span class="at">rules =</span> <span class="st">"quart"</span>, <span class="at">suffix =</span> <span class="st">"_q"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(age_q)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 5 × 2</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   age_q     n</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl&gt; &lt;int&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="do">## 1     1  1322</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 2     2  1344</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 3     3  1259</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 4     4  1298</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 5    NA    23</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>age_q</code> ist jetzt eine kategoriale Variable mit den Werten 1–4 für die Altersquartile.</p>
 </section>
@@ -1138,9 +1149,9 @@ Tipp
 </div>
 <p>Bevor du aus den sechs Items einen Mittelwert bildest, <strong>musst</strong> du <code>mm02</code> und <code>mm05</code> umpolen, sonst heben sich die Effekte auf. mariposa hat dafür den Spezial-Modus <code>"rev"</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm02, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm02, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>"rev"</code> rechnet intern <code>max(x) + min(x) - x</code> — bei einer 7-stufigen Skala also <code>8 - x</code>, was genau das gewünschte Umpolen ist. Mit <code>suffix = "r"</code> erzeugt mariposa zwei neue Variablen <code>mm02r</code> und <code>mm05r</code>; die Originale <code>mm02</code> und <code>mm05</code> bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1187,8 +1198,8 @@ Warnung
 <h3 data-number="4.10.4" class="anchored" data-anchor-id="dummy-variablen-mit-to_dummy"><span class="header-section-number">4.10.4</span> Dummy-Variablen mit <code>to_dummy()</code></h3>
 <p>Für Regressionen brauchst du oft <strong>Dummy-Variablen</strong> — eine kategoriale Variable mit <code>k</code> Ausprägungen wird in <code>k-1</code> Indikator-Spalten zerlegt (0/1 pro Ausprägung). mariposas <code>to_dummy()</code> macht das in einem Aufruf:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_dummy</span>(eastwest, <span class="at">ref =</span> <span class="dv">1</span>)        <span class="co"># West (=1) als Referenz, dummy für Ost</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_dummy</span>(eastwest, <span class="at">ref =</span> <span class="dv">1</span>)        <span class="co"># West (=1) als Referenz, dummy für Ost</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Die neuen Spalten werden automatisch angehängt; mit <code>ref =</code> legst du fest, welche Ausprägung als <em>Referenz</em> weggelassen wird. Dummy-Variablen brauchst du erst in Kap. 6 für die Regression — <code>lm()</code> und <code>linear_regression()</code> aus mariposa erstellen sie für Faktoren auch automatisch im Hintergrund.</p>
 </section>
@@ -1197,21 +1208,21 @@ Warnung
 <h2 data-number="4.11" class="anchored" data-anchor-id="standardisieren-und-zentrieren"><span class="header-section-number">4.11</span> Standardisieren und zentrieren</h2>
 <p>Vor manchen Analysen ist es sinnvoll, eine Variable auf einen einheitlichen Maßstab zu bringen.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">std</span>(age, <span class="at">suffix =</span> <span class="st">"_z"</span>) <span class="sc">|&gt;</span>     <span class="co"># neue Variable age_z (Mittelwert 0, SD 1)</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age, age_z) <span class="sc">|&gt;</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   age         age_z</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;   &lt;dbl&gt;</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 50        -0.138 </span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 51        -0.0828</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 69         0.903</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">std</span>(age, <span class="at">suffix =</span> <span class="st">"_z"</span>) <span class="sc">|&gt;</span>     <span class="co"># neue Variable age_z (Mittelwert 0, SD 1)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age, age_z) <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 3 × 2</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   age         age_z</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;dbl+lbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 50        -0.138 </span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 51        -0.0828</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 69         0.903</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Mit <code>center()</code> analog für mittelwertzentrierte Variablen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">center</span>(age, <span class="at">suffix =</span> <span class="st">"_c"</span>)     <span class="co"># neue Variable age_c (Mittelwert 0)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">center</span>(age, <span class="at">suffix =</span> <span class="st">"_c"</span>)     <span class="co"># neue Variable age_c (Mittelwert 0)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Ohne <code>suffix</code>-Argument <strong>überschreiben</strong> beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein <code>weights =</code>-Argument, falls du die Standardisierung gewichtet machen willst.</p>
 </section>
@@ -1249,21 +1260,21 @@ Warnung
 <section id="islamfeindlichkeits-skala" class="level3" data-number="4.12.1">
 <h3 data-number="4.12.1" class="anchored" data-anchor-id="islamfeindlichkeits-skala"><span class="header-section-number">4.12.1</span> Islamfeindlichkeits-Skala</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(mm01, mm02r, mm03, mm04, mm05r, mm06),</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_valid =</span> <span class="dv">5</span>)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(mm01, mm02r, mm03, mm04, mm05r, mm06),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_valid =</span> <span class="dv">5</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Schnelle Prüfung, ob die Skala plausibel ist:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">describe</span>(islamophobie)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Descriptive Statistics</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="do">##      Variable  Mean Median    SD Range   IQR Skewness    N Missing</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  islamophobie 4.113      4 1.549     6 2.333    0.147 3345    1901</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">describe</span>(islamophobie)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Descriptive Statistics</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="do">##      Variable  Mean Median    SD Range   IQR Skewness    N Missing</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  islamophobie 4.113      4 1.549     6 2.333    0.147 3345    1901</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1283,20 +1294,20 @@ Hinweis
 <h3 data-number="4.12.2" class="anchored" data-anchor-id="antwortstil-prüfen-mit-row_count"><span class="header-section-number">4.12.2</span> Antwortstil prüfen mit <code>row_count()</code></h3>
 <p>Bevor wir die Populismus-Skala bilden, ein kleiner Daten-Qualitäts-Check: Wie oft hat jemand bei den <code>mm</code>-Items die <strong>extremste</strong> Antwort (7) gewählt? Hoher Wert deutet auf eine <em>response style</em> hin — jemand kreuzt durchgängig „voll und ganz zu” an, unabhängig vom Item.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_extrem =</span> <span class="fu">row_count</span>(<span class="fu">pick</span>(mm01, mm02, mm03, mm04, mm05, mm06),</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">count =</span> <span class="dv">7</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(n_extrem)</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 2</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   n_extrem     n</span></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="do">##      &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1        0  3399</span></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2        1   958</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3        2   407</span></span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 4        3   214</span></span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 5        4   233</span></span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 6        5    30</span></span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 7        6     5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_extrem =</span> <span class="fu">row_count</span>(<span class="fu">pick</span>(mm01, mm02, mm03, mm04, mm05, mm06),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">count =</span> <span class="dv">7</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(n_extrem)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 7 × 2</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   n_extrem     n</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="do">##      &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 1        0  3399</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="do">## 2        1   958</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="do">## 3        2   407</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="do">## 4        3   214</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 5        4   233</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="do">## 6        5    30</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="do">## 7        6     5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Die meisten Befragten zeigen <em>kein</em> solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. <code>row_count()</code> ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht”, wie viele Extremantworten, wie viele Mittelantworten?</p>
 </section>
@@ -1304,33 +1315,33 @@ Hinweis
 <h3 data-number="4.12.3" class="anchored" data-anchor-id="populismus-skala"><span class="header-section-number">4.12.3</span> Populismus-Skala</h3>
 <p>Hier wartet eine zweite Polungs-Falle — und genau die ist der Grund, warum du dich vor jeder Skalenbildung mit dem Codebook beschäftigst. Schau dir zuerst die Wertelabels eines <code>pa</code>-Items an:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">val_labels</span>(allbus<span class="sc">$</span>pa29)</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="do">## STIMME VOLL ZU STIMME EHER ZU    TEILS/TEILS  LEHNE EHER AB  LEHNE GANZ AB </span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="do">##              1              2              3              4              5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">val_labels</span>(allbus<span class="sc">$</span>pa29)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="do">## STIMME VOLL ZU STIMME EHER ZU    TEILS/TEILS  LEHNE EHER AB  LEHNE GANZ AB </span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="do">##              1              2              3              4              5</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Das <code>pa</code>-Modul nutzt eine <strong>5-stufige Skala</strong>, bei der <strong>1 = „stimme voll zu” und 5 = „lehne ganz ab”</strong> steht. Das ist die <em>umgekehrte</em> Logik zu den <code>mm</code>-Items, wo <code>1</code> Ablehnung und <code>7</code> Zustimmung bedeutete. Folglich heißt für <code>pa29</code> „Abgeordnete nur dem Volk verpflichtet” ein <strong>niedriger</strong> Wert = populistisch.</p>
 <p>Damit am Ende <code>populismus</code> so funktioniert wie <code>islamophobie</code> (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben <code>pa</code>-Items um — sie sind alle gleich (invers) kodiert, die Umpolung läuft also für alle in einer Schleife identisch:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa29, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa30, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa31, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa32, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa33, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa34, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa35, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min_valid =</span> <span class="dv">6</span>)</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">describe</span>(populismus)</span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Descriptive Statistics</span></span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------</span></span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a><span class="do">##    Variable  Mean Median    SD Range   IQR Skewness    N Missing</span></span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  populismus 3.398  3.429 0.767     4 1.143    0.041 3563    1683</span></span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa29, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa30, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa31, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa32, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa33, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa34, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa35, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">min_valid =</span> <span class="dv">6</span>)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">describe</span>(populismus)</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Descriptive Statistics</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="do">##    Variable  Mean Median    SD Range   IQR Skewness    N Missing</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  populismus 3.398  3.429 0.767     4 1.143    0.041 3563    1683</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="do">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1356,23 +1367,23 @@ Warnung
 \]</span></p>
 <p>mariposa hat das als <code>pomps()</code> direkt verbaut:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_orig =</span> <span class="fu">round</span>(<span class="fu">mean</span>(islamophobie,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_p    =</span> <span class="fu">round</span>(<span class="fu">mean</span>(islamophobie_p, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_orig   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(populismus,     <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_p      =</span> <span class="fu">round</span>(<span class="fu">mean</span>(populismus_p,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>)</span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 4</span></span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="do">##   islam_orig islam_p pop_orig pop_p</span></span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 1       4.11    51.9      3.4  60.0</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_orig =</span> <span class="fu">round</span>(<span class="fu">mean</span>(islamophobie,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_p    =</span> <span class="fu">round</span>(<span class="fu">mean</span>(islamophobie_p, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_orig   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(populismus,     <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_p      =</span> <span class="fu">round</span>(<span class="fu">mean</span>(populismus_p,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 4</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="do">##   islam_orig islam_p pop_orig pop_p</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="do">##        &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 1       4.11    51.9      3.4  60.0</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in <em>relativer Intensität</em> stärker islamophob als populistisch — oder umgekehrt.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -1406,49 +1417,49 @@ Hinweis
 <h2 data-number="4.14" class="anchored" data-anchor-id="sec-pipeline"><span class="header-section-number">4.14</span> Die komplette Datenpräp-Pipeline</h2>
 <p>Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer einzigen sauberen Pipeline zusammenfassen. Diese Pipeline ist der <strong>Anker für Kap. 5–7</strong> — du wirst sie als Setup-Block am Anfang jedes weiteren Kapitels wiederfinden:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-43"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-43-1" class="code-annotation-target"><a href="#annotated-cell-43-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">"ALLBUS2023.sav"</span>) <span class="sc">|&gt;</span></span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-43-2" class="code-annotation-target"><a href="#annotated-cell-43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm02, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-3"><a href="#annotated-cell-43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-43-4" class="code-annotation-target"><a href="#annotated-cell-43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa29, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-5"><a href="#annotated-cell-43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa30, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-6"><a href="#annotated-cell-43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa31, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-7"><a href="#annotated-cell-43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa32, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-8"><a href="#annotated-cell-43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa33, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-9"><a href="#annotated-cell-43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa34, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-10"><a href="#annotated-cell-43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa35, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="annotated-cell-43-11"><a href="#annotated-cell-43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="annotated-cell-43-12"><a href="#annotated-cell-43-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie   =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(mm01, mm02r, mm03, mm04, mm05r, mm06),</span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-43-13" class="code-annotation-target"><a href="#annotated-cell-43-13" aria-hidden="true" tabindex="-1"></a>                               <span class="at">min_valid =</span> <span class="dv">5</span>),</span>
-<span id="annotated-cell-43-14"><a href="#annotated-cell-43-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus     =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),</span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-43-15" class="code-annotation-target"><a href="#annotated-cell-43-15" aria-hidden="true" tabindex="-1"></a>                               <span class="at">min_valid =</span> <span class="dv">6</span>),</span>
-<a class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="6" onclick="event.preventDefault();">6</a><span id="annotated-cell-43-16" class="code-annotation-target"><a href="#annotated-cell-43-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
-<span id="annotated-cell-43-17"><a href="#annotated-cell-43-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
-<span id="annotated-cell-43-18"><a href="#annotated-cell-43-18" aria-hidden="true" tabindex="-1"></a>  )</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-44"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-44-1" class="code-annotation-target"><a href="#annotated-cell-44-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">"ALLBUS2023.sav"</span>) <span class="sc">|&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-44-2" class="code-annotation-target"><a href="#annotated-cell-44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm02, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-3"><a href="#annotated-cell-44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(mm05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-44-4" class="code-annotation-target"><a href="#annotated-cell-44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa29, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-5"><a href="#annotated-cell-44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa30, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-6"><a href="#annotated-cell-44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa31, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-7"><a href="#annotated-cell-44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa32, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-8"><a href="#annotated-cell-44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa33, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-9"><a href="#annotated-cell-44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa34, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-10"><a href="#annotated-cell-44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pa35, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="annotated-cell-44-11"><a href="#annotated-cell-44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="annotated-cell-44-12"><a href="#annotated-cell-44-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie   =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(mm01, mm02r, mm03, mm04, mm05r, mm06),</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-44-13" class="code-annotation-target"><a href="#annotated-cell-44-13" aria-hidden="true" tabindex="-1"></a>                               <span class="at">min_valid =</span> <span class="dv">5</span>),</span>
+<span id="annotated-cell-44-14"><a href="#annotated-cell-44-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus     =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-44-15" class="code-annotation-target"><a href="#annotated-cell-44-15" aria-hidden="true" tabindex="-1"></a>                               <span class="at">min_valid =</span> <span class="dv">6</span>),</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="6" onclick="event.preventDefault();">6</a><span id="annotated-cell-44-16" class="code-annotation-target"><a href="#annotated-cell-44-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">islamophobie_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
+<span id="annotated-cell-44-17"><a href="#annotated-cell-44-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">populismus_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
+<span id="annotated-cell-44-18"><a href="#annotated-cell-44-18" aria-hidden="true" tabindex="-1"></a>  )</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-grid">
-<dt data-target-cell="annotated-cell-43" data-target-annotation="1">1</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="1" data-code-annotation="1">ALLBUS 2023 einlesen — fehlende Werte sind automatisch als tagged NAs gesetzt.</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="1" data-code-annotation="1">ALLBUS 2023 einlesen — fehlende Werte sind automatisch als tagged NAs gesetzt.</span>
 </dd>
-<dt data-target-cell="annotated-cell-43" data-target-annotation="2">2</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="2,3" data-code-annotation="2">Umpolen der inversen <code>mm</code>-Items (<code>mm02</code>, <code>mm05</code>) zu <code>mm02r</code>/<code>mm05r</code> — Skala 7-stufig.</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="2,3" data-code-annotation="2">Umpolen der inversen <code>mm</code>-Items (<code>mm02</code>, <code>mm05</code>) zu <code>mm02r</code>/<code>mm05r</code> — Skala 7-stufig.</span>
 </dd>
-<dt data-target-cell="annotated-cell-43" data-target-annotation="3">3</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="4,5,6,7,8,9,10" data-code-annotation="3">Umpolen aller <code>pa</code>-Items, weil sie 5-stufig <strong>invers</strong> kodiert sind (<code>1 = stimme zu</code>, <code>5 = lehne ab</code>) — nach Umpolung gilt hoch = populistisch.</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="4,5,6,7,8,9,10" data-code-annotation="3">Umpolen aller <code>pa</code>-Items, weil sie 5-stufig <strong>invers</strong> kodiert sind (<code>1 = stimme zu</code>, <code>5 = lehne ab</code>) — nach Umpolung gilt hoch = populistisch.</span>
 </dd>
-<dt data-target-cell="annotated-cell-43" data-target-annotation="4">4</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="4">4</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="13" data-code-annotation="4">Skala <strong>Islamfeindlichkeit</strong> als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="13" data-code-annotation="4">Skala <strong>Islamfeindlichkeit</strong> als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.</span>
 </dd>
-<dt data-target-cell="annotated-cell-43" data-target-annotation="5">5</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="5">5</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="15" data-code-annotation="5">Skala <strong>Populismus</strong> als Mittelwert der sieben umgepolten <code>pa</code>-Items — mindestens 6 von 7 müssen valide sein.</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="15" data-code-annotation="5">Skala <strong>Populismus</strong> als Mittelwert der sieben umgepolten <code>pa</code>-Items — mindestens 6 von 7 müssen valide sein.</span>
 </dd>
-<dt data-target-cell="annotated-cell-43" data-target-annotation="6">6</dt>
+<dt data-target-cell="annotated-cell-44" data-target-annotation="6">6</dt>
 <dd>
-<span data-code-cell="annotated-cell-43" data-code-lines="16,17" data-code-annotation="6"><strong>POMPS-Versionen</strong> beider Skalen auf 0–100 für direkten Vergleich (optional; die Original-Skalen bleiben erhalten).</span>
+<span data-code-cell="annotated-cell-44" data-code-lines="16,17" data-code-annotation="6"><strong>POMPS-Versionen</strong> beider Skalen auf 0–100 für direkten Vergleich (optional; die Original-Skalen bleiben erhalten).</span>
 </dd>
 </dl>
 </div>
@@ -1472,17 +1483,17 @@ Tipp
 <p><strong>Übung 1 — Skala Politische Effizienz.</strong> Die <code>pe</code>-Items (<code>pe01</code>, <code>pe04</code>, <code>pe05</code>, <code>pe06</code>, <code>pe07</code>, <code>pe08</code>) messen politische Selbstwirksamkeit (kognitive Komponente). Prüfe zuerst die Variablenlabels mit <code>var_label()</code>, identifiziere ob Items umgepolt werden müssen, und baue analog eine Skala <code>polit_effizienz</code> mit <code>min_valid = 5</code>. <em>Tipp: schaue dir die Wortlaute genau an.</em></p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(pe01, pe04, pe05, pe06, pe07, pe08) <span class="sc">|&gt;</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">var_label</span>()</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Items pe05 und pe07 sind positiv gepolt, müssen umgepolt werden.</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pe05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pe07, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">polit_effizienz =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pe01, pe04, pe05r, pe06, pe07r, pe08),</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>                                <span class="at">min_valid =</span> <span class="dv">5</span>)</span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(pe01, pe04, pe05, pe06, pe07, pe08) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">var_label</span>()</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Items pe05 und pe07 sind positiv gepolt, müssen umgepolt werden.</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pe05, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(pe07, <span class="at">rules =</span> <span class="st">"rev"</span>, <span class="at">suffix =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">polit_effizienz =</span> <span class="fu">row_means</span>(<span class="fu">pick</span>(pe01, pe04, pe05r, pe06, pe07r, pe08),</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>                                <span class="at">min_valid =</span> <span class="dv">5</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1502,8 +1513,8 @@ Tipp
 <p><strong>Übung 2 — Variablen finden.</strong> Du willst eine Skala zu Vertrauen in Institutionen bauen, kennst aber die Variablennamen nicht auswendig. Nutze <code>find_var()</code>, um (a) alle Variablen mit „vertrau” im Label und (b) alle Variablen mit <code>st</code> am Namensanfang zu finden.</p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">"vertrau"</span>, <span class="at">search =</span> <span class="st">"label"</span>)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">"^st"</span>, <span class="at">search =</span> <span class="st">"name"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">"vertrau"</span>, <span class="at">search =</span> <span class="st">"label"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span> <span class="fu">find_var</span>(<span class="st">"^st"</span>, <span class="at">search =</span> <span class="st">"name"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1523,10 +1534,10 @@ Tipp
 <p><strong>Übung 3 — ISCED-Bildung kategorisieren.</strong> Statt <code>educ</code> kannst du auch die international vergleichbare ISCED-Variable <code>isced97</code> (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig”, 3–4 = „mittel”, 5–6 = „hoch”.</p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(isced97, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]"</span>,</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(isced97)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(isced97, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]"</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(isced97)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1546,15 +1557,15 @@ Tipp
 <p><strong>Übung 4 — Skalen vergleichbar machen.</strong> Liegen die Befragten in Deutschland 2023 in der Mini-Studie <em>stärker</em> auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: <code>w_mean()</code> aus mariposa für gewichtete Mittelwerte, Argument <code>weights = wghtpew</code>).</p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam =</span> <span class="fu">w_mean</span>(islam_p, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop   =</span> <span class="fu">w_mean</span>(pop_p,   <span class="at">weights =</span> wghtpew)</span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam_p =</span> <span class="fu">pomps</span>(islamophobie, <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">7</span>),</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_p   =</span> <span class="fu">pomps</span>(populismus,   <span class="at">scale_min =</span> <span class="dv">1</span>, <span class="at">scale_max =</span> <span class="dv">5</span>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam =</span> <span class="fu">w_mean</span>(islam_p, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop   =</span> <span class="fu">w_mean</span>(pop_p,   <span class="at">weights =</span> wghtpew)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1574,10 +1585,10 @@ Tipp
 <p><strong>Übung 5 — Analyse-Subset bilden.</strong> Erstelle einen Datensatz <code>analyse</code>, der nur die für die Mini-Studie nötigen Variablen enthält (<code>islamophobie</code>, <code>populismus</code>, <code>eastwest</code>, <code>sex</code>, <code>age</code>, <code>educ</code>, <code>wghtpew</code>) und nur Fälle, in denen sowohl die Islamophobie-Skala als auch die Populismus-Skala gültige Werte haben.</p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>analyse <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(islamophobie, populismus, eastwest, sex, age, educ, wghtpew) <span class="sc">|&gt;</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(islamophobie, populismus)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(analyse)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>analyse <span class="ot">&lt;-</span> allbus <span class="sc">|&gt;</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(islamophobie, populismus, eastwest, sex, age, educ, wghtpew) <span class="sc">|&gt;</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(islamophobie, populismus)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(analyse)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
