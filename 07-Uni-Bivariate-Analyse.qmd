@@ -401,13 +401,11 @@ allbus |>
 
 ## Übungen {-}
 
-::: {.callout-tip title="Übung 1 · Demokratiezufriedenheit beschreiben · Reproduktion" collapse="true"}
+::: {.callout-note title="Übung 1 · Demokratiezufriedenheit beschreiben · Reproduktion"}
 Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken (inkl. Schiefe und Wölbung). Beschreibe in einem Satz, was du siehst.
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex1-kap5-loesung, eval=FALSE}
 allbus |> frequency(ps03, weights = wghtpew)
 allbus |> describe(ps03, weights = wghtpew)
@@ -416,13 +414,11 @@ allbus |> w_kurtosis(ps03, weights = wghtpew)
 ```
 :::
 
-::: {.callout-tip title="Übung 2 · Subgruppen-Vergleich · Reproduktion" collapse="true"}
+::: {.callout-note title="Übung 2 · Subgruppen-Vergleich · Reproduktion"}
 Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex2-kap5-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(sex)) |>
@@ -436,13 +432,11 @@ allbus |>
 ```
 :::
 
-::: {.callout-tip title="Übung 3 · Drei Korrelate · Transfer" collapse="true"}
+::: {.callout-note title="Übung 3 · Drei Korrelate · Transfer"}
 Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten? Ordne ihn mit der Effektgrößen-Faustregel ein.
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex3-kap5-loesung, eval=FALSE}
 allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
@@ -450,13 +444,11 @@ allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
 ```
 :::
 
-::: {.callout-tip title="Übung 4 · Post-Hoc bei ANOVA · Transfer" collapse="true"}
+::: {.callout-note title="Übung 4 · Post-Hoc bei ANOVA · Transfer"}
 Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex4-kap5-loesung, eval=FALSE}
 allbus_bildung |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
@@ -464,7 +456,7 @@ allbus_bildung |>
 ```
 :::
 
-::: {.callout-tip title="Übung 5 · Eigene Hypothese bivariat testen · Mini-Forschungsfrage" collapse="true"}
+::: {.callout-note title="Übung 5 · Eigene Hypothese bivariat testen · Mini-Forschungsfrage"}
 Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *„Frauen sind mit der Demokratie in Deutschland zufriedener als Männer."* oder *„Lebenszufriedenheit hängt negativ mit Alter zusammen."* Wähle (a) das passende Verfahren (t-Test, ANOVA, Korrelation, Chi²), (b) die passenden Variablen, (c) ob du gewichten musst, (d) eine angemessene Effektgröße. Berichte das Ergebnis in einem Satz nach dem Schema: *„X und Y hängen [richtung] [stärke] zusammen ([Testname], [Statistik], [p], [Effektgröße])."*
 
 *Keine Musterlösung — die Übung trainiert Hypothesen­führung, Methodenwahl und das Berichten. Genau diese Schritte gehörst du im echten Forschungsalltag.*

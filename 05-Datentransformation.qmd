@@ -484,13 +484,11 @@ Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
 
 ## Übungen {-}
 
-::: {.callout-tip title="Übung 1 · Skala Politische Effizienz · Reproduktion" collapse="true"}
+::: {.callout-note title="Übung 1 · Skala Politische Effizienz · Reproduktion"}
 Die `pe`-Items (`pe01`, `pe04`, `pe05`, `pe06`, `pe07`, `pe08`) messen politische Selbstwirksamkeit (kognitive Komponente). Prüfe zuerst die Variablenlabels mit `var_label()`, identifiziere ob Items umgepolt werden müssen, und baue analog eine Skala `polit_effizienz` mit `min_valid = 5`. *Tipp: schaue dir die Wortlaute genau an.*
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex1-kap5-loesung, eval=FALSE}
 allbus |>
   select(pe01, pe04, pe05, pe06, pe07, pe08) |>
@@ -506,13 +504,11 @@ allbus <- allbus |>
 ```
 :::
 
-::: {.callout-tip title="Übung 2 · ISCED-Bildung kategorisieren · Reproduktion" collapse="true"}
+::: {.callout-note title="Übung 2 · ISCED-Bildung kategorisieren · Reproduktion"}
 Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isced97` (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig", 3–4 = „mittel", 5–6 = „hoch".
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex2-kap5-loesung, eval=FALSE}
 allbus |>
   rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
@@ -521,13 +517,11 @@ allbus |>
 ```
 :::
 
-::: {.callout-tip title="Übung 3 · Skalen vergleichbar machen · Transfer" collapse="true"}
+::: {.callout-note title="Übung 3 · Skalen vergleichbar machen · Transfer"}
 Liegen die Befragten in Deutschland 2023 in der Mini-Studie *stärker* auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: `w_mean()` aus mariposa für gewichtete Mittelwerte, Argument `weights = wghtpew`).
+:::
 
----
-
-**Lösung**
-
+::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex3-kap5-loesung, eval=FALSE}
 allbus |>
   summarise(
@@ -537,7 +531,7 @@ allbus |>
 ```
 :::
 
-::: {.callout-tip title="Übung 4 · Eigene Skala bauen · Mini-Forschungsfrage" collapse="true"}
+::: {.callout-note title="Übung 4 · Eigene Skala bauen · Mini-Forschungsfrage"}
 Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (Demokratiezufriedenheit, Vertrauen in Institutionen, Geschlechterrolleneinstellungen, …). Suche mit `find_var()` mindestens drei passende Items im ALLBUS 2023, prüfe ihre Polung, baue eine Skala mit `row_means(min_valid = ...)` und beschreibe in 3–4 Sätzen, *wie* du das Konstrukt operationalisiert hast und welche Items du *warum* einbezogen oder ausgeschlossen hast.
 
 *Es gibt hier keine Musterlösung — die Übung trainiert Operationalisierung, das Kernhandwerk empirischer Sozialforschung.*
