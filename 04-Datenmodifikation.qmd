@@ -10,14 +10,23 @@ source("R/_common.R")
 
 Bevor du diese Frage beantworten kannst, brauchst du saubere Daten. Dieses Kapitel begleitet dich vom unbearbeiteten SPSS-Datensatz bis zur fertigen Analyse-Pipeline mit zwei selbstgebauten Skalen — **Islamfeindlichkeit** und **Populismus**. Am Ende des Kapitels hast du den Datensatz vorliegen, mit dem du in Kap. 5 deskriptiv arbeitest, in Kap. 6 modellierst und in Kap. 7 visualisierst.
 
+## Worum es geht
+
+Echte Sekundärdaten sind selten so, wie du sie für eine konkrete Analyse brauchst: 579 Variablen mit kryptischen Namen, vier verschiedene Codes für fehlende Werte, Items in unterschiedlichen Richtungen gepolt, Skalen mit unterschiedlichen Wertebereichen. Datenmodifikation ist die Brücke vom Rohdatensatz zur Analyse — der Schritt, der über die Qualität jeder folgenden Auswertung entscheidet.
+
+Dieses Kapitel ist der **Anker** für Kap. 5–7: jede Analyse, die du dort siehst, läuft auf der Pipeline auf, die du hier baust. Wir machen den Weg deshalb explizit — von `read_spss()` bis zur fertigen Skala — und schließen jede gängige Datenmod-Operation an die Mini-Studie an.
+
 ## Was du nach diesem Kapitel kannst {-}
 
 - Einen SPSS-Datensatz mit `read_spss()` einlesen — inklusive aller Variablen- und Wertelabels.
-- Variablen und Fälle gezielt auswählen (`select()`, `filter()`, `arrange()`).
+- Variablen über Name **oder** Label mit `find_var()` suchen.
+- Variablen und Fälle gezielt auswählen, sortieren und umsortieren (`select()`, `filter()`, `arrange()`, `relocate()`).
 - Datentypen verstehen und zwischen `labelled`, Faktor und numerisch konvertieren.
 - Fehlende Werte deklarieren und systematisch behandeln.
-- Variablen rekodieren — insbesondere **umpolen (Reverse Coding)**, ein zentraler Schritt vor jeder Skalenbildung.
-- Aus mehreren Items eine **latente Skala** bilden — gewichtet, mit kontrollierter Mindest-Validität.
+- Variablen rekodieren — vom einfachen Umkodieren über **Dichotomisierung** und **Quartilbildung** bis zum sauberen **Umpolen (Reverse Coding)**.
+- Dummy-Variablen für Regressionen erzeugen.
+- Aus mehreren Items eine **latente Skala** bilden — mit kontrollierter Mindest-Validität.
+- Skalen unterschiedlicher Bandbreite mit `pomps()` auf eine 0–100-Vergleichsbasis bringen.
 - Die komplette Datenpräp-Pipeline für die Mini-Studie nachvollziehen.
 
 ## Setup
@@ -77,6 +86,27 @@ nrow(allbus)              # Anzahl Fälle
 ncol(allbus)              # Anzahl Variablen
 ```
 
+### Variablen finden mit `find_var()`
+
+Die Variablennamen im ALLBUS sind kryptisch (`mm01`, `pa29`, `wghtpew`). Was wirklich gemessen wird, steht im **Variablenlabel**. mariposas `find_var()` durchsucht beide gleichzeitig — Name und Label — und liefert dir die Treffer als kleine Übersichtstabelle:
+
+```{r find-var-demo}
+allbus |> find_var("muslim")
+```
+
+Damit findest du die sechs `mm`-Items für unsere Islamfeindlichkeits-Skala. Standardmäßig wird in Namen *und* Labels gesucht; mit `search = "label"` schränkst du auf Labels ein, mit `search = "name"` auf Namen:
+
+```{r find-var-labels, eval=FALSE}
+allbus |> find_var("alter", search = "label")
+allbus |> find_var("^mm", search = "name")     # regex: alle mm-Items
+```
+
+::: {.callout-tip}
+**SPSS → R.** In SPSS kennst du `DISPLAY DICTIONARY` für eine Gesamtübersicht. `find_var()` ist gezielter: du suchst nach einem inhaltlichen Stichwort und bekommst sofort die passenden Variablen — selbst wenn du die kryptischen Namen nicht im Kopf hast.
+:::
+
+### Detail-Übersicht mit `codebook()`
+
 Für eine *bestimmte* Auswahl von Variablen liefert `codebook()` aus mariposa eine schöne HTML-Übersicht mit Labels, Ausprägungen und Häufigkeiten. Das ist das R-Äquivalent zum SPSS-`DISPLAY DICTIONARY`:
 
 ```{r codebook, eval=FALSE}
@@ -86,11 +116,11 @@ allbus |>
 
 ::: {.callout-tip}
 **SPSS → R: Dateninspektion.**
-| SPSS | R |
-| --- | --- |
-| `FREQUENCIES VARIABLES=mm01.` | `allbus \|> frequency(mm01)` |
-| `DESCRIPTIVES VARIABLES=age.` | `allbus \|> describe(age)` |
-| `DISPLAY DICTIONARY.` | `allbus \|> codebook(...)` |
+| SPSS                            | R                                |
+| ------------------------------- | -------------------------------- |
+| `FREQUENCIES VARIABLES=mm01.`   | `allbus \|> frequency(mm01)`     |
+| `DESCRIPTIVES VARIABLES=age.`   | `allbus \|> describe(age)`       |
+| `DISPLAY DICTIONARY.`           | `allbus \|> codebook(...)`       |
 :::
 
 ## Variablen und Fälle auswählen
@@ -113,6 +143,11 @@ allbus |>
 
 Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.
 
+Zwei nahe Verwandte von `select()`:
+
+- **`pull(var)`** zieht eine einzelne Spalte als reinen Vektor heraus — nützlich, wenn du den Spalteninhalt direkt in eine Funktion füttern willst, die kein Tibble erwartet: `allbus |> pull(age) |> mean(na.rm = TRUE)`.
+- **`relocate(var, .before = X, .after = Y)`** sortiert Spalten um, ohne welche zu entfernen — praktisch, wenn die wichtigsten Variablen vorne stehen sollen: `allbus |> relocate(islamophobie, populismus, .before = sex)`.
+
 ### Fälle filtern mit `filter()`
 
 ```{r filter-basic}
@@ -121,17 +156,7 @@ allbus |>
   select(sex, age, educ)
 ```
 
-Logische Operatoren, die du brauchst:
-
-```
-==   gleich                !=   ungleich
-<    kleiner               >    größer
-<=   kleiner gleich        >=   größer gleich
-&    UND                   |    ODER
-%in% in einer Menge enthalten
-```
-
-Komplexere Filter kombinierst du frei:
+Die Vergleichs- und Logik-Operatoren aus Kap. 3 (`==`, `!=`, `<`, `>`, `&`, `|`, `%in%`) bilden hier dein Vokabular. Komplexere Filter kombinierst du frei:
 
 ```{r filter-complex}
 allbus |>
@@ -173,11 +198,11 @@ class(allbus$age)
 
 Drei Konvertierungen wirst du immer wieder brauchen:
 
-| Funktion | Wirkung |
-|---|---|
-| `to_label(data, var)` | wandelt `<haven_labelled>` in einen **Faktor** mit den Wertelabels als Stufen — Standard, wenn du in `ggplot()`-Achsen lesbare Beschriftungen willst |
-| `to_numeric(data, var)` | wandelt in einen reinen numerischen Vektor — Labels gehen verloren |
-| `to_labelled(data, var, labels = ...)` | wandelt umgekehrt einen Faktor zurück in ein `<haven_labelled>` |
+| Funktion                              | Wirkung                                                                                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `to_label(data, var)`                 | wandelt `<haven_labelled>` in einen **Faktor** mit den Wertelabels als Stufen — Standard, wenn du in `ggplot()`-Achsen lesbare Beschriftungen willst |
+| `to_numeric(data, var)`               | wandelt in einen reinen numerischen Vektor — Labels gehen verloren                                                            |
+| `to_labelled(data, var, labels = ...)`| wandelt umgekehrt einen Faktor zurück in ein `<haven_labelled>`                                                              |
 
 ```{r to-label}
 allbus |>
@@ -186,8 +211,11 @@ allbus |>
   head(3)
 ```
 
+Wenn du nur Labels *abstreifen* willst (z. B. weil eine Funktion mit labelled-Vektoren nicht klarkommt), nimmst du `unlabel()`: `allbus |> unlabel(sex, age)`. Selten gebraucht, aber gut zu wissen, wenn ein fremdes Paket sich quer stellt.
+
 ::: {.callout-note}
 **Hintergrund: Warum nicht einfach Faktor?** In SPSS sind Variablen entweder numerisch oder *string*. Wertelabels sind ein Zusatz. In R gibt es Faktoren (Kategorien) und numerische Vektoren als getrennte Typen. `<haven_labelled>` ist eine Brücke: Du arbeitest mit Zahlen, aber die Wertelabels reisen mit. Wann du das auflösen solltest:
+
 - **`to_label()`** wenn du sortierst, gruppierst, kreuztabellierst oder plottest — Faktoren liefern lesbare Outputs.
 - **`to_numeric()`** wenn du rechnest oder skalierst — z. B. bei Likert-Items, die du als pseudo-metrisch behandelst.
 - **Beim Original lassen**, wenn die Variable noch nicht final ist und du das Label später noch brauchst.
@@ -195,12 +223,12 @@ allbus |>
 
 ## Variablen- und Wertelabels lesen und setzen
 
-| Funktion | Wirkung |
-|---|---|
-| `var_label(data)` | Variablenlabels auslesen |
-| `var_label(data) <- list(var = "Neue Beschriftung")` | Variablenlabel setzen |
-| `val_labels(data)` | Wertelabels auslesen |
-| `drop_labels(data)` | Alle Wertelabels entfernen, deren Ausprägung in den Daten gar nicht vorkommt |
+| Funktion                                            | Wirkung                                                              |
+| --------------------------------------------------- | -------------------------------------------------------------------- |
+| `var_label(data)`                                   | Variablenlabels auslesen                                             |
+| `var_label(data) <- list(var = "Neue Beschriftung")`| Variablenlabel setzen                                                |
+| `val_labels(data)`                                  | Wertelabels auslesen                                                 |
+| `drop_labels(data)`                                 | Alle Wertelabels entfernen, deren Ausprägung in den Daten gar nicht vorkommt |
 
 ```{r labels-read}
 allbus |>
@@ -214,21 +242,23 @@ Das Ergebnis ist ein **benannter Character-Vektor** — pro Variable das hinterl
 
 ALLBUS verwendet negative Codes für verschiedene Arten fehlender Werte:
 
-| Code | Bedeutung |
-| ---: | --- |
-| `-42` | DATENFEHLER |
-| `-11` | TNZ (trifft nicht zu / Split-Modul) |
-| `-9`  | KEINE ANGABE |
-| `-8`  | WEISS NICHT |
+| Code  | Bedeutung                                |
+| ----: | ---------------------------------------- |
+| `-42` | DATENFEHLER                              |
+| `-11` | TNZ (trifft nicht zu / Split-Modul)      |
+| `-9`  | KEINE ANGABE                             |
+| `-8`  | WEISS NICHT                              |
 
 Beim Einlesen werden diese in SPSS als *user-missing* deklarierten Codes automatisch zu **tagged NAs**. Das bedeutet: Sie zählen in Berechnungen als `NA`, behalten aber ihre ursprüngliche Information.
 
-Mit `set_na()` kannst du nachträglich weitere Werte als fehlend deklarieren:
+Wenn du eine Variable hast, in der bestimmte Werte *erst nachträglich* als fehlend gelten sollen — etwa Altersangaben über 100 als unplausibel —, deklarierst du sie mit `set_na()`:
 
-```{r set-na, eval=FALSE}
+```{r set-na-demo, eval=FALSE}
 allbus |>
-  set_na(age, tag = TRUE)
+  set_na(age, na_values = c(-9, -8), verbose = TRUE)
 ```
+
+Mit `verbose = TRUE` zeigt mariposa dir an, wie viele Fälle pro Wert zu `NA` wurden — kontrolliert und nachvollziehbar.
 
 Mit `drop_na()` (aus tidyr) entfernst du Fälle mit `NA`:
 
@@ -247,14 +277,15 @@ allbus |>
 
 Vier Verben aus `dplyr` decken den Großteil aller Datentransformationen ab:
 
-| Funktion | Wirkung |
-|---|---|
-| `mutate()` | Variablen neu erzeugen oder ändern (SPSS: `COMPUTE`) |
-| `case_when()` / `case_match()` | Vektorisierte Bedingungslogik (SPSS: `IF`) |
-| `summarise()` | Zusammenfassungen pro Gruppe (SPSS: `AGGREGATE`) |
-| `group_by()` | Gruppierung für nachfolgende Operationen |
-| `distinct()` | Einzigartige Werte einer Variable |
-| `rename()` | Variablen umbenennen |
+| Funktion                       | Wirkung                                                |
+| ------------------------------ | ------------------------------------------------------ |
+| `mutate()`                     | Variablen neu erzeugen oder ändern (SPSS: `COMPUTE`)   |
+| `case_when()` / `case_match()` | Vektorisierte Bedingungslogik (SPSS: `IF`)             |
+| `if_else()`                    | Knappe Form für zwei-stufige Bedingungen               |
+| `summarise()`                  | Zusammenfassungen pro Gruppe (SPSS: `AGGREGATE`)       |
+| `group_by()`                   | Gruppierung für nachfolgende Operationen               |
+| `distinct()`                   | Einzigartige Werte einer Variable                      |
+| `rename()`                     | Variablen umbenennen                                   |
 
 ### Neue Variablen mit `mutate()`
 
@@ -265,7 +296,14 @@ allbus |>
   head(3)
 ```
 
-### Bedingungslogik mit `case_when()`
+Soll dieselbe Transformation auf *mehrere* Variablen wirken, hilft `across()`:
+
+```{r mutate-across, eval=FALSE}
+allbus |>
+  mutate(across(c(mm01, mm02, mm03), as.numeric))
+```
+
+### Bedingungslogik mit `case_when()` und `if_else()`
 
 `case_when()` ist das R-Äquivalent zu SPSS' `IF`. Du listest Bedingungen in der Form `bedingung ~ wert` auf — die erste zutreffende gewinnt.
 
@@ -283,7 +321,15 @@ allbus |>
   count(bildung)
 ```
 
-Seit dplyr 1.1 gibt es zusätzlich `case_match()` — knapper, wenn du nur Werte mappst (ohne Vergleichsoperatoren):
+Bei nur **zwei** Ausprägungen ist `if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)` knapper:
+
+```{r if-else-demo}
+allbus |>
+  mutate(jung = if_else(age < 30, "jung", "30+")) |>
+  count(jung)
+```
+
+Seit dplyr 1.1 gibt es zusätzlich `case_match()` — knapper als `case_when()`, wenn du nur Werte mappst (ohne Vergleichsoperatoren):
 
 ```{r case-match}
 allbus |>
@@ -298,10 +344,13 @@ allbus |>
 allbus |>
   group_by(eastwest) |>
   summarise(
-    n_faelle = n(),
+    n_faelle           = n(),
+    n_einz_bildung     = n_distinct(educ),
     durchschnitt_alter = mean(age, na.rm = TRUE)
   )
 ```
+
+`n()` zählt alle Fälle in der Gruppe, `n_distinct()` zählt **einzigartige** Werte einer Variablen.
 
 ::: {.callout-tip}
 **`.by` als Alternative.** Seit dplyr 1.1 kannst du die Gruppierung auch direkt im Aufruf von `summarise()` oder `mutate()` setzen, ohne `group_by()` davor:
@@ -319,14 +368,23 @@ Das ist kürzer und vermeidet, dass du `ungroup()` vergisst.
 
 ### `distinct()` und `rename()`
 
-```{r distinct-rename, results='hide'}
-allbus |>
-  distinct(eastwest)              # einzigartige Ausprägungen
+`distinct()` zeigt dir alle einzigartigen Ausprägungen einer Variable — die schnellste Antwort auf „welche Codes gibt es eigentlich?":
 
+```{r distinct}
 allbus |>
-  rename(geschlecht = sex,        # neuer Name links
-         alter = age)
+  distinct(eastwest)
 ```
+
+`rename()` benennt Variablen um — neuer Name links, alter Name rechts:
+
+```{r rename}
+allbus |>
+  rename(geschlecht = sex, alter = age) |>
+  select(geschlecht, alter) |>
+  head(3)
+```
+
+Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Übersetzen von kryptischen ALLBUS-Namen in sprechende Kürzel für deinen Analyse-Datensatz.
 
 ## Rekodierung mit `rec()` {#sec-rekodierung}
 
@@ -339,15 +397,23 @@ data |>
   rec(variable, rules = "1=1; 2:3=2; else=NA")
 ```
 
-Die Regel-Syntax (Auswahl):
+Die Regel-Syntax im Überblick:
 
-- `alt=neu` — Einzelwert: Wert `alt` wird zu `neu`.
-- `lo:hi=neu` — Wertebereich (z. B. `1:3=1`).
-- `min:5=neu`, `5:max=neu` — bis zum dynamischen Minimum/Maximum.
-- `else=copy` — alle nicht erwähnten Werte bleiben unverändert.
-- `else=NA` — alle nicht erwähnten Werte werden fehlend.
-- `[Label]` direkt nach dem neuen Wert: vergibt ein Wertelabel inline.
-- Spezial-Modi: `"rev"` (Skala umpolen), `"dicho"` (Median-Split), `"mean"`, `"quart"`.
+| Muster              | Wirkung                                 | Beispiel                                |
+| ------------------- | --------------------------------------- | --------------------------------------- |
+| `alt=neu`           | Einzelwert wird umkodiert               | `"1=10; 2=20"`                          |
+| `lo:hi=neu`         | Wertebereich umkodieren                 | `"1:3=1"`                               |
+| `min:x=neu`, `x:max=neu` | Dynamische Grenzen                 | `"min:5=1; 6:max=2"`                    |
+| `[Label]`           | Inline-Wertelabel vergeben              | `"1:2=1 [niedrig]; 3:5=2 [hoch]"`       |
+| `else=copy`         | Alle nicht erwähnten Werte unverändert  | `"1:3=1; else=copy"`                    |
+| `else=NA`           | Alle nicht erwähnten Werte werden NA    | `"1=1; else=NA"`                        |
+| `NA=neu`            | NA durch einen Wert ersetzen            | `"NA=0; else=copy"`                     |
+| `val=NA`            | Bestimmte Werte zu NA machen            | `"-9=NA; -8=NA; else=copy"`             |
+| `"rev"`             | Skala umpolen (`max + min - x`)         | `rules = "rev"`                         |
+| `"dicho"`           | Dichotomisieren am Median (0/1)         | `rules = "dicho"`                       |
+| `"dicho(x)"`        | Dichotomisieren am festen Cut-Punkt     | `rules = "dicho(3)"`                    |
+| `"mean"`            | Dichotomisieren am Mittelwert           | `rules = "mean"`                        |
+| `"quart"`           | In vier Quartilgruppen aufteilen        | `rules = "quart"`                       |
 
 Regeln werden in Reihenfolge geprüft, die erste passende gewinnt.
 
@@ -361,6 +427,26 @@ allbus |>
 ```
 
 Mit `as.factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.
+
+### Spezial-Modi: Dichotomisieren und Quartile
+
+Statt eine Regel-Kette zu schreiben, kannst du eine Variable in einem Aufruf am Median, an einem festen Cut-Punkt, am Mittelwert oder in Quartile zerlegen:
+
+```{r rec-dicho}
+allbus |>
+  rec(age, rules = "dicho(50)", suffix = "_d") |>
+  count(age_d)
+```
+
+Hier wird `age_d` zu 0 für unter 50, zu 1 für 50+. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
+
+```{r rec-quart}
+allbus |>
+  rec(age, rules = "quart", suffix = "_q") |>
+  count(age_q)
+```
+
+`age_q` ist jetzt eine kategoriale Variable mit den Werten 1–4 für die Altersquartile.
 
 ### Lehrstück: Umpolen (Reverse Coding)
 
@@ -388,6 +474,10 @@ allbus <- allbus |>
 
 `"rev"` rechnet intern `max(x) + min(x) - x` — bei einer 7-stufigen Skala also `8 - x`, was genau das gewünschte Umpolen ist. Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen.
 
+::: {.callout-note}
+**Hintergrund: `allbus <- allbus |> ...` überschreibt.** Wenn du `allbus <-` schreibst, ersetzt du das Tibble *im Speicher* um die rekodierten Spalten. Die Originaldatei `ALLBUS2023.sav` auf der Festplatte bleibt unangetastet — du kannst die Pipeline jederzeit neu starten. Möchtest du Zwischenstände parallel behalten, weist du einer neuen Variable zu (`allbus_mm <- allbus |> rec(...)`).
+:::
+
 ::: {.callout-important}
 **mariposa-Tipp: Saubere Umpolung mit `suffix`.** Andere Pakete überschreiben gerne die Originalvariable beim Rekodieren. mariposa zwingt dich, dir bewusst zu sein, *was du tust* — Original bleibt, neue Variable bekommt einen klaren Namen mit Suffix. Wenn drei Wochen später ein:e Reviewer:in fragt „warum war Skalenwert für Fall 42 = 4.5?", kannst du den Schritt rekonstruieren.
 :::
@@ -395,6 +485,17 @@ allbus <- allbus |>
 ::: {.callout-warning}
 **Vorsicht: Polung immer prüfen, nicht raten.** Schau dir vor jeder Skalenbildung das Wortlaut-Label der Items an (`var_label()`) — auch Items, die du schon hundertmal gesehen hast. Der nervigste Fehler einer Skala ist eine vergessene Umpolung; sie zeigt sich an einem überraschend niedrigen Cronbachs α.
 :::
+
+### Dummy-Variablen mit `to_dummy()`
+
+Für Regressionen brauchst du oft **Dummy-Variablen** — eine kategoriale Variable mit `k` Ausprägungen wird in `k-1` Indikator-Spalten zerlegt (0/1 pro Ausprägung). mariposas `to_dummy()` macht das in einem Aufruf:
+
+```{r to-dummy-demo, eval=FALSE}
+allbus |>
+  to_dummy(eastwest, ref = 1)        # West (=1) als Referenz, dummy für Ost
+```
+
+Die neuen Spalten werden automatisch angehängt; mit `ref =` legst du fest, welche Ausprägung als *Referenz* weggelassen wird. Dummy-Variablen brauchst du erst in Kap. 6 für die Regression — `lm()` und `linear_regression()` aus mariposa erstellen sie für Faktoren auch automatisch im Hintergrund.
 
 ## Standardisieren und zentrieren
 
@@ -416,17 +517,17 @@ allbus |>
 
 Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein `weights =`-Argument, falls du die Standardisierung gewichtet machen willst.
 
-## Skalen bilden
+## Skalen bilden {#sec-skalen}
 
 Für die Mini-Studie willst du aus den sechs umgepolten Items eine **gewichtete Mittelwert-Skala** bauen. mariposa stellt dafür drei Zeilen-Funktionen bereit:
 
-| Funktion | Was sie tut |
-|---|---|
-| `row_means(data, ..., min_valid = N)` | Mittelwert pro Fall über die angegebenen Variablen |
-| `row_sums(data, ..., min_valid = N)` | Summe pro Fall |
-| `row_count(data, ..., count = wert)` | Wie oft ein bestimmter Wert in der Zeile vorkommt |
+| Funktion                                | Was sie tut                                          |
+| --------------------------------------- | ---------------------------------------------------- |
+| `row_means(data, ..., min_valid = N)`   | Mittelwert pro Fall über die angegebenen Variablen   |
+| `row_sums(data, ..., min_valid = N)`    | Summe pro Fall                                       |
+| `row_count(data, ..., count = wert)`    | Wie oft ein bestimmter Wert in der Zeile vorkommt    |
 
-Das Argument `min_valid` gibt vor, *wie viele gültige Antworten* mindestens da sein müssen, damit der Mittelwert berechnet wird. Andernfalls bleibt der Skalenwert `NA`. Faustregel: mindestens 80% der Items.
+Das Argument `min_valid` gibt vor, *wie viele gültige Antworten* mindestens da sein müssen, damit der Mittelwert berechnet wird. Andernfalls bleibt der Skalenwert `NA`. Faustregel: mindestens 80 % der Items.
 
 Wichtig: `row_means()` (und ihre Geschwister) geben einen **numerischen Vektor** zurück — sie wollen also in einem `mutate()`-Aufruf eingebettet werden, mit `pick()` zur Variablenauswahl. Das ist tidyverse-idiomatisch und macht klar, dass eine neue Spalte entsteht.
 
@@ -450,6 +551,19 @@ allbus |> describe(islamophobie)
 **Hintergrund: Was misst die Skala?** Werte nahe 1 bedeuten geringe Zustimmung zu islamfeindlichen Aussagen, Werte nahe 7 hohe Zustimmung. Da die positiv formulierten Items (`mm02r`, `mm05r`) umgepolt sind, „zieht" hohes Wohlwollen gegenüber Muslimen den Skalenwert nach unten — wie es bei einer Skala für *Islamfeindlichkeit* sein soll.
 :::
 
+### Antwortstil prüfen mit `row_count()`
+
+Bevor wir die Populismus-Skala bilden, ein kleiner Daten-Qualitäts-Check: Wie oft hat jemand bei den `mm`-Items die **extremste** Antwort (7) gewählt? Hoher Wert deutet auf eine *response style* hin — jemand kreuzt durchgängig „voll und ganz zu" an, unabhängig vom Item.
+
+```{r row-count-demo}
+allbus |>
+  mutate(n_extrem = row_count(pick(mm01, mm02, mm03, mm04, mm05, mm06),
+                              count = 7)) |>
+  count(n_extrem)
+```
+
+Die meisten Befragten zeigen *kein* solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. `row_count()` ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht", wie viele Extremantworten, wie viele Mittelantworten?
+
 ### Populismus-Skala
 
 Hier wartet eine zweite Polungs-Falle — und genau die ist der Grund, warum du dich vor jeder Skalenbildung mit dem Codebook beschäftigst. Schau dir zuerst die Wertelabels eines `pa`-Items an:
@@ -460,7 +574,7 @@ val_labels(allbus$pa29)
 
 Das `pa`-Modul nutzt eine **5-stufige Skala**, bei der **1 = „stimme voll zu" und 5 = „lehne ganz ab"** steht. Das ist die *umgekehrte* Logik zu den `mm`-Items, wo `1` Ablehnung und `7` Zustimmung bedeutete. Folglich heißt für `pa29` „Abgeordnete nur dem Volk verpflichtet" ein **niedriger** Wert = populistisch.
 
-Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben Items um:
+Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben `pa`-Items um — sie sind alle gleich (invers) kodiert, die Umpolung läuft also für alle in einer Schleife identisch:
 
 ```{r scale-pop}
 allbus <- allbus |>
@@ -483,6 +597,44 @@ allbus |> describe(populismus)
 **Vorsicht: Polung wird in der Praxis öfter übersehen, als du denkst.** Items in einer Itembatterie sind nicht immer in dieselbe Richtung kodiert — selbst nicht innerhalb derselben Welle desselben Datensatzes. Die `mm`-Items von ALLBUS 2023 nutzen 7-stufig (`1 = nicht zu, 7 = voll zu`), die `pa`-Items 5-stufig (`1 = voll zu, 5 = lehne ab`). Wenn du auf eine neue Skala stößt, gilt ausnahmslos: **erst Wertelabels prüfen, dann Skala bauen**.
 :::
 
+## Skalen vergleichbar machen mit `pomps()` {#sec-pomps}
+
+Du hast jetzt zwei Skalen — `islamophobie` (1–7) und `populismus` (1–5). Ein Vergleich der reinen Mittelwerte ist **irreführend**: der Mittelwert von `islamophobie` läuft auf einer doppelt so weiten Skala wie der von `populismus`. „Populismus liegt im Schnitt bei 3, Islamfeindlichkeit bei 4" sagt für sich allein nichts über die *relative Intensität* der beiden Einstellungen aus.
+
+Die Lösung ist die **POMPS**-Transformation (*Percent of Maximum Possible Scores*): Du rechnest beide Skalen auf einen gemeinsamen 0–100-Bereich um. Die Formel ist einfach:
+
+$$
+\text{POMPS} = \frac{x - \text{min}}{\text{max} - \text{min}} \times 100
+$$
+
+mariposa hat das als `pomps()` direkt verbaut:
+
+```{r pomps-demo}
+allbus <- allbus |>
+  mutate(
+    islamophobie_p = pomps(islamophobie, scale_min = 1, scale_max = 7),
+    populismus_p   = pomps(populismus,   scale_min = 1, scale_max = 5)
+  )
+
+allbus |>
+  summarise(
+    islam_orig = round(mean(islamophobie,   na.rm = TRUE), 2),
+    islam_p    = round(mean(islamophobie_p, na.rm = TRUE), 2),
+    pop_orig   = round(mean(populismus,     na.rm = TRUE), 2),
+    pop_p      = round(mean(populismus_p,   na.rm = TRUE), 2)
+  )
+```
+
+Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in *relativer Intensität* stärker islamophob als populistisch — oder umgekehrt.
+
+::: {.callout-important}
+**mariposa-Tipp: `scale_min` und `scale_max` immer angeben.** Ohne diese Argumente nutzt `pomps()` den *beobachteten* Wertebereich (`min(x)`, `max(x)`) — bei einer 1–7-Skala, in der niemand 1 angekreuzt hat, würde 2 zur „neuen Null", was die Skala verzerrt. Gib bei Likert-Items immer den **theoretischen** Wertebereich an.
+:::
+
+::: {.callout-note}
+**Hintergrund: Korrelationen bleiben erhalten.** POMPS ist eine *lineare* Transformation — die Verteilung der Werte verändert sich nicht, nur der Maßstab. Korrelationen, Effektstärken und alle linearen Modelle liefern auf den POMPS-Variablen genau dieselben Ergebnisse wie auf den Originalen. Du verlierst also nichts; du gewinnst nur Vergleichbarkeit zwischen Skalen unterschiedlicher Bandbreite.
+:::
+
 ## Die komplette Datenpräp-Pipeline {#sec-pipeline}
 
 Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer einzigen sauberen Pipeline zusammenfassen. Diese Pipeline ist der **Anker für Kap. 5–7** — du wirst sie als Setup-Block am Anfang jedes weiteren Kapitels wiederfinden:
@@ -499,10 +651,12 @@ allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
   rec(pa34, rules = "rev", suffix = "r") |>                       # <3>
   rec(pa35, rules = "rev", suffix = "r") |>                       # <3>
   mutate(
-    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
-                             min_valid = 5),                       # <4>
-    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
-                             min_valid = 6)                        # <5>
+    islamophobie   = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                               min_valid = 5),                     # <4>
+    populismus     = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                               min_valid = 6),                     # <5>
+    islamophobie_p = pomps(islamophobie, scale_min = 1, scale_max = 7),  # <6>
+    populismus_p   = pomps(populismus,   scale_min = 1, scale_max = 5)   # <6>
   )
 ```
 1. ALLBUS 2023 einlesen — fehlende Werte sind automatisch als tagged NAs gesetzt.
@@ -510,6 +664,7 @@ allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
 3. Umpolen aller `pa`-Items, weil sie 5-stufig **invers** kodiert sind (`1 = stimme zu`, `5 = lehne ab`) — nach Umpolung gilt hoch = populistisch.
 4. Skala **Islamfeindlichkeit** als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.
 5. Skala **Populismus** als Mittelwert der sieben umgepolten `pa`-Items — mindestens 6 von 7 müssen valide sein.
+6. **POMPS-Versionen** beider Skalen auf 0–100 für direkten Vergleich (optional; die Original-Skalen bleiben erhalten).
 
 Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
 
@@ -535,10 +690,20 @@ allbus <- allbus |>
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 2 — ISCED-Bildung kategorisieren.** Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isced97` (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig", 3–4 = „mittel", 5–6 = „hoch".
+**Übung 2 — Variablen finden.** Du willst eine Skala zu Vertrauen in Institutionen bauen, kennst aber die Variablennamen nicht auswendig. Nutze `find_var()`, um (a) alle Variablen mit „vertrau" im Label und (b) alle Variablen mit `st` am Namensanfang zu finden.
 
 **Lösung:**
 ```{r ex2-kap4-loesung, eval=FALSE}
+allbus |> find_var("vertrau", search = "label")
+allbus |> find_var("^st", search = "name")
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — ISCED-Bildung kategorisieren.** Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isced97` (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig", 3–4 = „mittel", 5–6 = „hoch".
+
+**Lösung:**
+```{r ex3-kap4-loesung, eval=FALSE}
 allbus |>
   rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
       as.factor = TRUE) |>
@@ -547,10 +712,27 @@ allbus |>
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 3 — Analyse-Subset bilden.** Erstelle einen Datensatz `analyse`, der nur die für die Mini-Studie nötigen Variablen enthält (`islamophobie`, `populismus`, `eastwest`, `sex`, `age`, `educ`, `wghtpew`) und nur Fälle, in denen sowohl die Islamophobie-Skala als auch die Populismus-Skala gültige Werte haben.
+**Übung 4 — Skalen vergleichbar machen.** Liegen die Befragten in Deutschland 2023 in der Mini-Studie *stärker* auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: `w_mean()` aus mariposa für gewichtete Mittelwerte, Argument `weights = wghtpew`).
 
 **Lösung:**
-```{r ex3-kap4-loesung, eval=FALSE}
+```{r ex4-kap4-loesung, eval=FALSE}
+allbus |>
+  mutate(
+    islam_p = pomps(islamophobie, scale_min = 1, scale_max = 7),
+    pop_p   = pomps(populismus,   scale_min = 1, scale_max = 5)
+  ) |>
+  summarise(
+    islam = w_mean(islam_p, weights = wghtpew),
+    pop   = w_mean(pop_p,   weights = wghtpew)
+  )
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 5 — Analyse-Subset bilden.** Erstelle einen Datensatz `analyse`, der nur die für die Mini-Studie nötigen Variablen enthält (`islamophobie`, `populismus`, `eastwest`, `sex`, `age`, `educ`, `wghtpew`) und nur Fälle, in denen sowohl die Islamophobie-Skala als auch die Populismus-Skala gültige Werte haben.
+
+**Lösung:**
+```{r ex5-kap4-loesung, eval=FALSE}
 analyse <- allbus |>
   select(islamophobie, populismus, eastwest, sex, age, educ, wghtpew) |>
   drop_na(islamophobie, populismus)
@@ -561,18 +743,24 @@ nrow(analyse)
 ## Was du jetzt weißt {-}
 
 - Du liest SPSS-Daten mit `read_spss()` ein und behältst Variablen- und Wertelabels.
-- Du wählst Variablen und Fälle mit `select()`, `filter()`, `arrange()` aus.
+- Du findest Variablen über Name oder Label mit `find_var()`.
+- Du wählst Variablen und Fälle mit `select()`, `filter()`, `arrange()` aus — und sortierst sie mit `relocate()` um.
 - Du verstehst den `<haven_labelled>`-Typ und wandelst ihn bei Bedarf in Faktor oder numerisch.
 - Du deklarierst fehlende Werte und schließt Fälle gezielt mit `drop_na()` aus.
-- Du transformierst Variablen mit `mutate()` und `case_when()`/`case_match()`.
-- Du rekodierst Variablen mit `rec()` — inklusive sauberem Umpolen über `suffix`.
+- Du transformierst Variablen mit `mutate()`, `case_when()`, `case_match()` und `if_else()`.
+- Du aggregierst Subgruppen mit `summarise(.by = ...)` und nutzt `n()`/`n_distinct()`.
+- Du rekodierst Variablen mit `rec()` — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum sauberen Umpolen.
+- Du erzeugst Dummy-Variablen mit `to_dummy()`.
 - Du baust gewichtete Mittelwert-Skalen mit `row_means()` und kontrolliertem `min_valid`.
+- Du prüfst Antwort-Stile und Datenqualität mit `row_count()`.
+- Du machst Skalen unterschiedlicher Bandbreite mit `pomps()` direkt vergleichbar.
 - Du kennst die vollständige Datenpräp-Pipeline für die Mini-Studie.
 
 Im nächsten Kapitel lernst du, wie du diese Daten univariat und bivariat beschreibst — mit Häufigkeitstabellen, deskriptiven Statistiken, Kreuztabellen und ersten Tests.
 
 ## Weiterführend {-}
 
-- mariposa-Vignetten [„Labels and Missing Values"](https://yannickdiehl.github.io/mariposa/articles/labels-and-missing-values.html) und [„Data I/O"](https://yannickdiehl.github.io/mariposa/articles/data-io.html).
+- mariposa-Vignetten [„Labels and Missing Values"](https://yannickdiehl.github.io/mariposa/articles/labels-and-missing-values.html), [„Data Transformation"](https://yannickdiehl.github.io/mariposa/articles/data-transformation.html) und [„Data I/O"](https://yannickdiehl.github.io/mariposa/articles/data-io.html).
 - Hadley Wickham & Garrett Grolemund, [R for Data Science (2e), Kapitel „Data Transformation"](https://r4ds.hadley.nz/data-transform.html).
 - Joseph Larmarange, [„labelled" Vignetten](https://larmarange.github.io/labelled/) — vertiefte Auseinandersetzung mit labelled-Datentypen, falls du an die Grenzen kommst.
+- Cohen, P., Cohen, J., Aiken, L. S., & West, S. G. (1999). *The Problem of Units and the Circumstance for POMP.* Multivariate Behavioral Research, 34(3), 315–346 — die theoretische Basis von POMPS.
