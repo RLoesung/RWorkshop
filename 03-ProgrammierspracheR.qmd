@@ -6,18 +6,25 @@ library(mariposa)
 source("R/_common.R")
 ```
 
-Bevor wir mit Daten arbeiten, lernen wir R als **Programmiersprache** kennen — Variablen, Funktionen, Datentypen und den Pipe-Operator. Diese Grundlagen tragen dich durch das gesamte Buch.
+## Worum es geht
+
+In Kap. 1 hast du RStudio eingerichtet, in Kap. 2 dein erstes Quarto-Dokument gebaut. Jetzt geht es an die Sprache, in der du in diesem Buch alles formulierst: **R**. Variablen, Funktionen, Datentypen und der Pipe-Operator sind die Bausteine, mit denen du in den folgenden Kapiteln Datensätze einliest, transformierst, analysierst und visualisierst.
+
+Anders als die SPSS-Syntax — die im Kern eine Befehlssprache mit festem Vokabular ist — schreibst du in R selbst Funktionen, baust Werte zu Vektoren, kombinierst sie zu Datensätzen. Diese kleine Hürde am Anfang zahlt sich später aus: dieselben Bausteine tragen dich vom Einstieg bis zur Bachelorarbeit.
 
 ## Was du nach diesem Kapitel kannst {-}
 
 - Variablen anlegen, benennen und Werte zuweisen.
+- Code mit `#`-Kommentaren für dein zukünftiges Ich verständlich halten.
 - Funktionen mit Argumenten aufrufen und verstehen, was sie zurückgeben.
+- Arithmetische, Vergleichs- und Logik-Operatoren (`==`, `&`, `%in%`, …) einsetzen.
 - Die wichtigsten R-Datentypen unterscheiden: Vektor, Faktor, Datensatz (Tibble), Liste.
+- Mit fehlenden Werten (`NA`) umgehen und sie aus Berechnungen ausschließen.
 - Den **nativen Pipe-Operator** `|>` lesen und schreiben.
 - Den Unterschied zwischen `|>` und dem älteren `%>%` aus `magrittr` einordnen.
 - Code mit Pipes lesbar und linear strukturieren.
 
-## Variablen definieren
+## Variablen definieren {#sec-variablen}
 
 Eine **Variable** speichert einen Wert. In R weist du Werte über den Zuweisungspfeil `<-` zu:
 
@@ -65,9 +72,20 @@ mittelwertAlter_neu
 mittelwert alter
 ```
 
-## Funktionen aufrufen
+### Kommentare
 
-> "Everything that exists is an object. Everything that happens is a function call." — John Chambers
+Alles, was hinter einem `#` steht, wird von R ignoriert — du nutzt das, um deinen Code zu erklären:
+
+```{r kommentare}
+# Stichprobengröße der Mini-Studie
+n_befragte <- 5246      # ALLBUS 2023, gesamt
+```
+
+Kommentare sind das, was deinem zukünftigen Ich (oder Reviewer:innen) den Code in drei Wochen wieder verständlich macht. Schreibe sie für die Frage *Warum?* — nicht für das, was der Code ohnehin schon sagt.
+
+## Funktionen aufrufen {#sec-funktionen}
+
+> „Everything that exists is an object. Everything that happens is a function call." — John Chambers
 
 Eine Funktion ist ein benanntes Werkzeug, dem du **Argumente** übergibst und das ein **Ergebnis** zurückgibt. Eine generische Funktion sieht so aus:
 
@@ -92,16 +110,16 @@ seq(1, 10, 2)                    # positional, identisch
 
 ### Grundfunktionen für den Einstieg
 
-| Funktion | Wirkung |
-|---|---|
-| `c(...)` | erzeugt einen Vektor aus den Argumenten (*combine*) |
-| `seq(from, to, by)` | erzeugt eine Sequenz |
-| `1:5` | reguläre Sequenz (1, 2, 3, 4, 5) |
-| `rep(x, times, each)` | wiederholt `x` |
-| `head(x, n)` | die ersten `n` Elemente |
-| `tail(x, n)` | die letzten `n` Elemente |
-| `length(x)` | Anzahl der Elemente |
-| `round(x, digits)` | rundet Zahlen |
+| Funktion              | Wirkung                                            |
+|-----------------------|----------------------------------------------------|
+| `c(...)`              | erzeugt einen Vektor aus den Argumenten (*combine*)|
+| `seq(from, to, by)`   | erzeugt eine Sequenz                               |
+| `1:5`                 | reguläre Sequenz (1, 2, 3, 4, 5)                   |
+| `rep(x, times, each)` | wiederholt `x`                                     |
+| `head(x, n)`          | die ersten `n` Elemente                            |
+| `tail(x, n)`          | die letzten `n` Elemente                           |
+| `length(x)`           | Anzahl der Elemente                                |
+| `round(x, digits)`    | rundet Zahlen                                      |
 
 ```{r grundfunktionen}
 zahlen <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -111,17 +129,55 @@ rep(x = 0, times = 5)
 round(c(1.222, 2.345, 3.987), digits = 1)
 ```
 
-### Verschachtelte Funktionen
+## Operatoren {#sec-operatoren}
 
-Du kannst Funktionen ineinander verschachteln. Der Output einer Funktion wird zum Input der nächsten:
+Drei Gruppen von Operatoren brauchst du immer wieder.
 
-```{r nested, eval=FALSE}
-head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+**Arithmetisch.**
+
+| Operator | Wirkung           |
+|----------|-------------------|
+| `+`      | Addition          |
+| `-`      | Subtraktion       |
+| `*`      | Multiplikation    |
+| `/`      | Division          |
+| `^`      | Potenzieren       |
+| `%%`     | Modulo (Rest)     |
+
+**Vergleich.** Geben einen logischen Wert `TRUE`/`FALSE` zurück.
+
+| Operator      | Wirkung                |
+|---------------|------------------------|
+| `==`          | gleich                 |
+| `!=`          | ungleich               |
+| `<`, `<=`     | kleiner (gleich)       |
+| `>`, `>=`     | größer (gleich)        |
+| `%in%`        | enthalten in Menge     |
+
+::: {.callout-warning}
+**Vorsicht: `==` ist nicht `=`.** Für Vergleiche verwendest du immer `==` (doppeltes Gleichheitszeichen). Einzelnes `=` ist für Funktionsargumente reserviert — `mean(x = data)` setzt `x`, vergleicht aber nichts.
+:::
+
+**Logisch.** Verknüpfen Wahrheitswerte.
+
+| Operator | Wirkung |
+|----------|---------|
+| `&`      | UND     |
+| `|`      | ODER    |
+| `!`      | NICHT   |
+
+Ein kleines Beispiel:
+
+```{r operators-demo}
+alter <- c(22, 45, 67, 18, 33)
+alter > 30
+alter >= 18 & alter <= 65
+alter %in% c(22, 33, 44)
 ```
 
-Das funktioniert, aber je mehr Schritte du verschachtelst, desto schwerer wird der Code zu lesen — du musst ihn von *innen nach außen* lesen, was unserer natürlichen Leserichtung widerspricht. Für genau dieses Problem gibt es eine elegante Lösung: den **Pipe-Operator**.
+Diese Operatoren wirst du in Kap. 4 ständig brauchen, wenn du Fälle mit `filter()` auswählst.
 
-## Objekte und Datentypen
+## Objekte und Datentypen {#sec-datentypen}
 
 In R ist **alles ein Objekt** — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit:
 
@@ -201,21 +257,51 @@ ergebnis$koeffizient
 ergebnis$konfidenz[1]
 ```
 
-## Pipe-Operatoren
+## Fehlende Werte: `NA` {#sec-na}
 
-Ein **Pipe** verkettet Funktionsaufrufe linear, statt sie zu verschachteln. R kennt zwei Varianten — wir nutzen die *native* Pipe `|>`.
+In echten Datensätzen fehlen oft einzelne Werte — eine Befragte hat eine Frage übersprungen, ein Messwert war ungültig, eine Auskunft wurde verweigert. R kodiert das mit einem speziellen Wert: **`NA`** (*Not Available*).
+
+```{r na-basic}
+x <- c(1, 2, NA, 4, 5)
+x
+is.na(x)              # welche Elemente sind NA?
+```
+
+**Rechnungen mit `NA` ergeben `NA`.** Das ist Absicht: der Mittelwert von „1, 2, ?, 4, 5" ist eigentlich unbekannt.
+
+```{r na-arith}
+NA + 1
+mean(x)
+```
+
+Damit Funktionen wie `mean()`, `sd()` & Co. trotzdem rechnen, übergibst du `na.rm = TRUE`:
+
+```{r na-rm}
+mean(x, na.rm = TRUE)
+sum(x, na.rm = TRUE)
+```
+
+::: {.callout-note}
+**Hintergrund: Mehrere Arten von Missing.** SPSS unterscheidet *system-missing* (leeres Feld) von *user-missing* (z. B. „keine Angabe" als Code `-9`). In R gibt es per Default nur ein generisches `NA` — beim SPSS-Import behält mariposa die *user-missing*-Codes aber als **tagged NA**, sodass du den Grund des Fehlens jederzeit nachschauen kannst. Mehr dazu in Kap. 4.
+:::
+
+## Pipe-Operatoren {#sec-pipes}
+
+R erlaubt es, Funktionen ineinander zu verschachteln — der Output einer Funktion wird zum Input der nächsten:
+
+```{r nested, eval=FALSE}
+head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+```
+
+Das funktioniert, aber je mehr Schritte du verschachtelst, desto schwerer wird der Code zu lesen — du musst ihn von *innen nach außen* lesen, was unserer natürlichen Leserichtung widerspricht. Für genau dieses Problem gibt es eine elegante Lösung: den **Pipe-Operator**. Ein Pipe verkettet Funktionsaufrufe linear, statt sie zu verschachteln. R kennt zwei Varianten — wir nutzen die *native* Pipe `|>`.
 
 ### Native Pipe `|>`
 
-Seit R 4.1 hat R einen *eingebauten* Pipe-Operator. Er heißt `|>` und ist heute der Standard.
+Mit der nativen Pipe schreibst du dieselbe Pipeline linear — von links nach rechts statt von innen nach außen:
 
 ```{r pipe-native}
 zahlen <- c(1.11, 1.22, 1.33, 1.44, 1.55)
 
-# Verschachtelt
-head(round(zahlen, digits = 1), n = 3)
-
-# Mit native Pipe
 zahlen |>
   round(digits = 1) |>
   head(n = 3)
@@ -223,21 +309,22 @@ zahlen |>
 
 Lies das wie einen Satz: „Nimm `zahlen`, **dann** runde auf 1 Nachkommastelle, **dann** zeige die ersten 3."
 
-**Tastenkürzel:** `cmd`/`strg` + `shift` + `M`. Stelle in RStudio unter `Tools` → `Global Options` → `Code` → *Use native pipe operator* die Option ein.
+**Tastenkürzel:** `cmd`/`strg` + `shift` + `M`. Stelle in RStudio unter `Tools` → `Global Options` → `Code` → *Use native pipe operator* die Option ein, damit das Shortcut `|>` statt `%>%` einfügt.
 
-### Placeholder `_` mit native Pipe
-
-Standardmäßig übergibt `|>` den Wert als **erstes Argument** der nächsten Funktion. Wenn er an eine *andere* Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter `_` — er muss ein **benanntes** Argument sein:
+::: {.callout-note}
+**Hintergrund: Wert nicht ans erste Argument?** Standardmäßig übergibt `|>` den Wert als **erstes Argument** der nächsten Funktion. Wenn er an eine *andere* Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter `_` — er muss als benanntes Argument stehen:
 
 ```{r placeholder, eval=FALSE}
-# Datensatz als data-Argument in lm() ist die zweite Position
 allbus |>
   lm(islamophobie ~ age, data = _)
 ```
 
+Bei den meisten Tidyverse-Funktionen brauchst du das nicht — sie nehmen den Datensatz ohnehin als erstes Argument.
+:::
+
 ### Das ältere `%>%` aus magrittr
 
-Vor R 4.1 hatten R-Anwender:innen den Pipe-Operator `%>%` aus dem Paket `magrittr` (im tidyverse mitgeliefert). Du wirst ihn in älterem Code überall sehen.
+Du wirst in der R-Welt überall den Pipe `%>%` (aus dem tidyverse-Paket `magrittr`) sehen — in Tutorials, in Stack-Overflow-Antworten, in vielen R-Paketen intern. `%>%` und `|>` sind funktional fast identisch:
 
 ```{r pipe-magrittr, eval=FALSE}
 zahlen %>%
@@ -245,7 +332,7 @@ zahlen %>%
   head(n = 3)
 ```
 
-Funktional sind `|>` und `%>%` fast identisch. Wenn du Wahl hast, nimm `|>` — er ist Teil der Sprache, schneller, und sichtbar in jeder R-Installation.
+Beide funktionieren in tidyverse-Code, beide liefern dieselben Ergebnisse. Wir nutzen in diesem Buch durchgängig `|>`, weil er Teil der Sprache selbst ist (kein Paket nötig) und ein klein wenig schneller — aber wenn du in fremdem Code `%>%` siehst, ist das kein Problem.
 
 ::: {.callout-note}
 **Hintergrund: Wo `%>%` etwas anders ist.** Der magrittr-Pipe hat einen Platzhalter `.`, der überall positionierbar ist:
@@ -256,9 +343,9 @@ Funktional sind `|>` und `%>%` fast identisch. Wenn du Wahl hast, nimm `|>` — 
 **Verschwundene Operatoren.** `%$%`, `%T>%`, `%<>%` aus `magrittr` waren früher gelegentlich nötig (z. B. um Pipes durch Plotting-Funktionen zu führen). In diesem Buch brauchen wir sie *nirgends* — mariposa-Funktionen sind durchgehend data-first und pipe-freundlich.
 :::
 
-### Lesbarer Code, vermehrt
+### Pipes in der Praxis
 
-Hier eine echte Pipeline aus Kap. 4, die dir einen Vorgeschmack gibt, wofür Pipes nützlich sind:
+Hier eine echte Pipeline aus Kap. 4, die zeigt, wofür Pipes wirklich nützlich sind:
 
 ```{r real-pipe, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>
@@ -270,7 +357,7 @@ allbus <- read_spss("ALLBUS2023.sav") |>
   )
 ```
 
-Du liest: Datensatz einlesen → mm02 umpolen → mm05 umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe Rückwärts lesen könntest.
+Du liest: Datensatz einlesen → `mm02` umpolen → `mm05` umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.
 
 ## Übungen {-}
 
@@ -314,11 +401,26 @@ levels(bildung)
 ```
 :::
 
+::: {.callout-tip collapse="true"}
+**Übung 4 — Operatoren und NA.** Gegeben sei der Vektor `werte <- c(3, 8, NA, 12, 5, NA, 7)`. Bestimme (a) den Mittelwert ohne `NA`s, (b) wie viele Elemente größer als 5 sind, (c) ob mindestens ein Element fehlt.
+
+**Lösung:**
+```{r ex4-kap3-loesung, eval=FALSE}
+werte <- c(3, 8, NA, 12, 5, NA, 7)
+mean(werte, na.rm = TRUE)            # (a)
+sum(werte > 5, na.rm = TRUE)         # (b) TRUE zählt als 1
+any(is.na(werte))                    # (c)
+```
+:::
+
 ## Was du jetzt weißt {-}
 
 - Du weist Werte mit `<-` Variablen zu und kennst die Konvention `snake_case`.
+- Du kommentierst Code mit `#` für dein zukünftiges Ich und Reviewer:innen.
 - Du rufst Funktionen mit benannten Argumenten auf und schlägst Hilfe mit `?` nach.
+- Du nutzt arithmetische, Vergleichs- und Logik-Operatoren — inklusive `%in%`.
 - Du erkennst und erstellst Vektoren, Faktoren, Tibbles und Listen.
+- Du gehst sicher mit `NA` um und nutzt `na.rm = TRUE` in Berechnungsfunktionen.
 - Du nutzt den nativen Pipe `|>` für lesbaren, linearen Code.
 - Du verstehst den Unterschied zu `%>%` und weißt, dass `|>` der heutige Standard ist.
 
