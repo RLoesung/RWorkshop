@@ -12,6 +12,10 @@ In Kap. 1 hast du RStudio eingerichtet, in Kap. 2 dein erstes Quarto-Dokument ge
 
 Anders als die SPSS-Syntax — die im Kern eine Befehlssprache mit festem Vokabular ist — schreibst du in R selbst Funktionen, baust Werte zu Vektoren, kombinierst sie zu Datensätzen. Diese kleine Hürde am Anfang zahlt sich später aus: dieselben Bausteine tragen dich vom Einstieg bis zur Bachelorarbeit.
 
+::: {.callout-note}
+**Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Du hast in @sec-rstudio die IDE eingerichtet und in @sec-quarto den Berichts-Workflow verstanden. Jetzt lernst du die Sprachelemente, mit denen du gleich Survey-Items rekodierst, Skalen baust und Modelle rechnest. Beispiele in diesem Kapitel sind bewusst sozial- und politikwissenschaftlich gewählt — du wirst dieselben Operationen ab @sec-datenimport auf echte ALLBUS-Variablen anwenden.
+:::
+
 ## Was du nach diesem Kapitel kannst {-}
 
 - Variablen anlegen, benennen und Werte zuweisen.
@@ -402,15 +406,35 @@ levels(bildung)
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 4 — Operatoren und NA.** Gegeben sei der Vektor `werte <- c(3, 8, NA, 12, 5, NA, 7)`. Bestimme (a) den Mittelwert ohne `NA`s, (b) wie viele Elemente größer als 5 sind, (c) ob mindestens ein Element fehlt.
+**Übung 4 — Operatoren und NA mit Survey-typischen Daten (Transfer).** Stell dir vor, du hast eine kleine Umfrage zu *Vertrauen in den Bundestag* (0 = kein Vertrauen, 10 = volles Vertrauen) bei sieben Befragten gemacht: `vertrauen <- c(3, 8, NA, 7, 5, NA, 9)`. (NA = „keine Angabe".) Bestimme (a) den Mittelwert ohne fehlende Werte, (b) wie viele Befragte hohes Vertrauen (> 5) angegeben haben, (c) ob mindestens eine Person die Frage übersprungen hat.
 
 **Lösung:**
 ```{r ex4-kap3-loesung, eval=FALSE}
-werte <- c(3, 8, NA, 12, 5, NA, 7)
-mean(werte, na.rm = TRUE)            # (a)
-sum(werte > 5, na.rm = TRUE)         # (b) TRUE zählt als 1
-any(is.na(werte))                    # (c)
+vertrauen <- c(3, 8, NA, 7, 5, NA, 9)
+mean(vertrauen, na.rm = TRUE)            # (a)
+sum(vertrauen > 5, na.rm = TRUE)         # (b) TRUE zählt als 1
+any(is.na(vertrauen))                    # (c)
 ```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 5 — Pipe-Pipeline auf Survey-Vektor (Mini-Forschungsfrage).** Du hast in der Vertrauens-Übung gerade einzelne Kennwerte berechnet. Schreibe nun in *einer* Pipeline: filtere alle `NA`-Werte heraus, behalte nur Werte ≥ 5 (hohes Vertrauen), berechne den Mittelwert. Schreibe die Lösung sowohl verschachtelt als auch mit Pipe — welche Version findest du lesbarer?
+
+Stelle dir vor, du würdest später dieselbe Pipeline auf den ALLBUS-Vektor `pt03` (Vertrauen in den Bundestag, ~5.000 Fälle) anwenden — der Code wäre derselbe.
+
+**Lösung:**
+```{r ex5-kap3-loesung, eval=FALSE}
+vertrauen <- c(3, 8, NA, 7, 5, NA, 9)
+
+# Verschachtelt
+mean(vertrauen[!is.na(vertrauen) & vertrauen >= 5])
+
+# Mit Pipe (lesbarer)
+vertrauen[!is.na(vertrauen) & vertrauen >= 5] |>
+  mean()
+```
+
+*Anschluss:* In den folgenden Kapiteln rufst du genau diese Operationen mit tidyverse-Verben (`filter()`, `summarise()`) auf — die `|>`-Pipe bleibt dieselbe.
 :::
 
 ## Was du jetzt weißt {-}

@@ -305,6 +305,19 @@ window.Quarto = {
 <p><em>Wie wird aus sechs einzelnen Items eine messbare Einstellung?</em></p>
 </blockquote>
 <p>In <a href="04-Datenimport.html" class="quarto-xref"><span>Kapitel 4</span></a> hast du den Datensatz gelesen, Variablen gefunden und fehlende Werte deklariert. Jetzt geht es um das, was in der quantitativen Sozialforschung <strong>Operationalisierung</strong> heißt: Aus einer abstrakten Idee („Islamfeindlichkeit”) werden konkrete Variablen, die du am Ende rechnen kannst.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Forschungsjournal: Wo stehst du in deiner Mini-Studie?</strong> Du hast die Rohdaten — jetzt baust du das, was am Ende deine <em>abhängige Variable</em> sein wird. Die Skalenbildung ist methodisch <em>der</em> zentrale Schritt: hier entscheidet sich, ob deine Modelle in den späteren Kapiteln auf etwas Stabilem aufsetzen. Wenn dieses Kapitel zu Ende ist, hältst du <code>islamophobie</code> und <code>populismus</code> als saubere Variablen in der Hand.</p>
+</div>
+</div>
 <section id="worum-es-geht" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="worum-es-geht"><span class="header-section-number">5.1</span> Worum es geht</h2>
 <p>Eine einzige Survey-Frage misst selten zuverlässig, was sie messen soll. <em>„Sind Sie islamfeindlich?“</em> würde kaum jemand mit Ja beantworten — auch wer es ist. Deshalb arbeitet die empirische Sozialforschung mit <strong>Itembatterien</strong>: Mehrere Aussagen aus unterschiedlichen Perspektiven decken zusammen ein Konstrukt ab. Aus ihnen wird ein Skalenwert berechnet, der robuster ist als jede einzelne Frage.</p>
@@ -1114,7 +1127,7 @@ Hinweis
 <section id="übungen" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1123,7 +1136,7 @@ Tipp
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Übung 1 — Skala Politische Effizienz (Reproduktion).</strong> Die <code>pe</code>-Items (<code>pe01</code>, <code>pe04</code>, <code>pe05</code>, <code>pe06</code>, <code>pe07</code>, <code>pe08</code>) messen politische Selbstwirksamkeit (kognitive Komponente). Prüfe zuerst die Variablenlabels mit <code>var_label()</code>, identifiziere ob Items umgepolt werden müssen, und baue analog eine Skala <code>polit_effizienz</code> mit <code>min_valid = 5</code>. <em>Tipp: schaue dir die Wortlaute genau an.</em></p>
 <p><strong>Lösung:</strong></p>
@@ -1144,29 +1157,6 @@ Tipp
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tipp
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><strong>Übung 2 — ISCED-Bildung kategorisieren (Reproduktion).</strong> Statt <code>educ</code> kannst du auch die international vergleichbare ISCED-Variable <code>isced97</code> (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig”, 3–4 = „mittel”, 5–6 = „hoch”.</p>
-<p><strong>Lösung:</strong></p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(isced97, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]"</span>,</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(isced97)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -1178,14 +1168,13 @@ Tipp
 </div>
 <div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>Übung 3 — Skalen vergleichbar machen (Transfer).</strong> Liegen die Befragten in Deutschland 2023 in der Mini-Studie <em>stärker</em> auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: <code>w_mean()</code> aus mariposa für gewichtete Mittelwerte, Argument <code>weights = wghtpew</code>).</p>
+<p><strong>Übung 2 — ISCED-Bildung kategorisieren (Reproduktion).</strong> Statt <code>educ</code> kannst du auch die international vergleichbare ISCED-Variable <code>isced97</code> (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig”, 3–4 = „mittel”, 5–6 = „hoch”.</p>
 <p><strong>Lösung:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam =</span> <span class="fu">w_mean</span>(islamophobie_p, <span class="at">weights =</span> wghtpew),</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop   =</span> <span class="fu">w_mean</span>(populismus_p,   <span class="at">weights =</span> wghtpew)</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(isced97, <span class="at">rules =</span> <span class="st">"1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]"</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">as.factor =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(isced97)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1202,9 +1191,46 @@ Tipp
 </div>
 <div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
+<p><strong>Übung 3 — Skalen vergleichbar machen (Transfer).</strong> Liegen die Befragten in Deutschland 2023 in der Mini-Studie <em>stärker</em> auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: <code>w_mean()</code> aus mariposa für gewichtete Mittelwerte, Argument <code>weights = wghtpew</code>).</p>
+<p><strong>Lösung:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">islam =</span> <span class="fu">w_mean</span>(islamophobie_p, <span class="at">weights =</span> wghtpew),</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop   =</span> <span class="fu">w_mean</span>(populismus_p,   <span class="at">weights =</span> wghtpew)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p><strong>Übung 4 — Eigene Skala mit Mini-Forschungsfrage.</strong> Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (Demokratiezufriedenheit, Vertrauen in Institutionen, Geschlechterrolleneinstellungen, …). Suche mit <code>find_var()</code> mindestens drei passende Items im ALLBUS 2023, prüfe ihre Polung, baue eine Skala mit <code>row_means(min_valid = ...)</code> und beschreibe in 3–4 Sätzen, <em>wie</em> du das Konstrukt operationalisiert hast und welche Items du <em>warum</em> einbezogen oder ausgeschlossen hast.</p>
 <p><em>Es gibt hier keine Musterlösung — die Übung trainiert Operationalisierung, das Kernhandwerk empirischer Sozialforschung.</em></p>
 </div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Forschungsjournal: Stand deiner Mini-Studie.</strong> Du hast zwei selbstgebaute Skalen: <code>islamophobie</code> (1–7) und <code>populismus</code> (1–5), beide mit kontrollierter Mindest-Validität und in POMPS-Versionen für direkten Vergleich. Die Skalenbildung ist <em>dein</em> methodischer Schritt — alles, was ab <a href="07-Uni-Bivariate-Analyse.html" class="quarto-xref"><span>Kapitel 7</span></a> folgt, baut darauf auf. <strong>Was als Nächstes kommt:</strong> Bevor du die Skalen statistisch testest, lernst du in <a href="06-Grafiken-Grundlagen.html" class="quarto-xref"><span>Kapitel 6</span></a> die ggplot2-Grammatik — die Werkzeuge, mit denen du Verteilungen und Zusammenhänge sichtbar machst.</p>
 </div>
 </div>
 </section>

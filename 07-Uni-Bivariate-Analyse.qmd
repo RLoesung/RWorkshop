@@ -11,6 +11,10 @@ Nachdem du in @sec-datentransformation die Datenpräp-Pipeline gebaut und in @se
 
 > *Wie sieht die Verteilung von Islamfeindlichkeit in Deutschland 2023 aus? Unterscheiden sich Ost und West? Hängt Islamfeindlichkeit mit Populismus zusammen?*
 
+::: {.callout-note}
+**Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Du hast die Skalen, du beherrschst ggplot2 — jetzt sind die ersten Hypothesen-Tests dran. Am Ende dieses Kapitels weißt du, wie sich Islamfeindlichkeit verteilt, wo Mittelwertunterschiede zwischen Gruppen statistisch (und inhaltlich) bedeutsam sind und welche Variablen *bivariat* mit deiner Zielvariable zusammenhängen. Das ist die *Bühne*, auf der die multivariate Modellierung in @sec-erklaerung aufbaut.
+:::
+
 ## Worum es geht
 
 Die uni- und bivariate Analyse ist die **Bühne, auf der jede multivariate Methode später aufbaut**: bevor du regressionierst, willst du wissen, wie deine Zielvariable verteilt ist und welche Prädiktoren überhaupt mit ihr korrelieren. Eine *univariate* Statistik beschreibt eine einzelne Variable (Verteilung, Mittelwert, Streuung). Eine *bivariate* Analyse fragt nach Beziehungen zwischen zwei Variablen — entweder als *Zusammenhang* (Korrelation, Chi²) oder als *Unterschied* (t-Test, ANOVA).
@@ -234,7 +238,15 @@ allbus |> t_test(islamophobie, group = eastwest, weights = wghtpew)
 **Lesart.** Du erhältst *t*, df, *p*-Wert und Hedges' *g* (eine Effektgröße ähnlich Cohens *d*, aber für kleine N robuster). Die Reihenfolge der Gruppen in der Ausgabe verrät dir die Richtung des Unterschieds.
 
 ::: {.callout-note}
+**Forschungshintergrund: Ost-West-Vergleich als methodischer Klassiker.** Die Gegenüberstellung von Ost- und Westdeutschland ist eine der ältesten methodischen Vergleichsachsen der deutschen politischen Soziologie. Sie ist robust, gut interpretierbar — und in der Vorurteilsforschung umkämpft: Ein Ost-West-Unterschied bei Islamfeindlichkeit kann *strukturell* sein (Kontakt-Hypothese: weniger muslimische Bevölkerung im Osten → mehr Vorurteile), *historisch* (DDR-Sozialisationsfolgen, transformations­bedingte Statusängste) oder *kohortenspezifisch* (Altersstruktur unterschiedlich). Der t-Test sagt dir, *dass* ein Unterschied existiert — nicht, *warum*. Die multiple Regression in @sec-erklaerung versucht, das auseinanderzunehmen.
+:::
+
+::: {.callout-note}
 **Hintergrund: Welcher t-Test?** Standardmäßig rechnet `t_test()` den **Welch-t-Test**, der ungleiche Varianzen erlaubt. Wenn du den klassischen Student-t möchtest, setze `var.equal = TRUE`. Für die Praxis gilt: der Welch-Test ist fast immer die sichere Wahl.
+:::
+
+::: {.callout-note}
+**Reviewer-Hinweis.** Beim t-Test in einer Publikation gehört berichtet: gewichtetes oder ungewichtetes *N* pro Gruppe, Mittelwerte und SDs pro Gruppe, *t*, df, *p*, Effektgröße (Hedges' *g* oder Cohens *d*) plus 95 %-KI für die Mittelwertdifferenz. *p* allein reicht nicht — bei N > 1000 sind fast alle Effekte „signifikant", aber inhaltlich womöglich winzig.
 :::
 
 ::: {.callout-note}
@@ -265,6 +277,10 @@ allbus_bildung |>
 ```
 
 **Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird.
+
+::: {.callout-note}
+**Forschungshintergrund: Bildung als Vorurteils-Prädiktor.** Bildung ist in der Sozialforschung der robusteste Prädiktor *gegen* gruppenbezogene Vorurteile — über Länder, Themen und Jahrzehnte hinweg. Die theoretische Debatte streitet, warum: *Liberalisierungs-Hypothese* (Bildung vermittelt liberale Werte direkt), *Kognitive-Komplexität-Hypothese* (Bildung erlaubt komplexere Bewertungen), *Status-Hypothese* (höher Gebildete fühlen sich weniger ökonomisch bedroht und weniger durch Outgroups herausgefordert). Eine ANOVA prüft *ob* der Effekt existiert; *welcher* der drei Erklärungsstränge stimmt, müsste über Mediator-Modelle oder qualitative Forschung beantwortet werden.
+:::
 
 ### Post-Hoc: welche Gruppen genau?
 
@@ -394,15 +410,24 @@ allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 4 — Post-Hoc bei ANOVA.** Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
+**Übung 4 — Post-Hoc bei ANOVA (Transfer).** Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
 
 **Lösung:**
 ```{r ex4-kap5-loesung, eval=FALSE}
 allbus_bildung |>
-  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew)
-allbus_bildung |>
-  tukey_test(islamophobie, group = educ_kat, weights = wghtpew)
+  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
+  tukey_test()
 ```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 5 — Eigene Hypothese bivariat testen (Mini-Forschungsfrage).** Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *„Frauen sind mit der Demokratie in Deutschland zufriedener als Männer."* oder *„Lebenszufriedenheit hängt negativ mit Alter zusammen."* Wähle (a) das passende Verfahren (t-Test, ANOVA, Korrelation, Chi²), (b) die passenden Variablen, (c) ob du gewichten musst, (d) eine angemessene Effektgröße. Berichte das Ergebnis in einem Satz nach dem Schema: *„X und Y hängen [richtung] [stärke] zusammen ([Testname], [Statistik], [p], [Effektgröße])."*
+
+*Keine Musterlösung — die Übung trainiert Hypothesen­führung, Methodenwahl und das Berichten. Genau diese Schritte gehörst du im echten Forschungsalltag.*
+:::
+
+::: {.callout-note}
+**Forschungsjournal: Stand deiner Mini-Studie.** Du weißt jetzt: Islamfeindlichkeit liegt im Mittel um 4 (auf einer 1–7-Skala), deutlich gestreut. Ost-West-Unterschiede bestehen. Islamfeindlichkeit korreliert deutlich mit Populismus (*r* ≈ .41), negativ mit Bildung. Das sind die *Befunde-erster-Ordnung*, die jede multivariate Modellierung kennen muss. **Was als Nächstes kommt:** In @sec-latente prüfen wir, ob deine Skalen *empirisch* tragfähig sind (Faktorstruktur, Reliabilität). In @sec-erklaerung dann das eigentliche Modell mit mehreren Prädiktoren gleichzeitig.
 :::
 
 ## Was du jetzt weißt {-}
