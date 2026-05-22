@@ -16,9 +16,13 @@ knitr::write_bib(
 
 # Vorwort {.unnumbered}
 
-Dieses Buch ist eine Einführung in die statistische Datenanalyse mit R für die Sozialwissenschaften. Es richtet sich an Studierende, die R neu kennenlernen — oft mit Vorerfahrung in SPSS — und einen einfachen, modernen Einstieg suchen. Du arbeitest dich vom ersten Datenimport über deskriptive und inferenzstatistische Verfahren bis zu Faktorenanalyse und Regression. Dein Werkzeugkasten ist dabei bewusst klein gehalten: das **tidyverse** für Datenmanipulation und Visualisierung und das Marburger Paket **mariposa** für die statistische Analyse.
+> *Sind islamfeindliche Einstellungen in Ostdeutschland weiter verbreitet als im Westen? Wer trägt sie, und wie hängen sie mit politischen Orientierungen zusammen?*
 
-Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erhebungsstandards — exemplarisch arbeiten wir mit dem **ALLBUS 2023**. Auch unstandardisierte Datensätze lassen sich mit denselben Techniken bearbeiten, und Survey-Gewichtung ist von Anfang an mit dabei.
+Wer auf Fragen wie diese in einem Datensatz nachsehen will, braucht zwei Dinge: einen sauberen Datensatz wie den **ALLBUS 2023** — und ein Werkzeug, das ihn auswerten kann. Dieses Buch ist eine Einführung in genau dieses Werkzeug: **R** für die statistische Datenanalyse in den Sozialwissenschaften. Es richtet sich an Studierende, die R neu kennenlernen — oft mit Vorerfahrung in SPSS — und einen einfachen, modernen Einstieg suchen.
+
+Du arbeitest dich vom ersten Datenimport über deskriptive und inferenzstatistische Verfahren bis zu Faktorenanalyse und Regression. Dein Werkzeugkasten ist dabei bewusst klein gehalten: das **tidyverse** für Datenmanipulation und Visualisierung und das Marburger Paket **mariposa** für die statistische Analyse. Hinzu kommt **Quarto** als Brücke vom Code zum publizierten Bericht.
+
+Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erhebungsstandards. Auch unstandardisierte Datensätze lassen sich mit denselben Techniken bearbeiten, und Survey-Gewichtung ist von Anfang an mit dabei.
 
 ## Was du nach diesem Buch kannst {-}
 
@@ -29,30 +33,12 @@ Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erheb
 - Befunde mit ggplot2 in publikationsfähige Grafiken bringen.
 - Eine Analyse so dokumentieren, dass sie reproduzierbar ist.
 
-## Voraussetzungen {-}
+## Wie liest du dieses Buch? {-}
 
-**R** (Programmiersprache, Open Source). Die jeweils aktuelle Version findest du unter [cran.r-project.org](https://cran.r-project.org/). Dieses Buch setzt mindestens **R 4.3** voraus; empfohlen ist **R 4.5 oder höher**, damit alle hier gezeigten Funktionen ohne Anpassungen laufen.
-
-**RStudio** als integrierte Entwicklungsumgebung (IDE). Die IDE selbst heißt weiterhin RStudio, die Firma dahinter heißt seit 2022 [Posit](https://posit.co/). Du brauchst die Desktop-Version: [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/). Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](https://posit.cloud/) (vormals RStudio Cloud) im Browser nutzen.
-
-**Pakete.** Wir installieren am Anfang einmal die zwei Ökosysteme, die uns durch das ganze Buch tragen:
-
-```{r install, eval=FALSE}
-install.packages("tidyverse")
-install.packages("remotes")
-remotes::install_github("YannickDiehl/mariposa")
-install.packages("patchwork")  # nur fuer Multi-Plot-Komposition in Kap. 6
-```
-
-Aktivierung in jeder R-Sitzung:
-
-```{r activate, eval=FALSE}
-library(tidyverse)
-library(mariposa)
-library(patchwork)
-```
-
-Mehr brauchen wir nicht. Für die konfirmatorische Faktorenanalyse in Kap. 5 fügen wir später noch `lavaan` und `semPlot` hinzu — das sind die einzigen weiteren Pakete, die wir bewusst zulassen.
+- **Linear lesen.** Die Kapitel bauen aufeinander auf. Kap. 3 setzt die Grundlagen aus Kap. 1–2 voraus, und alle Methodenkapitel (Kap. 5–7) setzen die Datenpräp aus Kap. 4 voraus.
+- **Code mitlaufen lassen.** Halte RStudio parallel offen und kopiere die Chunks in dein Skript. Copy-and-paste ist ausdrücklich erwünscht.
+- **Übungen ernst nehmen.** Jedes Methoden-Kapitel endet mit drei Aufgaben aufsteigender Schwierigkeit; die Lösungen sind erst aufklappbar. Versuche jede Übung zuerst selbst.
+- **Datensatz früh besorgen.** Den ALLBUS 2023 brauchst du ab Kap. 4 — wie du an die Daten kommst, steht unter *Beispieldatensatz*.
 
 ## Warum R? {-}
 
@@ -70,32 +56,59 @@ Statt einer langen Liste von Spezialpaketen arbeiten wir mit zwei klar abgegrenz
 
 **mariposa.** Ein in Marburg entwickeltes Paket (Marburg Initiative for Political and Social Analysis), das die für sozialwissenschaftliche Analysen typischen Verfahren in einer konsistenten, tidyverse-nahen Syntax bereitstellt: Datenimport aus SPSS, Umgang mit Labels und Missing-Werten, deskriptive Statistik, t-Tests, ANOVA, Korrelation, Faktorenanalyse, Regression. Die Ergebnisse sind SPSS-kongruent — wer aus SPSS umsteigt, erkennt die Ausgaben wieder.
 
+## Voraussetzungen {-}
+
+**R** (Programmiersprache, Open Source). Die jeweils aktuelle Version findest du unter [cran.r-project.org](https://cran.r-project.org/). Dieses Buch setzt mindestens **R 4.3** voraus; empfohlen ist **R 4.5 oder höher**, damit alle hier gezeigten Funktionen ohne Anpassungen laufen.
+
+**RStudio** als integrierte Entwicklungsumgebung (IDE). Die IDE selbst heißt weiterhin RStudio, die Firma dahinter heißt seit 2022 [Posit](https://posit.co/). Du brauchst die Desktop-Version: [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/). Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](https://posit.cloud/) (vormals RStudio Cloud) im Browser nutzen.
+
+**Pakete.** Wir installieren am Anfang einmal die zwei Ökosysteme, die uns durch das ganze Buch tragen:
+
+```{r install, eval=FALSE}
+install.packages("tidyverse")
+install.packages("remotes")
+remotes::install_github("YannickDiehl/mariposa")
+```
+
+Aktivierung in jeder R-Sitzung:
+
+```{r activate, eval=FALSE}
+library(tidyverse)
+library(mariposa)
+```
+
+Für die Grafik-Komposition in Kap. 7 kommt später noch `patchwork` dazu, und für die konfirmatorische Faktorenanalyse in Kap. 6 fügen wir `lavaan` und `semPlot` hinzu — die einzigen weiteren Pakete, die wir bewusst zulassen.
+
 ## Beispieldatensatz: ALLBUS 2023 {-}
 
-Wir arbeiten durchgehend mit dem [ALLBUS](https://www.gesis.org/allbus) — der Allgemeinen Bevölkerungsumfrage der Sozialwissenschaften. Die Welle 2023 ist die aktuell verfügbare Hauptbefragung mit 5246 Befragten und 579 Variablen. Als roten Faden durch die Methoden-Kapitel verwenden wir die Frage:
+Wir arbeiten durchgehend mit dem [ALLBUS](https://www.gesis.org/allbus) — der Allgemeinen Bevölkerungsumfrage der Sozialwissenschaften. Die Welle 2023 ist die aktuell verfügbare Hauptbefragung mit 5246 Befragten und 579 Variablen.
+
+**So kommst du an die Daten.** Den Datensatz findest du im [GESIS-Datenbestandskatalog unter der Studiennummer ZA8901](https://search.gesis.org/research_data/ZA8901). Du brauchst einen kostenlosen GESIS-Account; nach der Registrierung kannst du die SPSS-Version herunterladen. Speichere die Datei in deinem Projektordner als `ALLBUS2023.sav`.
+
+Als roten Faden durch die Methoden-Kapitel verwenden wir die Frage:
 
 > *Wer trägt islamfeindliche Einstellungen in Deutschland 2023, und wie hängen sie mit politischen Orientierungen und Soziostruktur zusammen?*
 
-Diese Frage ist nicht zufällig gewählt: Sie ermöglicht uns, eine **latente Skala** aus sechs Einzelitems zu bilden, die Skala anschließend deskriptiv zu beschreiben, mit anderen Variablen in Beziehung zu setzen und schließlich in Regressionsmodellen zu erklären. So lernst du nicht nur einzelne Methoden, sondern siehst, wie sie zu einer kompletten Analyse zusammenfließen.
+Die Frage ist nicht zufällig gewählt — sie zieht sich durch jedes Kapitel:
 
-## Typographie {-}
+- **Kap. 4 — Datenmodifikation.** Aus sechs ALLBUS-Items baust du eine **Islamfeindlichkeits-Skala** und parallel eine **Populismus-Skala** — inklusive sauberem Umpolen und Mindest-Validität.
+- **Kap. 5 — Uni- und bivariate Analyse.** Du beschreibst die Verteilung der Skala, vergleichst Ost und West, prüfst den Zusammenhang mit Populismus.
+- **Kap. 6 — Multivariate Analyse.** Du fragst, *welche* Merkmale (Bildung, Alter, Region, Populismus) Islamfeindlichkeit am besten erklären — Faktorenanalyse, Reliabilität, Regression.
+- **Kap. 7 — Grafiken.** Du visualisierst alle Befunde mit ggplot2 und fügst sie zu einer publikationsfähigen Komposition zusammen.
 
-Die folgenden Kapitel bestehen zu einem großen Teil aus R-Code in sogenannten **Code-Chunks**. Sie sehen so aus:
+So lernst du nicht nur einzelne Methoden, sondern siehst, wie sie zu einer kompletten Analyse zusammenfließen.
 
-```{r, results='hide'}
-x <- seq(from = 1, to = 100, by = 10)
-x
+## So sind die Kapitel gebaut {-}
+
+Jedes Methoden-Kapitel folgt demselben Aufbau: eine **Frage** wird in **Code** beantwortet, der Output bekommt eine **Lesart**. Die Kapitel bestehen zu großen Teilen aus R-Code in sogenannten **Code-Chunks**:
+
+```{r, eval=FALSE}
+allbus |> describe(islamophobie, weights = wghtpew)
 ```
 
-Das Ergebnis erscheint direkt darunter:
+Das Ergebnis erscheint direkt darunter, gerendert ins Buch. Den Code kannst du jederzeit in dein eigenes R-Skript übernehmen — Copy-and-paste ist ausdrücklich erwünscht.
 
-```{r, echo=FALSE}
-x
-```
-
-`x` ist hier dein Input, das Ergebnis dein Output. Den Code kannst du jederzeit in dein eigenes R-Script übernehmen — Copy-and-Paste ist ausdrücklich erwünscht.
-
-**Pipe-Operator.** Du wirst durchgehend den nativen Pipe-Operator `|>` sehen. Er reicht das Ergebnis einer Funktion in die nächste weiter und macht aus verschachteltem Code einen lesbaren Arbeitsfluss:
+**Pipe-Operator.** Du wirst durchgehend den nativen Pipe `|>` sehen. Er reicht das Ergebnis einer Funktion in die nächste weiter und macht aus verschachteltem Code einen lesbaren Arbeitsfluss:
 
 ```{r, eval=FALSE}
 allbus |>
@@ -103,11 +116,9 @@ allbus |>
   describe(ls01)
 ```
 
-In älterem Code findest du oft `%>%` (aus dem Paket `magrittr`). Beide tun fast dasselbe; wir erklären den Unterschied kurz in Kapitel 2.
+In älterem Code findest du oft `%>%` (aus dem Paket `magrittr`). Beide tun fast dasselbe; wir erklären den Unterschied kurz in Kap. 3.
 
-## Konventionen in diesem Buch {-}
-
-Du erkennst wiederkehrende Bausteine:
+**Callout-Boxen.** Vier wiederkehrende Bausteine helfen dir bei der Orientierung:
 
 ::: {.callout-tip}
 **SPSS → R.** Direkte Übersetzungshilfe für Umsteiger:innen — links der SPSS-Befehl, rechts das R-Pendant.
@@ -132,4 +143,4 @@ Wenn du tiefer einsteigen möchtest:
 - Hadley Wickham & Garrett Grolemund, [R for Data Science (2. Auflage)](https://r4ds.hadley.nz/) — das Standardwerk für das tidyverse, frei online.
 - Hadley Wickham, [Advanced R](https://adv-r.hadley.nz/) — für alle, die R als Programmiersprache verstehen wollen.
 - mariposa-Dokumentation: [yannickdiehl.github.io/mariposa](https://yannickdiehl.github.io/mariposa/) — Funktionsreferenz und Vignetten.
-- Yihui Xie, [bookdown: Authoring Books and Technical Documents with R Markdown](https://bookdown.org/yihui/bookdown/) — falls du selbst ein Buch oder Skript wie dieses schreiben möchtest.
+- Posit, [Quarto-Dokumentation](https://quarto.org/) — Referenz für Bücher, Berichte und Seminararbeiten mit Quarto (siehe Kap. 2).
