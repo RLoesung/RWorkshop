@@ -1,0 +1,331 @@
+# Programmiersprache R {#sec-r-grundlagen}
+
+```{r setup-kap3, include=FALSE}
+library(tidyverse)
+library(mariposa)
+source("R/_common.R")
+```
+
+Bevor wir mit Daten arbeiten, lernen wir R als **Programmiersprache** kennen — Variablen, Funktionen, Datentypen und den Pipe-Operator. Diese Grundlagen tragen dich durch das gesamte Buch.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Variablen anlegen, benennen und Werte zuweisen.
+- Funktionen mit Argumenten aufrufen und verstehen, was sie zurückgeben.
+- Die wichtigsten R-Datentypen unterscheiden: Vektor, Faktor, Datensatz (Tibble), Liste.
+- Den **nativen Pipe-Operator** `|>` lesen und schreiben.
+- Den Unterschied zwischen `|>` und dem älteren `%>%` aus `magrittr` einordnen.
+- Code mit Pipes lesbar und linear strukturieren.
+
+## Variablen definieren
+
+Eine **Variable** speichert einen Wert. In R weist du Werte über den Zuweisungspfeil `<-` zu:
+
+```{r var1}
+var1 <- 2 * 4
+var1
+```
+
+`var1` (links) ist der Variablenname; `2 * 4` (rechts) der Ausdruck, dessen Ergebnis (`8`) gespeichert wird.
+
+Wenn du die Zuweisung in runde Klammern setzt, wird das Ergebnis gleichzeitig in der Konsole angezeigt:
+
+```{r var-paren}
+(var2 <- 2 * 4)
+```
+
+::: {.callout-warning}
+**Vorsicht: `<-` statt `=`.** Aus anderen Programmiersprachen kennst du `=` als Zuweisungsoperator. R akzeptiert es in vielen Kontexten, der idiomatische Operator ist aber `<-`. Grund: `=` wird in R *innerhalb* von Funktionsaufrufen für Argumente verwendet (`mean(x = data)`). Wenn du `<-` für Zuweisung und `=` für Argumente strikt trennst, vermeidest du subtile Fehler.
+
+Tastenkürzel für `<-`: `option` + `-` (macOS) bzw. `alt` + `-` (Windows/Linux).
+:::
+
+### Variablennamen
+
+Eine Variable muss mit einem Buchstaben beginnen und darf danach Buchstaben, Zahlen, Punkte (`.`) und Unterstriche (`_`) enthalten. Leerzeichen sind nicht erlaubt.
+
+Für lesbaren Code halten sich Sozialwissenschaftler:innen meist an eine von zwei Konventionen:
+
+1. **`snake_case`** — alles klein, Worte mit Unterstrich verbunden: `mittelwert_alter`. Tidyverse-Standard.
+2. **`camelCase`** — erstes Wort klein, weitere groß beginnend: `mittelwertAlter`. Verbreitet im Stata- und JavaScript-Umfeld.
+
+Wähle eine und bleibe konsequent. In diesem Buch nutzen wir `snake_case`.
+
+```{r names, eval=FALSE}
+# Gut
+mittelwert_alter
+faktor_skala
+islamophobie_skala
+
+# Schlecht (inkonsistent)
+Mittelwert.alter
+mittelwertAlter_neu
+
+# Verboten (Leerzeichen)
+mittelwert alter
+```
+
+## Funktionen aufrufen
+
+> "Everything that exists is an object. Everything that happens is a function call." — John Chambers
+
+Eine Funktion ist ein benanntes Werkzeug, dem du **Argumente** übergibst und das ein **Ergebnis** zurückgibt. Eine generische Funktion sieht so aus:
+
+```r
+funktionsname(arg1 = wert1, arg2 = wert2, ...)
+```
+
+- `funktionsname` — was die Funktion macht.
+- `arg1`, `arg2` — wie sie ihre Arbeit konfiguriert.
+- Werte können explizit benannt (`arg1 = wert1`) oder positional übergeben werden.
+
+Einige Argumente haben **Default-Werte**: sie müssen nicht angegeben werden, weil der häufigste Wert voreingestellt ist.
+
+```{r fn-basics}
+seq(from = 1, to = 10, by = 2)   # explizit
+seq(1, 10, 2)                    # positional, identisch
+```
+
+::: {.callout-tip}
+**Tipp: `?funktion`.** Wenn du die Argumente einer Funktion vergessen hast, gibt `?funktion` (z. B. `?seq`) die Hilfe in RStudio aus. Innerhalb der Klammern öffnet `Tab` ein Dropdown mit allen Argumenten.
+:::
+
+### Grundfunktionen für den Einstieg
+
+| Funktion | Wirkung |
+|---|---|
+| `c(...)` | erzeugt einen Vektor aus den Argumenten (*combine*) |
+| `seq(from, to, by)` | erzeugt eine Sequenz |
+| `1:5` | reguläre Sequenz (1, 2, 3, 4, 5) |
+| `rep(x, times, each)` | wiederholt `x` |
+| `head(x, n)` | die ersten `n` Elemente |
+| `tail(x, n)` | die letzten `n` Elemente |
+| `length(x)` | Anzahl der Elemente |
+| `round(x, digits)` | rundet Zahlen |
+
+```{r grundfunktionen}
+zahlen <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+head(zahlen, n = 3)
+seq(from = 1, to = 10, by = 2)
+rep(x = 0, times = 5)
+round(c(1.222, 2.345, 3.987), digits = 1)
+```
+
+### Verschachtelte Funktionen
+
+Du kannst Funktionen ineinander verschachteln. Der Output einer Funktion wird zum Input der nächsten:
+
+```{r nested, eval=FALSE}
+head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
+```
+
+Das funktioniert, aber je mehr Schritte du verschachtelst, desto schwerer wird der Code zu lesen — du musst ihn von *innen nach außen* lesen, was unserer natürlichen Leserichtung widerspricht. Für genau dieses Problem gibt es eine elegante Lösung: den **Pipe-Operator**.
+
+## Objekte und Datentypen
+
+In R ist **alles ein Objekt** — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit:
+
+### Vektoren
+
+Ein **Vektor** ist eine eindimensionale Sammlung gleicher Datentypen. Drei Typen wirst du am häufigsten sehen:
+
+```{r vectors}
+zahlen <- c(1, 2, 3, 4, 5)              # numeric
+namen  <- c("Anna", "Boris", "Carla")   # character
+flags  <- c(TRUE, FALSE, NA)            # logical
+```
+
+::: {.callout-warning}
+**Vorsicht: `TRUE`/`FALSE` schreiben, nicht `T`/`F`.** Die Kurzschreibweisen funktionieren — sind aber überschreibbar, deshalb in der Praxis fehleranfällig. Schreibe immer `TRUE` und `FALSE` aus.
+:::
+
+Mit Indizes greifst du auf einzelne Elemente zu:
+
+```{r indexing}
+zahlen[1]      # erstes Element
+zahlen[2:4]    # zweites bis viertes
+zahlen[-1]     # alle ausser dem ersten
+```
+
+### Faktoren
+
+Ein **Faktor** ist ein Vektor mit definierten **Ausprägungen** (`levels`) — für kategoriale Variablen wie Geschlecht oder Bildung.
+
+```{r factors}
+geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),
+                     levels = c("Mann", "Frau", "Divers"))
+geschlecht
+levels(geschlecht)
+```
+
+Faktoren sind wichtig für Regressionsmodelle — die erste Ausprägung wird automatisch zur **Referenzkategorie**. Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du die Reihenfolge.
+
+::: {.callout-note}
+**Hintergrund: `haven_labelled` vs. Faktor.** Wenn du Daten aus SPSS einliest (Kap. 4), bekommst du Spalten vom Typ `<haven_labelled>`. Das ist *kein* Faktor — sondern ein numerischer Vektor mit Labels als Begleitinformation. Mit `to_label()` (mariposa) wandelst du sie bei Bedarf in einen klassischen Faktor.
+:::
+
+### Datensätze (Tibbles)
+
+Ein **Tibble** ist die moderne Form des Data Frames im tidyverse — eine Tabelle mit Zeilen (Fälle) und Spalten (Variablen). Du baust es mit `tibble()`:
+
+```{r tibble-create}
+befragte <- tibble(
+  geschlecht = factor(c("Mann", "Frau", "Mann", "Divers")),
+  alter      = c(34, 41, 28, 52)
+)
+befragte
+```
+
+Auf eine einzelne Spalte greifst du mit `$` oder `[[]]` zu:
+
+```{r tibble-access}
+befragte$alter
+befragte[["alter"]]
+befragte[1, "alter"]   # erste Zeile, Spalte "alter"
+```
+
+In der Praxis liest du Datensätze fertig aus SPSS-, Stata- oder Excel-Dateien ein (siehe Kap. 4). Selbst-gebaute Tibbles brauchst du fast nur für kleine Demonstrationen.
+
+### Listen
+
+Eine **Liste** kann verschiedene Objekttypen unterschiedlicher Länge sammeln. Ergebnisse statistischer Analysen sind in R meistens Listen — ein Regressionsergebnis enthält Koeffizienten, Residuen, Modellgüte usw. Du musst sie selten selbst erstellen, aber regelmäßig lesen können:
+
+```{r list}
+ergebnis <- list(
+  koeffizient = 0.42,
+  p_wert      = 0.001,
+  konfidenz   = c(0.31, 0.53),
+  modell      = "lm"
+)
+ergebnis$koeffizient
+ergebnis$konfidenz[1]
+```
+
+## Pipe-Operatoren
+
+Ein **Pipe** verkettet Funktionsaufrufe linear, statt sie zu verschachteln. R kennt zwei Varianten — wir nutzen die *native* Pipe `|>`.
+
+### Native Pipe `|>`
+
+Seit R 4.1 hat R einen *eingebauten* Pipe-Operator. Er heißt `|>` und ist heute der Standard.
+
+```{r pipe-native}
+zahlen <- c(1.11, 1.22, 1.33, 1.44, 1.55)
+
+# Verschachtelt
+head(round(zahlen, digits = 1), n = 3)
+
+# Mit native Pipe
+zahlen |>
+  round(digits = 1) |>
+  head(n = 3)
+```
+
+Lies das wie einen Satz: „Nimm `zahlen`, **dann** runde auf 1 Nachkommastelle, **dann** zeige die ersten 3."
+
+**Tastenkürzel:** `cmd`/`strg` + `shift` + `M`. Stelle in RStudio unter `Tools` → `Global Options` → `Code` → *Use native pipe operator* die Option ein.
+
+### Placeholder `_` mit native Pipe
+
+Standardmäßig übergibt `|>` den Wert als **erstes Argument** der nächsten Funktion. Wenn er an eine *andere* Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter `_` — er muss ein **benanntes** Argument sein:
+
+```{r placeholder, eval=FALSE}
+# Datensatz als data-Argument in lm() ist die zweite Position
+allbus |>
+  lm(islamophobie ~ age, data = _)
+```
+
+### Das ältere `%>%` aus magrittr
+
+Vor R 4.1 hatten R-Anwender:innen den Pipe-Operator `%>%` aus dem Paket `magrittr` (im tidyverse mitgeliefert). Du wirst ihn in älterem Code überall sehen.
+
+```{r pipe-magrittr, eval=FALSE}
+zahlen %>%
+  round(digits = 1) %>%
+  head(n = 3)
+```
+
+Funktional sind `|>` und `%>%` fast identisch. Wenn du Wahl hast, nimm `|>` — er ist Teil der Sprache, schneller, und sichtbar in jeder R-Installation.
+
+::: {.callout-note}
+**Hintergrund: Wo `%>%` etwas anders ist.** Der magrittr-Pipe hat einen Platzhalter `.`, der überall positionierbar ist:
+`x %>% lm(y ~ ., data = .)`. Der native `_` muss benannt sein. Bei den meisten Tidyverse-Funktionen brauchst du den Platzhalter nicht — das erste Argument ist immer der Datensatz.
+:::
+
+::: {.callout-warning}
+**Verschwundene Operatoren.** `%$%`, `%T>%`, `%<>%` aus `magrittr` waren früher gelegentlich nötig (z. B. um Pipes durch Plotting-Funktionen zu führen). In diesem Buch brauchen wir sie *nirgends* — mariposa-Funktionen sind durchgehend data-first und pipe-freundlich.
+:::
+
+### Lesbarer Code, vermehrt
+
+Hier eine echte Pipeline aus Kap. 4, die dir einen Vorgeschmack gibt, wofür Pipes nützlich sind:
+
+```{r real-pipe, eval=FALSE}
+allbus <- read_spss("ALLBUS2023.sav") |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                             min_valid = 5)
+  )
+```
+
+Du liest: Datensatz einlesen → mm02 umpolen → mm05 umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe Rückwärts lesen könntest.
+
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — Variablen und Vektoren.** Erstelle einen Vektor mit den Zahlen 10 bis 20, runde jede Zahl auf eine Dezimalstelle (auch wenn schon ganzzahlig), berechne den Mittelwert. Schreibe das einmal verschachtelt und einmal mit Pipe.
+
+**Lösung:**
+```{r ex1-kap3-loesung, eval=FALSE}
+# Verschachtelt
+mean(round(10:20, digits = 1))
+
+# Mit Pipe
+10:20 |>
+  round(digits = 1) |>
+  mean()
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 2 — Tibble basteln.** Erzeuge ein Tibble mit zwei Variablen: `id` (1 bis 5) und `wert` (zufällige Zahlen — `runif(5, 0, 10)` ist eine Möglichkeit). Greife danach auf die dritte Zeile zu.
+
+**Lösung:**
+```{r ex2-kap3-loesung, eval=FALSE}
+demo <- tibble(
+  id   = 1:5,
+  wert = runif(5, 0, 10)
+)
+demo
+demo[3, ]
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — Faktor und Referenzkategorie.** Baue einen Faktor `bildung` mit den Ausprägungen `"niedrig"`, `"mittel"`, `"hoch"`. Setze `"mittel"` als Referenzkategorie. Tipp: `levels = ` setzt die Reihenfolge bei `factor()`.
+
+**Lösung:**
+```{r ex3-kap3-loesung, eval=FALSE}
+bildung <- factor(c("hoch", "niedrig", "mittel", "mittel", "hoch"),
+                  levels = c("mittel", "niedrig", "hoch"))
+levels(bildung)
+```
+:::
+
+## Was du jetzt weißt {-}
+
+- Du weist Werte mit `<-` Variablen zu und kennst die Konvention `snake_case`.
+- Du rufst Funktionen mit benannten Argumenten auf und schlägst Hilfe mit `?` nach.
+- Du erkennst und erstellst Vektoren, Faktoren, Tibbles und Listen.
+- Du nutzt den nativen Pipe `|>` für lesbaren, linearen Code.
+- Du verstehst den Unterschied zu `%>%` und weißt, dass `|>` der heutige Standard ist.
+
+Im nächsten Kapitel arbeiten wir mit echten Daten: dem ALLBUS 2023.
+
+## Weiterführend {-}
+
+- Hadley Wickham, [Advanced R](https://adv-r.hadley.nz/) — *die* Referenz zu R als Programmiersprache.
+- [The Tidyverse Style Guide](https://style.tidyverse.org/) — Konventionen für gut lesbaren tidyverse-Code.
+- Bruno Rodrigues, [Modern R with the Tidyverse](https://b-rodrigues.github.io/modern_R/) — freier Online-Kurs zum tidyverse als Programmierumgebung.

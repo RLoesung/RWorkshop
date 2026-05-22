@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>5&nbsp; Uni- und Bivariate Datenanalyse – R Workshop – Sozialwissenschaften</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./06-Multivariate.Datenanalyse.html" rel="next">
+<link href="./04-Datenmodifikation.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6499386a99bca6986a49a1d91551f074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Keine Treffer",
+    "search-matching-documents-text": "Treffer",
+    "search-copy-link-title": "Link in die Suche kopieren",
+    "search-hide-matches-text": "Zusätzliche Treffer verbergen",
+    "search-more-match-text": "weitere Treffer in diesem Dokument",
+    "search-more-matches-text": "weitere Treffer in diesem Dokument",
+    "search-clear-button-title": "Zurücksetzen",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Abbrechen",
+    "search-submit-button-title": "Abschicken",
+    "search-label": "Suchen"
+  }
+}</script><style>html{ scroll-behavior: smooth; }</style>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Seitenleiste umschalten" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-Uni-Bivariate.Datenanalyse.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Uni- und Bivariate Datenanalyse</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Seitenleiste umschalten" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Suchen" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Workshop – Sozialwissenschaften</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/RLoesung/RWorkshop" title="Quellcode" class="quarto-navigation-tool px-1" aria-label="Quellcode"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Suchen"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Vorwort</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-RStudio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto und reproduzierbare Wissenschaft</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-ProgrammierspracheR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Programmiersprache R</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Datenmodifikation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datenmodifikation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Uni-Bivariate.Datenanalyse.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Uni- und Bivariate Datenanalyse</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Multivariate.Datenanalyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Multivariate Datenanalyse</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Grafiken.erstellen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Grafiken erstellen</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">Inhaltsverzeichnis</h2>
+   
+  <ul>
+<li><a href="#was-du-nach-diesem-kapitel-kannst" id="toc-was-du-nach-diesem-kapitel-kannst" class="nav-link active" data-scroll-target="#was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</a></li>
+  <li><a href="#%C3%BCber-gewichtung" id="toc-über-gewichtung" class="nav-link" data-scroll-target="#%C3%BCber-gewichtung"><span class="header-section-number">5.1</span> Über Gewichtung</a></li>
+  <li>
+<a href="#univariate-statistik" id="toc-univariate-statistik" class="nav-link" data-scroll-target="#univariate-statistik"><span class="header-section-number">5.2</span> Univariate Statistik</a>
+  <ul>
+<li><a href="#h%C3%A4ufigkeitstabellen-mit-frequency" id="toc-häufigkeitstabellen-mit-frequency" class="nav-link" data-scroll-target="#h%C3%A4ufigkeitstabellen-mit-frequency"><span class="header-section-number">5.2.1</span> Häufigkeitstabellen mit <code>frequency()</code></a></li>
+  <li><a href="#deskriptive-statistik-mit-describe" id="toc-deskriptive-statistik-mit-describe" class="nav-link" data-scroll-target="#deskriptive-statistik-mit-describe"><span class="header-section-number">5.2.2</span> Deskriptive Statistik mit <code>describe()</code></a></li>
+  <li><a href="#einzelne-kennwerte" id="toc-einzelne-kennwerte" class="nav-link" data-scroll-target="#einzelne-kennwerte"><span class="header-section-number">5.2.3</span> Einzelne Kennwerte</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#bivariate-statistik" id="toc-bivariate-statistik" class="nav-link" data-scroll-target="#bivariate-statistik"><span class="header-section-number">5.3</span> Bivariate Statistik</a>
+  <ul>
+<li><a href="#kreuztabellen-mit-crosstab" id="toc-kreuztabellen-mit-crosstab" class="nav-link" data-scroll-target="#kreuztabellen-mit-crosstab"><span class="header-section-number">5.3.1</span> Kreuztabellen mit <code>crosstab()</code></a></li>
+  <li><a href="#chi-quadrat-test-mit-chi_square" id="toc-chi-quadrat-test-mit-chi_square" class="nav-link" data-scroll-target="#chi-quadrat-test-mit-chi_square"><span class="header-section-number">5.3.2</span> Chi-Quadrat-Test mit <code>chi_square()</code></a></li>
+  <li><a href="#korrelation" id="toc-korrelation" class="nav-link" data-scroll-target="#korrelation"><span class="header-section-number">5.3.3</span> Korrelation</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#mittelwertvergleiche" id="toc-mittelwertvergleiche" class="nav-link" data-scroll-target="#mittelwertvergleiche"><span class="header-section-number">5.4</span> Mittelwertvergleiche</a>
+  <ul>
+<li><a href="#t-test-mit-t_test" id="toc-t-test-mit-t_test" class="nav-link" data-scroll-target="#t-test-mit-t_test"><span class="header-section-number">5.4.1</span> t-Test mit <code>t_test()</code></a></li>
+  <li><a href="#anova-mit-oneway_anova" id="toc-anova-mit-oneway_anova" class="nav-link" data-scroll-target="#anova-mit-oneway_anova"><span class="header-section-number">5.4.2</span> ANOVA mit <code>oneway_anova()</code></a></li>
+  <li><a href="#nicht-parametrisch" id="toc-nicht-parametrisch" class="nav-link" data-scroll-target="#nicht-parametrisch"><span class="header-section-number">5.4.3</span> Nicht-parametrisch</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#erste-grafiken-zu-deinen-befunden" id="toc-erste-grafiken-zu-deinen-befunden" class="nav-link" data-scroll-target="#erste-grafiken-zu-deinen-befunden"><span class="header-section-number">5.5</span> Erste Grafiken zu deinen Befunden</a>
+  <ul>
+<li><a href="#histogramm" id="toc-histogramm" class="nav-link" data-scroll-target="#histogramm"><span class="header-section-number">5.5.1</span> Histogramm</a></li>
+  <li><a href="#boxplot-nach-gruppen" id="toc-boxplot-nach-gruppen" class="nav-link" data-scroll-target="#boxplot-nach-gruppen"><span class="header-section-number">5.5.2</span> Boxplot nach Gruppen</a></li>
+  <li><a href="#streudiagramm-mit-regressionsgerade" id="toc-streudiagramm-mit-regressionsgerade" class="nav-link" data-scroll-target="#streudiagramm-mit-regressionsgerade"><span class="header-section-number">5.5.3</span> Streudiagramm mit Regressionsgerade</a></li>
+  </ul>
+</li>
+  <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
+  <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
+  <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/05-Uni-Bivariate.Datenanalyse.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/05-Uni-Bivariate.Datenanalyse.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-univbivar" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Uni- und Bivariate Datenanalyse</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><p>Nachdem du in Kap. 4 die Datenpräp-Pipeline gebaut hast, beginnt jetzt die eigentliche Analyse. Wir gehen Schritt für Schritt von der einzelnen Variable bis zu Zusammenhängen zwischen zwei Variablen — und beantworten dabei die ersten Teilfragen unserer Mini-Studie:</p>
+<blockquote class="blockquote">
+<p><em>Wie sieht die Verteilung von Islamfeindlichkeit in Deutschland 2023 aus? Unterscheiden sich Ost und West? Hängt Islamfeindlichkeit mit Populismus zusammen?</em></p>
+</blockquote>
+<section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
+<ul>
+<li>Häufigkeitsverteilungen einer Variable berichten — gewichtet und ungewichtet.</li>
+<li>Mittelwert, Median, Streuung und Standardfehler bestimmen.</li>
+<li>Kreuztabellen mit Chi-Quadrat-Test und Effektgrößen lesen.</li>
+<li>Pearson-, Spearman- und Kendall-Korrelationen berechnen und interpretieren.</li>
+<li>Mittelwerte zweier Gruppen mit einem <strong>t-Test</strong> vergleichen.</li>
+<li>Mittelwerte mehrerer Gruppen mit einer <strong>einfaktoriellen ANOVA</strong> vergleichen.</li>
+<li>Nicht-parametrische Alternativen anwenden, wenn Voraussetzungen verletzt sind.</li>
+<li>Erste Grafiken zu deinen Befunden erstellen.</li>
+</ul></section><section id="über-gewichtung" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="über-gewichtung">
+<span class="header-section-number">5.1</span> Über Gewichtung</h2>
+<p>In der ALLBUS-Stichprobe sind die neuen Bundesländer <strong>gewollt überrepräsentiert</strong>, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das <strong>personenbezogene Ost-West-Gewicht</strong> <code>wghtpew</code>. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen” verzerrt.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SPSS → R.</strong> In SPSS aktivierst du Gewichtung einmal session-weit mit <code>WEIGHT BY wghtpew.</code> In R ist das anders: <strong>jede Funktion</strong>, die Gewichtung braucht, bekommt das Argument <code>weights =</code> einzeln. Das wirkt am Anfang umständlich, ist aber transparent — du siehst auf einen Blick, ob eine Analyse gewichtet ist.</p>
+</div>
+</div>
+<p>In mariposa heißt das Argument durchgängig <code>weights = wghtpew</code> — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.</p>
+</section><section id="univariate-statistik" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="univariate-statistik">
+<span class="header-section-number">5.2</span> Univariate Statistik</h2>
+<section id="häufigkeitstabellen-mit-frequency" class="level3" data-number="5.2.1"><h3 data-number="5.2.1" class="anchored" data-anchor-id="häufigkeitstabellen-mit-frequency">
+<span class="header-section-number">5.2.1</span> Häufigkeitstabellen mit <code>frequency()</code>
+</h3>
+<p><code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> aus mariposa ist das R-Pendant zu SPSS’ <code>FREQUENCIES</code> — gleicher Output (Wert, Label, N, Prozent, gültige Prozent, kumulierte Prozent) plus oben kurz die Streumaße.</p>
+<p><strong>Frage:</strong> Wie ist die Verteilung von Ost und West im gewichteten Sample?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Weighted Frequency Analysis Results</span></span>
+<span><span class="co">## -----------------------------------</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## eastwest (ERHEBUNGSGEBIET (WOHNGEBIET): WEST - OST)</span></span>
+<span><span class="co">## # total N=5246 valid N=5246 mean=1.17 sd=0.37 skewness=1.77</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## +------+--------------------+--------+--------+--------+--------+</span></span>
+<span><span class="co">## |Value |              Label |      N |  Raw % |Valid % | Cum. % |</span></span>
+<span><span class="co">## +------+--------------------+--------+--------+--------+--------+</span></span>
+<span><span class="co">## |    1 | ALTE BUNDESLAENDER |   4363 |  83.16 |  83.16 |  83.16 |</span></span>
+<span><span class="co">## |    2 | NEUE BUNDESLAENDER |    883 |  16.84 |  16.84 | 100.00 |</span></span>
+<span><span class="co">## +------+--------------------+--------+--------+--------+--------+</span></span>
+<span><span class="co">## |Total |                    |   5246 | 100.00 | 100.00 |        |</span></span>
+<span><span class="co">## +------+--------------------+--------+--------+--------+--------+</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Die gewichteten Häufigkeiten spiegeln das tatsächliche Verhältnis Ost/West in der deutschen Bevölkerung — ca. 83% West, 17% Ost. In den ungewichteten Rohdaten wäre Ost stärker vertreten gewesen.</p>
+<p>Für eine ganze Itembatterie kombinierst du <code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> mit <code>tidyselect</code>-Helfern:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="deskriptive-statistik-mit-describe" class="level3" data-number="5.2.2"><h3 data-number="5.2.2" class="anchored" data-anchor-id="deskriptive-statistik-mit-describe">
+<span class="header-section-number">5.2.2</span> Deskriptive Statistik mit <code>describe()</code>
+</h3>
+<p>Mit <code>describe()</code> bekommst du Mittelwert, Median, Standardabweichung, Range, IQR und Schiefe für eine oder mehrere Variablen.</p>
+<p><strong>Frage:</strong> Wo liegt der durchschnittliche Skalenwert für Islamfeindlichkeit?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Weighted Descriptive Statistics</span></span>
+<span><span class="co">## -------------------------------</span></span>
+<span><span class="co">##      Variable  Mean Median    SD Range   IQR Skewness Effective_N</span></span>
+<span><span class="co">##  islamophobie 4.012      4 1.516     6 2.333    0.207      3006.2</span></span>
+<span><span class="co">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5).</p>
+<p>Mehrere Variablen gleichzeitig:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, <span class="va">age</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Weighted Descriptive Statistics</span></span>
+<span><span class="co">## -------------------------------</span></span>
+<span><span class="co">##      Variable   Mean Median     SD Range    IQR Skewness Effective_N</span></span>
+<span><span class="co">##  islamophobie  4.012  4.000  1.516     6  2.333    0.207      3006.2</span></span>
+<span><span class="co">##    populismus  3.354  3.286  0.759     4  1.000    0.056      3204.6</span></span>
+<span><span class="co">##           age 52.104 54.000 18.289    81 29.000   -0.009      4721.9</span></span>
+<span><span class="co">## ----------------------------------------</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="einzelne-kennwerte" class="level3" data-number="5.2.3"><h3 data-number="5.2.3" class="anchored" data-anchor-id="einzelne-kennwerte">
+<span class="header-section-number">5.2.3</span> Einzelne Kennwerte</h3>
+<p>Manchmal brauchst du nicht eine ganze Tabelle, sondern <em>einen</em> Wert — etwa für eine <code>summarise()</code>-Pipeline oder eine Caption. mariposa hat dafür gewichtete Einzel-Funktionen:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>Funktion</th>
+<th>Was sie liefert</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>w_mean()</code></td>
+<td>gewichteter Mittelwert</td>
+</tr>
+<tr class="even">
+<td><code>w_median()</code></td>
+<td>gewichteter Median</td>
+</tr>
+<tr class="odd">
+<td><code>w_sd()</code></td>
+<td>gewichtete Standardabweichung</td>
+</tr>
+<tr class="even">
+<td><code>w_se()</code></td>
+<td>gewichteter Standardfehler</td>
+</tr>
+<tr class="odd">
+<td><code>w_quantile()</code></td>
+<td>gewichtete Quantile</td>
+</tr>
+<tr class="even">
+<td><code>w_var()</code></td>
+<td>gewichtete Varianz</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Weighted Mean Statistics</span></span>
+<span><span class="co">## ------------------------</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## --- islamophobie ---</span></span>
+<span><span class="co">##      Variable weighted_mean Effective_N</span></span>
+<span><span class="co">##  islamophobie         4.012      3006.2</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Im Zusammenspiel mit <code>group_by()</code>/<code>summarise()</code> baust du dir eigene Subgruppen-Tabellen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span>    n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    mittelwert <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    sd         <span class="op">=</span> <span class="fu">w_sd</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    se         <span class="op">=</span> <span class="fu">w_se</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    .by <span class="op">=</span> <span class="va">eastwest</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">## # A tibble: 2 × 5</span></span>
+<span><span class="co">##   eastwest                   n mittelwert    sd     se</span></span>
+<span><span class="co">##   &lt;dbl+lbl&gt;              &lt;int&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 1 [ALTE BUNDESLAENDER]  3567       3.90  1.47 0.0279</span></span>
+<span><span class="co">## 2 2 [NEUE BUNDESLAENDER]  1679       4.55  1.61 0.0680</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Das ist die R-Variante zum SPSS-<code>AGGREGATE</code> mit <code>WEIGHT BY</code> — alles in <em>einem</em> Block, in einem Pipe-Fluss.</p>
+</section></section><section id="bivariate-statistik" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="bivariate-statistik">
+<span class="header-section-number">5.3</span> Bivariate Statistik</h2>
+<section id="kreuztabellen-mit-crosstab" class="level3" data-number="5.3.1"><h3 data-number="5.3.1" class="anchored" data-anchor-id="kreuztabellen-mit-crosstab">
+<span class="header-section-number">5.3.1</span> Kreuztabellen mit <code>crosstab()</code>
+</h3>
+<p><code>crosstab()</code> aus mariposa erzeugt eine Kreuztabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung.</p>
+<p><strong>Frage:</strong> Verteilt sich Bildung anders in Ost und West?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">crosstab</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Crosstabulation: eastwest × educ</span></span>
+<span><span class="co">## -------------------------------- </span></span>
+<span><span class="co">## - Row variable: eastwest</span></span>
+<span><span class="co">## - Column variable: educ</span></span>
+<span><span class="co">## - Percentages: Row percentages</span></span>
+<span><span class="co">## - Weights variable: wghtpew</span></span>
+<span><span class="co">## - N (valid): 5133 (weighted)</span></span>
+<span><span class="co">## - Missing: 109</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## +--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+</span></span>
+<span><span class="co">## |                    |                                                                                 educ                                                                                  |</span></span>
+<span><span class="co">## | eastwest           |     OHNE ABSCHLUSS | VOLKS-,HAUPTSCHULE |     MITTLERE REIFE | FACHHOCHSCHULREIFE |     HOCHSCHULREIFE |  ANDERER ABSCHLUSS |      NOCH SCHUELER |              Total |</span></span>
+<span><span class="co">## +--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+</span></span>
+<span><span class="co">## | ALTE BUNDESLAENDER |                 70 |                865 |               1163 |                544 |               1578 |                 17 |                 27 |               4265 |</span></span>
+<span><span class="co">## |   row %            |               1.6% |              20.3% |              27.3% |              12.8% |              37.0% |               0.4% |               0.6% |             100.0% |</span></span>
+<span><span class="co">## +--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+</span></span>
+<span><span class="co">## | NEUE BUNDESLAENDER |                 11 |                104 |                361 |                 95 |                292 |                  2 |                  2 |                868 |</span></span>
+<span><span class="co">## |   row %            |               1.2% |              12.0% |              41.6% |              11.0% |              33.7% |               0.2% |               0.2% |             100.0% |</span></span>
+<span><span class="co">## +====================+====================+====================+====================+====================+====================+====================+====================+====================+</span></span>
+<span><span class="co">## | Total              |                 80 |                969 |               1525 |                640 |               1871 |                 19 |                 29 |               5133 |</span></span>
+<span><span class="co">## +--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+--------------------+</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Mit <code>prop = "col"</code> oder <code>prop = "total"</code> änderst du die Prozentuierungs-Richtung; mit <code>show = "n"</code> siehst du nur die Zellenzahlen.</p>
+</section><section id="chi-quadrat-test-mit-chi_square" class="level3" data-number="5.3.2"><h3 data-number="5.3.2" class="anchored" data-anchor-id="chi-quadrat-test-mit-chi_square">
+<span class="header-section-number">5.3.2</span> Chi-Quadrat-Test mit <code>chi_square()</code>
+</h3>
+<p>Statt erst eine Kreuztabelle zu rechnen und <em>dann</em> den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgröße (Cramérs <em>V</em>):</p>
+<p><strong>Frage:</strong> Hängt Bildung und Region statistisch zusammen?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chi_square</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## Chi-Squared Test: eastwest × educ [Weighted]</span></span>
+<span><span class="co">##   chi2(6) = 83.582, p &lt; 0.001 ***, V = 0.128 (small), N = 5131</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Du erhältst χ² mit Freiheitsgraden, <em>p</em>-Wert und Cramérs <em>V</em>. Faustregel für <em>V</em>: <code>&lt; 0.1</code> vernachlässigbar, <code>0.1–0.3</code> schwach, <code>0.3–0.5</code> moderat, <code>&gt; 0.5</code> stark.</p>
+</section><section id="korrelation" class="level3" data-number="5.3.3"><h3 data-number="5.3.3" class="anchored" data-anchor-id="korrelation">
+<span class="header-section-number">5.3.3</span> Korrelation</h3>
+<p>Drei Korrelationskoeffizienten, drei Funktionen — alle akzeptieren <code>weights =</code>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Funktion</th>
+<th>Skalenniveau</th>
+<th>Wann sinnvoll</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>pearson_cor()</code></td>
+<td>intervall, normalverteilt</td>
+<td>klassischer linearer Zusammenhang</td>
+</tr>
+<tr class="even">
+<td><code>spearman_rho()</code></td>
+<td>ordinal oder schief</td>
+<td>wenn Linearität / Normalverteilung fragwürdig</td>
+</tr>
+<tr class="odd">
+<td><code>kendall_tau()</code></td>
+<td>ordinal, kleine N</td>
+<td>robuste Variante, gut bei Bindungen</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Frage:</strong> Hängen Islamfeindlichkeit und Populismus zusammen?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## Pearson Correlation: islamophobie x populismus [Weighted]</span></span>
+<span><span class="co">##   r = 0.406, p &lt; 0.001 ***, N = 1903</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Der gewichtete Pearson-<em>r</em> liegt bei etwa <strong>+0.41</strong> — das ist ein klar positiver, moderater Zusammenhang. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit.</p>
+<p>Eine ganze Korrelationsmatrix bekommst du, indem du mehrere Variablen oder einen <code>tidyselect</code>-Ausdruck übergibst:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"mm0"</span><span class="op">)</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section><section id="mittelwertvergleiche" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="mittelwertvergleiche">
+<span class="header-section-number">5.4</span> Mittelwertvergleiche</h2>
+<section id="t-test-mit-t_test" class="level3" data-number="5.4.1"><h3 data-number="5.4.1" class="anchored" data-anchor-id="t-test-mit-t_test">
+<span class="header-section-number">5.4.1</span> t-Test mit <code>t_test()</code>
+</h3>
+<p>Der unabhängige t-Test prüft, ob sich die Mittelwerte zweier Gruppen unterscheiden.</p>
+<p><strong>Frage:</strong> Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">t_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## t-Test: islamophobie by eastwest [Weighted]</span></span>
+<span><span class="co">##   t(764.0) = -8.784, p &lt; 0.001 ***, g = -0.431 (small), N = 3344</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Du erhältst <em>t</em>, df, <em>p</em>-Wert und Hedges’ <em>g</em> (eine Effektgröße ähnlich Cohens <em>d</em>, aber für kleine N robuster). Die Reihenfolge der Gruppen in der Ausgabe verrät dir die Richtung des Unterschieds.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Hintergrund: Welcher t-Test?</strong> Standardmäßig rechnet <code>t_test()</code> den <strong>Welch-t-Test</strong>, der ungleiche Varianzen erlaubt. Wenn du den klassischen Student-t möchtest, setze <code>var.equal = TRUE</code>. Für die Praxis gilt: der Welch-Test ist fast immer die sichere Wahl.</p>
+</div>
+</div>
+</section><section id="anova-mit-oneway_anova" class="level3" data-number="5.4.2"><h3 data-number="5.4.2" class="anchored" data-anchor-id="anova-mit-oneway_anova">
+<span class="header-section-number">5.4.2</span> ANOVA mit <code>oneway_anova()</code>
+</h3>
+<p>Für <em>drei oder mehr</em> Gruppen ist die einfaktorielle ANOVA dein Standardwerkzeug.</p>
+<p><strong>Frage:</strong> Hängt Islamfeindlichkeit mit Bildung zusammen?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_bildung</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rec</span><span class="op">(</span><span class="va">educ</span>, rules <span class="op">=</span> <span class="st">"1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA"</span>,</span>
+<span>      as.factor <span class="op">=</span> <span class="cn">TRUE</span>, suffix <span class="op">=</span> <span class="st">"_kat"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">allbus_bildung</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">oneway_anova</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">educ_kat</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="co">## One-Way ANOVA: islamophobie by educ_kat [Weighted]</span></span>
+<span><span class="co">##   F(2, 3267) = 233.676, p &lt; 0.001 ***, eta2 = 0.125 (medium), N = 3271</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Lesart.</strong> Du bekommst <em>F</em>, df, <em>p</em> und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird. Faustregeln für η²: <code>&lt; 0.01</code> vernachlässigbar, <code>0.01–0.06</code> klein, <code>0.06–0.14</code> mittel, <code>&gt; 0.14</code> groß.</p>
+<p>Wenn die ANOVA signifikant ist, willst du <em>welche</em> Gruppen sich unterscheiden — mit <code>tukey_test()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_bildung</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tukey_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">educ_kat</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="nicht-parametrisch" class="level3" data-number="5.4.3"><h3 data-number="5.4.3" class="anchored" data-anchor-id="nicht-parametrisch">
+<span class="header-section-number">5.4.3</span> Nicht-parametrisch</h3>
+<p>Wenn die Voraussetzungen für <em>t</em>-Test oder ANOVA nicht erfüllt sind (z. B. stark schiefe Verteilungen, ordinale AV), gibt es Alternativen:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>parametrisch</th>
+<th>nicht-parametrisch</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>
+<code>t_test()</code> (zwei Gruppen)</td>
+<td><code>mann_whitney()</code></td>
+</tr>
+<tr class="even">
+<td>
+<code>oneway_anova()</code> (n Gruppen)</td>
+<td><code>kruskal_wallis()</code></td>
+</tr>
+<tr class="odd">
+<td>
+<code>t_test()</code> (verbunden)</td>
+<td><code>wilcoxon_test()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">mann_whitney</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warnung
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Vorsicht: Nicht reflexhaft zu non-parametrisch greifen.</strong> Bei großen Stichproben sind <em>t</em>-Test und ANOVA gegenüber Verteilungsabweichungen sehr robust. Die nicht-parametrischen Tests verlieren etwas an statistischer Power. Wechsele die Methode bewusst, nicht als Sicherheits-Ritual.</p>
+</div>
+</div>
+</section></section><section id="erste-grafiken-zu-deinen-befunden" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="erste-grafiken-zu-deinen-befunden">
+<span class="header-section-number">5.5</span> Erste Grafiken zu deinen Befunden</h2>
+<p>Die volle Grafik-Schulung kommt in Kap. 7. Hier zeige ich dir drei kompakte Standard-Visualisierungen, die du nach jeder Bi-/Univariat-Analyse einsetzen kannst.</p>
+<section id="histogramm" class="level3" data-number="5.5.1"><h3 data-number="5.5.1" class="anchored" data-anchor-id="histogramm">
+<span class="header-section-number">5.5.1</span> Histogramm</h3>
+<p><strong>Frage:</strong> Wie verteilt sich Islamfeindlichkeit über die Stichprobe?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"#2563eb"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Islamfeindlichkeit (1–7)"</span>, y <span class="op">=</span> <span class="st">"Häufigkeit (gewichtet)"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Verteilung der Islamfeindlichkeit"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, gewichtet mit wghtpew"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="05-Uni-Bivariate.Datenanalyse_files/figure-html/hist-kap5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="boxplot-nach-gruppen" class="level3" data-number="5.5.2"><h3 data-number="5.5.2" class="anchored" data-anchor-id="boxplot-nach-gruppen">
+<span class="header-section-number">5.5.2</span> Boxplot nach Gruppen</h3>
+<p><strong>Frage:</strong> Wie verteilt sich Islamfeindlichkeit nach Bildungsgruppen?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_bildung</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_boxplot</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#e8f5ec"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Bildungsgruppe"</span>, y <span class="op">=</span> <span class="st">"Islamfeindlichkeit (1–7)"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="05-Uni-Bivariate.Datenanalyse_files/figure-html/boxplot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="streudiagramm-mit-regressionsgerade" class="level3" data-number="5.5.3"><h3 data-number="5.5.3" class="anchored" data-anchor-id="streudiagramm-mit-regressionsgerade">
+<span class="header-section-number">5.5.3</span> Streudiagramm mit Regressionsgerade</h3>
+<p><strong>Frage:</strong> Wie sieht der Zusammenhang Islamfeindlichkeit ↔︎ Populismus aus?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>, width <span class="op">=</span> <span class="fl">0.05</span>, height <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Populismus (1–5, umgepolt)"</span>, y <span class="op">=</span> <span class="st">"Islamfeindlichkeit (1–7)"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="05-Uni-Bivariate.Datenanalyse_files/figure-html/scatter-kap5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Wichtig
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>mariposa-Tipp: Statistik in mariposa, Grafik in ggplot2.</strong> mariposa hat bewusst keine eigene Plotting-Funktion. Das hat einen guten Grund: ggplot2 ist mächtig genug, dass jede:r Sozialwissenschaftler:in damit eigene Grafiken bauen kann — und du verstehst dabei, was wirklich passiert, statt einen Plotter-Wrapper-Output zu importieren.</p>
+</div>
+</div>
+</section></section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 1 — Demokratiezufriedenheit beschreiben.</strong> Erzeuge eine Häufigkeitstabelle für <code>ps03</code> („Zufrieden mit Demokratie in Deutschland?“) gewichtet, und ergänze deskriptive Statistiken. Beschreibe in einem Satz, was du siehst.</p>
+<p><strong>Lösung:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 2 — Subgruppen-Vergleich.</strong> Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: <code>summarise(.by = sex, ...)</code>.</p>
+<p><strong>Lösung:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span>    n  <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    mw <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    sd <span class="op">=</span> <span class="fu">w_sd</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    se <span class="op">=</span> <span class="fu">w_se</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
+<span>    .by <span class="op">=</span> <span class="va">sex</span></span>
+<span>  <span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 3 — Drei Korrelate.</strong> Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit <code>ls01</code>, (b) Mitmenschen-Vertrauen <code>st01</code>, (c) Demokratiezufriedenheit <code>ps03</code>. Welcher Zusammenhang ist am stärksten?</p>
+<p><strong>Lösung:</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">ls01</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">st01</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="was-du-jetzt-weißt" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-jetzt-weißt">Was du jetzt weißt</h2>
+<ul>
+<li>Du erzeugst gewichtete Häufigkeiten und deskriptive Statistiken mit <code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> und <code>describe()</code>.</li>
+<li>Du berechnest gewichtete Einzelkennwerte (<code>w_mean</code>, <code>w_median</code>, <code>w_sd</code>, <code>w_se</code>, <code>w_quantile</code>).</li>
+<li>Du baust Subgruppen-Tabellen mit <code>summarise()</code> und <code>.by =</code>.</li>
+<li>Du kombinierst Kreuztabellen und Chi-Quadrat-Test in einer Funktion.</li>
+<li>Du wählst zwischen Pearson, Spearman und Kendall passend zum Skalenniveau.</li>
+<li>Du vergleichst Gruppenmittelwerte mit <code>t_test()</code> und <code>oneway_anova()</code> — und kennst nicht-parametrische Alternativen.</li>
+<li>Du bringst deine Ergebnisse mit drei ggplot2-Standard-Grafiken zu Papier.</li>
+</ul>
+<p>Im nächsten Kapitel weiten wir den Blick auf multivariate Verfahren aus: Faktorenanalyse, Reliabilität und multiple Regression.</p>
+</section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
+<ul>
+<li>mariposa-Vignetten <a href="https://yannickdiehl.github.io/mariposa/articles/descriptive-statistics.html">„Descriptive Statistics”</a>, <a href="https://yannickdiehl.github.io/mariposa/articles/hypothesis-testing.html">„Hypothesis Testing”</a> und <a href="https://yannickdiehl.github.io/mariposa/articles/correlation-analysis.html">„Correlation Analysis”</a>.</li>
+<li>Andy Field et al., <em>Discovering Statistics Using R</em> — Kapitel zu Mittelwertvergleichen und Korrelation.</li>
+<li>ALLBUS-Methodenbericht 2023 (GESIS): Erläuterung der Gewichtungsvariablen und Stichprobenarchitektur.</li>
+</ul>
+
+
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopiert");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopiert");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./04-Datenmodifikation.html" class="pagination-link" aria-label="Datenmodifikation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datenmodifikation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./06-Multivariate.Datenanalyse.html" class="pagination-link" aria-label="Multivariate Datenanalyse">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Multivariate Datenanalyse</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/05-Uni-Bivariate.Datenanalyse.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/05-Uni-Bivariate.Datenanalyse.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

@@ -1,0 +1,439 @@
+# Grafiken erstellen {#sec-grafiken}
+
+```{r setup-kap7, include=FALSE}
+library(tidyverse)
+library(mariposa)
+library(patchwork)
+source("R/_common.R")
+
+allbus <- read_spss("ALLBUS2023.sav") |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r") |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat") |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5),
+    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r), min_valid = 6)
+  ) |>
+  to_label(eastwest, sex)
+```
+
+Mit diesem Kapitel kommst du zum eigentlichen *Sichtbar-Machen* deiner Befunde. Das tidyverse bietet dir mit **ggplot2** ein Grafik-System, das aus *einer* konsistenten Grammatik komplexe Visualisierungen baut — die *Grammar of Graphics*. Du legst nicht einzelne Plot-Funktionen aufeinander wie in SPSS, sondern beschreibst, *wie* deine Daten *welche* visuellen Aspekte einer Grafik füllen sollen.
+
+Wir bauen das Kapitel an unserer Mini-Studie auf: Du visualisierst die Islamfeindlichkeits- und Populismus-Skala, vergleichst Subgruppen und kombinierst am Ende mehrere Grafiken zu einer publikationsfähigen Komposition.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Den **Grammar of Graphics**-Ansatz von ggplot2 erklären.
+- Häufigkeiten, Verteilungen und Zusammenhänge mit den passenden `geom_*()`-Schichten visualisieren.
+- Subgruppen mit `facet_wrap()` und `facet_grid()` aufteilen.
+- Farben, Themes und Beschriftungen anpassen.
+- Mehrere Plots mit **patchwork** zu einer Komposition zusammenfügen.
+- Grafiken mit `ggsave()` in publikationsfähiger Auflösung exportieren.
+
+## Die Grammar of Graphics in drei Schritten
+
+Jede ggplot2-Grafik folgt demselben Aufbau:
+
+1. **Datengrundlage** — welcher Datensatz?
+2. **Aesthetic Mapping** — welche Spalten füllen welche visuellen Eigenschaften (x, y, Farbe, Form, Gewicht)?
+3. **Layer (`geom_*`)** — was wird gezeichnet? Balken, Punkte, Linien, Boxen?
+
+Jede Schicht kommt mit `+` dazu — das ist *kein* tidyverse-Pipe, sondern ggplot2-eigen.
+
+### Erste Grafik: Häufigkeitsverteilung eines Items
+
+**Frage:** Wie verteilen sich die Antworten auf das Item `mm03` („Anwesenheit von Muslimen bringt Konflikt")?
+
+```{r first}
+allbus |>
+  filter(!is.na(mm03)) |>
+  ggplot(aes(x = mm03, weight = wghtpew)) +
+  geom_bar(fill = "#2563eb") +
+  labs(x = "mm03: Anwesenheit von Muslimen bringt Konflikt",
+       y = "Anzahl (gewichtet)",
+       caption = "ALLBUS 2023, gewichtet mit wghtpew") +
+  scale_x_continuous(breaks = 1:7)
+```
+
+**Lesart.** Die Skala läuft von 1 („stimme gar nicht zu") bis 7 („stimme voll und ganz zu"). Die Verteilung zeigt, in welche Richtung die Befragten tendieren.
+
+### Zweite Grafik: Subgruppen-Vergleich
+
+**Frage:** Wie unterscheidet sich Islamfeindlichkeit nach Bildungsniveau?
+
+```{r first2}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(x = "Bildungsgruppe", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023") +
+  scale_fill_brewer(palette = "Blues") +
+  theme(legend.position = "none")
+```
+
+Beide Grafiken folgen dem gleichen Drei-Schritt-Aufbau. Den schauen wir uns jetzt im Detail an.
+
+## Schritt 1: Plot-Objekt erstellen
+
+Das Plot-Objekt entsteht mit `ggplot()`. Erstes Argument ist der Datensatz.
+
+```{r empty, eval=FALSE}
+g <- ggplot(allbus)                # ohne Pipe
+g <- allbus |> ggplot()            # mit Pipe (gleichwertig)
+```
+
+Allein ist `g` ein „leeres" Plot-Objekt — es weiß noch nichts über Achsen oder Inhalte.
+
+## Schritt 2: Aesthetic Mapping
+
+Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften der Grafik** zu. Die wichtigsten Eigenschaften:
+
+| Argument | Wozu |
+|---|---|
+| `x =`, `y =` | Achsen |
+| `weight =` | Survey-Gewichtung |
+| `fill =` | Füllfarbe (Flächen — Balken, Boxen) |
+| `colour =` | Linien- oder Punktfarbe |
+| `shape =` | Punktform |
+| `linetype =` | Strichstil |
+| `size =`, `alpha =` | Größe / Transparenz |
+| `group =` | unsichtbare Gruppierung |
+
+**Wichtig:** Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
+
+```{r mapping, eval=FALSE}
+g <- allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, weight = wghtpew, fill = eastwest))
+```
+
+`g` ist jetzt ein Plot-Objekt mit Achsenzuweisungen — du siehst aber noch nichts, weil kein Layer existiert.
+
+## Schritt 3: Layer hinzufügen
+
+Layer kommen mit `+` dazu. Die Layer-Funktionen beginnen alle mit dem Präfix `geom_`.
+
+### Punktdiagramm / Jitter
+
+```{r jitter}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(width = 0.08, height = 0.08, alpha = 0.2, color = "#1f77b4") +
+  labs(x = "Populismus (1–5, umgepolt)",
+       y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
+```
+
+`geom_jitter()` verteilt überlappende Punkte leicht — das ist bei zwei diskreten Achsen (Skalen mit wenigen Ausprägungen) unverzichtbar, sonst sehen alle Befragten wie *ein* Punkt aus.
+
+### Boxplot und Violinplot
+
+```{r boxviolin}
+g_base <- allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat))
+
+g_base + geom_boxplot()
+```
+
+Boxplots zeigen Median (Linie in der Box), die mittleren 50% (Box) und Whisker (1.5 × IQR). Violinplots zeigen stattdessen die Dichte:
+
+```{r violin}
+g_base + geom_violin()
+```
+
+Ein häufiger Trick: beide Schichten kombinieren — Violin als Hintergrund, dünnen Boxplot darüber:
+
+```{r combo}
+g_base +
+  geom_violin(alpha = 0.4) +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme(legend.position = "none")
+```
+
+## Verschiedene Geoms für verschiedene Datentypen
+
+Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab.
+
+### Eine kategoriale Variable
+
+Klassischer Bar Chart mit `geom_bar()`:
+
+```{r bar-cat}
+allbus |>
+  filter(!is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew)) +
+  geom_bar(fill = "steelblue") +
+  labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)")
+```
+
+**Relative Häufigkeiten.** In modernem ggplot2 (ab Version 3.4) benutzt du `after_stat()` statt der alten `..count..`/`..prop..`-Syntax:
+
+```{r bar-prop}
+allbus |>
+  filter(!is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew)) +
+  geom_bar(aes(y = after_stat(prop), group = 1), fill = "steelblue") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "Bildungsgruppe", y = "Anteil")
+```
+
+Mit `fill =` als zweiter Gruppierungsvariable bekommst du gestapelte Balken — und mit `position = "dodge"` nebeneinander:
+
+```{r bar-stacked}
+allbus |>
+  filter(!is.na(educ_kat), !is.na(sex)) |>
+  ggplot(aes(x = educ_kat, weight = wghtpew, fill = sex)) +
+  geom_bar(position = "dodge") +
+  labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)", fill = "Geschlecht")
+```
+
+### Eine kontinuierliche Variable
+
+Histogramm mit `geom_histogram()`. Die wichtigste Stellschraube ist `binwidth`:
+
+```{r hist-kap7}
+allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "steelblue", color = "white") +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Anzahl (gewichtet)")
+```
+
+Mit `geom_density()` bekommst du stattdessen eine geglättete Dichteschätzung:
+
+```{r density}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(sex)) |>
+  ggplot(aes(x = islamophobie, fill = sex)) +
+  geom_density(alpha = 0.4) +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Dichte", fill = "Geschlecht")
+```
+
+### Zwei kontinuierliche Variablen
+
+Streudiagramm mit Regressionsgerade — der Klassiker:
+
+```{r scatter-kap7}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus), !is.na(sex)) |>
+  ggplot(aes(x = populismus, y = islamophobie, color = sex)) +
+  geom_jitter(alpha = 0.2, width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit",
+       color = "Geschlecht", caption = "ALLBUS 2023")
+```
+
+`geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`.
+
+## Subgruppen aufteilen mit Facets
+
+Wenn eine Gruppierungsvariable mehr als drei oder vier Ausprägungen hat, wird die Überlagerung in einer Grafik unübersichtlich. Mit `facet_wrap()` bekommt jede Ausprägung ihr eigenes Panel:
+
+```{r facet-wrap}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus), !is.na(educ_kat)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4") +
+  geom_smooth(method = "lm", color = "black") +
+  facet_wrap(~ educ_kat) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit")
+```
+
+Bei *zwei* Gruppierungsvariablen ist `facet_grid()` die richtige Wahl — Zeilen × Spalten:
+
+```{r facet-grid}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus),
+         !is.na(educ_kat), !is.na(eastwest)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4") +
+  geom_smooth(method = "lm", color = "black") +
+  facet_grid(eastwest ~ educ_kat) +
+  labs(x = "Populismus", y = "Islamfeindlichkeit")
+```
+
+## Farben und Themes
+
+Der Default-Farbverlauf von ggplot2 ist nicht barrierefrei. Eine kleine Sammlung Standard-Lösungen:
+
+```{r colors-themes, eval=FALSE}
+# Diskrete kategoriale Variablen — Brewer-Paletten
+scale_color_brewer(palette = "Set1")     # für Linien/Punkte
+scale_fill_brewer(palette = "Blues")     # für Flächen
+
+# Kontinuierlich — Viridis (barrierearm)
+scale_color_viridis_c()
+scale_fill_viridis_c()
+
+# Eigene Palette
+farben <- c("#2563eb", "#16a34a", "#dc2626")
+scale_color_manual(values = farben)
+```
+
+Komplette Themes ersetzen mit einer Zeile das Standard-Aussehen:
+
+```{r themes}
+p <- allbus |>
+  filter(!is.na(islamophobie), !is.na(educ_kat)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie, fill = educ_kat)) +
+  geom_boxplot() +
+  labs(x = "Bildung", y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
+
+p + theme_minimal()
+```
+
+`theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen. In `index.Rmd` haben wir `theme_rworkshop()` als globalen Default gesetzt, sodass alle Grafiken dieses Buchs einheitlich aussehen.
+
+::: {.callout-tip}
+**SPSS → R: Klick vs. Code.** In SPSS klickst du Farben in einem Dialogfeld an, und die nächste Grafik fängt wieder bei Null an. In ggplot2 *speicherst* du Theme und Farbpalette als Code — und kannst sie auf jede neue Grafik anwenden, ohne dich zu wiederholen.
+:::
+
+## Beschriftungen
+
+`labs()` setzt alle Texte einer Grafik in einem Funktionsaufruf:
+
+```{r labs}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(
+    title    = "Islamfeindlichkeit und Populismus in Deutschland 2023",
+    subtitle = "Bivariater Zusammenhang, ungewichtet",
+    x        = "Populismus (1–5, umgepolt)",
+    y        = "Islamfeindlichkeit (1–7)",
+    caption  = "Quelle: ALLBUS 2023, GESIS Leibniz-Institut"
+  )
+```
+
+## Mehrere Grafiken kombinieren mit patchwork
+
+`patchwork` ist der moderne Ersatz für `gridExtra::grid.arrange()`. Du speicherst Grafiken als Objekte und kombinierst sie mit `+`, `/` und `|`:
+
+```{r patchwork}
+p1 <- allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
+  labs(title = "Verteilung", x = "Islamfeindlichkeit", y = "Häufigkeit")
+
+p2 <- allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Ost vs. West", x = NULL, y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
+
+p3 <- allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(title = "Mit Populismus", x = "Populismus", y = NULL)
+
+(p1 | p2) / p3
+```
+
+`p1 | p2` legt nebeneinander, `/` untereinander. Klammern setzen Gruppierungen — fast wie ein arithmetischer Ausdruck.
+
+::: {.callout-important}
+**mariposa-Tipp: Statistik aus mariposa, Komposition aus patchwork.** Die Trennung ist absichtlich. mariposa liefert dir die Inferenz-Outputs (Koeffizienten, χ², r, F), ggplot2 die Visualisierung — und patchwork hält ggplot2-typisch nichts dazwischen, sondern lässt dich Plots so kombinieren, als wären sie Bausteine.
+:::
+
+## Grafiken speichern
+
+`ggsave()` exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:
+
+```{r save, eval=FALSE}
+ggsave(
+  filename = "befunde_mini_studie.png",
+  plot     = (p1 | p2) / p3,
+  width    = 10,
+  height   = 7,
+  dpi      = 300
+)
+```
+
+Tipp für die Praxis: **PDF für LaTeX-Reports** (`filename = "....pdf"`), **PNG mit dpi ≥ 300 für Word/Folien**, **SVG für Web** (skalierbar).
+
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — Eigene Verteilung.** Erstelle ein Histogramm der Populismus-Skala (`populismus`) mit Binwidth 0.25, gewichtet, mit eigenem Titel und Achsenbeschriftung.
+
+**Lösung:**
+```{r ex1-kap7-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(populismus)) |>
+  ggplot(aes(x = populismus, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.25, fill = "#7c3aed", color = "white") +
+  labs(x = "Populismus (umgepolt)", y = "Anzahl (gewichtet)",
+       title = "Verteilung der Populismus-Einstellung",
+       caption = "ALLBUS 2023")
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 2 — Subgruppen-Boxplot.** Erstelle einen Boxplot der Islamfeindlichkeit nach `eastwest`, *gefiltert* nach Bildungsgruppen `educ_kat` (per `facet_wrap`).
+
+**Lösung:**
+```{r ex2-kap7-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(eastwest), !is.na(educ_kat)) |>
+  ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
+  geom_boxplot() +
+  facet_wrap(~ educ_kat) +
+  labs(x = NULL, y = "Islamfeindlichkeit") +
+  theme(legend.position = "none")
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — Koeffizienten-Plot bauen.** Aus dem `summary()`-Output deines Regressions-Modells in Kap. 6 kannst du dir einen Koeffizienten-Plot bauen — Punkt für Schätzwert, Linie für Konfidenzintervall. Versuche es selbst (Tipp: schreibe die Werte in ein eigenes Tibble und benutze `geom_pointrange()`).
+
+**Lösung-Skizze:**
+```{r ex3-kap7-loesung, eval=FALSE}
+tibble(
+  term = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
+  beta = c(-0.13, 0.30, 0.10, 0.05, 0.33),
+  lower = c(-0.18, 0.26, 0.04, -0.01, 0.27),
+  upper = c(-0.08, 0.34, 0.16, 0.10, 0.39)
+) |>
+  ggplot(aes(x = beta, y = fct_reorder(term, beta), xmin = lower, xmax = upper)) +
+  geom_pointrange() +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  labs(x = "Standardisierter Koeffizient (Beta)", y = NULL,
+       title = "Was erklärt Islamfeindlichkeit 2023?")
+```
+:::
+
+## Was du jetzt weißt {-}
+
+- Du baust ggplot2-Grafiken in drei Schritten: Daten, Mapping, Layer.
+- Du wählst passende `geom_*`-Schichten nach Datentyp (kategorial/kontinuierlich, eine/zwei Variablen).
+- Du teilst Subgruppen mit `facet_wrap()` und `facet_grid()` auf.
+- Du benutzt Brewer- und Viridis-Paletten für barrierearme Farbgebung.
+- Du fasst mehrere Plots mit `patchwork` zu Kompositionen zusammen.
+- Du exportierst Grafiken mit `ggsave()` in publikationsfähiger Qualität.
+
+Damit hast du den gesamten Werkzeugkasten dieses Buchs zusammen: SPSS-Daten → Datenmodifikation → Univariate, Bivariate, Multivariate Analyse → Visualisierung. Was als Nächstes? Wende es an. Auf deine eigene Forschungsfrage, mit deinen eigenen Daten.
+
+## Weiterführend {-}
+
+- Hadley Wickham et al., [ggplot2 Reference](https://ggplot2.tidyverse.org/reference/) — Funktionsreferenz mit Beispielen für jede `geom_*` und `scale_*`.
+- [R Graph Gallery](https://r-graph-gallery.com/) — Inspiration und Cookbook für tausende Grafiktypen.
+- Claus Wilke, [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) — Theorie der Datenvisualisierung, frei online.
+- [patchwork-Dokumentation](https://patchwork.data-imaginist.com/) für die Komposition komplexerer Layouts.

@@ -4,10 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.37">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="author" content="Yannick Diehl">
-<meta name="author" content="Daniel Moosdorf">
-<meta name="description" content="Eine Einführung in die statistische Datenanalyse mit R, tidyverse und mariposa für die Sozialwissenschaften — mit ALLBUS 2023.">
-<title>R Workshop – Sozialwissenschaften</title>
+<title>2&nbsp; Quarto und reproduzierbare Wissenschaft – R Workshop – Sozialwissenschaften</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -67,7 +29,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./01-RStudio.html" rel="next">
+<link href="./03-ProgrammierspracheR.html" rel="next">
+<link href="./01-RStudio.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -112,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Seitenleiste umschalten" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Vorwort</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-Quarto.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto und reproduzierbare Wissenschaft</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Seitenleiste umschalten" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Suchen" onclick="window.quartoOpenSearch();">
@@ -138,7 +101,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Vorwort</span></a>
   </div>
 </li>
@@ -150,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto und reproduzierbare Wissenschaft</span></span></a>
   </div>
 </li>
@@ -192,148 +155,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">Inhaltsverzeichnis</h2>
    
   <ul>
-<li>
-<a href="#vorwort" id="toc-vorwort" class="nav-link active" data-scroll-target="#vorwort">Vorwort</a>
-  <ul>
-<li><a href="#was-du-nach-diesem-buch-kannst" id="toc-was-du-nach-diesem-buch-kannst" class="nav-link" data-scroll-target="#was-du-nach-diesem-buch-kannst">Was du nach diesem Buch kannst</a></li>
-  <li><a href="#voraussetzungen" id="toc-voraussetzungen" class="nav-link" data-scroll-target="#voraussetzungen">Voraussetzungen</a></li>
-  <li><a href="#warum-r" id="toc-warum-r" class="nav-link" data-scroll-target="#warum-r">Warum R?</a></li>
-  <li><a href="#warum-tidyverse-und-mariposa" id="toc-warum-tidyverse-und-mariposa" class="nav-link" data-scroll-target="#warum-tidyverse-und-mariposa">Warum tidyverse und mariposa?</a></li>
-  <li><a href="#beispieldatensatz-allbus-2023" id="toc-beispieldatensatz-allbus-2023" class="nav-link" data-scroll-target="#beispieldatensatz-allbus-2023">Beispieldatensatz: ALLBUS 2023</a></li>
-  <li><a href="#typographie" id="toc-typographie" class="nav-link" data-scroll-target="#typographie">Typographie</a></li>
-  <li><a href="#konventionen-in-diesem-buch" id="toc-konventionen-in-diesem-buch" class="nav-link" data-scroll-target="#konventionen-in-diesem-buch">Konventionen in diesem Buch</a></li>
-  <li><a href="#weiterf%C3%BChrende-literatur" id="toc-weiterführende-literatur" class="nav-link" data-scroll-target="#weiterf%C3%BChrende-literatur">Weiterführende Literatur</a></li>
-  </ul>
-</li>
-  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/index.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></nav>
+<li><a href="#worum-es-geht" id="toc-worum-es-geht" class="nav-link active" data-scroll-target="#worum-es-geht"><span class="header-section-number">2.1</span> Worum es geht</a></li>
+  <li><a href="#was-du-nach-diesem-kapitel-kannst" id="toc-was-du-nach-diesem-kapitel-kannst" class="nav-link" data-scroll-target="#was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</a></li>
+  <li><a href="#warum-quarto-vom-script-zum-bericht" id="toc-warum-quarto-vom-script-zum-bericht" class="nav-link" data-scroll-target="#warum-quarto-vom-script-zum-bericht"><span class="header-section-number">2.2</span> Warum Quarto? — vom Script zum Bericht</a></li>
+  <li><a href="#dein-erstes-.qmd" id="toc-dein-erstes-.qmd" class="nav-link" data-scroll-target="#dein-erstes-.qmd"><span class="header-section-number">2.3</span> Dein erstes <code>.qmd</code></a></li>
+  <li><a href="#yaml-header-das-steuerpult" id="toc-yaml-header-das-steuerpult" class="nav-link" data-scroll-target="#yaml-header-das-steuerpult"><span class="header-section-number">2.4</span> YAML-Header: das Steuerpult</a></li>
+  <li><a href="#code-chunks-im-detail" id="toc-code-chunks-im-detail" class="nav-link" data-scroll-target="#code-chunks-im-detail"><span class="header-section-number">2.5</span> Code-Chunks im Detail</a></li>
+  <li><a href="#inline-r-code-zahlen-im-flie%C3%9Ftext" id="toc-inline-r-code-zahlen-im-fließtext" class="nav-link" data-scroll-target="#inline-r-code-zahlen-im-flie%C3%9Ftext"><span class="header-section-number">2.6</span> Inline-R-Code: Zahlen im Fließtext</a></li>
+  <li><a href="#tabellen-und-grafiken" id="toc-tabellen-und-grafiken" class="nav-link" data-scroll-target="#tabellen-und-grafiken"><span class="header-section-number">2.7</span> Tabellen und Grafiken</a></li>
+  <li><a href="#literaturverweise-mit-bibtex-und-zotero" id="toc-literaturverweise-mit-bibtex-und-zotero" class="nav-link" data-scroll-target="#literaturverweise-mit-bibtex-und-zotero"><span class="header-section-number">2.8</span> Literaturverweise mit BibTeX und Zotero</a></li>
+  <li><a href="#open-science-reproduzierbarkeit-als-standard" id="toc-open-science-reproduzierbarkeit-als-standard" class="nav-link" data-scroll-target="#open-science-reproduzierbarkeit-als-standard"><span class="header-section-number">2.9</span> Open Science: Reproduzierbarkeit als Standard</a></li>
+  <li><a href="#projektstruktur-und-versionskontrolle" id="toc-projektstruktur-und-versionskontrolle" class="nav-link" data-scroll-target="#projektstruktur-und-versionskontrolle"><span class="header-section-number">2.10</span> Projektstruktur und Versionskontrolle</a></li>
+  <li><a href="#publizieren-html-pdf-word" id="toc-publizieren-html-pdf-word" class="nav-link" data-scroll-target="#publizieren-html-pdf-word"><span class="header-section-number">2.11</span> Publizieren: HTML, PDF, Word</a></li>
+  <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
+  <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
+  <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/02-Quarto.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/02-Quarto.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">R Workshop – Sozialwissenschaften</h1>
-<p class="subtitle lead">Einführung in die statistische Datenanalyse mit tidyverse und mariposa</p>
+<h1 class="title"><span id="sec-quarto" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto und reproduzierbare Wissenschaft</span></span></h1>
 </div>
 
-<div>
-  <div class="description">
-    Eine Einführung in die statistische Datenanalyse mit R, tidyverse und mariposa für die Sozialwissenschaften — mit ALLBUS 2023.
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Autor:innen</div>
-    <div class="quarto-title-meta-contents">
-             <p>Yannick Diehl </p>
-             <p>Daniel Moosdorf </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Veröffentlichungsdatum</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">22.05.2026</p>
-    </div>
-  </div>
   
     
   </div>
   
 
 
-</header><section id="vorwort" class="level1 unnumbered"><h1 class="unnumbered">Vorwort</h1>
-<p>Dieses Buch ist eine Einführung in die statistische Datenanalyse mit R für die Sozialwissenschaften. Es richtet sich an Studierende, die R neu kennenlernen — oft mit Vorerfahrung in SPSS — und einen einfachen, modernen Einstieg suchen. Du arbeitest dich vom ersten Datenimport über deskriptive und inferenzstatistische Verfahren bis zu Faktorenanalyse und Regression. Dein Werkzeugkasten ist dabei bewusst klein gehalten: das <strong>tidyverse</strong> für Datenmanipulation und Visualisierung und das Marburger Paket <strong>mariposa</strong> für die statistische Analyse.</p>
-<p>Anwendungsziel sind sozialwissenschaftliche Studien mit wissenschaftlichen Erhebungsstandards — exemplarisch arbeiten wir mit dem <strong>ALLBUS 2023</strong>. Auch unstandardisierte Datensätze lassen sich mit denselben Techniken bearbeiten, und Survey-Gewichtung ist von Anfang an mit dabei.</p>
-<section id="was-du-nach-diesem-buch-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-buch-kannst">Was du nach diesem Buch kannst</h2>
-<ul>
-<li>Datensätze aus SPSS, Stata oder Excel einlesen und mit Labels und fehlenden Werten umgehen.</li>
-<li>Daten transformieren, rekodieren und Skalen aus Items bilden.</li>
-<li>Univariate, bivariate und multivariate Analysen durchführen — auch mit Survey-Gewichten.</li>
-<li>Korrelationen, Faktorenanalysen, lineare und logistische Regressionen rechnen und interpretieren.</li>
-<li>Befunde mit ggplot2 in publikationsfähige Grafiken bringen.</li>
-<li>Eine Analyse so dokumentieren, dass sie reproduzierbar ist.</li>
-</ul></section><section id="voraussetzungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="voraussetzungen">Voraussetzungen</h2>
-<p><strong>R</strong> (Programmiersprache, Open Source). Die jeweils aktuelle Version findest du unter <a href="https://cran.r-project.org/">cran.r-project.org</a>. Dieses Buch setzt mindestens <strong>R 4.3</strong> voraus; empfohlen ist <strong>R 4.5 oder höher</strong>, damit alle hier gezeigten Funktionen ohne Anpassungen laufen.</p>
-<p><strong>RStudio</strong> als integrierte Entwicklungsumgebung (IDE). Die IDE selbst heißt weiterhin RStudio, die Firma dahinter heißt seit 2022 <a href="https://posit.co/">Posit</a>. Du brauchst die Desktop-Version: <a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a>. Wenn du lokal nichts installieren möchtest, kannst du alternativ <a href="https://posit.cloud/">Posit Cloud</a> (vormals RStudio Cloud) im Browser nutzen.</p>
-<p><strong>Pakete.</strong> Wir installieren am Anfang einmal die zwei Ökosysteme, die uns durch das ganze Buch tragen:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"YannickDiehl/mariposa"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"patchwork"</span><span class="op">)</span>  <span class="co"># nur fuer Multi-Plot-Komposition in Kap. 6</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Aktivierung in jeder R-Sitzung:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://YannickDiehl.github.io/mariposa/">mariposa</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Mehr brauchen wir nicht. Für die konfirmatorische Faktorenanalyse in Kap. 5 fügen wir später noch <code>lavaan</code> und <code>semPlot</code> hinzu — das sind die einzigen weiteren Pakete, die wir bewusst zulassen.</p>
-</section><section id="warum-r" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="warum-r">Warum R?</h2>
-<ul>
-<li>R ist eine Programmiersprache, die speziell für statistische Berechnungen und Visualisierungen von Daten entwickelt wurde.</li>
-<li>R ist Open Source: keine Lizenzkosten, auch nicht für die Erweiterungspakete.</li>
-<li>Daten lassen sich sehr flexibel auswerten und visualisieren — kleine Datenanalysen und große Pipelines folgen demselben Code-Stil.</li>
-<li>Wissenschaftliche Organisationen, Unternehmen und Behörden setzen R weltweit ein. Wer R lernt, lernt eine Sprache, die in der Praxis gefragt ist.</li>
-<li>R lässt sich plattformunabhängig in beliebige IT-Strukturen integrieren.</li>
-</ul></section><section id="warum-tidyverse-und-mariposa" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="warum-tidyverse-und-mariposa">Warum tidyverse und mariposa?</h2>
-<p>Statt einer langen Liste von Spezialpaketen arbeiten wir mit zwei klar abgegrenzten Ökosystemen.</p>
-<p><strong>Tidyverse.</strong> Eine Sammlung aufeinander abgestimmter Pakete (<code>dplyr</code>, <code>tidyr</code>, <code>ggplot2</code>, <code>readr</code>, <code>purrr</code>, <code>tibble</code>, <code>stringr</code>, <code>forcats</code>, <code>lubridate</code>), die einen gemeinsamen Stil für Datenmanipulation und Visualisierung definieren. Wer das tidyverse einmal verstanden hat, kann fast alle modernen R-Skripte lesen.</p>
-<p><strong>mariposa.</strong> Ein in Marburg entwickeltes Paket (Marburg Initiative for Political and Social Analysis), das die für sozialwissenschaftliche Analysen typischen Verfahren in einer konsistenten, tidyverse-nahen Syntax bereitstellt: Datenimport aus SPSS, Umgang mit Labels und Missing-Werten, deskriptive Statistik, t-Tests, ANOVA, Korrelation, Faktorenanalyse, Regression. Die Ergebnisse sind SPSS-kongruent — wer aus SPSS umsteigt, erkennt die Ausgaben wieder.</p>
-</section><section id="beispieldatensatz-allbus-2023" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="beispieldatensatz-allbus-2023">Beispieldatensatz: ALLBUS 2023</h2>
-<p>Wir arbeiten durchgehend mit dem <a href="https://www.gesis.org/allbus">ALLBUS</a> — der Allgemeinen Bevölkerungsumfrage der Sozialwissenschaften. Die Welle 2023 ist die aktuell verfügbare Hauptbefragung mit 5246 Befragten und 579 Variablen. Als roten Faden durch die Methoden-Kapitel verwenden wir die Frage:</p>
-<blockquote class="blockquote">
-<p><em>Wer trägt islamfeindliche Einstellungen in Deutschland 2023, und wie hängen sie mit politischen Orientierungen und Soziostruktur zusammen?</em></p>
-</blockquote>
-<p>Diese Frage ist nicht zufällig gewählt: Sie ermöglicht uns, eine <strong>latente Skala</strong> aus sechs Einzelitems zu bilden, die Skala anschließend deskriptiv zu beschreiben, mit anderen Variablen in Beziehung zu setzen und schließlich in Regressionsmodellen zu erklären. So lernst du nicht nur einzelne Methoden, sondern siehst, wie sie zu einer kompletten Analyse zusammenfließen.</p>
-</section><section id="typographie" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="typographie">Typographie</h2>
-<p>Die folgenden Kapitel bestehen zu einem großen Teil aus R-Code in sogenannten <strong>Code-Chunks</strong>. Sie sehen so aus:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">x</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Das Ergebnis erscheint direkt darunter:</p>
-<div class="cell" data-layout-align="center">
-<pre><code>##  [1]  1 11 21 31 41 51 61 71 81 91</code></pre>
-</div>
-<p><code>x</code> ist hier dein Input, das Ergebnis dein Output. Den Code kannst du jederzeit in dein eigenes R-Script übernehmen — Copy-and-Paste ist ausdrücklich erwünscht.</p>
-<p><strong>Pipe-Operator.</strong> Du wirst durchgehend den nativen Pipe-Operator <code>|&gt;</code> sehen. Er reicht das Ergebnis einer Funktion in die nächste weiter und macht aus verschachteltem Code einen lesbaren Arbeitsfluss:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">eastwest</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/describe.html">describe</a></span><span class="op">(</span><span class="va">ls01</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>In älterem Code findest du oft <code>%&gt;%</code> (aus dem Paket <code>magrittr</code>). Beide tun fast dasselbe; wir erklären den Unterschied kurz in Kapitel 2.</p>
-</section><section id="konventionen-in-diesem-buch" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="konventionen-in-diesem-buch">Konventionen in diesem Buch</h2>
-<p>Du erkennst wiederkehrende Bausteine:</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tipp
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>SPSS → R.</strong> Direkte Übersetzungshilfe für Umsteiger:innen — links der SPSS-Befehl, rechts das R-Pendant.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warnung
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Vorsicht.</strong> Typische Fallstricke und Stolpersteine.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
+</header><div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -343,33 +198,69 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Hintergrund.</strong> Kurze konzeptionelle Einschübe zur Theorie hinter einer Methode.</p>
+<p><strong>Kapitel in Arbeit.</strong> Der Inhalt dieses Kapitels wird zur Modernisierung 2026 ergänzt. Die Gliederung unten zeigt, was geplant ist.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Wichtig
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>mariposa-Tipp.</strong> Stellen, an denen mariposa eine besonders kompakte Lösung anbietet.</p>
-</div>
-</div>
-</section><section id="weiterführende-literatur" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführende-literatur">Weiterführende Literatur</h2>
-<p>Wenn du tiefer einsteigen möchtest:</p>
+<section id="worum-es-geht" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="worum-es-geht">
+<span class="header-section-number">2.1</span> Worum es geht</h2>
+<p>Wissenschaftliche Arbeit ist nur dann <em>Wissenschaft</em>, wenn andere sie nachvollziehen können. Quarto verbindet <strong>Analyse und Bericht in einem Dokument</strong>: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem R-Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word — und wenn du Daten oder Code änderst, ist der nächste Render-Lauf automatisch aktuell.</p>
+<p>Dieses Kapitel führt dich von deinem ersten <code>.qmd</code>-Dokument bis zu einem reproduzierbaren Projekt, das den Standards offener Wissenschaft genügt.</p>
+</section><section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
 <ul>
-<li>Hadley Wickham &amp; Garrett Grolemund, <a href="https://r4ds.hadley.nz/">R for Data Science (2. Auflage)</a> — das Standardwerk für das tidyverse, frei online.</li>
-<li>Hadley Wickham, <a href="https://adv-r.hadley.nz/">Advanced R</a> — für alle, die R als Programmiersprache verstehen wollen.</li>
-<li>mariposa-Dokumentation: <a href="https://yannickdiehl.github.io/mariposa/">yannickdiehl.github.io/mariposa</a> — Funktionsreferenz und Vignetten.</li>
-<li>Yihui Xie, <a href="https://bookdown.org/yihui/bookdown/">bookdown: Authoring Books and Technical Documents with R Markdown</a> — falls du selbst ein Buch oder Skript wie dieses schreiben möchtest.</li>
+<li>Den Unterschied zwischen R-Script, R Markdown und Quarto erklären.</li>
+<li>Ein <code>.qmd</code>-Dokument anlegen, rendern und in HTML/PDF/Word exportieren.</li>
+<li>Code-Chunks mit YAML-Optionen steuern (<code>echo</code>, <code>eval</code>, <code>fig-cap</code>, …).</li>
+<li>Inline-R-Code für reproduzierbare Zahlen im Fließtext nutzen.</li>
+<li>Tabellen und Grafiken mit Beschriftungen und Referenzen einbinden.</li>
+<li>Literatur über BibTeX und Zotero zitieren.</li>
+<li>Open-Science-Prinzipien (Reproduzierbarkeit, FAIR, OSF) auf dein Projekt anwenden.</li>
+<li>Ein Projekt sauber strukturieren (<code>data/</code>, <code>R/</code>, <code>output/</code>) und mit Git versionieren.</li>
+</ul></section><section id="warum-quarto-vom-script-zum-bericht" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="warum-quarto-vom-script-zum-bericht">
+<span class="header-section-number">2.2</span> Warum Quarto? — vom Script zum Bericht</h2>
+<p><em>(folgt)</em></p>
+</section><section id="dein-erstes-.qmd" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="dein-erstes-.qmd">
+<span class="header-section-number">2.3</span> Dein erstes <code>.qmd</code>
+</h2>
+<p><em>(folgt)</em></p>
+</section><section id="yaml-header-das-steuerpult" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="yaml-header-das-steuerpult">
+<span class="header-section-number">2.4</span> YAML-Header: das Steuerpult</h2>
+<p><em>(folgt)</em></p>
+</section><section id="code-chunks-im-detail" class="level2" data-number="2.5"><h2 data-number="2.5" class="anchored" data-anchor-id="code-chunks-im-detail">
+<span class="header-section-number">2.5</span> Code-Chunks im Detail</h2>
+<p><em>(folgt)</em></p>
+</section><section id="inline-r-code-zahlen-im-fließtext" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="inline-r-code-zahlen-im-fließtext">
+<span class="header-section-number">2.6</span> Inline-R-Code: Zahlen im Fließtext</h2>
+<p><em>(folgt)</em></p>
+</section><section id="tabellen-und-grafiken" class="level2" data-number="2.7"><h2 data-number="2.7" class="anchored" data-anchor-id="tabellen-und-grafiken">
+<span class="header-section-number">2.7</span> Tabellen und Grafiken</h2>
+<p><em>(folgt)</em></p>
+</section><section id="literaturverweise-mit-bibtex-und-zotero" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="literaturverweise-mit-bibtex-und-zotero">
+<span class="header-section-number">2.8</span> Literaturverweise mit BibTeX und Zotero</h2>
+<p><em>(folgt)</em></p>
+</section><section id="open-science-reproduzierbarkeit-als-standard" class="level2" data-number="2.9"><h2 data-number="2.9" class="anchored" data-anchor-id="open-science-reproduzierbarkeit-als-standard">
+<span class="header-section-number">2.9</span> Open Science: Reproduzierbarkeit als Standard</h2>
+<p><em>(folgt — FAIR-Prinzipien, OSF, Zenodo, Pre-Registration)</em></p>
+</section><section id="projektstruktur-und-versionskontrolle" class="level2" data-number="2.10"><h2 data-number="2.10" class="anchored" data-anchor-id="projektstruktur-und-versionskontrolle">
+<span class="header-section-number">2.10</span> Projektstruktur und Versionskontrolle</h2>
+<p><em>(folgt — <code>data/</code>, <code>R/</code>, <code>output/</code>, Git-Basics)</em></p>
+</section><section id="publizieren-html-pdf-word" class="level2" data-number="2.11"><h2 data-number="2.11" class="anchored" data-anchor-id="publizieren-html-pdf-word">
+<span class="header-section-number">2.11</span> Publizieren: HTML, PDF, Word</h2>
+<p><em>(folgt)</em></p>
+</section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
+<p><em>(folgt)</em></p>
+</section><section id="was-du-jetzt-weißt" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-jetzt-weißt">Was du jetzt weißt</h2>
+<p><em>(folgt nach Ausarbeitung)</em></p>
+</section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
+<ul>
+<li>Posit, <a href="https://quarto.org/">Quarto-Dokumentation</a> — Referenz für alle Optionen und Output-Formate.</li>
+<li>Garrett Grolemund &amp; Hadley Wickham, <a href="https://r4ds.hadley.nz/quarto.html">R for Data Science (2e), Kapitel „Quarto”</a>.</li>
+<li>Steven Goodman, Daniele Fanelli &amp; John Ioannidis, <em>„What Does Research Reproducibility Mean?“</em> — Science Translational Medicine (2016).</li>
+<li>
+<a href="https://osf.io/">Open Science Framework</a> — Plattform für Daten, Code und Pre-Registrations.</li>
 </ul>
 
 
-</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -769,10 +660,13 @@ Wichtig
     }
   });
   </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./01-RStudio.html" class="pagination-link" aria-label="RStudio">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./01-RStudio.html" class="pagination-link" aria-label="RStudio">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./03-ProgrammierspracheR.html" class="pagination-link" aria-label="Programmiersprache R">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Programmiersprache R</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -780,5 +674,5 @@ Wichtig
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/index.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/02-Quarto.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/02-Quarto.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
