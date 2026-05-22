@@ -28,18 +28,24 @@ In diesem Kapitel verdichten wir die Befunde aus Kap. 5 zu einem **multivariaten
 
 > *Welche soziodemografischen und politischen Merkmale erklären Islamfeindlichkeit am besten?*
 
-Dafür brauchen wir drei Werkzeugkästen: die **explorative Faktorenanalyse**, um die Struktur unserer Skala zu prüfen, die **Reliabilitätsanalyse** für die Skalenqualität, und die **multiple Regression** für die eigentliche Erklärung. Am Ende werfen wir noch einen kurzen Blick auf die konfirmatorische Faktorenanalyse mit `lavaan` — das ist der einzige Punkt, an dem wir aus dem tidyverse-/mariposa-Universum heraustreten.
+## Worum es geht
+
+In Kap. 5 hast du Variablen einzeln beschrieben und paarweise verglichen. Multivariate Verfahren gehen einen Schritt weiter: Sie modellieren mehrere Prädiktoren gleichzeitig — und damit auch, wie diese sich gegenseitig kontrollieren. *Was bleibt vom Ost-West-Unterschied übrig, wenn ich Bildung herausrechne? Wie viel der Varianz in Islamfeindlichkeit erklären Bildung, Region und Populismus zusammen?*
+
+Drei Werkzeugkästen tragen dich durch das Kapitel: die **explorative Faktorenanalyse** (prüft die Struktur deiner Skalen), die **Reliabilitätsanalyse** (misst, wie konsistent die Items zusammenhängen), und die **multiple Regression** (erklärt deine Zielvariable über mehrere Prädiktoren). Dazwischen liegt eine erweiterte ANOVA-Familie (mehrfaktoriell, ANCOVA), und am Ende ein kurzer Ausblick auf konfirmatorische Modelle mit `lavaan` — der einzige Punkt, an dem wir aus dem tidyverse-/mariposa-Universum heraustreten.
 
 ## Was du nach diesem Kapitel kannst {-}
 
-- Eine Korrelationsmatrix für eine Itembatterie aufstellen und interpretieren.
+- Eine Korrelationsmatrix für eine Itembatterie aufstellen, interpretieren und als Heatmap visualisieren.
 - Eine **explorative Faktorenanalyse** durchführen — inklusive KMO, Bartlett, Anzahl-Faktoren-Entscheidung und Rotation.
-- **Cronbachs α** berechnen und Item-Statistiken lesen.
+- **Cronbachs α** berechnen, Item-Statistiken lesen und problematische Items identifizieren.
+- **Mehrfaktorielle ANOVA** mit Interaktion und **ANCOVA** mit kontinuierlicher Kovariate rechnen.
 - Eine **multiple lineare Regression** rechnen, gewichten und interpretieren — Koeffizienten, Beta, R², Modell-F.
+- Multikollinearität über **VIF** und **Tolerance** prüfen.
 - Eine **logistische Regression** rechnen, die einem dichotomen Outcome folgt.
 - Ein Strukturgleichungsmodell mit `lavaan` als Ausblick verstehen.
 
-## Korrelationsmatrix
+## Korrelationsmatrix {#sec-korrelationsmatrix}
 
 Bevor du eine EFA rechnest, schaust du dir die Korrelationen aller Skala-Items an. Hohe Inter-Item-Korrelationen sind die Grundvoraussetzung jeder sinnvollen Faktorisierung.
 
@@ -52,8 +58,9 @@ allbus |>
 
 **Lesart.** mariposa gibt dir eine sauber formatierte Matrix mit Pearson-*r*, *p*-Werten und N pro Zelle. Werte zwischen 0.3 und 0.7 sind in einer gut funktionierenden Skala typisch — zu niedrig (< 0.2) deutet auf ein Fremdkörper-Item hin, zu hoch (> 0.85) auf Redundanz.
 
-::: {.callout-tip}
-**Eine schnelle Heatmap.** Wenn du die Matrix visualisieren willst, geht das mit ggplot2:
+### Korrelationsmatrix visualisieren
+
+Wenn du die Matrix lieber als **Heatmap** siehst, baust du sie mit ggplot2 selbst — das ist die tidyverse-Alternative zum klassischen `corrplot()`, mit voller Kontrolle über Farben und Beschriftung:
 
 ```{r cor-heatmap, eval=FALSE}
 allbus |>
@@ -68,10 +75,10 @@ allbus |>
                        midpoint = 0, limits = c(-1, 1)) +
   coord_fixed()
 ```
-Das ist die tidyverse-Alternative zum klassischen `corrplot()` — du baust dir die Visualisierung selbst, hast aber volle Kontrolle.
-:::
 
-## Explorative Faktorenanalyse
+Mehr zur Grammatik von ggplot2 in Kap. 7.
+
+## Explorative Faktorenanalyse {#sec-efa}
 
 Die EFA prüft, ob hinter mehreren beobachteten Variablen wenige **latente Dimensionen** stehen. mariposas `efa()` integriert in einem Aufruf alles, was du brauchst: KMO-Test, Bartlett-Test, Eigenwerte, Faktorladungen und (auf Wunsch) Rotation.
 
@@ -104,14 +111,15 @@ allbus |>
 
 ::: {.callout-note}
 **Hintergrund: PCA, EFA, CFA — was unterscheidet sie?**
+
 - **PCA** (`method = "pca"`) sucht *Komponenten*, die maximal Varianz erklären — gut für Datenreduktion.
 - **EFA** (`method = "ml"` oder `"minres"`) modelliert *latente Faktoren* hinter den Items — gut für Theoriebildung.
-- **CFA** (mit `lavaan`, siehe unten) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
+- **CFA** (mit `lavaan`, siehe @sec-cfa) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
 
 In der Praxis: EFA, wenn du *erkundest*, CFA wenn du *bestätigst*.
 :::
 
-## Reliabilitätsanalyse
+## Reliabilitätsanalyse {#sec-reliabilitaet}
 
 Bevor du eine Skala in einer Regression einsetzt, prüfst du ihre **interne Konsistenz** mit Cronbachs α.
 
@@ -123,13 +131,56 @@ allbus |> reliability(mm01, mm02r, mm03, mm04, mm05r, mm06)
 
 **Lesart.** Faustregeln für Cronbachs α: < 0.5 ungenügend, 0.5–0.7 fragwürdig, 0.7–0.8 akzeptabel, 0.8–0.9 gut, > 0.9 exzellent (manchmal zu hoch, deutet auf Redundanz hin). Werte ≥ 0.8 sind in den Sozialwissenschaften üblich für gute Skalen.
 
-Wenn die Funktion Item-Statistiken ausgibt, achte besonders auf die Spalte „α if item deleted": Steigt α deutlich, wenn ein Item entfernt wird, ist das Item ein Kandidat zum Streichen.
+Die Item-Statistik zeigt für jedes Item zwei zentrale Werte:
+
+- **Item-Total-Korrelation** — wie stark korreliert dieses Item mit dem Gesamtscore (ohne das Item)?
+- **α if item deleted** — wie hoch wäre α, wenn dieses Item entfernt würde?
+
+Daraus liest du:
+
+- **α steigt beim Entfernen** → das Item passt nicht zur Skala, Kandidat zum Streichen.
+- **α sinkt beim Entfernen** → das Item trägt zur Reliabilität bei, behalten.
+- **Item-Total-Korrelation < 0.3** → schwacher Beitrag, oft Hand in Hand mit dem ersten Punkt.
+
+Ein Beispiel: zeigt die Item-Statistik, dass „α if item deleted" für `mm04` von 0.84 auf 0.87 steigen würde, weißt du: `mm04` passt nicht ganz zu den anderen — vielleicht weil es eine andere Facette (staatliche Restriktion) anspricht als die übrigen Items (persönliche Einstellung). Entweder du behältst es bewusst (theoretisch begründet) oder entfernst es (empirisch begründet).
 
 ::: {.callout-warning}
 **Vorsicht: Cronbachs α ist eine Untergrenze.** Das berühmte α unterschätzt die wahre Reliabilität in fast allen Modellannahmen. In der modernen Methodenliteratur gilt **McDonalds ω** als sauberere Wahl, ist aber rechentechnisch aufwendiger (über `lavaan`-Modelle). Für ein Einsteigerbuch reicht α — wisse aber, dass es das gibt.
 :::
 
-## Lineare Regression
+## ANOVA mit mehreren Faktoren {#sec-anova-mult}
+
+Die einfaktorielle ANOVA aus Kap. 5 testet *einen* Gruppierungsfaktor. In der Praxis willst du oft mehrere Faktoren gleichzeitig prüfen — und vor allem: ob ein Faktor in unterschiedlichen Subgruppen *unterschiedlich* wirkt (Interaktion).
+
+### Zweifaktorielle ANOVA mit `factorial_anova()`
+
+**Frage:** Wirkt der Bildungseffekt auf Islamfeindlichkeit in Ost und West gleich, oder unterscheidet er sich?
+
+```{r factorial-anova, eval=FALSE}
+allbus |>
+  factorial_anova(islamophobie,
+                  between = c(educ_kat, eastwest),
+                  weights = wghtpew)
+```
+
+**Lesart.** Du bekommst drei F-Tests: für jeden **Haupteffekt** einen (Bildung, Region) und einen für die **Interaktion** (Bildung × Region). Eine signifikante Interaktion bedeutet: der Bildungseffekt auf Islamfeindlichkeit fällt in Ost und West unterschiedlich aus. Ist die Interaktion nicht signifikant, sind beide Effekte additiv — beide wirken in beiden Regionen ähnlich.
+
+### ANCOVA mit `ancova()`
+
+Die **Kovarianzanalyse** mischt ANOVA und Regression: Du hast einen kategorialen Gruppierungsfaktor (z. B. Bildung) und eine kontinuierliche **Kovariate** (z. B. Alter). ANCOVA testet den Gruppenunterschied, *nachdem* der Einfluss der Kovariate herausgerechnet wurde.
+
+**Frage:** Unterscheiden sich Bildungsgruppen in der Islamfeindlichkeit, wenn das Alter konstant gehalten wird?
+
+```{r ancova-demo, eval=FALSE}
+allbus |>
+  ancova(islamophobie,
+         between = educ_kat, covariate = age,
+         weights = wghtpew)
+```
+
+**Lesart.** Der Gruppeneffekt von Bildung wird *bereinigt* um den Alterseffekt ausgegeben. ANCOVA ist nützlich, wenn ein bekannter Störfaktor zwischen den Gruppen variiert und du seinen Einfluss isolieren willst — methodisch eine Brücke zur Regression im nächsten Abschnitt.
+
+## Lineare Regression {#sec-regression}
 
 Jetzt die zentrale Methode des Kapitels: die **multiple lineare Regression**. Wir nutzen die Skalen und Variablen, die wir in Kap. 4 und 5 vorbereitet haben.
 
@@ -155,14 +206,37 @@ summary(modell)
 
 - **B** — unstandardisierte Koeffizienten. Interpretation: „Wenn x um eine Einheit steigt, ändert sich y um B Einheiten."
 - **Std. Error** und **t-Wert** — Präzision der Schätzung.
-- **Beta** — standardisierte Koeffizienten. Direkt vergleichbar zwischen den Prädiktoren.
+- **Beta** — standardisierte Koeffizienten. Skalenunabhängig und damit direkt vergleichbar zwischen den Prädiktoren — die wichtigste Hilfe, um zu sagen, *welcher* Prädiktor relativ am stärksten wirkt.
 - **Sig.** — *p*-Werte.
 
 In unserem Modell ist `populismus` mit einem Beta von rund 0.33 der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher. Bildung wirkt negativ (höhere Bildung → weniger Islamfeindlichkeit), Alter und Ost-Region positiv.
 
+::: {.callout-note}
+**Hintergrund: Multikollinearität prüfen.** Wenn zwei Prädiktoren stark miteinander korrelieren, hat das Modell Mühe, ihre Effekte zu trennen — Koeffizienten werden instabil, Standardfehler steigen. Die Diagnose-Maße sind **VIF** (Variance Inflation Factor) und **Tolerance** (= 1 / VIF). mariposa rechnet beide automatisch und gibt sie standardmäßig im `summary()` aus:
+
+```{r vif-callout, eval=FALSE}
+summary(modell, collinearity = TRUE)     # Standardeinstellung
+summary(modell, collinearity = FALSE)    # Block ausblenden
+```
+
+Faustregeln: **VIF > 10** signalisiert problematische Multikollinearität, **VIF > 5** ist Warngrenze. Tolerance < 0.2 entsprechend. Wenn ein Prädiktor weit über der Schwelle liegt, prüfst du: Lässt sich einer der hoch korrelierten Prädiktoren weglassen oder zu einer Skala zusammenfassen?
+:::
+
+::: {.callout-tip}
+**Tipp: Residuen-Diagnostik.** Die Annahmen der linearen Regression (Linearität, Normalverteilung der Residuen, Homoskedastizität, keine Ausreißer) prüfst du am schnellsten mit den vier Standard-Plots:
+
+```{r residual-plot, eval=FALSE}
+plot(modell$model)
+```
+
+Du bekommst nacheinander: *Residuals vs Fitted* (Linearität), *QQ-Plot* (Normalverteilung der Residuen), *Scale-Location* (Homoskedastizität) und *Residuals vs Leverage* (Ausreißer / Hebelpunkte).
+:::
+
 ### Modelle vergleichen
 
-Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell *signifikant* verbessert, rechnest du beide Modelle und vergleichst sie mit `anova()`:
+Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell *signifikant* verbessert, rechnest du beide Modelle und vergleichst sie mit `anova()`.
+
+mariposas `linear_regression()` gibt ein **Listenobjekt** zurück — das eigentliche `lm`-Objekt aus base R liegt darin unter `$model`. Damit kannst du es an `anova()`, `plot()` oder `predict()` weiterreichen:
 
 ```{r model-compare, eval=FALSE}
 m_basis <- allbus |>
@@ -172,14 +246,14 @@ m_voll <- allbus |>
   linear_regression(islamophobie ~ educ_kat + age + eastwest + sex + populismus,
                     weights = wghtpew)
 
-anova(m_basis$model, m_voll$model)  # F-Test auf inkrementelle Varianzaufklaerung
+anova(m_basis$model, m_voll$model)   # F-Test auf inkrementelle Varianzaufklaerung
 ```
 
 ::: {.callout-tip}
 **SPSS → R: Hierarchische Regression.** In SPSS klickst du in `Linear Regression` mehrere `Block`-Stufen und bekommst die Modellvergleichsstatistik gratis. In R rechnest du jedes Modell einzeln und vergleichst sie explizit — das ist mehr Code, aber sichtbarer.
 :::
 
-## Logistische Regression
+## Logistische Regression {#sec-logistic}
 
 Wenn deine AV **dichotom** ist (ja/nein, hoch/niedrig), brauchst du eine **logistische Regression**. Wir konstruieren dafür eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
 
@@ -212,7 +286,16 @@ summary(modell_log)
 
 Odds Ratios > 1 erhöhen, < 1 verringern die Wahrscheinlichkeit des Outcomes.
 
-## Konfirmatorische Faktorenanalyse als Ausblick
+::: {.callout-note}
+**Hintergrund: Accuracy ist nur eine Klassifikationskennzahl.** Accuracy = (richtig positiv + richtig negativ) / Gesamt — beantwortet aber nicht, *wo* das Modell scheitert. Bei unausgewogenen Klassen (z. B. 90 % „niedrig", 10 % „hoch") kann ein Modell, das alles als „niedrig" vorhersagt, schon eine Accuracy von 90 % erreichen, ohne einen einzigen „hoch"-Fall zu erkennen. Zwei ergänzende Maße sind:
+
+- **Sensitivity** (Recall) — Anteil der wirklichen „hoch"-Fälle, die korrekt erkannt wurden.
+- **Specificity** — Anteil der wirklichen „niedrig"-Fälle, die korrekt erkannt wurden.
+
+Aus den Vorhersagen `predict(modell_log$model, type = "response")` baust du sie dir bei Bedarf manuell oder mit dem Paket `caret`.
+:::
+
+## Konfirmatorische Faktorenanalyse als Ausblick {#sec-cfa}
 
 Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine **konfirmatorische Faktorenanalyse**. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`.
 
@@ -250,6 +333,7 @@ semPaths(fit, whatLabels = "std", layout = "tree", edge.color = "black")
 
 ::: {.callout-note}
 **Hintergrund: Wann CFA, wann nicht?** Eine CFA macht Sinn, wenn:
+
 1. Du eine *konkrete* theoretische Hypothese über die Faktorstruktur hast.
 2. Deine Stichprobe groß genug ist (Faustregel: N ≥ 200).
 3. Du *Modellgüte* in Maß und Zahl ausweisen willst.
@@ -288,10 +372,24 @@ allbus |>
 :::
 
 ::: {.callout-tip collapse="true"}
-**Übung 3 — Logistische Regression mit dichotomer Outcome.** Erzeuge eine Dummy-Variable für „hohe Demokratiezufriedenheit" (`ps03` ≤ 2, da niedrige Werte hier Zufriedenheit bedeuten) und prüfe, welche Merkmale damit zusammenhängen.
+**Übung 3 — Multikollinearität prüfen.** Rechne das Hauptmodell aus dem Kapitel noch einmal und schau dir die VIF-Werte an. Sind alle unter dem kritischen Wert von 10? Welcher Prädiktor hat den höchsten VIF?
 
 **Lösung:**
 ```{r ex3-kap6-loesung, eval=FALSE}
+modell <- allbus |>
+  linear_regression(
+    formula = islamophobie ~ educ_kat + age + eastwest + sex + populismus,
+    weights = wghtpew
+  )
+summary(modell, collinearity = TRUE)
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 4 — Logistische Regression mit dichotomer Outcome.** Erzeuge eine Dummy-Variable für „hohe Demokratiezufriedenheit" (`ps03` ≤ 2, da niedrige Werte hier Zufriedenheit bedeuten) und prüfe, welche Merkmale damit zusammenhängen.
+
+**Lösung:**
+```{r ex4-kap6-loesung, eval=FALSE}
 allbus |>
   mutate(demo_zufrieden = as.integer(ps03 <= 2)) |>
   logistic_regression(
@@ -304,11 +402,14 @@ allbus |>
 
 ## Was du jetzt weißt {-}
 
-- Du erstellst gewichtete Korrelationsmatrizen mit `pearson_cor()` und visualisierst sie über ggplot2.
+- Du erstellst gewichtete Korrelationsmatrizen mit `pearson_cor()` und visualisierst sie als Heatmap über ggplot2.
 - Du führst eine EFA mit `efa()` durch — inklusive KMO, Bartlett und Rotation.
-- Du berechnest Cronbachs α mit `reliability()` und beurteilst die interne Konsistenz einer Skala.
-- Du rechnest eine multiple lineare Regression mit `linear_regression()` und interpretierst Beta-Koeffizienten.
-- Du rechnest eine logistische Regression mit `logistic_regression()` und liest Odds Ratios.
+- Du berechnest Cronbachs α mit `reliability()`, liest Item-Statistiken und identifizierst problematische Items.
+- Du rechnest mehrfaktorielle ANOVA (`factorial_anova()`) und ANCOVA (`ancova()`) mit Interaktion und Kovariate.
+- Du rechnest eine multiple lineare Regression mit `linear_regression()`, interpretierst Beta-Koeffizienten und prüfst Multikollinearität (VIF, Tolerance).
+- Du checkst Residuen mit den vier Standard-Plots von `plot(modell$model)`.
+- Du vergleichst Modelle mit `anova()` und kennst den Unterschied von mariposa-Listenobjekt und `$model`-`lm`-Objekt.
+- Du rechnest eine logistische Regression mit `logistic_regression()`, liest Odds Ratios und kennst Accuracy, Sensitivity und Specificity als ergänzende Klassifikationsmaße.
 - Du weißt, wann CFA mit `lavaan` sinnvoll ist und wie eine Minimalspezifikation aussieht.
 
 Im nächsten Kapitel widmen wir uns ganz der **grafischen Aufbereitung** deiner Ergebnisse mit ggplot2 und patchwork.
@@ -317,4 +418,5 @@ Im nächsten Kapitel widmen wir uns ganz der **grafischen Aufbereitung** deiner 
 
 - mariposa-Vignetten [„Regression Analysis"](https://yannickdiehl.github.io/mariposa/articles/regression-analysis.html) und [„Scale Analysis"](https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html).
 - Yves Rosseel et al., [lavaan-Dokumentation](https://lavaan.ugent.be/) — sehr lesbare Einführung in SEM mit R.
-- Andy Field et al., *Discovering Statistics Using R*, Kapitel zu multipler Regression und Faktorenanalyse.
+- Andy Field et al., *Discovering Statistics Using R*, Kapitel zu multipler Regression, ANCOVA und Faktorenanalyse.
+- John Fox & Sanford Weisberg, *An R Companion to Applied Regression* — die Standardreferenz für Regressionsdiagnostik in R.
