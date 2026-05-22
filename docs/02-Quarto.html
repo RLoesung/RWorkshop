@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -157,15 +192,38 @@ ul.task-list li input[type="checkbox"] {
   <ul>
 <li><a href="#worum-es-geht" id="toc-worum-es-geht" class="nav-link active" data-scroll-target="#worum-es-geht"><span class="header-section-number">2.1</span> Worum es geht</a></li>
   <li><a href="#was-du-nach-diesem-kapitel-kannst" id="toc-was-du-nach-diesem-kapitel-kannst" class="nav-link" data-scroll-target="#was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</a></li>
-  <li><a href="#warum-quarto-vom-script-zum-bericht" id="toc-warum-quarto-vom-script-zum-bericht" class="nav-link" data-scroll-target="#warum-quarto-vom-script-zum-bericht"><span class="header-section-number">2.2</span> Warum Quarto? — vom Script zum Bericht</a></li>
+  <li><a href="#warum-quarto-vom-skript-zum-bericht" id="toc-warum-quarto-vom-skript-zum-bericht" class="nav-link" data-scroll-target="#warum-quarto-vom-skript-zum-bericht"><span class="header-section-number">2.2</span> Warum Quarto? — vom Skript zum Bericht</a></li>
   <li><a href="#dein-erstes-.qmd" id="toc-dein-erstes-.qmd" class="nav-link" data-scroll-target="#dein-erstes-.qmd"><span class="header-section-number">2.3</span> Dein erstes <code>.qmd</code></a></li>
   <li><a href="#yaml-header-das-steuerpult" id="toc-yaml-header-das-steuerpult" class="nav-link" data-scroll-target="#yaml-header-das-steuerpult"><span class="header-section-number">2.4</span> YAML-Header: das Steuerpult</a></li>
-  <li><a href="#code-chunks-im-detail" id="toc-code-chunks-im-detail" class="nav-link" data-scroll-target="#code-chunks-im-detail"><span class="header-section-number">2.5</span> Code-Chunks im Detail</a></li>
+  <li>
+<a href="#code-chunks-im-detail" id="toc-code-chunks-im-detail" class="nav-link" data-scroll-target="#code-chunks-im-detail"><span class="header-section-number">2.5</span> Code-Chunks im Detail</a>
+  <ul>
+<li><a href="#setup-chunk" id="toc-setup-chunk" class="nav-link" data-scroll-target="#setup-chunk"><span class="header-section-number">2.5.1</span> Setup-Chunk</a></li>
+  </ul>
+</li>
   <li><a href="#inline-r-code-zahlen-im-flie%C3%9Ftext" id="toc-inline-r-code-zahlen-im-fließtext" class="nav-link" data-scroll-target="#inline-r-code-zahlen-im-flie%C3%9Ftext"><span class="header-section-number">2.6</span> Inline-R-Code: Zahlen im Fließtext</a></li>
-  <li><a href="#tabellen-und-grafiken" id="toc-tabellen-und-grafiken" class="nav-link" data-scroll-target="#tabellen-und-grafiken"><span class="header-section-number">2.7</span> Tabellen und Grafiken</a></li>
-  <li><a href="#literaturverweise-mit-bibtex-und-zotero" id="toc-literaturverweise-mit-bibtex-und-zotero" class="nav-link" data-scroll-target="#literaturverweise-mit-bibtex-und-zotero"><span class="header-section-number">2.8</span> Literaturverweise mit BibTeX und Zotero</a></li>
-  <li><a href="#open-science-reproduzierbarkeit-als-standard" id="toc-open-science-reproduzierbarkeit-als-standard" class="nav-link" data-scroll-target="#open-science-reproduzierbarkeit-als-standard"><span class="header-section-number">2.9</span> Open Science: Reproduzierbarkeit als Standard</a></li>
-  <li><a href="#projektstruktur-und-versionskontrolle" id="toc-projektstruktur-und-versionskontrolle" class="nav-link" data-scroll-target="#projektstruktur-und-versionskontrolle"><span class="header-section-number">2.10</span> Projektstruktur und Versionskontrolle</a></li>
+  <li>
+<a href="#tabellen-und-grafiken" id="toc-tabellen-und-grafiken" class="nav-link" data-scroll-target="#tabellen-und-grafiken"><span class="header-section-number">2.7</span> Tabellen und Grafiken</a>
+  <ul>
+<li><a href="#tabellen-mit-kable-und-gt" id="toc-tabellen-mit-kable-und-gt" class="nav-link" data-scroll-target="#tabellen-mit-kable-und-gt"><span class="header-section-number">2.7.1</span> Tabellen mit <code>kable()</code> und <code>gt</code></a></li>
+  <li><a href="#grafiken" id="toc-grafiken" class="nav-link" data-scroll-target="#grafiken"><span class="header-section-number">2.7.2</span> Grafiken</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-literatur" id="toc-sec-literatur" class="nav-link" data-scroll-target="#sec-literatur"><span class="header-section-number">2.8</span> Literaturverweise mit BibTeX und Zotero</a></li>
+  <li>
+<a href="#open-science-reproduzierbarkeit-als-standard" id="toc-open-science-reproduzierbarkeit-als-standard" class="nav-link" data-scroll-target="#open-science-reproduzierbarkeit-als-standard"><span class="header-section-number">2.9</span> Open Science: Reproduzierbarkeit als Standard</a>
+  <ul>
+<li><a href="#reproduzierbarkeit-vs.-replizierbarkeit" id="toc-reproduzierbarkeit-vs.-replizierbarkeit" class="nav-link" data-scroll-target="#reproduzierbarkeit-vs.-replizierbarkeit"><span class="header-section-number">2.9.1</span> Reproduzierbarkeit vs.&nbsp;Replizierbarkeit</a></li>
+  <li><a href="#fair-prinzipien" id="toc-fair-prinzipien" class="nav-link" data-scroll-target="#fair-prinzipien"><span class="header-section-number">2.9.2</span> FAIR-Prinzipien</a></li>
+  <li><a href="#plattformen-und-pre-registration" id="toc-plattformen-und-pre-registration" class="nav-link" data-scroll-target="#plattformen-und-pre-registration"><span class="header-section-number">2.9.3</span> Plattformen und Pre-Registration</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#projektstruktur-und-versionskontrolle" id="toc-projektstruktur-und-versionskontrolle" class="nav-link" data-scroll-target="#projektstruktur-und-versionskontrolle"><span class="header-section-number">2.10</span> Projektstruktur und Versionskontrolle</a>
+  <ul>
+<li><a href="#versionskontrolle-mit-git" id="toc-versionskontrolle-mit-git" class="nav-link" data-scroll-target="#versionskontrolle-mit-git"><span class="header-section-number">2.10.1</span> Versionskontrolle mit Git</a></li>
+  </ul>
+</li>
   <li><a href="#publizieren-html-pdf-word" id="toc-publizieren-html-pdf-word" class="nav-link" data-scroll-target="#publizieren-html-pdf-word"><span class="header-section-number">2.11</span> Publizieren: HTML, PDF, Word</a></li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
@@ -188,7 +246,69 @@ ul.task-list li input[type="checkbox"] {
   
 
 
-</header><div class="callout callout-style-default callout-note callout-titled">
+</header><section id="worum-es-geht" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="worum-es-geht">
+<span class="header-section-number">2.1</span> Worum es geht</h2>
+<p>Wissenschaftliche Arbeit ist nur dann <em>Wissenschaft</em>, wenn andere sie nachvollziehen können. Wer eine Analyse veröffentlicht, sollte den Weg von den Daten zum Ergebnis vollständig offenlegen — ohne dass Leser:innen Zwischenschritte rekonstruieren oder Tabellen aus dem Output-Fenster nachformatieren müssen.</p>
+<p><strong>Quarto</strong> ist das Werkzeug, das diesen Anspruch praktisch einlöst. Es verbindet <strong>R-Code</strong> und <strong>Schriftbericht</strong> in einem einzigen Dokument: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word. Änderst du die Daten oder eine Methodenentscheidung, läuft das gesamte Dokument beim nächsten Render-Lauf frisch durch — Zahlen, Tabellen und Grafiken sind automatisch aktuell.</p>
+<p>Dieses Kapitel führt dich von deinem ersten <code>.qmd</code>-Dokument bis zu einem reproduzierbaren Projekt nach den Standards offener Wissenschaft. Das Buch, das du gerade liest, ist selbst mit Quarto gebaut — du findest also überall in diesen Seiten das, was hier erklärt wird.</p>
+</section><section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
+<ul>
+<li>Den Unterschied zwischen R-Skript, R Markdown und Quarto erklären.</li>
+<li>Ein <code>.qmd</code>-Dokument anlegen, rendern und in HTML/PDF/Word exportieren.</li>
+<li>Code-Chunks mit YAML-Optionen steuern (<code>echo</code>, <code>eval</code>, <code>fig-cap</code>, …).</li>
+<li>Inline-R-Code für reproduzierbare Zahlen im Fließtext nutzen.</li>
+<li>Tabellen und Grafiken mit Beschriftungen und Referenzen einbinden.</li>
+<li>Literatur über BibTeX und Zotero zitieren.</li>
+<li>Open-Science-Prinzipien (Reproduzierbarkeit, FAIR, OSF, Pre-Registration) auf dein Projekt anwenden.</li>
+<li>Ein Projekt sauber strukturieren (<code>data/</code>, <code>R/</code>, <code>output/</code>) und mit Git versionieren.</li>
+</ul></section><section id="warum-quarto-vom-skript-zum-bericht" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="warum-quarto-vom-skript-zum-bericht">
+<span class="header-section-number">2.2</span> Warum Quarto? — vom Skript zum Bericht</h2>
+<p>Wenn du in SPSS arbeitest, kennst du den Ablauf: Du klickst durch die Menüs, der Output erscheint in einem separaten Fenster, und du kopierst Tabellen und Grafiken nach Word, wo du sie noch einmal formatierst. Wenn dir später auffällt, dass du eine Variable falsch rekodiert hast, beginnt der ganze Prozess von vorn.</p>
+<p>In Quarto trennst du nicht mehr zwischen Analyse und Bericht. Beides lebt im selben Dokument:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 35%">
+<col style="width: 38%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">SPSS-Workflow</th>
+<th style="text-align: left;">Quarto-Workflow</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Wo wird gerechnet?</strong></td>
+<td style="text-align: left;">SPSS-Output-Fenster</td>
+<td style="text-align: left;">Code-Chunk im <code>.qmd</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Wo wird geschrieben?</strong></td>
+<td style="text-align: left;">Word</td>
+<td style="text-align: left;">Lauftext im <code>.qmd</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Wie kommen Tabellen rein?</strong></td>
+<td style="text-align: left;">Word (kopieren, manuell formatieren)</td>
+<td style="text-align: left;">Quarto (automatisch beim Render)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Was passiert bei Datenänderung?</strong></td>
+<td style="text-align: left;">Alles neu kopieren</td>
+<td style="text-align: left;">Render-Knopf — fertig</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Wie reproduziert das jemand anderes?</strong></td>
+<td style="text-align: left;">Hoffen, dass die Klick-Reihenfolge dokumentiert ist</td>
+<td style="text-align: left;">
+<code>.qmd</code> plus Daten → identisches Ergebnis</td>
+</tr>
+</tbody>
+</table>
+<p>Quarto ist der <strong>Nachfolger von R Markdown</strong>. R Markdown war R-zentriert; Quarto ist mehrsprachig (R, Python, Julia, Observable) und vereinheitlicht die Konfiguration. Für unsere Zwecke benutzen wir Quarto mit R — alles, was du aus R-Markdown-Tutorials kennst, läuft fast unverändert in Quarto weiter.</p>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -198,65 +318,541 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Kapitel in Arbeit.</strong> Der Inhalt dieses Kapitels wird zur Modernisierung 2026 ergänzt. Die Gliederung unten zeigt, was geplant ist.</p>
+<p><strong>Hintergrund: R Markdown, Quarto, knitr.</strong> Unter der Haube nutzt Quarto weiterhin <strong>knitr</strong>, die R-Engine, die Code-Chunks ausführt und in Markdown einbettet. Was Quarto neu macht, ist die Schicht <em>darüber</em>: ein einheitliches YAML-Format, eine konsistente Output-Architektur und Unterstützung für Bücher (wie dieses hier), Webseiten, Folien und Dashboards. Die meisten Beispiele aus R-Markdown-Tutorials funktionieren in Quarto identisch.</p>
 </div>
 </div>
-<section id="worum-es-geht" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="worum-es-geht">
-<span class="header-section-number">2.1</span> Worum es geht</h2>
-<p>Wissenschaftliche Arbeit ist nur dann <em>Wissenschaft</em>, wenn andere sie nachvollziehen können. Quarto verbindet <strong>Analyse und Bericht in einem Dokument</strong>: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem R-Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word — und wenn du Daten oder Code änderst, ist der nächste Render-Lauf automatisch aktuell.</p>
-<p>Dieses Kapitel führt dich von deinem ersten <code>.qmd</code>-Dokument bis zu einem reproduzierbaren Projekt, das den Standards offener Wissenschaft genügt.</p>
-</section><section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
-<ul>
-<li>Den Unterschied zwischen R-Script, R Markdown und Quarto erklären.</li>
-<li>Ein <code>.qmd</code>-Dokument anlegen, rendern und in HTML/PDF/Word exportieren.</li>
-<li>Code-Chunks mit YAML-Optionen steuern (<code>echo</code>, <code>eval</code>, <code>fig-cap</code>, …).</li>
-<li>Inline-R-Code für reproduzierbare Zahlen im Fließtext nutzen.</li>
-<li>Tabellen und Grafiken mit Beschriftungen und Referenzen einbinden.</li>
-<li>Literatur über BibTeX und Zotero zitieren.</li>
-<li>Open-Science-Prinzipien (Reproduzierbarkeit, FAIR, OSF) auf dein Projekt anwenden.</li>
-<li>Ein Projekt sauber strukturieren (<code>data/</code>, <code>R/</code>, <code>output/</code>) und mit Git versionieren.</li>
-</ul></section><section id="warum-quarto-vom-script-zum-bericht" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="warum-quarto-vom-script-zum-bericht">
-<span class="header-section-number">2.2</span> Warum Quarto? — vom Script zum Bericht</h2>
-<p><em>(folgt)</em></p>
 </section><section id="dein-erstes-.qmd" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="dein-erstes-.qmd">
 <span class="header-section-number">2.3</span> Dein erstes <code>.qmd</code>
 </h2>
-<p><em>(folgt)</em></p>
+<p>In RStudio: <strong><code>File</code> → <code>New File</code> → <code>Quarto Document</code></strong>. Im Dialog gibst du Titel und Autor an, wählst HTML als Format und drückst <em>Create</em>. RStudio öffnet ein Beispiel-Dokument, das du mit dem <strong>Render</strong>-Knopf (oder <code>cmd</code>/<code>strg</code> + <code>shift</code> + <code>K</code>) sofort in HTML übersetzen kannst.</p>
+<p>Ein minimales <code>.qmd</code> hat genau drei Bestandteile:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Mein erster Bericht"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Anna Schmidt"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Einleitung</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>In diesem Bericht analysiere ich den ALLBUS 2023.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Du erkennst:</p>
+<ol type="1">
+<li>
+<strong>YAML-Header</strong> zwischen <code>---</code>-Linien — Metadaten und Format-Konfiguration.</li>
+<li>
+<strong>Markdown-Lauftext</strong> — Überschriften mit <code>#</code>, Fettdruck mit <code>**…**</code>, Listen mit <code>-</code>.</li>
+<li>
+<strong>Code-Chunks</strong> in dreifachen Backticks mit <code>{r}</code> — werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.</li>
+</ol>
+<p>Das Ergebnis (gerendert) zeigt deinen Text, die Code-Zeile <em>und</em> deren Ausgabe (<code>3</code>) — alles in einer fertigen HTML-Datei. Genau dieser Workflow trägt dich von der Hausarbeit bis zur Dissertation.</p>
 </section><section id="yaml-header-das-steuerpult" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="yaml-header-das-steuerpult">
 <span class="header-section-number">2.4</span> YAML-Header: das Steuerpult</h2>
-<p><em>(folgt)</em></p>
+<p>Der YAML-Header steuert das Verhalten deines Dokuments. Die wichtigsten Felder:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"Islamfeindlichkeit in Deutschland 2023"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">subtitle</span><span class="kw">:</span><span class="at"> </span><span class="st">"Eine ALLBUS-basierte Analyse"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">author</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"Anna Schmidt"</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"Boris Müller"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span><span class="kw">:</span><span class="at"> today</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">date-format</span><span class="kw">:</span><span class="at"> </span><span class="st">"DD.MM.YYYY"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-depth</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">number-sections</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">code-tools</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">documentclass</span><span class="kw">:</span><span class="at"> article</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">geometry</span><span class="kw">:</span><span class="at"> margin=2.5cm</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">docx</span><span class="kw">:</span><span class="at"> default</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> literatur.bib</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">csl</span><span class="kw">:</span><span class="at"> apa.csl</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">echo</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">warning</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">message</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">lang</span><span class="kw">:</span><span class="at"> de</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Was die Felder tun:</p>
+<ul>
+<li>
+<strong><code>format</code></strong> legt die Ausgabe fest. Mehrere Formate gleichzeitig sind erlaubt — Quarto produziert dann alle in einem Render-Lauf.</li>
+<li>
+<strong><code>toc</code></strong> schaltet das Inhaltsverzeichnis ein, <strong><code>number-sections</code></strong> nummeriert Abschnitte automatisch.</li>
+<li>
+<strong><code>bibliography</code></strong> verweist auf eine BibTeX-Datei (siehe <a href="#sec-literatur" class="quarto-xref"><span>Kapitel 2.8</span></a>).</li>
+<li>
+<strong><code>csl</code></strong> wählt den Zitationsstil — APA, Chicago, DGPs-konform usw.</li>
+<li>
+<strong><code>execute</code></strong> setzt Default-Optionen für alle Code-Chunks: <code>echo: true</code> zeigt den Code, <code>warning: false</code> / <code>message: false</code> blendet R-Meldungen aus.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warnung
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Vorsicht: YAML-Einrückung.</strong> YAML ist <strong>leerzeichensensitiv</strong>. Untergeordnete Felder werden mit <em>zwei Leerzeichen</em> eingerückt — Tabulatoren oder unregelmäßige Einrückung führen zu Render-Fehlern. Wenn ein Quarto-Render mit „yaml parsing error” abbricht, schaue zuerst auf die Einrückung.</p>
+</div>
+</div>
 </section><section id="code-chunks-im-detail" class="level2" data-number="2.5"><h2 data-number="2.5" class="anchored" data-anchor-id="code-chunks-im-detail">
 <span class="header-section-number">2.5</span> Code-Chunks im Detail</h2>
-<p><em>(folgt)</em></p>
-</section><section id="inline-r-code-zahlen-im-fließtext" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="inline-r-code-zahlen-im-fließtext">
+<p>Ein Code-Chunk hat zwei Teile: eine <strong>Header-Zeile</strong> mit Optionen und einen <strong>Code-Body</strong>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mein-chunk, echo=TRUE, warning=FALSE, fig.width=6}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Die wichtigsten Optionen:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">Wirkung</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>echo</code></td>
+<td style="text-align: left;">Code sichtbar? (<code>TRUE</code> zeigt, <code>FALSE</code> blendet aus)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>eval</code></td>
+<td style="text-align: left;">Code ausführen? (<code>FALSE</code> zeigt Code, ohne ihn auszuführen)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>include</code></td>
+<td style="text-align: left;">Code-Output ins Dokument? (<code>FALSE</code> versteckt beides, aber führt aus)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">
+<code>warning</code>, <code>message</code>
+</td>
+<td style="text-align: left;">Warnungen/Meldungen anzeigen?</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>fig-cap</code></td>
+<td style="text-align: left;">Bildunterschrift für Grafiken</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">
+<code>fig-width</code>, <code>fig-height</code>
+</td>
+<td style="text-align: left;">Größe der Grafik in Zoll</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>fig-align</code></td>
+<td style="text-align: left;">
+<code>"left"</code>, <code>"center"</code>, <code>"right"</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chunk-Labels</strong> (wie <code>mein-chunk</code> oben) müssen pro Dokument <em>eindeutig</em> sein. Sie dienen als Cache-Schlüssel und als Anker für Grafik-Referenzen.</p>
+<p>Seit Quarto setzt sich der <strong>YAML-Stil</strong> für Chunk-Optionen durch — eleganter als die Header-Notation:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mein-chunk}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Verteilung der Lebenszufriedenheit"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mtcars<span class="sc">$</span>mpg)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Beide Schreibweisen sind erlaubt. In diesem Buch nutzen wir aus Lesbarkeitsgründen weiterhin die Header-Notation; in modernen Quarto-Beispielen im Web wirst du häufiger den <code>#|</code>-Stil sehen.</p>
+<section id="setup-chunk" class="level3" data-number="2.5.1"><h3 data-number="2.5.1" class="anchored" data-anchor-id="setup-chunk">
+<span class="header-section-number">2.5.1</span> Setup-Chunk</h3>
+<p>Am Anfang jedes Dokuments steht typischerweise ein <strong>Setup-Chunk</strong>, der Pakete lädt und Defaults setzt — versteckt vor den Leser:innen mit <code>include=FALSE</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup, include=FALSE}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mariposa)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>allbus <span class="ot">&lt;-</span> <span class="fu">read_spss</span>(<span class="st">"ALLBUS2023.sav"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alle nachfolgenden Chunks erben den geladenen Zustand. Das ist der Grund, warum du in den Kapiteln dieses Buchs <code>tidyverse</code> und <code>mariposa</code> nicht in jedem Chunk neu lädst — der Setup-Chunk oben hat schon alles bereitgestellt.</p>
+</section></section><section id="inline-r-code-zahlen-im-fließtext" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="inline-r-code-zahlen-im-fließtext">
 <span class="header-section-number">2.6</span> Inline-R-Code: Zahlen im Fließtext</h2>
-<p><em>(folgt)</em></p>
+<p>Manchmal willst du nicht eine ganze Tabelle einbinden, sondern <em>eine Zahl</em> direkt im Satz nennen — den Stichprobenumfang, einen Mittelwert, einen p-Wert. Quarto erlaubt das über <strong>Inline-R-Code</strong> mit Backticks und einem vorangestellten <code>r</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Die Stichprobe enthält 32 Fahrzeuge.</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>Der durchschnittliche Verbrauch liegt bei 20.1 mpg.</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Beim Rendern wird daraus:</p>
+<blockquote class="blockquote">
+<p>Die Stichprobe enthält 32 Fahrzeuge. Der durchschnittliche Verbrauch liegt bei 20.1 mpg.</p>
+</blockquote>
+<p>Inline-Code ist eines der wichtigsten Werkzeuge für <strong>reproduzierbare Berichte</strong>: Du nennst keine Zahl manuell, sondern lässt sie aus den Daten berechnen. Filterst du später anders oder spielst eine neue Datenwelle ein, sind alle Zahlen im Bericht beim nächsten Render automatisch aktuell — und keine bleibt versehentlich auf einem alten Wert stehen.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tipp: <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> nicht vergessen.</strong> R gibt Zahlen mit voller Maschinengenauigkeit aus (<code>23.847395</code>). Für den Fließtext rundest du auf so viele Nachkommastellen, wie es die Lesbarkeit verlangt — meist eine oder zwei.</p>
+</div>
+</div>
 </section><section id="tabellen-und-grafiken" class="level2" data-number="2.7"><h2 data-number="2.7" class="anchored" data-anchor-id="tabellen-und-grafiken">
 <span class="header-section-number">2.7</span> Tabellen und Grafiken</h2>
-<p><em>(folgt)</em></p>
-</section><section id="literaturverweise-mit-bibtex-und-zotero" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="literaturverweise-mit-bibtex-und-zotero">
+<section id="tabellen-mit-kable-und-gt" class="level3" data-number="2.7.1"><h3 data-number="2.7.1" class="anchored" data-anchor-id="tabellen-mit-kable-und-gt">
+<span class="header-section-number">2.7.1</span> Tabellen mit <code>kable()</code> und <code>gt</code>
+</h3>
+<p>Eine einfache Tabelle erzeugst du mit <code><a href="https://rdrr.io/pkg/knitr/man/kable.html">knitr::kable()</a></code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Erste drei Zeilen des mtcars-Datensatzes"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Erste drei Zeilen des mtcars-Datensatzes</caption>
+<colgroup>
+<col style="width: 21%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">mpg</th>
+<th style="text-align: right;">cyl</th>
+<th style="text-align: right;">disp</th>
+<th style="text-align: right;">hp</th>
+<th style="text-align: right;">drat</th>
+<th style="text-align: right;">wt</th>
+<th style="text-align: right;">qsec</th>
+<th style="text-align: right;">vs</th>
+<th style="text-align: right;">am</th>
+<th style="text-align: right;">gear</th>
+<th style="text-align: right;">carb</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mazda RX4</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.620</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mazda RX4 Wag</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.875</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Datsun 710</td>
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">3.85</td>
+<td style="text-align: right;">2.320</td>
+<td style="text-align: right;">18.61</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Für anspruchsvollere Formatierung (Spalten-Gruppen, bedingte Färbung, Stil-Themes) bietet das Paket <strong><code>gt</code></strong> einen tidyverse-nahen Tabellenbau:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://gt.rstudio.com">gt</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mtcars</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">gt</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tab_header</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"mtcars (Auszug)"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">fmt_number</span><span class="op">(</span>columns <span class="op">=</span> <span class="va">mpg</span>, decimals <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>kable()</code> reicht für die meisten Hausarbeiten; <code>gt</code> lohnt sich, wenn die Tabelle das Endprodukt ist.</p>
+</section><section id="grafiken" class="level3" data-number="2.7.2"><h3 data-number="2.7.2" class="anchored" data-anchor-id="grafiken">
+<span class="header-section-number">2.7.2</span> Grafiken</h3>
+<p>Jedes <code>ggplot2</code>-Objekt, das ein Chunk zurückgibt, landet als Grafik im Bericht. Mit Chunk-Optionen steuerst du Beschriftung und Größe:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-mpg, fig.width=6, fig.height=4, fig-cap="Verbrauch nach Zylinderzahl"}</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(cyl), <span class="at">y =</span> mpg)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Die <code>fig-cap</code>-Option erscheint als Bildunterschrift; bei <code>number-sections: true</code> wird die Grafik automatisch als „Abbildung 1.1” o. ä. nummeriert. Mit einem Chunk-Label wie <code>fig-mpg</code> kannst du im Fließtext per <code>@fig-mpg</code> darauf verweisen.</p>
+</section></section><section id="sec-literatur" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="sec-literatur">
 <span class="header-section-number">2.8</span> Literaturverweise mit BibTeX und Zotero</h2>
-<p><em>(folgt)</em></p>
+<p>Quarto integriert Zitationen direkt in den Fließtext. Du brauchst zwei Dinge: eine <strong>BibTeX-Datei</strong> mit deinen Quellen und einen <strong>Verweis im YAML-Header</strong>.</p>
+<p><strong>1. BibTeX-Datei <code>literatur.bib</code></strong> im Projektordner:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">Goodman2016</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>  = {Goodman, Steven N. and Fanelli, Daniele and Ioannidis, John P. A.},</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>   = {What does research reproducibility mean?},</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span> = {Science Translational Medicine},</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>    = {2016},</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">volume</span>  = {8},</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">number</span>  = {341},</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pages</span>   = {341ps12}</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">Wickham2023</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>    = {Wickham, Hadley and Grolemund, Garrett},</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>     = {R for Data Science},</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">edition</span>   = {2},</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>      = {2023},</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {O'Reilly}</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>2. YAML-Header</strong> verweist auf die Datei:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> literatur.bib</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">csl</span><span class="kw">:</span><span class="at"> apa.csl</span><span class="co">     # optional: Zitationsstil</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>3. Zitieren im Text</strong> mit <code>@key</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren.</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Für eine ausführliche Behandlung siehe auch <span class="co">[</span><span class="ot">@Wickham2023</span><span class="co">]</span>.</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Quarto formatiert die Zitationen automatisch und hängt am Ende eine <strong>Literaturliste</strong> an. Wenn du sie an einer bestimmten Stelle willst, setze einfach <code>## Literatur</code> ans Ende — Quarto füllt darunter.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Zotero-Integration.</strong> Die meisten Studierenden verwalten ihre Quellen in <strong>Zotero</strong>. Mit dem Plugin <a href="https://retorque.re/zotero-better-bibtex/">Better BibTeX for Zotero</a> exportierst du deine Sammlung als <code>.bib</code>-Datei und hältst sie automatisch synchron. Im <strong>Quarto Visual Editor</strong> in RStudio kannst du außerdem über <code>Insert</code> → <code>Citation</code> Zotero-Quellen direkt nachschlagen.</p>
+</div>
+</div>
 </section><section id="open-science-reproduzierbarkeit-als-standard" class="level2" data-number="2.9"><h2 data-number="2.9" class="anchored" data-anchor-id="open-science-reproduzierbarkeit-als-standard">
 <span class="header-section-number">2.9</span> Open Science: Reproduzierbarkeit als Standard</h2>
-<p><em>(folgt — FAIR-Prinzipien, OSF, Zenodo, Pre-Registration)</em></p>
-</section><section id="projektstruktur-und-versionskontrolle" class="level2" data-number="2.10"><h2 data-number="2.10" class="anchored" data-anchor-id="projektstruktur-und-versionskontrolle">
+<p>Quarto ist nicht nur Komfort — es ist die technische Grundlage einer Forschungspraxis, die sich seit etwa 2015 als <strong>Open Science</strong> etabliert hat. Drei Konzepte solltest du kennen.</p>
+<section id="reproduzierbarkeit-vs.-replizierbarkeit" class="level3" data-number="2.9.1"><h3 data-number="2.9.1" class="anchored" data-anchor-id="reproduzierbarkeit-vs.-replizierbarkeit">
+<span class="header-section-number">2.9.1</span> Reproduzierbarkeit vs.&nbsp;Replizierbarkeit</h3>
+<p>Goodman, Fanelli &amp; Ioannidis (2016) unterscheiden zwei Begriffe, die im Alltag gerne verwechselt werden:</p>
+<ul>
+<li>
+<strong>Reproduzierbar</strong> = gleicher Code + gleiche Daten → gleiches Ergebnis. Das ist die technische Mindestanforderung. Quarto liefert sie dir geschenkt.</li>
+<li>
+<strong>Replizierbar</strong> = gleiche Methode + neue Daten → ähnliches Ergebnis. Das ist die wissenschaftliche Frage — kann jemand anderes deinen Befund mit einer neuen Stichprobe bestätigen?</li>
+</ul>
+<p>Reproduzierbarkeit ist Voraussetzung für Replizierbarkeit, aber nicht umgekehrt. Eine Studie kann perfekt reproduzierbar sein und trotzdem ein Ein-mal-Ergebnis (gerne mit <em>p</em> = .04) bleiben.</p>
+</section><section id="fair-prinzipien" class="level3" data-number="2.9.2"><h3 data-number="2.9.2" class="anchored" data-anchor-id="fair-prinzipien">
+<span class="header-section-number">2.9.2</span> FAIR-Prinzipien</h3>
+<p>Die FAIR-Prinzipien beschreiben, was gute Forschungsdaten und gute Forschungssoftware ausmacht:</p>
+<ul>
+<li>
+<strong>Findable</strong> — auffindbar über persistente Identifier (z. B. DOI).</li>
+<li>
+<strong>Accessible</strong> — abrufbar über offene, dokumentierte Protokolle.</li>
+<li>
+<strong>Interoperable</strong> — in standardisierten Formaten (<code>.csv</code> statt <code>.xlsx</code>-spezifischer Trickserei).</li>
+<li>
+<strong>Reusable</strong> — mit ausreichender Dokumentation und klarer Lizenz weiternutzbar.</li>
+</ul>
+<p>Für deine Hausarbeit reicht ein kleiner Schritt: lege Code und (wenn möglich) Daten auf eine Plattform wie OSF und vergib eine offene Lizenz.</p>
+</section><section id="plattformen-und-pre-registration" class="level3" data-number="2.9.3"><h3 data-number="2.9.3" class="anchored" data-anchor-id="plattformen-und-pre-registration">
+<span class="header-section-number">2.9.3</span> Plattformen und Pre-Registration</h3>
+<ul>
+<li>
+<strong><a href="https://osf.io/">OSF — Open Science Framework</a></strong> — kostenlose Plattform für Forschungsprojekte. Du legst dort Code, Daten und Pre-Registrations ab.</li>
+<li>
+<strong><a href="https://zenodo.org/">Zenodo</a></strong> — vergibt persistente DOIs für Code-Releases (häufig mit GitHub gekoppelt).</li>
+<li>
+<strong>Pre-Registration</strong> — Forschungsfrage, Hypothesen und Auswertungsplan werden <em>vor</em> Datenerhebung oder Auswertung schriftlich festgelegt. Das schützt vor <em>p-hacking</em> und <em>HARKing</em> (Hypothesizing After the Results are Known). Sinnvoll für konfirmatorische Studien; explorative Forschung markiert man entsprechend.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Hintergrund: Warum jetzt?</strong> Die <em>replication crisis</em> in der Psychologie und den empirischen Sozialwissenschaften (ab 2011, zugespitzt durch die Open Science Collaboration 2015) hat gezeigt, dass viele publizierte Befunde sich nicht reproduzieren lassen — teils, weil Methoden unsauber dokumentiert waren, teils, weil das Forschungs-Anreizsystem signifikante Ergebnisse über sorgfältige Methoden belohnte. Open Science, Pre-Registration und reproduzierbare Berichte (Quarto, R Markdown) sind die strukturelle Antwort darauf.</p>
+</div>
+</div>
+</section></section><section id="projektstruktur-und-versionskontrolle" class="level2" data-number="2.10"><h2 data-number="2.10" class="anchored" data-anchor-id="projektstruktur-und-versionskontrolle">
 <span class="header-section-number">2.10</span> Projektstruktur und Versionskontrolle</h2>
-<p><em>(folgt — <code>data/</code>, <code>R/</code>, <code>output/</code>, Git-Basics)</em></p>
-</section><section id="publizieren-html-pdf-word" class="level2" data-number="2.11"><h2 data-number="2.11" class="anchored" data-anchor-id="publizieren-html-pdf-word">
+<p>Ein gut strukturiertes Quarto-Projekt sieht typischerweise so aus:</p>
+<pre><code>mein-projekt/
+├── data/
+│   ├── ALLBUS2023.sav        # Rohdaten — niemals bearbeiten
+│   └── README.md             # Beschreibung der Quelle
+├── R/
+│   ├── _common.R             # geteilte Theme-/Helper-Funktionen
+│   └── prep.R                # Datenpräp als Funktion
+├── output/                   # erzeugte Tabellen/Grafiken
+├── literatur.bib
+├── analyse.qmd               # das Hauptdokument
+└── mein-projekt.Rproj</code></pre>
+<p>Drei Regeln, die sich bewährt haben:</p>
+<ul>
+<li>
+<strong>Rohdaten sind heilig.</strong> Du schreibst nie in <code>data/</code> zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in <code>output/</code>.</li>
+<li>
+<strong>Code, Daten und Dokument liegen zusammen.</strong> Niemals absolute Pfade (<code>/Users/anna/...</code>) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.</li>
+<li>
+<strong>Geteilte Logik kommt in <code>R/</code>.</strong> Wenn drei <code>.qmd</code>-Dateien dieselben Daten vorbereiten, gehört der Code in <code>R/prep.R</code> und wird in jedem Dokument per <code>source("R/prep.R")</code> eingebunden.</li>
+</ul>
+<section id="versionskontrolle-mit-git" class="level3" data-number="2.10.1"><h3 data-number="2.10.1" class="anchored" data-anchor-id="versionskontrolle-mit-git">
+<span class="header-section-number">2.10.1</span> Versionskontrolle mit Git</h3>
+<p><strong>Git</strong> ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Jeder <em>Commit</em> ist ein Snapshot mit einer Begründung („Tabelle 1 korrigiert: Cronbachs α statt Pearson <em>r</em>”). RStudio bringt Git-Integration mit; im Reiter <code>Git</code> siehst du, was sich geändert hat, kannst Änderungen committen und auf einen Remote-Server (<strong>GitHub</strong>, <strong>GitLab</strong>) pushen.</p>
+<p>Drei Grundbefehle reichen für den Anfang:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .                              <span class="co"># alle Änderungen vormerken</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Datenpräp erweitert"</span>    <span class="co"># snapshot mit Begründung</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push                                <span class="co"># zum Remote schicken</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Tipp: GitHub Student Developer Pack.</strong> Studierende bekommen über das <a href="https://education.github.com/pack">GitHub Student Developer Pack</a> kostenlos Zugang zu privaten Repositories und vielen weiteren Tools. Für eine Hausarbeit, die du nicht öffentlich machen willst, ist das die natürliche Wahl.</p>
+</div>
+</div>
+</section></section><section id="publizieren-html-pdf-word" class="level2" data-number="2.11"><h2 data-number="2.11" class="anchored" data-anchor-id="publizieren-html-pdf-word">
 <span class="header-section-number">2.11</span> Publizieren: HTML, PDF, Word</h2>
-<p><em>(folgt)</em></p>
+<p>Welches Output-Format das richtige ist, hängt vom Adressaten ab:</p>
+<ul>
+<li>
+<strong>HTML</strong> — für die eigene Webseite, für GitHub Pages, für interaktive Berichte mit Verlinkungen. Schnellster Render-Lauf.</li>
+<li>
+<strong>PDF</strong> — für Seminar-Abgaben und formale Berichte. Quarto nutzt LaTeX im Hintergrund; installiere einmalig:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tinytex"</span><span class="op">)</span></span>
+<span><span class="fu">tinytex</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tinytex/man/install_tinytex.html">install_tinytex</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>
+<strong>Word</strong> — für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.</li>
+</ul>
+<p>Mehrere Formate parallel:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span><span class="at"> default</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pdf</span><span class="kw">:</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">documentclass</span><span class="kw">:</span><span class="at"> article</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">docx</span><span class="kw">:</span><span class="at"> default</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Quarto rendert beim nächsten Lauf alle drei. Über <strong><code>quarto publish</code></strong> kannst du HTML-Outputs direkt zu GitHub Pages, Quarto Pub oder Netlify veröffentlichen — alles ohne Server-Setup.</p>
 </section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
-<p><em>(folgt)</em></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 1 — Dein erstes <code>.qmd</code>.</strong> Lege in deinem RStudio-Projekt ein neues Quarto-Dokument an, schreibe einen kurzen Einleitungs-Absatz und füge einen Code-Chunk mit <code>summary(mtcars)</code> ein. Render das Dokument als HTML.</p>
+<p><strong>Lösungs-Skizze:</strong> <code>File</code> → <code>New File</code> → <code>Quarto Document</code> → HTML wählen → Titel angeben → Render-Knopf.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 2 — Inline-R-Code üben.</strong> Schreibe einen Methoden-Satz, der den Stichprobenumfang und den Mittelwert <em>einer</em> Variable aus <code>mtcars</code> per Inline-Code einbettet. Achte auf eine sinnvolle Rundung.</p>
+<p><strong>Lösung:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Die Stichprobe umfasst 32 Fahrzeuge mit</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>einem durchschnittlichen Verbrauch von</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>20.1 Meilen pro Gallone.</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Übung 3 — Quelle zitieren.</strong> Lege eine Datei <code>literatur.bib</code> an mit <em>einer</em> Quelle (z. B. dem Goodman-Reproduzierbarkeits-Artikel) und referenziere sie in deinem <code>.qmd</code> mit <code>@key</code>. Aktiviere im YAML-Header <code>bibliography: literatur.bib</code> und ergänze am Ende eine Überschrift <code>## Literatur</code>.</p>
+<p><strong>Lösungs-Skizze:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">Goodman2016</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>  = {Goodman, Steven N. and Fanelli, Daniele and Ioannidis, John P. A.},</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>   = {What does research reproducibility mean?},</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span> = {Science Translational Medicine},</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>    = {2016}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Im YAML: <code>bibliography: literatur.bib</code>. Im Text: <code>[@Goodman2016]</code>. Render-Lauf, Literaturliste erscheint automatisch unter <code>## Literatur</code>.</p>
+</div>
+</div>
+</div>
 </section><section id="was-du-jetzt-weißt" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-jetzt-weißt">Was du jetzt weißt</h2>
-<p><em>(folgt nach Ausarbeitung)</em></p>
+<ul>
+<li>Du erklärst, wie Quarto Analyse und Bericht in einem Dokument verbindet.</li>
+<li>Du baust ein <code>.qmd</code> aus YAML-Header, Lauftext und Code-Chunks.</li>
+<li>Du steuerst Chunk-Output mit <code>echo</code>, <code>eval</code>, <code>include</code>, <code>warning</code>.</li>
+<li>Du nutzt Inline-R-Code, um Zahlen reproduzierbar im Fließtext zu nennen.</li>
+<li>Du erzeugst Tabellen mit <code>kable()</code>/<code>gt</code> und Grafiken mit <code>fig-cap</code>/<code>fig-width</code>.</li>
+<li>Du zitierst mit BibTeX, optional gekoppelt an Zotero.</li>
+<li>Du kennst die Open-Science-Begriffe (Reproduzierbarkeit, FAIR, OSF, Pre-Registration) und kannst sie auf dein Projekt anwenden.</li>
+<li>Du strukturierst dein Projekt mit <code>data/</code>, <code>R/</code>, <code>output/</code> und versionierst es mit Git.</li>
+<li>Du publizierst in HTML, PDF oder Word.</li>
+</ul>
+<p>Im nächsten Kapitel kommst du zur <strong>Programmiersprache R selbst</strong> — Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.</p>
 </section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
 <ul>
-<li>Posit, <a href="https://quarto.org/">Quarto-Dokumentation</a> — Referenz für alle Optionen und Output-Formate.</li>
-<li>Garrett Grolemund &amp; Hadley Wickham, <a href="https://r4ds.hadley.nz/quarto.html">R for Data Science (2e), Kapitel „Quarto”</a>.</li>
-<li>Steven Goodman, Daniele Fanelli &amp; John Ioannidis, <em>„What Does Research Reproducibility Mean?“</em> — Science Translational Medicine (2016).</li>
+<li>Posit, <a href="https://quarto.org/">Quarto-Dokumentation</a> — Referenz für alle Output-Formate, YAML-Optionen und Erweiterungen.</li>
+<li>Garrett Grolemund &amp; Hadley Wickham, <a href="https://r4ds.hadley.nz/quarto.html">R for Data Science (2e), Kapitel „Quarto”</a> — kompakter Einstieg in den Workflow.</li>
+<li>Kieran Healy, <a href="https://plain-text.co/">The Plain Person’s Guide to Plain Text Social Science</a> — wie sozialwissenschaftliche Forschung mit Plain-Text-Tools (Quarto, Git, BibTeX) durchgängig wird.</li>
+<li>Steven Goodman, Daniele Fanelli &amp; John Ioannidis, <a href="https://www.science.org/doi/10.1126/scitranslmed.aaf5027">„What Does Research Reproducibility Mean?”</a> — Science Translational Medicine (2016) — die meistzitierte Definition.</li>
+<li>Open Science Collaboration, <a href="https://www.science.org/doi/10.1126/science.aac4716">„Estimating the reproducibility of psychological science”</a> — Science (2015) — die Studie, die die Replikationskrise ins Bewusstsein der Sozialwissenschaft brachte.</li>
 <li>
 <a href="https://osf.io/">Open Science Framework</a> — Plattform für Daten, Code und Pre-Registrations.</li>
+<li>
+<a href="https://retorque.re/zotero-better-bibtex/">Better BibTeX for Zotero</a> — der Schlüssel zur Zotero-Quarto-Brücke.</li>
 </ul>
 
 
