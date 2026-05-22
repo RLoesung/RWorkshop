@@ -401,10 +401,13 @@ allbus |>
 
 ## Übungen {-}
 
-::: {.callout-tip collapse="true"}
-**Übung 1 — Demokratiezufriedenheit beschreiben.** Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken (inkl. Schiefe und Wölbung). Beschreibe in einem Satz, was du siehst.
+::: {.callout-tip title="Übung 1 · Demokratiezufriedenheit beschreiben · Reproduktion" collapse="true"}
+Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken (inkl. Schiefe und Wölbung). Beschreibe in einem Satz, was du siehst.
 
-**Lösung:**
+---
+
+**Lösung**
+
 ```{r ex1-kap5-loesung, eval=FALSE}
 allbus |> frequency(ps03, weights = wghtpew)
 allbus |> describe(ps03, weights = wghtpew)
@@ -413,10 +416,13 @@ allbus |> w_kurtosis(ps03, weights = wghtpew)
 ```
 :::
 
-::: {.callout-tip collapse="true"}
-**Übung 2 — Subgruppen-Vergleich.** Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
+::: {.callout-tip title="Übung 2 · Subgruppen-Vergleich · Reproduktion" collapse="true"}
+Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
 
-**Lösung:**
+---
+
+**Lösung**
+
 ```{r ex2-kap5-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(sex)) |>
@@ -430,10 +436,13 @@ allbus |>
 ```
 :::
 
-::: {.callout-tip collapse="true"}
-**Übung 3 — Drei Korrelate.** Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten? Ordne ihn mit der Effektgrößen-Faustregel ein.
+::: {.callout-tip title="Übung 3 · Drei Korrelate · Transfer" collapse="true"}
+Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten? Ordne ihn mit der Effektgrößen-Faustregel ein.
 
-**Lösung:**
+---
+
+**Lösung**
+
 ```{r ex3-kap5-loesung, eval=FALSE}
 allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
@@ -441,10 +450,13 @@ allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
 ```
 :::
 
-::: {.callout-tip collapse="true"}
-**Übung 4 — Post-Hoc bei ANOVA (Transfer).** Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
+::: {.callout-tip title="Übung 4 · Post-Hoc bei ANOVA · Transfer" collapse="true"}
+Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
 
-**Lösung:**
+---
+
+**Lösung**
+
 ```{r ex4-kap5-loesung, eval=FALSE}
 allbus_bildung |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
@@ -452,8 +464,8 @@ allbus_bildung |>
 ```
 :::
 
-::: {.callout-tip collapse="true"}
-**Übung 5 — Eigene Hypothese bivariat testen (Mini-Forschungsfrage).** Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *„Frauen sind mit der Demokratie in Deutschland zufriedener als Männer."* oder *„Lebenszufriedenheit hängt negativ mit Alter zusammen."* Wähle (a) das passende Verfahren (t-Test, ANOVA, Korrelation, Chi²), (b) die passenden Variablen, (c) ob du gewichten musst, (d) eine angemessene Effektgröße. Berichte das Ergebnis in einem Satz nach dem Schema: *„X und Y hängen [richtung] [stärke] zusammen ([Testname], [Statistik], [p], [Effektgröße])."*
+::: {.callout-tip title="Übung 5 · Eigene Hypothese bivariat testen · Mini-Forschungsfrage" collapse="true"}
+Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *„Frauen sind mit der Demokratie in Deutschland zufriedener als Männer."* oder *„Lebenszufriedenheit hängt negativ mit Alter zusammen."* Wähle (a) das passende Verfahren (t-Test, ANOVA, Korrelation, Chi²), (b) die passenden Variablen, (c) ob du gewichten musst, (d) eine angemessene Effektgröße. Berichte das Ergebnis in einem Satz nach dem Schema: *„X und Y hängen [richtung] [stärke] zusammen ([Testname], [Statistik], [p], [Effektgröße])."*
 
 *Keine Musterlösung — die Übung trainiert Hypothesen­führung, Methodenwahl und das Berichten. Genau diese Schritte gehörst du im echten Forschungsalltag.*
 :::
