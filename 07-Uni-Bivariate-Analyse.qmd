@@ -1,0 +1,429 @@
+# Uni- und Bivariate Analyse {#sec-univbivar}
+
+```{r setup-kap7, include=FALSE}
+library(tidyverse)
+library(mariposa)
+source("R/_common.R")
+source("R/prep.R")
+```
+
+Nachdem du in @sec-datentransformation die Datenpräp-Pipeline gebaut und in @sec-grafiken-basics die ggplot2-Grammatik kennengelernt hast, beginnt jetzt die eigentliche Analyse. Wir gehen Schritt für Schritt von der einzelnen Variable bis zu Zusammenhängen zwischen zwei Variablen — und beantworten dabei die ersten Teilfragen unserer Mini-Studie:
+
+> *Wie sieht die Verteilung von Islamfeindlichkeit in Deutschland 2023 aus? Unterscheiden sich Ost und West? Hängt Islamfeindlichkeit mit Populismus zusammen?*
+
+## Worum es geht
+
+Die uni- und bivariate Analyse ist die **Bühne, auf der jede multivariate Methode später aufbaut**: bevor du regressionierst, willst du wissen, wie deine Zielvariable verteilt ist und welche Prädiktoren überhaupt mit ihr korrelieren. Eine *univariate* Statistik beschreibt eine einzelne Variable (Verteilung, Mittelwert, Streuung). Eine *bivariate* Analyse fragt nach Beziehungen zwischen zwei Variablen — entweder als *Zusammenhang* (Korrelation, Chi²) oder als *Unterschied* (t-Test, ANOVA).
+
+Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test — Häufigkeit, Deskriptiva, Kreuztabelle, Korrelation, Mittelwertvergleich — jeweils gewichtet, mit Effektgröße und SPSS-vergleichbarem Output.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Häufigkeitsverteilungen einer Variable berichten — gewichtet und ungewichtet.
+- Mittelwert, Median, Streuung, IQR, Schiefe, Wölbung und Standardfehler bestimmen.
+- Univariate Häufigkeiten gegen eine theoretische Verteilung testen (Binomialtest, χ²-GOF).
+- Kreuztabellen mit Chi-Quadrat-Test, Fisher-Test, McNemar-Test und Effektgrößen lesen.
+- Pearson-, Spearman- und Kendall-Korrelationen berechnen und interpretieren.
+- Mittelwerte zweier Gruppen mit einem **t-Test** vergleichen — inklusive Voraussetzungs-Check (Levene).
+- Mittelwerte mehrerer Gruppen mit einer **einfaktoriellen ANOVA** vergleichen und vier Post-Hoc-Verfahren wählen.
+- Nicht-parametrische Alternativen anwenden, wenn Voraussetzungen verletzt sind.
+- Effektgrößen einordnen — wann ein signifikanter Test inhaltlich klein, mittel oder groß ist.
+- Erste Grafiken zu deinen Befunden erstellen.
+
+## Über Gewichtung
+
+In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsentiert**, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das **personenbezogene Ost-West-Gewicht** `wghtpew`. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen" verzerrt.
+
+::: {.callout-tip}
+**SPSS → R.** In SPSS aktivierst du Gewichtung einmal session-weit mit `WEIGHT BY wghtpew.` In R ist das anders: **jede Funktion**, die Gewichtung braucht, bekommt das Argument `weights =` einzeln. Das wirkt am Anfang umständlich, ist aber transparent — du siehst auf einen Blick, ob eine Analyse gewichtet ist.
+:::
+
+In mariposa heißt das Argument durchgängig `weights = wghtpew` — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.
+
+## Univariate Statistik {#sec-univariat}
+
+### Häufigkeitstabellen mit `frequency()`
+
+`frequency()` aus mariposa ist das R-Pendant zu SPSS' `FREQUENCIES` — gleicher Output (Wert, Label, N, Prozent, gültige Prozent, kumulierte Prozent) plus oben kurz die Streumaße.
+
+**Frage:** Wie ist die Verteilung von Ost und West im gewichteten Sample?
+
+```{r freq-eastwest}
+allbus |> frequency(eastwest, weights = wghtpew)
+```
+
+**Lesart.** Die gewichteten Häufigkeiten spiegeln das tatsächliche Verhältnis Ost/West in der deutschen Bevölkerung — ca. 83 % West, 17 % Ost. In den ungewichteten Rohdaten wäre Ost stärker vertreten gewesen.
+
+Für eine ganze Itembatterie kombinierst du `frequency()` mit `tidyselect`-Helfern:
+
+```{r freq-mm}
+allbus |> frequency(mm01:mm06, weights = wghtpew)
+```
+
+::: {.callout-tip}
+**Tipp: `fre()` als SPSS-naher Alias.** Wer aus SPSS umsteigt, tippt eher `fre(allbus, sex)` als `frequency(...)`. mariposa exportiert `fre()` als Alias mit identischer Funktionsweise und identischen Argumenten.
+:::
+
+### Deskriptive Statistik mit `describe()`
+
+Mit `describe()` bekommst du Mittelwert, Median, Standardabweichung, Range, IQR und Schiefe für eine oder mehrere Variablen.
+
+**Frage:** Wo liegt der durchschnittliche Skalenwert für Islamfeindlichkeit?
+
+```{r describe-islam}
+allbus |> describe(islamophobie, weights = wghtpew)
+```
+
+**Lesart.** Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5).
+
+Mehrere Variablen gleichzeitig:
+
+```{r describe-multi}
+allbus |> describe(islamophobie, populismus, age, weights = wghtpew)
+```
+
+### Einzelne Kennwerte
+
+Manchmal brauchst du nicht eine ganze Tabelle, sondern *einen* Wert — etwa für eine `summarise()`-Pipeline oder eine Caption. mariposa hat dafür gewichtete Einzel-Funktionen:
+
+| Funktion         | Was sie liefert                                |
+|------------------|------------------------------------------------|
+| `w_mean()`       | gewichteter Mittelwert                         |
+| `w_median()`     | gewichteter Median                             |
+| `w_modus()`      | gewichteter Modus (häufigster Wert)            |
+| `w_sd()`         | gewichtete Standardabweichung                  |
+| `w_var()`        | gewichtete Varianz                             |
+| `w_se()`         | gewichteter Standardfehler                     |
+| `w_quantile()`   | gewichtete Quantile                            |
+| `w_range()`      | gewichteter Wertebereich (min/max)             |
+| `w_iqr()`        | gewichteter Interquartilsabstand               |
+| `w_skew()`       | gewichtete Schiefe                             |
+| `w_kurtosis()`   | gewichtete Wölbung (Excess-Kurtosis)           |
+
+```{r w-mean}
+allbus |> w_mean(islamophobie, weights = wghtpew)
+```
+
+Im Zusammenspiel mit `group_by()`/`summarise()` baust du dir eigene Subgruppen-Tabellen:
+
+```{r summarise-group}
+allbus |>
+  filter(!is.na(eastwest)) |>
+  summarise(
+    n          = n(),
+    mittelwert = w_mean(islamophobie, weights = wghtpew),
+    sd         = w_sd(islamophobie, weights = wghtpew),
+    se         = w_se(islamophobie, weights = wghtpew),
+    .by        = eastwest
+  )
+```
+
+Das ist die R-Variante zum SPSS-`AGGREGATE` mit `WEIGHT BY` — alles in *einem* Block, in einem Pipe-Fluss.
+
+### Häufigkeits-Tests mit `binomial_test()` und `chisq_gof()`
+
+Wenn du prüfen willst, ob eine beobachtete Häufigkeit signifikant von einem **theoretischen** Anteil abweicht, brauchst du keinen Vergleich mit einer anderen Variable — ein Test gegen einen festen Wert genügt.
+
+**Frage:** Weicht der Frauenanteil in der gewichteten Stichprobe signifikant von 50 % ab?
+
+```{r binom}
+allbus |>
+  filter(sex %in% c(1, 2)) |>     # nur Mann/Frau (Divers eigene Kategorie)
+  binomial_test(sex, p = 0.5, weights = wghtpew)
+```
+
+Für mehr als zwei Ausprägungen — etwa „ist die Bildungsverteilung gleichmäßig auf alle Stufen?" — ist `chisq_gof()` der **Goodness-of-Fit-Test**:
+
+```{r chisq-gof}
+allbus |> chisq_gof(educ, weights = wghtpew)
+```
+
+Beide Tests geben Erwartungswerte, Beobachtungen und einen p-Wert zurück — sauber dokumentiert, was getestet wurde.
+
+## Bivariate Statistik {#sec-bivariat}
+
+::: {.callout-note}
+**Hintergrund: Warum Effektgrößen?** Ein signifikanter *p*-Wert sagt dir nur, dass ein Unterschied oder Zusammenhang von Zufall verschieden ist — *wie stark* er ist, sagt er nicht. Bei großen Stichproben (wie 5.246 ALLBUS-Fällen) sind fast alle Unterschiede statistisch signifikant. Effektgrößen ergänzen den p-Wert um die **inhaltliche Größenordnung**. Faustregeln für die wichtigsten Maße:
+
+| Maß                       | Klein  | Mittel | Groß   |
+|---------------------------|--------|--------|--------|
+| Cramérs *V* (Chi²)        | ≥ 0.10 | ≥ 0.30 | ≥ 0.50 |
+| Pearson *r* (Korrelation) | ≥ 0.10 | ≥ 0.30 | ≥ 0.50 |
+| Hedges' *g* (t-Test)      | ≥ 0.20 | ≥ 0.50 | ≥ 0.80 |
+| η² (ANOVA)                | ≥ 0.01 | ≥ 0.06 | ≥ 0.14 |
+
+Die mariposa-Tests geben dir Effektgrößen automatisch zurück — du musst sie nur lesen und einordnen.
+:::
+
+### Kreuztabellen mit `crosstab()`
+
+`crosstab()` aus mariposa erzeugt eine Kreuztabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung.
+
+**Frage:** Verteilt sich Bildung anders in Ost und West?
+
+```{r crosstab}
+allbus |>
+  crosstab(eastwest, educ, weights = wghtpew)
+```
+
+Mit `prop = "col"` oder `prop = "total"` änderst du die Prozentuierungs-Richtung; mit `show = "n"` siehst du nur die Zellenzahlen.
+
+### Chi-Quadrat-Test mit `chi_square()`
+
+Statt erst eine Kreuztabelle zu rechnen und *dann* den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs *V*, Phi, Gamma).
+
+**Frage:** Hängen Bildung und Region statistisch zusammen?
+
+```{r chi-sq}
+allbus |> chi_square(eastwest, educ, weights = wghtpew)
+```
+
+**Lesart.** Du erhältst χ² mit Freiheitsgraden, *p*-Wert und drei Effektgrößen mit Interpretation: Cramérs *V* (universell, 0–1), Phi (für 2×2-Tabellen, ±) und Goodman-Kruskal Gamma (für ordinale Variablen, ±).
+
+::: {.callout-important}
+**mariposa-Tipp: Effekt-Aliase.** mariposa exportiert `cramers_v()`, `phi()` und `goodman_gamma()` als Aliase für `chi_square()` — funktional identisch, aber sprechender, wenn du im Code klarmachen willst, *welche* Effektgröße im Vordergrund steht. Konvention: `phi()` für 2×2-Tabellen, `cramers_v()` für größere Kreuztabellen, `goodman_gamma()` für ordinale Variablen.
+:::
+
+::: {.callout-note}
+**Hintergrund: Verwandte Tests.**
+- **`fisher_test()`** — exakter Test bei kleinen Erwarteten (< 5 in mehr als 20 % der Zellen). Kein Erwartungswert-Limit, dafür rechenintensiv.
+- **`chisq_gof()`** — Goodness-of-Fit, eine Variable gegen eine theoretische Verteilung (siehe @sec-univariat).
+- **`mcnemar_test()`** — gepaarte 2×2-Tabellen (vorher/nachher, Test-Retest).
+:::
+
+### Korrelation
+
+Drei Korrelationskoeffizienten, drei Funktionen — alle akzeptieren `weights =`:
+
+| Funktion          | Skalenniveau                | Wann sinnvoll                                          |
+|-------------------|------------------------------|---------------------------------------------------------|
+| `pearson_cor()`   | intervall, normalverteilt    | klassischer linearer Zusammenhang                       |
+| `spearman_rho()`  | ordinal oder schief          | wenn Linearität / Normalverteilung fragwürdig           |
+| `kendall_tau()`   | ordinal, kleine N            | robuste Variante, gut bei Bindungen                     |
+
+**Frage:** Hängen Islamfeindlichkeit und Populismus zusammen?
+
+```{r pearson}
+allbus |> pearson_cor(islamophobie, populismus, weights = wghtpew)
+```
+
+**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa **+0.41** — das ist ein klar positiver, moderater Zusammenhang. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit.
+
+Eine ganze Korrelationsmatrix bekommst du, indem du mehrere Variablen oder einen `tidyselect`-Ausdruck übergibst:
+
+```{r pearson-matrix}
+allbus |> pearson_cor(starts_with("mm0"), weights = wghtpew)
+```
+
+::: {.callout-tip}
+**POMPS und Korrelationen.** Wenn du die Korrelation auf den POMPS-Versionen `islamophobie_p` und `populismus_p` aus @sec-pomps rechnest, bekommst du **identische** Werte — POMPS ist eine lineare Transformation, Korrelationen sind invariant. POMPS hilft bei Mittelwertvergleichen *über Skalen hinweg*, nicht bei Korrelationen.
+:::
+
+## Mittelwertvergleiche {#sec-mvc}
+
+### t-Test mit `t_test()`
+
+Der unabhängige t-Test prüft, ob sich die Mittelwerte zweier Gruppen unterscheiden.
+
+**Frage:** Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?
+
+```{r t-test}
+allbus |> t_test(islamophobie, group = eastwest, weights = wghtpew)
+```
+
+**Lesart.** Du erhältst *t*, df, *p*-Wert und Hedges' *g* (eine Effektgröße ähnlich Cohens *d*, aber für kleine N robuster). Die Reihenfolge der Gruppen in der Ausgabe verrät dir die Richtung des Unterschieds.
+
+::: {.callout-note}
+**Hintergrund: Welcher t-Test?** Standardmäßig rechnet `t_test()` den **Welch-t-Test**, der ungleiche Varianzen erlaubt. Wenn du den klassischen Student-t möchtest, setze `var.equal = TRUE`. Für die Praxis gilt: der Welch-Test ist fast immer die sichere Wahl.
+:::
+
+::: {.callout-note}
+**Hintergrund: Varianzhomogenität prüfen.** Wenn du explizit testen willst, ob die Varianzen in den Gruppen gleich sind, ist der **Levene-Test** das Standardwerkzeug:
+
+```{r levene}
+allbus |>
+  t_test(islamophobie, group = eastwest, weights = wghtpew) |>
+  levene_test()
+```
+
+Signifikanter Levene-Test → Varianzen unterscheiden sich → Welch-Variante ist die richtige Wahl. Da `t_test()` ohnehin Welch nutzt, ist das eher eine *Begründung* in der Methodenbeschreibung als eine Entscheidungshilfe.
+:::
+
+### ANOVA mit `oneway_anova()`
+
+Für *drei oder mehr* Gruppen ist die einfaktorielle ANOVA dein Standardwerkzeug.
+
+**Frage:** Hängt Islamfeindlichkeit mit Bildung zusammen?
+
+```{r anova}
+allbus_bildung <- allbus |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat")
+
+allbus_bildung |>
+  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew)
+```
+
+**Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird.
+
+### Post-Hoc: welche Gruppen genau?
+
+Eine signifikante ANOVA sagt dir „mindestens zwei Gruppen unterscheiden sich" — aber nicht *welche*. Vier Post-Hoc-Verfahren stehen in mariposa zur Auswahl:
+
+| Test                  | Wann sinnvoll                                                |
+|-----------------------|--------------------------------------------------------------|
+| `tukey_test()`        | klassischer Post-Hoc bei ANOVA, gleiche Gruppengrößen        |
+| `scheffe_test()`      | konservativer, robust bei ungleichen Gruppen oder Kontrasten |
+| `dunn_test()`         | Post-Hoc nach Kruskal-Wallis (ordinal / non-parametric)      |
+| `pairwise_wilcoxon()` | paarweise nicht-parametrisch                                 |
+
+```{r tukey}
+allbus_bildung |>
+  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
+  tukey_test()
+```
+
+### Nicht-parametrisch
+
+Wenn die Voraussetzungen für *t*-Test oder ANOVA nicht erfüllt sind (z. B. stark schiefe Verteilungen, ordinale AV), gibt es Alternativen:
+
+| Parametrisch                  | Nicht-parametrisch     |
+|-------------------------------|------------------------|
+| `t_test()` (zwei Gruppen)     | `mann_whitney()`       |
+| `oneway_anova()` (n Gruppen)  | `kruskal_wallis()`     |
+| `t_test()` (verbunden)        | `wilcoxon_test()`      |
+| `factorial_anova()` (verbunden) | `friedman_test()`    |
+
+```{r mw}
+allbus |> mann_whitney(islamophobie, group = eastwest, weights = wghtpew)
+```
+
+::: {.callout-warning}
+**Vorsicht: Nicht reflexhaft zu non-parametrisch greifen.** Bei großen Stichproben sind *t*-Test und ANOVA gegenüber Verteilungsabweichungen sehr robust. Die nicht-parametrischen Tests verlieren etwas an statistischer Power. Wechsele die Methode bewusst — typischerweise bei stark schiefen Verteilungen mit kleinem N oder bei ordinaler AV — nicht als Sicherheits-Ritual.
+:::
+
+## Erste Grafiken zu deinen Befunden
+
+Die ggplot2-Grammatik kennst du aus @sec-grafiken-basics. Hier sind drei kompakte Standard-Visualisierungen, die du nach jeder Bi-/Univariat-Analyse einsetzen kannst — direkt anschlussfähig an die soeben gerechneten Tests.
+
+### Histogramm
+
+**Frage:** Wie verteilt sich Islamfeindlichkeit über die Stichprobe?
+
+```{r hist-kap5}
+allbus |>
+  filter(!is.na(islamophobie)) |>
+  ggplot(aes(x = islamophobie, weight = wghtpew)) +
+  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
+  labs(x = "Islamfeindlichkeit (1–7)", y = "Häufigkeit (gewichtet)",
+       title = "Verteilung der Islamfeindlichkeit",
+       caption = "ALLBUS 2023, gewichtet mit wghtpew")
+```
+
+### Boxplot nach Gruppen
+
+**Frage:** Wie verteilt sich Islamfeindlichkeit nach Bildungsgruppen?
+
+```{r boxplot}
+allbus_bildung |>
+  filter(!is.na(educ_kat), !is.na(islamophobie)) |>
+  ggplot(aes(x = educ_kat, y = islamophobie)) +
+  geom_boxplot(fill = "#e8f5ec") +
+  labs(x = "Bildungsgruppe", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
+```
+
+### Streudiagramm mit Regressionsgerade
+
+**Frage:** Wie sieht der Zusammenhang Islamfeindlichkeit ↔ Populismus aus?
+
+```{r scatter-kap5}
+allbus |>
+  filter(!is.na(islamophobie), !is.na(populismus)) |>
+  ggplot(aes(x = populismus, y = islamophobie)) +
+  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
+  geom_smooth(method = "lm", color = "black") +
+  labs(x = "Populismus (1–5, umgepolt)", y = "Islamfeindlichkeit (1–7)",
+       caption = "ALLBUS 2023")
+```
+
+::: {.callout-important}
+**mariposa-Tipp: Statistik in mariposa, Grafik in ggplot2.** mariposa hat bewusst keine eigene Plotting-Funktion. Das hat einen guten Grund: ggplot2 ist mächtig genug, dass jede:r Sozialwissenschaftler:in damit eigene Grafiken bauen kann — und du verstehst dabei, was wirklich passiert, statt einen Plotter-Wrapper-Output zu importieren.
+:::
+
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — Demokratiezufriedenheit beschreiben.** Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deutschland?") gewichtet, und ergänze deskriptive Statistiken (inkl. Schiefe und Wölbung). Beschreibe in einem Satz, was du siehst.
+
+**Lösung:**
+```{r ex1-kap5-loesung, eval=FALSE}
+allbus |> frequency(ps03, weights = wghtpew)
+allbus |> describe(ps03, weights = wghtpew)
+allbus |> w_skew(ps03, weights = wghtpew)
+allbus |> w_kurtosis(ps03, weights = wghtpew)
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 2 — Subgruppen-Vergleich.** Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer und Frauen, mit Standardabweichung und Standardfehler. Tipp: `summarise(.by = sex, ...)`.
+
+**Lösung:**
+```{r ex2-kap5-loesung, eval=FALSE}
+allbus |>
+  filter(!is.na(sex)) |>
+  summarise(
+    n  = n(),
+    mw = w_mean(islamophobie, weights = wghtpew),
+    sd = w_sd(islamophobie, weights = wghtpew),
+    se = w_se(islamophobie, weights = wghtpew),
+    .by = sex
+  )
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — Drei Korrelate.** Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszufriedenheit `ls01`, (b) Mitmenschen-Vertrauen `st01`, (c) Demokratiezufriedenheit `ps03`. Welcher Zusammenhang ist am stärksten? Ordne ihn mit der Effektgrößen-Faustregel ein.
+
+**Lösung:**
+```{r ex3-kap5-loesung, eval=FALSE}
+allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
+allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
+allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 4 — Post-Hoc bei ANOVA.** Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe danach einen Tukey-Test durch. Welche Bildungspaare unterscheiden sich signifikant?
+
+**Lösung:**
+```{r ex4-kap5-loesung, eval=FALSE}
+allbus_bildung |>
+  oneway_anova(islamophobie, group = educ_kat, weights = wghtpew)
+allbus_bildung |>
+  tukey_test(islamophobie, group = educ_kat, weights = wghtpew)
+```
+:::
+
+## Was du jetzt weißt {-}
+
+- Du erzeugst gewichtete Häufigkeiten und deskriptive Statistiken mit `frequency()` / `fre()` und `describe()`.
+- Du berechnest gewichtete Einzelkennwerte (`w_mean`, `w_median`, `w_modus`, `w_sd`, `w_var`, `w_se`, `w_quantile`, `w_range`, `w_iqr`, `w_skew`, `w_kurtosis`).
+- Du testest univariate Häufigkeiten gegen eine Soll-Verteilung (`binomial_test()`, `chisq_gof()`).
+- Du baust Subgruppen-Tabellen mit `summarise()` und `.by =`.
+- Du kombinierst Kreuztabellen und Chi-Quadrat-Test in einer Funktion — inklusive der Effekt-Aliase `cramers_v()`, `phi()`, `goodman_gamma()`.
+- Du kennst verwandte Kreuztabellen-Tests (`fisher_test()`, `mcnemar_test()`).
+- Du wählst zwischen Pearson, Spearman und Kendall passend zum Skalenniveau.
+- Du ordnest Effektgrößen mit Faustregeln (Cohen) inhaltlich ein.
+- Du vergleichst Gruppenmittelwerte mit `t_test()` und `oneway_anova()`, prüfst Voraussetzungen mit `levene_test()` und wählst zwischen vier Post-Hoc-Verfahren (`tukey_test`, `scheffe_test`, `dunn_test`, `pairwise_wilcoxon`).
+- Du kennst nicht-parametrische Alternativen (`mann_whitney`, `kruskal_wallis`, `wilcoxon_test`, `friedman_test`).
+- Du bringst deine Ergebnisse mit drei ggplot2-Standard-Grafiken zu Papier.
+
+In den nächsten zwei Kapiteln weiten wir den Blick auf multivariate Verfahren aus: in @sec-latente prüfen wir die Faktorstruktur und Reliabilität unserer Skalen, in @sec-erklaerung modellieren wir Islamfeindlichkeit als abhängige Variable über mehrere Prädiktoren gleichzeitig.
+
+## Weiterführend {-}
+
+- mariposa-Vignetten [„Descriptive Statistics"](https://yannickdiehl.github.io/mariposa/articles/descriptive-statistics.html), [„Hypothesis Testing"](https://yannickdiehl.github.io/mariposa/articles/hypothesis-testing.html) und [„Correlation Analysis"](https://yannickdiehl.github.io/mariposa/articles/correlation-analysis.html).
+- Andy Field et al., *Discovering Statistics Using R* — Kapitel zu Mittelwertvergleichen und Korrelation.
+- Jacob Cohen, *Statistical Power Analysis for the Behavioral Sciences* (2. Aufl., 1988) — die Original-Quelle der Effektgrößen-Faustregeln.
+- ALLBUS-Methodenbericht 2023 (GESIS): Erläuterung der Gewichtungsvariablen und Stichprobenarchitektur.

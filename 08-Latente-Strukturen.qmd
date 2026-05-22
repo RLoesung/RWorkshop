@@ -1,0 +1,262 @@
+# Latente Strukturen {#sec-latente}
+
+```{r setup-kap8, include=FALSE}
+library(tidyverse)
+library(mariposa)
+source("R/_common.R")
+source("R/prep.R")
+```
+
+> *Messen die sechs Items wirklich eine einzige Einstellung — oder stecken da mehrere Dimensionen drin?*
+
+In @sec-datentransformation hast du aus mehreren Items eine Skala gemacht. Aber: ist das eigentlich legitim? Lädt jedes Item *gleichmäßig* auf das Konstrukt, oder gibt es Ausreißer? Misst die Skala *eine* Sache oder *mehrere*? Und wie konsistent sind die Items untereinander?
+
+## Worum es geht
+
+In der Sozialforschung sind die wichtigsten Konstrukte **latent** — du kannst sie nicht direkt messen, sondern nur über Indikatoren erschließen. „Islamfeindlichkeit" ist keine Variable, die ein Befragter ankreuzt; es ist eine Hintergrundeinstellung, die sich in den Antworten auf mehrere Survey-Items niederschlägt.
+
+Die methodische Frage: *Wie viele latente Faktoren stehen hinter deinen Items, und wie zuverlässig misst die daraus konstruierte Skala das Konstrukt?* Drei Werkzeuge tragen dich durch dieses Kapitel:
+
+1. **Korrelationsmatrix** — die rohe Voraussetzung jeder Faktorisierung.
+2. **Explorative Faktorenanalyse (EFA)** — wie viele Dimensionen *erkundet* man, ohne sie vorzugeben?
+3. **Reliabilität (Cronbachs α)** — wie konsistent hängen die Items in einer Dimension zusammen?
+
+Am Ende blicken wir kurz auf die **konfirmatorische Faktorenanalyse (CFA)** mit `lavaan` — das ist der nächste Schritt, wenn du eine Strukturhypothese *prüfen* statt nur *erkunden* willst.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Eine Korrelationsmatrix für eine Itembatterie aufstellen, interpretieren und als Heatmap visualisieren.
+- Eine **explorative Faktorenanalyse** durchführen — inklusive KMO, Bartlett, Anzahl-Faktoren-Entscheidung und Rotation.
+- **Cronbachs α** berechnen, Item-Statistiken lesen und problematische Items identifizieren.
+- Den Unterschied zwischen PCA, EFA und CFA erklären — und wissen, wann welche Methode passt.
+- Ein einfaches CFA-Modell mit `lavaan` aufsetzen und Fit-Indizes interpretieren.
+
+## Korrelationsmatrix {#sec-korrelationsmatrix}
+
+Bevor du eine EFA rechnest, schaust du dir die Korrelationen aller Skala-Items an. Hohe Inter-Item-Korrelationen sind die Grundvoraussetzung jeder sinnvollen Faktorisierung.
+
+**Frage:** Wie stark hängen die sechs Islamfeindlichkeits-Items untereinander zusammen?
+
+```{r cor-matrix}
+allbus |>
+  pearson_cor(mm01, mm02r, mm03, mm04, mm05r, mm06, weights = wghtpew)
+```
+
+**Lesart.** mariposa gibt dir eine sauber formatierte Matrix mit Pearson-*r*, *p*-Werten und N pro Zelle. Werte zwischen 0.3 und 0.7 sind in einer gut funktionierenden Skala typisch — zu niedrig (< 0.2) deutet auf ein Fremdkörper-Item hin, zu hoch (> 0.85) auf Redundanz.
+
+::: {.callout-note}
+**Reviewer-Hinweis.** Eine Inter-Item-Korrelationsmatrix gehört in den Anhang eines empirischen Papers, das eine selbstgebaute Skala benutzt. Sie ist der schnellste Sanity-Check für die Operationalisierung — wer dort einen Wert nahe 0 oder über 0.85 sieht, fängt an, sich Sorgen zu machen.
+:::
+
+### Korrelationsmatrix visualisieren
+
+Wenn du die Matrix lieber als **Heatmap** siehst, baust du sie mit ggplot2 selbst — das ist die tidyverse-Alternative zum klassischen `corrplot()`, mit voller Kontrolle über Farben und Beschriftung:
+
+```{r cor-heatmap}
+allbus |>
+  select(mm01, mm02r, mm03, mm04, mm05r, mm06) |>
+  cor(use = "pairwise") |>
+  as_tibble(rownames = "Item1") |>
+  pivot_longer(-Item1, names_to = "Item2", values_to = "r") |>
+  ggplot(aes(Item1, Item2, fill = r)) +
+  geom_tile() +
+  geom_text(aes(label = round(r, 2)), color = "white") +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red",
+                       midpoint = 0, limits = c(-1, 1)) +
+  coord_fixed()
+```
+
+Die ggplot2-Grammatik dahinter kennst du aus @sec-grafiken-basics.
+
+## Explorative Faktorenanalyse {#sec-efa}
+
+Die EFA prüft, ob hinter mehreren beobachteten Variablen wenige **latente Dimensionen** stehen. mariposas `efa()` integriert in einem Aufruf alles, was du brauchst: KMO-Test, Bartlett-Test, Eigenwerte, Faktorladungen und (auf Wunsch) Rotation.
+
+**Frage:** Bilden die sechs Items eine *eindimensionale* Islamfeindlichkeits-Skala, oder gibt es Sub-Faktoren?
+
+### Einfaktor-Lösung
+
+```{r efa-1}
+allbus |>
+  efa(mm01, mm02r, mm03, mm04, mm05r, mm06, n_factors = 1)
+```
+
+**Lesart.** Du bekommst:
+
+- **KMO** — Stichprobeneignung. Faustregel: ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut.
+- **Varianzanteil** — wie viel der gemeinsamen Varianz die extrahierten Faktoren erklären.
+- Die **Ladungen** zeigen, wie stark jedes Item mit dem Faktor zusammenhängt. Werte ≥ 0.5 sind brauchbar, ≥ 0.7 hoch.
+
+### Zwei-Faktor-Lösung als Vergleich
+
+In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen **kognitiv-stereotyper** (z. B. `mm06` „Fanatiker") und **politisch-restriktiver** (z. B. `mm04` „beobachten lassen") Komponente unterschieden. Probieren wir es aus:
+
+```{r efa-2}
+allbus |>
+  efa(mm01, mm02r, mm03, mm04, mm05r, mm06,
+      n_factors = 2, rotation = "varimax")
+```
+
+**Lesart.** Du siehst eine zweite Spalte mit Ladungen. Wenn sich die Items klar auf je *einen* Faktor verteilen (hohe Ladung auf F1 *oder* F2, nicht beide), ist die Zwei-Faktor-Lösung interpretierbar. Wenn die Trennung unscharf bleibt, ist die Einfaktor-Lösung die sparsamere Wahl.
+
+::: {.callout-note}
+**Hintergrund: PCA, EFA, CFA — was unterscheidet sie?**
+
+- **PCA** (`method = "pca"`) sucht *Komponenten*, die maximal Varianz erklären — gut für Datenreduktion.
+- **EFA** (`method = "ml"` oder `"minres"`) modelliert *latente Faktoren* hinter den Items — gut für Theoriebildung.
+- **CFA** (mit `lavaan`, siehe @sec-cfa) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
+
+In der Praxis: EFA, wenn du *erkundest*, CFA wenn du *bestätigst*.
+:::
+
+::: {.callout-note}
+**Hintergrund: Wie viele Faktoren extrahieren?** Die klassische Antwort heißt **Kaiser-Kriterium**: alle Faktoren mit Eigenwert > 1. Konservativer ist der **Scree-Test**: man wählt die Faktoranzahl an der „Knickstelle" im Eigenwerteverlauf. Modern (und in der Methodenliteratur empfohlen): **Parallelanalyse** — Vergleich der empirischen Eigenwerte mit Eigenwerten zufällig generierter Daten gleicher Größe. mariposa zeigt dir alle Eigenwerte; den Vergleich mit Zufallsdaten musst du im Moment noch über `psych::fa.parallel()` machen, wenn dir die einfache Lösung nicht reicht.
+:::
+
+## Reliabilitätsanalyse {#sec-reliabilitaet}
+
+Nachdem die EFA dir die Struktur zeigt, prüft die Reliabilitätsanalyse die *innere Konsistenz* — wie zuverlässig misst die Skala? **Cronbachs α** ist der Standard-Index dafür.
+
+```{r reliability}
+allbus |>
+  reliability(mm01, mm02r, mm03, mm04, mm05r, mm06, weights = wghtpew)
+```
+
+**Lesart.** Werte über α = 0.7 gelten als akzeptabel, über 0.8 als gut, über 0.9 als exzellent. Bei α < 0.6 misst die Skala wahrscheinlich kein einheitliches Konstrukt.
+
+mariposa gibt dir zusätzlich pro Item:
+
+- **Item-Total-Korrelation** — wie stark hängt das einzelne Item mit der Summe der anderen zusammen?
+- **α if item deleted** — wie würde sich α verändern, wenn dieses Item entfernt würde?
+
+Daraus liest du:
+
+- **α steigt beim Entfernen** → das Item passt nicht zur Skala, Kandidat zum Streichen.
+- **α sinkt beim Entfernen** → das Item trägt zur Reliabilität bei, behalten.
+- **Item-Total-Korrelation < 0.3** → schwacher Beitrag, oft Hand in Hand mit dem ersten Punkt.
+
+Ein Beispiel: zeigt die Item-Statistik, dass „α if item deleted" für `mm04` von 0.84 auf 0.87 steigen würde, weißt du: `mm04` passt nicht ganz zu den anderen — vielleicht weil es eine andere Facette (staatliche Restriktion) anspricht als die übrigen Items (persönliche Einstellung). Entweder du behältst es bewusst (theoretisch begründet) oder entfernst es (empirisch begründet).
+
+::: {.callout-warning}
+**Vorsicht: Cronbachs α ist eine Untergrenze.** Das berühmte α unterschätzt die wahre Reliabilität in fast allen Modellannahmen. In der modernen Methodenliteratur gilt **McDonalds ω** als sauberere Wahl, ist aber rechentechnisch aufwendiger (über `lavaan`-Modelle). Für ein Einsteigerbuch reicht α — wisse aber, dass es das gibt.
+:::
+
+::: {.callout-note}
+**Reviewer-Hinweis.** In einem Methodenbericht reicht *nicht* der α-Wert allein. Standard ist: α, Item-Total-Korrelationen aller Items, α-if-deleted aller Items — gerne in einer Tabelle. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.
+:::
+
+## Konfirmatorische Faktorenanalyse als Ausblick {#sec-cfa}
+
+Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine **konfirmatorische Faktorenanalyse**. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`.
+
+::: {.callout-important}
+**mariposa-Tipp: Bewusste Grenze.** mariposa deckt EFA, Reliabilität und (logistische) Regression ab. Für CFA und Strukturgleichungsmodelle bleiben `lavaan` und `semPlot` die Standardpakete — auch in modernen Lehrbüchern. Das ist eine bewusste Spezialisierung: jedes Werkzeug für die Aufgabe, für die es gemacht ist.
+:::
+
+Installation einmalig:
+
+```{r lavaan-install, eval=FALSE}
+install.packages(c("lavaan", "semPlot"))
+```
+
+Aktivieren und Modell aufstellen:
+
+```{r cfa-setup, eval=FALSE}
+library(lavaan)
+library(semPlot)
+
+modell_cfa <- "islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"
+
+fit <- cfa(modell_cfa, data = allbus,
+           sampling.weights = "wghtpew", estimator = "MLR")
+
+summary(fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+`fit.measures = TRUE` gibt dir CFI, TLI, RMSEA, SRMR — die Standard-Modellgüte-Indizes. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08.
+
+Eine Pfaddiagramm-Grafik:
+
+```{r cfa-plot, eval=FALSE}
+semPaths(fit, whatLabels = "std", layout = "tree", edge.color = "black")
+```
+
+::: {.callout-note}
+**Hintergrund: Wann CFA, wann nicht?** Eine CFA macht Sinn, wenn:
+
+1. Du eine *konkrete* theoretische Hypothese über die Faktorstruktur hast.
+2. Deine Stichprobe groß genug ist (Faustregel: N ≥ 200).
+3. Du dich auf strenge Verteilungs- bzw. Schätz-Annahmen einlässt (MLR, WLSMV bei ordinalen Items).
+
+Wenn du Items einfach zu einer Skala zusammenfassen willst und keine Strukturhypothese prüfst, ist EFA + α der pragmatischere Weg.
+:::
+
+::: {.callout-note}
+**Hintergrund: Methoden-Effekte umgepolter Items.** Bei Skalen mit positiv und negativ formulierten Items (wie unserer Islamfeindlichkeits-Skala) bricht ein striktes 1-Faktor-CFA-Modell oft ein, weil die umgepolten Items miteinander korrelieren — auch nach Kontrolle des Hauptfaktors. Das ist *kein* inhaltlicher Sub-Faktor, sondern ein **Methoden-Effekt** (Akquieszenz). In der CFA löst man das, indem man Residual-Kovarianzen zwischen den umgepolten Items zulässt (`mm02r ~~ mm05r`). Diese Spezifikation ist methodisch sauber und in der Literatur etabliert.
+:::
+
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — EFA der pa-Items (Reproduktion).** Die Forschungsdebatte zu Populismus diskutiert, ob es sich um eine *eindimensionale* Einstellung handelt oder um *drei* Komponenten (Anti-Elitismus, People-Centrism, Manichäisches Weltbild). Führe eine EFA der sieben umgepolten `pa`-Items durch — zuerst mit `n_factors = 1`, dann mit `n_factors = 3` und Varimax-Rotation. Welche Lösung passt besser?
+
+**Lösung:**
+```{r ex1-kap8-loesung, eval=FALSE}
+allbus |>
+  efa(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r,
+      n_factors = 1)
+allbus |>
+  efa(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r,
+      n_factors = 3, rotation = "varimax")
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 2 — Reliabilität der Populismus-Skala (Reproduktion).** Berechne Cronbachs α für die sieben umgepolten `pa`-Items. Welches Item hat die schwächste Item-Total-Korrelation? Würde Streichen die Reliabilität verbessern?
+
+**Lösung:**
+```{r ex2-kap8-loesung, eval=FALSE}
+allbus |>
+  reliability(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r,
+              weights = wghtpew)
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — Eigene Skala prüfen (Transfer).** Greife auf die Skala zurück, die du in der Übung am Ende von @sec-datentransformation gebaut hast (eigenes Konstrukt). Prüfe sie: (a) Korrelationsmatrix, (b) EFA mit 1 Faktor, (c) Cronbachs α. Schreibe in 2–3 Sätzen, ob die Operationalisierung methodisch tragfähig ist.
+
+*Keine Musterlösung — die Übung trainiert den vollständigen Validierungsworkflow.*
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 4 — CFA mit lavaan (Mini-Forschungsfrage).** Falls du `lavaan` installiert hast: Spezifiziere ein 1-Faktor-CFA-Modell für die sechs Islamfeindlichkeits-Items, lass eine Residual-Kovarianz zwischen `mm02r` und `mm05r` zu (siehe Methoden-Effekt-Hinweis oben), und prüfe Fit-Indizes. Erfüllt das Modell CFI ≥ 0.95, RMSEA ≤ 0.08, SRMR ≤ 0.08?
+
+**Lösungs-Skizze:**
+```{r ex4-kap8-loesung, eval=FALSE}
+library(lavaan)
+modell <- '
+  islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06
+  mm02r ~~ mm05r
+'
+fit <- cfa(modell, data = allbus, estimator = "MLR")
+fitMeasures(fit, c("cfi", "tli", "rmsea", "srmr"))
+```
+:::
+
+## Was du jetzt weißt {-}
+
+- Du erstellst gewichtete Korrelationsmatrizen mit `pearson_cor()` und visualisierst sie als Heatmap über ggplot2.
+- Du führst eine EFA mit `efa()` durch — inklusive KMO, Bartlett und Rotation.
+- Du berechnest Cronbachs α mit `reliability()`, liest Item-Statistiken und identifizierst problematische Items.
+- Du kennst den Unterschied zwischen PCA (Datenreduktion), EFA (explorativ) und CFA (konfirmatorisch).
+- Du weißt, wann CFA mit `lavaan` sinnvoll ist und wie eine Minimalspezifikation inkl. Methoden-Effekt aussieht.
+
+Im nächsten Kapitel (@sec-erklaerung) wechseln wir das Genre: statt *Struktur* zu *Erklärung* — wir modellieren Islamfeindlichkeit als abhängige Variable und prüfen, welche soziostrukturellen und politischen Prädiktoren sie am besten erklären.
+
+## Weiterführend {-}
+
+- mariposa-Vignette [„Scale Analysis"](https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html).
+- Yves Rosseel et al., [lavaan-Dokumentation](https://lavaan.ugent.be/) — sehr lesbare Einführung in SEM mit R.
+- Andy Field et al., *Discovering Statistics Using R*, Kapitel zu Faktorenanalyse und Reliabilität.
+- Brown, T. A. (2015). *Confirmatory Factor Analysis for Applied Research* (2nd ed.) — Standardwerk zur CFA-Praxis.
+- Furr, R. M. (2017). *Psychometrics: An Introduction* — gut lesbarer Einstieg in Reliabilität und Validität.

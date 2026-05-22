@@ -1,0 +1,523 @@
+# Daten transformieren und Skalen bilden {#sec-datentransformation}
+
+```{r setup-kap5, include=FALSE}
+library(tidyverse)
+library(mariposa)
+source("R/_common.R")
+allbus <- read_spss("ALLBUS2023.sav")
+```
+
+> *Wie wird aus sechs einzelnen Items eine messbare Einstellung?*
+
+In @sec-datenimport hast du den Datensatz gelesen, Variablen gefunden und fehlende Werte deklariert. Jetzt geht es um das, was in der quantitativen Sozialforschung **Operationalisierung** heißt: Aus einer abstrakten Idee („Islamfeindlichkeit") werden konkrete Variablen, die du am Ende rechnen kannst.
+
+## Worum es geht
+
+Eine einzige Survey-Frage misst selten zuverlässig, was sie messen soll. *„Sind Sie islamfeindlich?"* würde kaum jemand mit Ja beantworten — auch wer es ist. Deshalb arbeitet die empirische Sozialforschung mit **Itembatterien**: Mehrere Aussagen aus unterschiedlichen Perspektiven decken zusammen ein Konstrukt ab. Aus ihnen wird ein Skalenwert berechnet, der robuster ist als jede einzelne Frage.
+
+Dieses Kapitel zeigt dir den Weg von der rohen Variable bis zur fertigen Skala:
+
+1. **Neue Variablen erzeugen** (`mutate()`) — etwa aus zwei alten Variablen eine abgeleitete Größe.
+2. **Bedingungslogik** (`case_when()`, `if_else()`) — Kategorien neu schneiden.
+3. **Rekodieren** (`rec()`) — die zentrale Operation: Werte umkodieren, Kategorien zusammenfassen, **umpolen** (Reverse Coding).
+4. **Skalen bilden** (`row_means()`) — aus mehreren Items einen Wert pro Befragte:n.
+5. **Vergleichbar machen** (`pomps()`) — Skalen unterschiedlicher Bandbreite auf eine 0–100-Basis bringen.
+
+Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlichkeit** (`islamophobie`, 1–7) und **Populismus** (`populismus`, 1–5) — sauber aufgebaut und dokumentiert.
+
+## Was du nach diesem Kapitel kannst {-}
+
+- Neue Variablen mit `mutate()` erzeugen.
+- Mit `case_when()`, `case_match()` und `if_else()` Bedingungslogik schreiben.
+- Subgruppen-Aggregate mit `summarise(.by = ...)` rechnen.
+- Variablen mit `rec()` rekodieren — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum **Umpolen** (Reverse Coding).
+- Dummy-Variablen für Regressionen mit `to_dummy()` erzeugen.
+- Variablen standardisieren (`std()`) und zentrieren (`center()`).
+- Aus mehreren Items eine **gewichtete Mittelwert-Skala** mit `row_means()` und kontrolliertem `min_valid` bilden.
+- Skalen unterschiedlicher Bandbreite mit `pomps()` auf eine gemeinsame 0–100-Skala bringen.
+- Die vollständige Datenpräp-Pipeline der Mini-Studie nachvollziehen und auf eigene Konstrukte übertragen.
+
+## Daten transformieren
+
+Vier Verben aus `dplyr` decken den Großteil aller Datentransformationen ab:
+
+| Funktion                       | Wirkung                                                |
+| ------------------------------ | ------------------------------------------------------ |
+| `mutate()`                     | Variablen neu erzeugen oder ändern (SPSS: `COMPUTE`)   |
+| `case_when()` / `case_match()` | Vektorisierte Bedingungslogik (SPSS: `IF`)             |
+| `if_else()`                    | Knappe Form für zwei-stufige Bedingungen               |
+| `summarise()`                  | Zusammenfassungen pro Gruppe (SPSS: `AGGREGATE`)       |
+| `group_by()`                   | Gruppierung für nachfolgende Operationen               |
+| `distinct()`                   | Einzigartige Werte einer Variable                      |
+| `rename()`                     | Variablen umbenennen                                   |
+
+### Neue Variablen mit `mutate()`
+
+```{r mutate}
+allbus |>
+  select(age) |>
+  mutate(geburtsjahr = 2023 - age) |>
+  head(3)
+```
+
+Soll dieselbe Transformation auf *mehrere* Variablen wirken, hilft `across()`:
+
+```{r mutate-across, eval=FALSE}
+allbus |>
+  mutate(across(c(mm01, mm02, mm03), as.numeric))
+```
+
+### Bedingungslogik mit `case_when()` und `if_else()`
+
+`case_when()` ist das R-Äquivalent zu SPSS' `IF`. Du listest Bedingungen in der Form `bedingung ~ wert` auf — die erste zutreffende gewinnt.
+
+```{r case-when}
+allbus |>
+  select(educ) |>
+  mutate(
+    bildung = case_when(
+      educ %in% 1:2 ~ "niedrig",
+      educ %in% c(3, 7) ~ "mittel",
+      educ %in% 4:5 ~ "hoch",
+      .default = NA
+    )
+  ) |>
+  count(bildung)
+```
+
+Bei nur **zwei** Ausprägungen ist `if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)` knapper:
+
+```{r if-else-demo}
+allbus |>
+  mutate(jung = if_else(age < 30, "jung", "30+")) |>
+  count(jung)
+```
+
+Seit dplyr 1.1 gibt es zusätzlich `case_match()` — knapper als `case_when()`, wenn du nur Werte mappst (ohne Vergleichsoperatoren):
+
+```{r case-match}
+allbus |>
+  select(eastwest) |>
+  mutate(region = case_match(eastwest, 1 ~ "West", 2 ~ "Ost")) |>
+  count(region)
+```
+
+### Aggregation mit `group_by()` und `summarise()`
+
+```{r group-summarise}
+allbus |>
+  group_by(eastwest) |>
+  summarise(
+    n_faelle           = n(),
+    n_einz_bildung     = n_distinct(educ),
+    durchschnitt_alter = mean(age, na.rm = TRUE)
+  )
+```
+
+`n()` zählt alle Fälle in der Gruppe, `n_distinct()` zählt **einzigartige** Werte einer Variablen.
+
+::: {.callout-tip}
+**`.by` als Alternative.** Seit dplyr 1.1 kannst du die Gruppierung auch direkt im Aufruf von `summarise()` oder `mutate()` setzen, ohne `group_by()` davor:
+
+```{r dot-by}
+allbus |>
+  summarise(
+    durchschnitt_alter = mean(age, na.rm = TRUE),
+    .by = eastwest
+  )
+```
+
+Das ist kürzer und vermeidet, dass du `ungroup()` vergisst.
+:::
+
+### `distinct()` und `rename()`
+
+`distinct()` zeigt dir alle einzigartigen Ausprägungen einer Variable — die schnellste Antwort auf „welche Codes gibt es eigentlich?":
+
+```{r distinct}
+allbus |>
+  distinct(eastwest)
+```
+
+`rename()` benennt Variablen um — neuer Name links, alter Name rechts:
+
+```{r rename}
+allbus |>
+  rename(geschlecht = sex, alter = age) |>
+  select(geschlecht, alter) |>
+  head(3)
+```
+
+Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Übersetzen von kryptischen ALLBUS-Namen in sprechende Kürzel für deinen Analyse-Datensatz.
+
+## Rekodierung mit `rec()` {#sec-rekodierung}
+
+Die wichtigste Funktion in diesem Kapitel: `rec()` aus mariposa. Sie ersetzt das, was du in SPSS unter `RECODE` kennst, kann aber mehr — sie versteht eine kompakte **Regel-Syntax**, behält Labels und arbeitet pipe-freundlich.
+
+**Syntax:**
+
+```r
+data |>
+  rec(variable, rules = "1=1; 2:3=2; else=NA")
+```
+
+Die Regel-Syntax im Überblick:
+
+| Muster              | Wirkung                                 | Beispiel                                |
+| ------------------- | --------------------------------------- | --------------------------------------- |
+| `alt=neu`           | Einzelwert wird umkodiert               | `"1=10; 2=20"`                          |
+| `lo:hi=neu`         | Wertebereich umkodieren                 | `"1:3=1"`                               |
+| `min:x=neu`, `x:max=neu` | Dynamische Grenzen                 | `"min:5=1; 6:max=2"`                    |
+| `[Label]`           | Inline-Wertelabel vergeben              | `"1:2=1 [niedrig]; 3:5=2 [hoch]"`       |
+| `else=copy`         | Alle nicht erwähnten Werte unverändert  | `"1:3=1; else=copy"`                    |
+| `else=NA`           | Alle nicht erwähnten Werte werden NA    | `"1=1; else=NA"`                        |
+| `NA=neu`            | NA durch einen Wert ersetzen            | `"NA=0; else=copy"`                     |
+| `val=NA`            | Bestimmte Werte zu NA machen            | `"-9=NA; -8=NA; else=copy"`             |
+| `"rev"`             | Skala umpolen (`max + min - x`)         | `rules = "rev"`                         |
+| `"dicho"`           | Dichotomisieren am Median (0/1)         | `rules = "dicho"`                       |
+| `"dicho(x)"`        | Dichotomisieren am festen Cut-Punkt     | `rules = "dicho(3)"`                    |
+| `"mean"`            | Dichotomisieren am Mittelwert           | `rules = "mean"`                        |
+| `"quart"`           | In vier Quartilgruppen aufteilen        | `rules = "quart"`                       |
+
+Regeln werden in Reihenfolge geprüft, die erste passende gewinnt.
+
+### Beispiel: Bildung kategorisieren
+
+```{r rec-bildung}
+allbus |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE) |>
+  count(educ)
+```
+
+Mit `as.factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.
+
+### Spezial-Modi: Dichotomisieren und Quartile
+
+Statt eine Regel-Kette zu schreiben, kannst du eine Variable in einem Aufruf am Median, an einem festen Cut-Punkt, am Mittelwert oder in Quartile zerlegen:
+
+```{r rec-dicho}
+allbus |>
+  rec(age, rules = "dicho(50)", suffix = "_d") |>
+  count(age_d)
+```
+
+Hier wird `age_d` zu 0 für unter 50, zu 1 für 50+. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
+
+```{r rec-quart}
+allbus |>
+  rec(age, rules = "quart", suffix = "_q") |>
+  count(age_q)
+```
+
+`age_q` ist jetzt eine kategoriale Variable mit den Werten 1–4 für die Altersquartile.
+
+### Lehrstück: Umpolen (Reverse Coding)
+
+Die sechs Items unserer Islamfeindlichkeits-Skala sind **nicht alle in dieselbe Richtung gepolt**. Vier Items messen Zustimmung zu islamfeindlichen Aussagen (hoch = islamophob); zwei Items sind positiv formuliert (hoch = tolerant):
+
+```{r mm-items, echo=FALSE}
+tibble::tribble(
+  ~Item, ~Wortlaut, ~Polung,
+  "mm01", "Islamausübung in Deutschland beschränken",        "hoch = islamophob",
+  "mm02", "Islam passt in die deutsche Gesellschaft",         "hoch = TOLERANT — umpolen",
+  "mm03", "Anwesenheit von Muslimen bringt Konflikt",         "hoch = islamophob",
+  "mm04", "Staat sollte islamische Gruppen beobachten",       "hoch = islamophob",
+  "mm05", "Muslimischer Bürgermeister in Ordnung",            "hoch = TOLERANT — umpolen",
+  "mm06", "Unter Muslimen sind viele rel. Fanatiker",         "hoch = islamophob"
+) |> knitr::kable()
+```
+
+Bevor du aus den sechs Items einen Mittelwert bildest, **musst** du `mm02` und `mm05` umpolen, sonst heben sich die Effekte auf. mariposa hat dafür den Spezial-Modus `"rev"`:
+
+```{r reverse}
+allbus <- allbus |>
+  rec(mm02, rules = "rev", suffix = "r") |>
+  rec(mm05, rules = "rev", suffix = "r")
+```
+
+`"rev"` rechnet intern `max(x) + min(x) - x` — bei einer 7-stufigen Skala also `8 - x`, was genau das gewünschte Umpolen ist. Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen.
+
+::: {.callout-note}
+**Hintergrund: Warum positiv formulierte Items?** In der Survey-Methodologie ist die Mischung aus zustimmend und ablehnend formulierten Items eine Standard-Technik gegen **Akquieszenz** — die Tendenz, allen Aussagen zuzustimmen. Wer die Akquieszenz-Falle herausrechnen will, muss umpolen. Vergisst du diesen Schritt, korrelieren die umgepolten Items *negativ* mit den anderen — und Cronbachs α (siehe @sec-reliabilitaet) bricht ein. Das ist das klassische Warnsignal einer vergessenen Umpolung.
+:::
+
+::: {.callout-note}
+**Hintergrund: `allbus <- allbus |> ...` überschreibt.** Wenn du `allbus <-` schreibst, ersetzt du das Tibble *im Speicher* um die rekodierten Spalten. Die Originaldatei `ALLBUS2023.sav` auf der Festplatte bleibt unangetastet — du kannst die Pipeline jederzeit neu starten. Möchtest du Zwischenstände parallel behalten, weist du einer neuen Variable zu (`allbus_mm <- allbus |> rec(...)`).
+:::
+
+::: {.callout-important}
+**mariposa-Tipp: Saubere Umpolung mit `suffix`.** Andere Pakete überschreiben gerne die Originalvariable beim Rekodieren. mariposa zwingt dich, dir bewusst zu sein, *was du tust* — Original bleibt, neue Variable bekommt einen klaren Namen mit Suffix. Wenn drei Wochen später ein:e Reviewer:in fragt „warum war Skalenwert für Fall 42 = 4.5?", kannst du den Schritt rekonstruieren.
+:::
+
+::: {.callout-warning}
+**Vorsicht: Polung immer prüfen, nicht raten.** Schau dir vor jeder Skalenbildung das Wortlaut-Label der Items an (`var_label()`) — auch Items, die du schon hundertmal gesehen hast. Der nervigste Fehler einer Skala ist eine vergessene Umpolung; sie zeigt sich an einem überraschend niedrigen Cronbachs α.
+:::
+
+### Dummy-Variablen mit `to_dummy()`
+
+Für Regressionen brauchst du oft **Dummy-Variablen** — eine kategoriale Variable mit `k` Ausprägungen wird in `k-1` Indikator-Spalten zerlegt (0/1 pro Ausprägung). mariposas `to_dummy()` macht das in einem Aufruf:
+
+```{r to-dummy-demo, eval=FALSE}
+allbus |>
+  to_dummy(eastwest, ref = 1)        # West (=1) als Referenz, dummy für Ost
+```
+
+Die neuen Spalten werden automatisch angehängt; mit `ref =` legst du fest, welche Ausprägung als *Referenz* weggelassen wird. Dummy-Variablen brauchst du erst in @sec-erklaerung für die Regression — `lm()` und `linear_regression()` aus mariposa erstellen sie für Faktoren auch automatisch im Hintergrund.
+
+## Standardisieren und zentrieren
+
+Vor manchen Analysen ist es sinnvoll, eine Variable auf einen einheitlichen Maßstab zu bringen.
+
+```{r std-center}
+allbus |>
+  std(age, suffix = "_z") |>     # neue Variable age_z (Mittelwert 0, SD 1)
+  select(age, age_z) |>
+  head(3)
+```
+
+Mit `center()` analog für mittelwertzentrierte Variablen:
+
+```{r center, eval=FALSE}
+allbus |>
+  center(age, suffix = "_c")     # neue Variable age_c (Mittelwert 0)
+```
+
+Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein `weights =`-Argument, falls du die Standardisierung gewichtet machen willst.
+
+## Skalen bilden {#sec-skalen}
+
+Für die Mini-Studie willst du aus den sechs umgepolten Items eine **gewichtete Mittelwert-Skala** bauen. mariposa stellt dafür drei Zeilen-Funktionen bereit:
+
+| Funktion                                | Was sie tut                                          |
+| --------------------------------------- | ---------------------------------------------------- |
+| `row_means(data, ..., min_valid = N)`   | Mittelwert pro Fall über die angegebenen Variablen   |
+| `row_sums(data, ..., min_valid = N)`    | Summe pro Fall                                       |
+| `row_count(data, ..., count = wert)`    | Wie oft ein bestimmter Wert in der Zeile vorkommt    |
+
+Das Argument `min_valid` gibt vor, *wie viele gültige Antworten* mindestens da sein müssen, damit der Mittelwert berechnet wird. Andernfalls bleibt der Skalenwert `NA`. Faustregel: mindestens 80 % der Items.
+
+Wichtig: `row_means()` (und ihre Geschwister) geben einen **numerischen Vektor** zurück — sie wollen also in einem `mutate()`-Aufruf eingebettet werden, mit `pick()` zur Variablenauswahl. Das ist tidyverse-idiomatisch und macht klar, dass eine neue Spalte entsteht.
+
+### Islamfeindlichkeits-Skala
+
+```{r scale-islam}
+allbus <- allbus |>
+  mutate(
+    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                             min_valid = 5)
+  )
+```
+
+Schnelle Prüfung, ob die Skala plausibel ist:
+
+```{r scale-check}
+allbus |> describe(islamophobie)
+```
+
+::: {.callout-note}
+**Hintergrund: Was misst die Skala?** Werte nahe 1 bedeuten geringe Zustimmung zu islamfeindlichen Aussagen, Werte nahe 7 hohe Zustimmung. Da die positiv formulierten Items (`mm02r`, `mm05r`) umgepolt sind, „zieht" hohes Wohlwollen gegenüber Muslimen den Skalenwert nach unten — wie es bei einer Skala für *Islamfeindlichkeit* sein soll.
+:::
+
+::: {.callout-note}
+**Forschungshintergrund: Wer hat das gemessen?** Die sechs `mm`-Items sind etabliert in der deutschsprachigen Forschung zu gruppenbezogener Menschenfeindlichkeit (Decker & Brähler; Pickel/Pickel). Sie messen einen kohärenten Konstruktbereich — wir prüfen das in @sec-efa noch faktorenanalytisch und in @sec-reliabilitaet mit Cronbachs α. Die Mini-Studie nutzt die Skala unter dem Namen `islamophobie` (kürzer, international anschlussfähig) — der inhaltliche Gegenstand bleibt jedoch Islam- bzw. Muslimfeindlichkeit als spezifische Facette gruppenbezogener Menschenfeindlichkeit.
+:::
+
+### Antwortstil prüfen mit `row_count()`
+
+Bevor wir die Populismus-Skala bilden, ein kleiner Daten-Qualitäts-Check: Wie oft hat jemand bei den `mm`-Items die **extremste** Antwort (7) gewählt? Hoher Wert deutet auf eine *response style* hin — jemand kreuzt durchgängig „voll und ganz zu" an, unabhängig vom Item.
+
+```{r row-count-demo}
+allbus |>
+  mutate(n_extrem = row_count(pick(mm01, mm02, mm03, mm04, mm05, mm06),
+                              count = 7)) |>
+  count(n_extrem)
+```
+
+Die meisten Befragten zeigen *kein* solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. `row_count()` ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht", wie viele Extremantworten, wie viele Mittelantworten?
+
+### Populismus-Skala
+
+Hier wartet eine zweite Polungs-Falle — und genau die ist der Grund, warum du dich vor jeder Skalenbildung mit dem Codebook beschäftigst. Schau dir zuerst die Wertelabels eines `pa`-Items an:
+
+```{r pa-labels}
+val_labels(allbus$pa29)
+```
+
+Das `pa`-Modul nutzt eine **5-stufige Skala**, bei der **1 = „stimme voll zu" und 5 = „lehne ganz ab"** steht. Das ist die *umgekehrte* Logik zu den `mm`-Items, wo `1` Ablehnung und `7` Zustimmung bedeutete. Folglich heißt für `pa29` „Abgeordnete nur dem Volk verpflichtet" ein **niedriger** Wert = populistisch.
+
+Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben `pa`-Items um — sie sind alle gleich (invers) kodiert, die Umpolung läuft also für alle in einer Schleife identisch:
+
+```{r scale-pop}
+allbus <- allbus |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  rec(pa30, rules = "rev", suffix = "r") |>
+  rec(pa31, rules = "rev", suffix = "r") |>
+  rec(pa32, rules = "rev", suffix = "r") |>
+  rec(pa33, rules = "rev", suffix = "r") |>
+  rec(pa34, rules = "rev", suffix = "r") |>
+  rec(pa35, rules = "rev", suffix = "r") |>
+  mutate(
+    populismus = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                           min_valid = 6)
+  )
+
+allbus |> describe(populismus)
+```
+
+::: {.callout-note}
+**Forschungshintergrund: Populismus messen.** Die sieben `pa`-Items basieren auf einer Skala von Schulz et al. (2017) und decken drei klassische Populismus-Dimensionen ab: Anti-Elitismus, Volkszentrismus, Manichäismus (Volk vs. korrupte Elite). Hohe Werte bedeuten populistische Einstellungsmuster — das ist *nicht* gleichzusetzen mit Wahlpräferenz für populistische Parteien, sondern eine *Einstellung*, die quer durchs Parteienspektrum vorkommen kann.
+:::
+
+::: {.callout-warning}
+**Vorsicht: Polung wird in der Praxis öfter übersehen, als du denkst.** Items in einer Itembatterie sind nicht immer in dieselbe Richtung kodiert — selbst nicht innerhalb derselben Welle desselben Datensatzes. Die `mm`-Items von ALLBUS 2023 nutzen 7-stufig (`1 = nicht zu, 7 = voll zu`), die `pa`-Items 5-stufig (`1 = voll zu, 5 = lehne ab`). Wenn du auf eine neue Skala stößt, gilt ausnahmslos: **erst Wertelabels prüfen, dann Skala bauen**.
+:::
+
+## Skalen vergleichbar machen mit `pomps()` {#sec-pomps}
+
+Du hast jetzt zwei Skalen — `islamophobie` (1–7) und `populismus` (1–5). Ein Vergleich der reinen Mittelwerte ist **irreführend**: der Mittelwert von `islamophobie` läuft auf einer doppelt so weiten Skala wie der von `populismus`. „Populismus liegt im Schnitt bei 3, Islamfeindlichkeit bei 4" sagt für sich allein nichts über die *relative Intensität* der beiden Einstellungen aus.
+
+Die Lösung ist die **POMPS**-Transformation (*Percent of Maximum Possible Scores*): Du rechnest beide Skalen auf einen gemeinsamen 0–100-Bereich um. Die Formel ist einfach:
+
+$$
+\text{POMPS} = \frac{x - \text{min}}{\text{max} - \text{min}} \times 100
+$$
+
+mariposa hat das als `pomps()` direkt verbaut:
+
+```{r pomps-demo}
+allbus <- allbus |>
+  mutate(
+    islamophobie_p = pomps(islamophobie, scale_min = 1, scale_max = 7),
+    populismus_p   = pomps(populismus,   scale_min = 1, scale_max = 5)
+  )
+
+allbus |>
+  summarise(
+    islam_orig = round(mean(islamophobie,   na.rm = TRUE), 2),
+    islam_p    = round(mean(islamophobie_p, na.rm = TRUE), 2),
+    pop_orig   = round(mean(populismus,     na.rm = TRUE), 2),
+    pop_p      = round(mean(populismus_p,   na.rm = TRUE), 2)
+  )
+```
+
+Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in *relativer Intensität* stärker islamophob als populistisch — oder umgekehrt.
+
+::: {.callout-important}
+**mariposa-Tipp: `scale_min` und `scale_max` immer angeben.** Ohne diese Argumente nutzt `pomps()` den *beobachteten* Wertebereich (`min(x)`, `max(x)`) — bei einer 1–7-Skala, in der niemand 1 angekreuzt hat, würde 2 zur „neuen Null", was die Skala verzerrt. Gib bei Likert-Items immer den **theoretischen** Wertebereich an.
+:::
+
+::: {.callout-note}
+**Hintergrund: Korrelationen bleiben erhalten.** POMPS ist eine *lineare* Transformation — die Verteilung der Werte verändert sich nicht, nur der Maßstab. Korrelationen, Effektstärken und alle linearen Modelle liefern auf den POMPS-Variablen genau dieselben Ergebnisse wie auf den Originalen. Du verlierst also nichts; du gewinnst nur Vergleichbarkeit zwischen Skalen unterschiedlicher Bandbreite.
+:::
+
+## Die komplette Datenpräp-Pipeline {#sec-pipeline}
+
+Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer einzigen sauberen Pipeline zusammenfassen. Diese Pipeline ist der **Anker für Kap. 6–9** — du wirst sie als Setup-Block am Anfang jedes weiteren Kapitels wiederfinden (technisch eingebunden über `source("R/prep.R")`):
+
+```{r full-pipeline, eval=FALSE}
+allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
+  rec(mm02, rules = "rev", suffix = "r") |>                       # <2>
+  rec(mm05, rules = "rev", suffix = "r") |>                       # <2>
+  rec(pa29, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa30, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa31, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa32, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa33, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa34, rules = "rev", suffix = "r") |>                       # <3>
+  rec(pa35, rules = "rev", suffix = "r") |>                       # <3>
+  mutate(
+    islamophobie   = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                               min_valid = 5),                     # <4>
+    populismus     = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
+                               min_valid = 6),                     # <5>
+    islamophobie_p = pomps(islamophobie, scale_min = 1, scale_max = 7),  # <6>
+    populismus_p   = pomps(populismus,   scale_min = 1, scale_max = 5)   # <6>
+  )
+```
+1. ALLBUS 2023 einlesen — fehlende Werte sind automatisch als tagged NAs gesetzt.
+2. Umpolen der inversen `mm`-Items (`mm02`, `mm05`) zu `mm02r`/`mm05r` — Skala 7-stufig.
+3. Umpolen aller `pa`-Items, weil sie 5-stufig **invers** kodiert sind (`1 = stimme zu`, `5 = lehne ab`) — nach Umpolung gilt hoch = populistisch.
+4. Skala **Islamfeindlichkeit** als Mittelwert der sechs (jetzt gleichpoligen) Items — mindestens 5 von 6 müssen valide sein.
+5. Skala **Populismus** als Mittelwert der sieben umgepolten `pa`-Items — mindestens 6 von 7 müssen valide sein.
+6. **POMPS-Versionen** beider Skalen auf 0–100 für direkten Vergleich (optional; die Original-Skalen bleiben erhalten).
+
+Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
+
+::: {.callout-note}
+**Reviewer-Hinweis.** In einem Methodenbericht würdest du genau diese Schritte dokumentieren: Welche Items? Welche umgepolt — warum? Welche Mindest-Validität? Welche Skalenrichtung? Wer das transparent macht, gibt Reviewer:innen das Werkzeug in die Hand, die Operationalisierung zu beurteilen. Wer nur `cronbachs α = 0.87` berichtet, hat seine Pflicht *nicht* erfüllt.
+:::
+
+## Übungen {-}
+
+::: {.callout-tip collapse="true"}
+**Übung 1 — Skala Politische Effizienz (Reproduktion).** Die `pe`-Items (`pe01`, `pe04`, `pe05`, `pe06`, `pe07`, `pe08`) messen politische Selbstwirksamkeit (kognitive Komponente). Prüfe zuerst die Variablenlabels mit `var_label()`, identifiziere ob Items umgepolt werden müssen, und baue analog eine Skala `polit_effizienz` mit `min_valid = 5`. *Tipp: schaue dir die Wortlaute genau an.*
+
+**Lösung:**
+```{r ex1-kap5-loesung, eval=FALSE}
+allbus |>
+  select(pe01, pe04, pe05, pe06, pe07, pe08) |>
+  var_label()
+# Items pe05 und pe07 sind positiv gepolt, müssen umgepolt werden.
+allbus <- allbus |>
+  rec(pe05, rules = "rev", suffix = "r") |>
+  rec(pe07, rules = "rev", suffix = "r") |>
+  mutate(
+    polit_effizienz = row_means(pick(pe01, pe04, pe05r, pe06, pe07r, pe08),
+                                min_valid = 5)
+  )
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 2 — ISCED-Bildung kategorisieren (Reproduktion).** Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isced97` (1–6) als Bildungsmaß nehmen. Erstelle daraus drei Kategorien: ISCED 1–2 = „niedrig", 3–4 = „mittel", 5–6 = „hoch".
+
+**Lösung:**
+```{r ex2-kap5-loesung, eval=FALSE}
+allbus |>
+  rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
+      as.factor = TRUE) |>
+  count(isced97)
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 3 — Skalen vergleichbar machen (Transfer).** Liegen die Befragten in Deutschland 2023 in der Mini-Studie *stärker* auf der Populismus- oder auf der Islamfeindlichkeits-Skala? Rechne beide Skalen auf POMPS um und vergleiche die gewichteten Mittelwerte (Hinweis: `w_mean()` aus mariposa für gewichtete Mittelwerte, Argument `weights = wghtpew`).
+
+**Lösung:**
+```{r ex3-kap5-loesung, eval=FALSE}
+allbus |>
+  summarise(
+    islam = w_mean(islamophobie_p, weights = wghtpew),
+    pop   = w_mean(populismus_p,   weights = wghtpew)
+  )
+```
+:::
+
+::: {.callout-tip collapse="true"}
+**Übung 4 — Eigene Skala mit Mini-Forschungsfrage.** Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (Demokratiezufriedenheit, Vertrauen in Institutionen, Geschlechterrolleneinstellungen, …). Suche mit `find_var()` mindestens drei passende Items im ALLBUS 2023, prüfe ihre Polung, baue eine Skala mit `row_means(min_valid = ...)` und beschreibe in 3–4 Sätzen, *wie* du das Konstrukt operationalisiert hast und welche Items du *warum* einbezogen oder ausgeschlossen hast.
+
+*Es gibt hier keine Musterlösung — die Übung trainiert Operationalisierung, das Kernhandwerk empirischer Sozialforschung.*
+:::
+
+## Was du jetzt weißt {-}
+
+- Du transformierst Variablen mit `mutate()`, `case_when()`, `case_match()` und `if_else()`.
+- Du aggregierst Subgruppen mit `summarise(.by = ...)` und nutzt `n()`/`n_distinct()`.
+- Du rekodierst Variablen mit `rec()` — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum sauberen Umpolen.
+- Du erzeugst Dummy-Variablen mit `to_dummy()`.
+- Du standardisierst und zentrierst Variablen mit `std()` und `center()`.
+- Du baust gewichtete Mittelwert-Skalen mit `row_means()` und kontrolliertem `min_valid`.
+- Du prüfst Antwort-Stile und Datenqualität mit `row_count()`.
+- Du machst Skalen unterschiedlicher Bandbreite mit `pomps()` direkt vergleichbar.
+- Du kennst die vollständige Datenpräp-Pipeline für die Mini-Studie — sie ist in `R/prep.R` gekapselt und wird in den folgenden Kapiteln per `source()` eingebunden.
+
+Im nächsten Kapitel (@sec-grafiken-basics) lernst du das ggplot2-Grafiksystem kennen — du brauchst es ab dem Kapitel danach, um Verteilungen, Gruppenvergleiche und Zusammenhänge zu visualisieren.
+
+## Weiterführend {-}
+
+- mariposa-Vignetten [„Data Transformation"](https://yannickdiehl.github.io/mariposa/articles/data-transformation.html) und [„Scale Building"](https://yannickdiehl.github.io/mariposa/articles/scale-building.html).
+- Hadley Wickham & Garrett Grolemund, [R for Data Science (2e), Kapitel „Data Transformation"](https://r4ds.hadley.nz/data-transform.html).
+- Cohen, P., Cohen, J., Aiken, L. S., & West, S. G. (1999). *The Problem of Units and the Circumstance for POMP.* Multivariate Behavioral Research, 34(3), 315–346 — die theoretische Basis von POMPS.
+- Schulz, A., Müller, P., Schemer, C., Wirz, D. S., Wettstein, M., & Wirth, W. (2017). *Measuring populist attitudes on three dimensions.* International Journal of Public Opinion Research, 30(2), 316–326 — Quelle der Populismus-Skala.
+- Decker, O., Brähler, E. (Hg.) (2020). *Autoritäre Dynamiken. Neue Radikalität — alte Ressentiments. Leipziger Autoritarismus-Studie.* — Forschungs­hintergrund zu gruppenbezogener Menschenfeindlichkeit.
