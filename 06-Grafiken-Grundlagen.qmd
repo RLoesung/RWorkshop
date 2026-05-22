@@ -24,11 +24,21 @@ Mit diesem Kapitel kommst du zum eigentlichen *Sichtbar-Machen* deiner Befunde. 
 
 ## Worum es geht
 
-Wenn deine Analyse fertig ist, ist die Hälfte der Arbeit getan — die andere Hälfte ist, sie *zu kommunizieren*. Grafiken sind dabei das mächtigste Werkzeug: ein gut gewähltes Diagramm beantwortet eine Forschungsfrage auf einen Blick, wo ein Absatz Fließtext drei Lese-Anläufe braucht.
+Eine gute Grafik beantwortet eine Forschungsfrage in zwei Sekunden. Ein guter Absatz Fließtext braucht zwei Minuten. Und eine Tabelle? Die liest niemand, der nicht muss. Wenn deine Analyse fertig ist, ist erst die *Hälfte* deiner Arbeit getan — die andere Hälfte ist, sie so zu kommunizieren, dass Lesende verstehen, was du gefunden hast.
 
-Das tidyverse bietet dir mit **ggplot2** ein Grafik-System, das aus *einer* konsistenten Grammatik komplexe Visualisierungen baut — die *Grammar of Graphics*. Du legst nicht einzelne Plot-Funktionen aufeinander wie in SPSS, sondern beschreibst, *wie* deine Daten *welche* visuellen Aspekte einer Grafik füllen sollen.
+In SPSS klickst du im *Diagramm*-Menü zusammen, was du brauchst: Balken, Linien, Punkte. Jede Grafikart hat ihr eigenes Klick-Schema. Wenn du etwas Komplexeres willst — etwa einen Boxplot mit gestaffelten Facetten nach Bildung —, wird es schnell mühsam. Und das Ergebnis sieht aus, als wäre es 1998 designt worden.
 
-Dieses Kapitel führt dich durch das ggplot2-System: die *Grammar of Graphics*, mit der du jede Grafik in drei Schritten beschreiben kannst — Daten, Aesthetic Mapping, Layer. Du lernst, welche `geom_*()`-Variante zu welchem Datentyp passt, wie du Subgruppen mit Facets aufteilst und wie du Farben, Themes und Beschriftungen anpasst. Die fortgeschritteneren Visualisierungs-Themen (Coefficient-Plots, Multi-Plot-Komposition, Speichern in publikationsfähiger Qualität) folgen in @sec-erklaerung am Ende des Methoden-Pfads — dort, wo wir konkrete Modellergebnisse darstellen wollen.
+ggplot2 macht das anders. Stell dir vor, du beschreibst einer Designerin am Telefon eine Grafik, die sie für dich anfertigen soll. Du müsstest ihr genau drei Dinge sagen:
+
+1. **Welche Daten** möchtest du zeigen? Welcher Datensatz?
+2. **Was kommt wohin?** Welche Variable auf die x-Achse, welche auf die y-Achse, welche bestimmt die Farbe, welche die Gruppierung?
+3. **Wie sollen die Datenpunkte aussehen?** Als Balken? Als Punkte? Als Linie? Als Boxplot?
+
+Mehr brauchst du nicht. ggplot2 baut nach diesen drei Angaben die Grafik *automatisch* zusammen. Diese drei Komponenten heißen offiziell *Data*, *Aesthetic Mapping* und *Layer (geom)*. Hadley Wickham hat das System aus einem Buch von 2005 abgeleitet, in dem Leland Wilkinson statistische Grafiken systematisch als „Grammatik" beschrieben hat — daher der Name **Grammar of Graphics**. Genauso wie eine Sprache aus Substantiven, Verben und Adjektiven jeden beliebigen Satz bauen kann, baust du aus diesen drei Bausteinen jede beliebige Grafik.
+
+Das hat einen großen praktischen Vorteil: Hast du einmal verstanden, wie *ein* Diagramm gebaut wird, verstehst du alle. Wenn du einen Boxplot beherrschst, ist der Schritt zu einem Histogramm oder Streudiagramm nur ein anderes `geom_*()` — das Grundgerüst bleibt gleich.
+
+Dieses Kapitel führt dich durch diese drei Schritte und die wichtigsten Geom-Varianten. Du lernst, welche Grafik zu welchem Datentyp passt, wie du Subgruppen mit Facets aufteilst und wie du Farben, Themes und Beschriftungen anpasst. Die fortgeschritteneren Visualisierungs-Themen (Coefficient-Plots, Multi-Plot-Komposition, Speichern in publikationsfähiger Qualität) folgen in @sec-erklaerung am Ende des Methoden-Pfads — dort, wo wir konkrete Modellergebnisse darstellen wollen.
 
 ## Was du nach diesem Kapitel kannst {-}
 
@@ -40,13 +50,17 @@ Dieses Kapitel führt dich durch das ggplot2-System: die *Grammar of Graphics*, 
 
 ## Die Grammar of Graphics {#sec-grammar}
 
-Jede ggplot2-Grafik folgt demselben Aufbau:
+Wie im einleitenden Abschnitt erklärt: Jede ggplot2-Grafik besteht aus genau drei Komponenten — Daten, Aesthetic Mapping, Layer. Im Code sieht das so aus:
 
-1. **Datengrundlage** — welcher Datensatz?
-2. **Aesthetic Mapping** — welche Spalten füllen welche visuellen Eigenschaften (x, y, Farbe, Form, Gewicht)?
-3. **Layer (`geom_*`)** — was wird gezeichnet? Balken, Punkte, Linien, Boxen?
+```r
+allbus |>
+  ggplot(aes(x = ..., y = ...)) +    # Daten + Aesthetic Mapping
+  geom_...(...)                      # Layer
+```
 
-Jede Schicht kommt mit `+` dazu — das ist *kein* tidyverse-Pipe, sondern ggplot2-eigen.
+Die `aes()`-Funktion (kurz für *aesthetics*) macht die Übersetzung: „nimm diese Spalte und mappe sie auf diese visuelle Eigenschaft" — also etwa Bildungs-Variable → x-Achse, Skalenwert → y-Achse, Geschlecht → Farbe. Danach kommen die `geom_*()`-Funktionen als sichtbare Schicht oben drauf: Balken, Punkte, Boxen, was du brauchst.
+
+Auffällig: Die Schichten werden mit `+` verbunden, nicht mit der tidyverse-Pipe `|>`. Das hat historische Gründe — ggplot2 ist älter als die native Pipe und hat seinen eigenen Operator behalten. Du kannst dir merken: alles vor `ggplot(...)` mit `|>`, alles nach `ggplot(...)` mit `+`.
 
 ::: {.callout-note}
 **Hintergrund: Wer hat die Grammatik erfunden?** Leland Wilkinson formulierte 2005 in *The Grammar of Graphics* die Idee, jede statistische Grafik aus einer kleinen Zahl orthogonaler Komponenten zusammenzubauen. Hadley Wickham implementierte das 2007 als `ggplot` (später `ggplot2`) in R. Heute ist die Grammar Standard auch in Python (plotnine), JavaScript (Observable Plot) und vielen kommerziellen Tools — wer einmal in einem System gelernt hat, in welchen Schichten eine Grafik denkt, kann sie in allen lesen.
@@ -252,7 +266,11 @@ allbus |>
 
 ## Subgruppen aufteilen mit Facets {#sec-facets}
 
-Wenn eine Gruppierungsvariable mehr als drei oder vier Ausprägungen hat, wird die Überlagerung in einer Grafik unübersichtlich. Mit `facet_wrap()` bekommt jede Ausprägung ihr eigenes Panel:
+Stell dir vor, du willst den Zusammenhang von Populismus und Islamfeindlichkeit zeigen — aber getrennt nach Bildungsgruppen. Du könntest die drei Gruppen in einer einzigen Grafik mit drei verschiedenen Farben übereinanderlegen. Bei zwei Gruppen funktioniert das noch; bei drei oder mehr wird es chaotisch — Punkte überlappen, Trendlinien kreuzen sich, das Auge findet sich nicht mehr zurecht.
+
+Die Lösung sind **Facets**: ggplot2 macht aus *einer* Grafik mehrere, eine pro Subgruppe, nebeneinander angeordnet, mit identischen Achsen. So lassen sich die Subgruppen direkt vergleichen, ohne dass sie sich gegenseitig überlagern. Das ist eine der mächtigsten Funktionen in ggplot2 — und in der Sozialforschung extrem hilfreich, weil dort fast jede Frage gruppenspezifisch interessant ist.
+
+Es gibt zwei Varianten: `facet_wrap()` für *eine* Gruppierungsvariable, `facet_grid()` für *zwei*. Beide funktionieren gleich aufgebaut: Du gibst die Gruppierungsvariable als Formel mit `~` an.
 
 ```{r facet-wrap}
 allbus |>

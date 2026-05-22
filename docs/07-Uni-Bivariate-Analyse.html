@@ -279,8 +279,23 @@ Hinweis
 </div>
 <section id="worum-es-geht" class="level2" data-number="7.1"><h2 data-number="7.1" class="anchored" data-anchor-id="worum-es-geht">
 <span class="header-section-number">7.1</span> Worum es geht</h2>
-<p>Die uni- und bivariate Analyse ist die <strong>Bühne, auf der jede multivariate Methode später aufbaut</strong>: bevor du regressionierst, willst du wissen, wie deine Zielvariable verteilt ist und welche Prädiktoren überhaupt mit ihr korrelieren. Eine <em>univariate</em> Statistik beschreibt eine einzelne Variable (Verteilung, Mittelwert, Streuung). Eine <em>bivariate</em> Analyse fragt nach Beziehungen zwischen zwei Variablen — entweder als <em>Zusammenhang</em> (Korrelation, Chi²) oder als <em>Unterschied</em> (t-Test, ANOVA).</p>
-<p>Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test — Häufigkeit, Deskriptiva, Kreuztabelle, Korrelation, Mittelwertvergleich — jeweils gewichtet, mit Effektgröße und SPSS-vergleichbarem Output.</p>
+<p>Wer eine multivariate Regression rechnet, ohne vorher die Verteilung der Zielvariable angeschaut zu haben, arbeitet blind. Die Faustregel der empirischen Sozialforschung: <em>erst beschreiben, dann erklären</em>. Bevor du ein komplexes Modell aufsetzt, willst du wissen, wie deine Variablen aussehen — sind sie symmetrisch verteilt oder schief? Wo liegen die meisten Antworten? Korrelieren die wichtigsten Variablen überhaupt mit deiner Zielvariable, oder verlierst du Zeit mit irrelevanten Prädiktoren?</p>
+<p>Die Statistik nennt diese ersten Schritte <strong>univariate</strong> und <strong>bivariate</strong> Analyse. Die Trennung ist einfach:</p>
+<ul>
+<li>
+<em>Univariat</em> heißt: eine Variable für sich allein. Wie ist sie verteilt? Wo liegt ihr Mittelwert? Wie stark streuen die Werte? Eine Histogramm-Frage.</li>
+<li>
+<em>Bivariat</em> heißt: zwei Variablen gemeinsam. Hängen sie zusammen? Unterscheiden sich Gruppen? Eine Scatterplot- oder Boxplot-Frage.</li>
+</ul>
+<p>Bei der bivariaten Analyse gibt es zwei methodisch ähnliche, aber konzeptionell unterschiedliche Fragen, die du nicht verwechseln solltest:</p>
+<ul>
+<li>
+<strong>Zusammenhang</strong> — variieren zwei Variablen gemeinsam? (Korrelation für metrische Variablen, Chi² für kategoriale.)</li>
+<li>
+<strong>Unterschied</strong> — unterscheiden sich Gruppen in einer Variable? (t-Test, ANOVA für metrische Variablen pro Gruppe.)</li>
+</ul>
+<p>Beide Fragen beantworten denselben methodischen Kern: Gibt es einen statistisch belastbaren Zusammenhang zwischen zwei Variablen? Aber die Werkzeuge und die Berichtsformate sind unterschiedlich.</p>
+<p>Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test — Häufigkeit, Deskriptiva, Kreuztabelle, Korrelation, Mittelwertvergleich — jeweils gewichtet, mit Effektgröße und SPSS-vergleichbarem Output. Wenn du am Ende des Kapitels weißt, wie sich Islamfeindlichkeit verteilt, ob Ost und West sich unterscheiden, und ob Populismus damit zusammenhängt, hast du genau das Fundament gelegt, das du in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Kapitel 9</span></a> für die multivariate Modellierung brauchst.</p>
 </section><section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
 <ul>
 <li>Häufigkeitsverteilungen einer Variable berichten — gewichtet und ungewichtet.</li>
@@ -750,7 +765,8 @@ Hinweis
 <section id="kreuztabellen-mit-crosstab" class="level3" data-number="7.4.1"><h3 data-number="7.4.1" class="anchored" data-anchor-id="kreuztabellen-mit-crosstab">
 <span class="header-section-number">7.4.1</span> Kreuztabellen mit <code>crosstab()</code>
 </h3>
-<p><code>crosstab()</code> aus mariposa erzeugt eine Kreuztabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung.</p>
+<p>Bei <em>zwei kategorialen</em> Variablen — etwa Bildung × Region — kannst du keinen Mittelwertvergleich rechnen und keine Korrelation im klassischen Sinne. Die richtige Darstellung ist eine <strong>Kreuztabelle</strong>: Zeilen für die eine Variable, Spalten für die andere, Zellen mit den Häufigkeiten. Aus der Tabelle liest du direkt ab, ob bestimmte Kombinationen häufiger vorkommen als andere — der Standard-Anfang jeder Analyse mit kategorialen Variablen.</p>
+<p><code>crosstab()</code> aus mariposa erzeugt diese Tabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung — also: was passiert in jeder Zeile, wenn man sie auf 100 Prozent skaliert? Damit liest du <em>bedingte Wahrscheinlichkeiten</em>: „Welcher Anteil der Westdeutschen hat hohe Bildung im Vergleich zu welchem Anteil der Ostdeutschen?“.</p>
 <p><strong>Frage:</strong> Verteilt sich Bildung anders in Ost und West?</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -784,7 +800,8 @@ Crosstabulation: eastwest × educ
 </section><section id="chi-quadrat-test-mit-chi_square" class="level3" data-number="7.4.2"><h3 data-number="7.4.2" class="anchored" data-anchor-id="chi-quadrat-test-mit-chi_square">
 <span class="header-section-number">7.4.2</span> Chi-Quadrat-Test mit <code>chi_square()</code>
 </h3>
-<p>Statt erst eine Kreuztabelle zu rechnen und <em>dann</em> den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs <em>V</em>, Phi, Gamma).</p>
+<p>Eine Kreuztabelle beschreibt — aber sie sagt dir noch nicht, ob die beobachteten Muster <em>statistisch belastbar</em> sind oder ob sie auch durch Zufall in der Stichprobe entstanden sein könnten. Genau diese Frage beantwortet der <strong>Chi-Quadrat-Test</strong> (χ²): Er vergleicht die tatsächlichen Häufigkeiten in jeder Zelle mit den Häufigkeiten, die man unter der Annahme <em>völliger Unabhängigkeit</em> zwischen den beiden Variablen erwarten würde. Sind die beobachteten Werte deutlich anders, gibt es einen Zusammenhang.</p>
+<p>Statt erst eine Kreuztabelle zu rechnen und <em>dann</em> den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs <em>V</em>, Phi, Gamma). Die Effektgrößen sind hier besonders wichtig: Wie beim t-Test wird χ² bei großen N fast immer signifikant; erst Cramérs <em>V</em> sagt dir, ob der Zusammenhang inhaltlich groß ist.</p>
 <p><strong>Frage:</strong> Hängen Bildung und Region statistisch zusammen?</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chi_square</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -822,7 +839,18 @@ Hinweis
 </div>
 </section><section id="korrelation" class="level3" data-number="7.4.3"><h3 data-number="7.4.3" class="anchored" data-anchor-id="korrelation">
 <span class="header-section-number">7.4.3</span> Korrelation</h3>
-<p>Drei Korrelationskoeffizienten, drei Funktionen — alle akzeptieren <code>weights =</code>:</p>
+<p>Eine <strong>Korrelation</strong> ist die einfachste Antwort auf die Frage: <em>„Bewegen sich zwei Variablen gemeinsam?“</em> Wer hohe Werte auf der einen Skala hat, hat auch hohe Werte auf der anderen? Oder genau umgekehrt? Oder gibt es keinen Zusammenhang?</p>
+<p>Der bekannteste Index dafür ist <strong>Pearsons r</strong>. Er liegt zwischen -1 und +1:</p>
+<ul>
+<li>
+<em>r</em> = +1 → perfekter positiver Zusammenhang (steigt eines, steigt das andere proportional)</li>
+<li>
+<em>r</em> = 0 → kein linearer Zusammenhang</li>
+<li>
+<em>r</em> = -1 → perfekter negativer Zusammenhang</li>
+</ul>
+<p>In der Sozialforschung sind Werte um 0.4 schon ein deutlicher Befund. Werte über 0.7 sind selten — und wenn doch, oft ein Hinweis, dass die zwei Variablen letztlich dasselbe messen.</p>
+<p>Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzeptieren das <code>weights =</code>-Argument:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -923,7 +951,8 @@ Tipp
 <section id="t-test-mit-t_test" class="level3" data-number="7.5.1"><h3 data-number="7.5.1" class="anchored" data-anchor-id="t-test-mit-t_test">
 <span class="header-section-number">7.5.1</span> t-Test mit <code>t_test()</code>
 </h3>
-<p>Der unabhängige t-Test prüft, ob sich die Mittelwerte zweier Gruppen unterscheiden.</p>
+<p>Der <strong>t-Test</strong> ist eines der ältesten Werkzeuge der inferenziellen Statistik (William Gosset hat ihn 1908 unter dem Pseudonym „Student” veröffentlicht, weil sein Arbeitgeber Guinness Brauereigeheimnisse fürchtete). Die Frage, die er beantwortet, ist sehr konkret: <em>„Du siehst zwei Gruppen, die scheinbar unterschiedliche Mittelwerte haben. Wäre dieser Unterschied auch durch reinen Zufall in einer Stichprobe entstanden — oder ist er groß genug, dass man davon ausgehen kann, dass es in der Bevölkerung wirklich einen Unterschied gibt?“</em></p>
+<p>Der t-Test gibt dir darauf drei Antworten in einem Aufruf: die <em>Stärke</em> des Unterschieds (Mittelwertdifferenz), die <em>Wahrscheinlichkeit</em> eines Zufallsbefunds (<em>p</em>-Wert) und die <em>Effektgröße</em> (Hedges’ <em>g</em>) — also wie groß der Unterschied inhaltlich ist, unabhängig von der Stichprobengröße. Die letzte Zahl ist die wichtigste: bei N = 5000 ist <em>fast jeder</em> Unterschied statistisch signifikant. Erst die Effektgröße sagt dir, ob er auch inhaltlich relevant ist.</p>
 <p><strong>Frage:</strong> Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">t_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1021,7 +1050,9 @@ Recommendation based on Levene test:
 </section><section id="anova-mit-oneway_anova" class="level3" data-number="7.5.2"><h3 data-number="7.5.2" class="anchored" data-anchor-id="anova-mit-oneway_anova">
 <span class="header-section-number">7.5.2</span> ANOVA mit <code>oneway_anova()</code>
 </h3>
-<p>Für <em>drei oder mehr</em> Gruppen ist die einfaktorielle ANOVA dein Standardwerkzeug.</p>
+<p>Der t-Test funktioniert nur für <em>zwei</em> Gruppen. Sobald du drei oder mehr hast — etwa drei Bildungsgruppen oder fünf Altersklassen —, brauchst du ein anderes Werkzeug: die <strong>einfaktorielle Varianzanalyse</strong>, kurz ANOVA (<em>Analysis of Variance</em>).</p>
+<p>Ihr Trick ist elegant. Statt jedes Gruppenpaar einzeln zu vergleichen (was bei vielen Gruppen zu vielen falsch-positiven Befunden führen würde), prüft die ANOVA <em>eine einzige</em> Frage: <em>Streuen die Mittelwerte zwischen den Gruppen mehr, als man aufgrund der Streuung innerhalb der Gruppen erwarten würde?</em> Wenn ja, gibt es mindestens <em>einen</em> Gruppenunterschied. Welches Paar es genau ist, sagt die ANOVA dir nicht — das beantworten Post-Hoc-Tests, die später kommen.</p>
+<p>Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effektgröße <strong>η²</strong> (eta-quadrat): der Anteil der Varianz in der abhängigen Variable, der durch die Gruppierung erklärt wird. Ein η² von 0.01 bedeutet, dass die Gruppen 1 Prozent der Varianz erklären — statistisch oft signifikant bei großen N, aber inhaltlich winzig. Ein η² von 0.10 oder größer ist schon ein substanzieller Effekt.</p>
 <p><strong>Frage:</strong> Hängt Islamfeindlichkeit mit Bildung zusammen?</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_bildung</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>

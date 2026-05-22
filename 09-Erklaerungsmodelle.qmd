@@ -25,16 +25,20 @@ In @sec-univbivar hast du Variablen einzeln beschrieben und paarweise verglichen
 
 ## Worum es geht
 
-In der quantitativen Sozialforschung interessiert dich selten *eine* bivariate Beziehung allein. Die spannenden Fragen sind multikausal: *Was bleibt vom Ost-West-Unterschied übrig, wenn ich Bildung herausrechne? Wie viel der Varianz erklären Bildung, Region und Populismus zusammen?*
+Die wahre Stärke der quantitativen Sozialforschung kommt erst zum Vorschein, wenn du mehr als zwei Variablen gleichzeitig betrachtest. In @sec-univbivar hast du gezeigt: Islamfeindlichkeit korreliert positiv mit Populismus, negativ mit Bildung, ist im Osten höher als im Westen. Aber das wirft sofort die nächste Frage auf: *Sind das alles unabhängige Effekte? Oder hängen sie zusammen?*
 
-Multivariate Verfahren modellieren mehrere Prädiktoren gleichzeitig — und damit auch, wie diese sich gegenseitig kontrollieren. Dieses Kapitel führt dich durch die wichtigsten:
+Vielleicht ist der Ost-West-Unterschied gar nicht „echt" — vielleicht liegt er nur daran, dass im Osten der Bildungsdurchschnitt etwas niedriger ist, und der eigentliche Treiber ist Bildung. Vielleicht wirkt Populismus ganz anders bei niedrig Gebildeten als bei hoch Gebildeten. Solche **multikausalen** Fragen lassen sich mit bivariaten Tests nicht beantworten. Du brauchst dafür ein Modell, das mehrere Prädiktoren *gleichzeitig* berücksichtigt — und dabei zeigt, was bei jeder einzelnen Variable übrig bleibt, wenn die anderen kontrolliert werden.
 
-1. **Mehrfaktorielle ANOVA** — wenn zwei kategoriale Faktoren gleichzeitig wirken, evtl. mit Interaktion.
-2. **ANCOVA** — ANOVA mit einer kontinuierlichen Kovariate, die du *kontrollieren* willst.
-3. **Multiple lineare Regression** — der Allrounder, wenn deine AV intervallskaliert ist.
-4. **Logistische Regression** — wenn deine AV dichotom ist (ja/nein, hoch/niedrig).
+Das ist der Kern multivariater Verfahren: Sie isolieren den Effekt einer Variable, indem sie alle anderen gleichzeitig „herausrechnen". Wenn am Ende der Effekt von Region kleiner wird, sobald Bildung im Modell ist, weißt du: ein Teil des scheinbaren Ost-West-Unterschieds war eigentlich ein Bildungseffekt. Wenn er gleich bleibt, weißt du: Region ist ein eigenständiger Prädiktor.
 
-Am Ende kommunizieren wir die Befunde grafisch: **Coefficient-Plots** machen Modellergebnisse auf einen Blick lesbar, **Patchwork** kombiniert mehrere Befund-Plots zu einer publikationsfähigen Komposition, **`ggsave()`** exportiert in beliebige Formate.
+Dieses Kapitel führt dich durch die vier wichtigsten Werkzeuge dieser Klasse:
+
+1. **Mehrfaktorielle ANOVA** — wenn zwei kategoriale Faktoren gleichzeitig wirken, eventuell sogar mit einer *Interaktion* (also der Frage: *„Wirkt der Effekt von A in unterschiedlichen Subgruppen von B unterschiedlich stark?"*).
+2. **ANCOVA** — eine ANOVA mit einer kontinuierlichen Kovariate, die du als Störfaktor herausrechnen willst.
+3. **Multiple lineare Regression** — der Allrounder, wenn deine abhängige Variable intervallskaliert ist (wie unsere Islamfeindlichkeits-Skala). Mit ihr kannst du beliebig viele Prädiktoren modellieren und ihre relative Wirkungsstärke vergleichen.
+4. **Logistische Regression** — wenn deine abhängige Variable nur zwei Werte hat (ja/nein, hoch/niedrig). Sie ist die Standardmethode, um die *Wahrscheinlichkeit* eines binären Outcomes zu modellieren.
+
+Am Ende kommunizieren wir die Befunde grafisch: **Coefficient-Plots** machen Modellergebnisse auf einen Blick lesbar, **Patchwork** kombiniert mehrere Befund-Plots zu einer publikationsfähigen Komposition, **`ggsave()`** exportiert das Ergebnis in beliebige Formate.
 
 ## Was du nach diesem Kapitel kannst {-}
 
@@ -86,7 +90,13 @@ allbus |>
 
 ## Lineare Regression {#sec-regression}
 
-Jetzt die zentrale Methode des Kapitels: die **multiple lineare Regression**. Wir nutzen die Skalen und Variablen, die wir in den vorherigen Kapiteln vorbereitet haben.
+Jetzt die zentrale Methode dieses Kapitels — und vermutlich die wichtigste Methode in der gesamten quantitativen Sozialforschung: die **multiple lineare Regression**.
+
+Die Grundidee ist visuell einfach. Stell dir vor, du würdest auf einer x-Achse den Bildungsgrad und auf einer y-Achse Islamfeindlichkeit auftragen. Du würdest eine Punktwolke sehen. Eine **lineare Regression** findet die Linie, die am besten durch diese Wolke passt — also die Linie, die im Schnitt am dichtesten an allen Punkten vorbeiläuft. Die Steigung dieser Linie sagt dir: *„Wenn Bildung um eine Einheit steigt, sinkt Islamfeindlichkeit um den Steigungswert."* Das ist der **Regressionskoeffizient** der Variable Bildung.
+
+Bei einer *multiplen* Regression wird das mehrdimensional. Statt einer Geraden im 2D-Raum suchst du eine *Ebene* (oder noch höherdimensionale Fläche), die durch eine Wolke aus Punkten in mehreren Dimensionen passt. Jeder Prädiktor bekommt seinen eigenen Koeffizienten, und dieser Koeffizient sagt: *„Wenn diese Variable um eine Einheit steigt, *bei gleichzeitiger Konstanthaltung aller anderen Variablen*, ändert sich y um diesen Wert."* Das „bei Konstanthaltung" ist der entscheidende Punkt — genau dadurch isoliert die multiple Regression unabhängige Effekte.
+
+Die wichtigste Zahl für die Gesamtgüte des Modells ist **R²**: der Anteil der Varianz in der abhängigen Variable, den das Modell erklärt. Ein R² von 0.30 bedeutet: deine Prädiktoren erklären 30 Prozent der Streuung in der abhängigen Variable; 70 Prozent bleiben unerklärt (durch Variablen, die du nicht im Modell hast, durch Messfehler, durch Zufall). In der Sozialforschung sind R² über 0.30 schon ein deutlicher Befund — perfekte Erklärung mit R² nahe 1 gibt es nur in den Naturwissenschaften.
 
 **Frage:** Welche Variablen erklären Islamfeindlichkeit am besten — Bildung, Alter, Region, Geschlecht, Populismus?
 
@@ -167,7 +177,13 @@ anova(m_basis$model, m_voll$model)   # F-Test auf inkrementelle Varianzaufklaeru
 
 ## Logistische Regression {#sec-logistic}
 
-Wenn deine AV **dichotom** ist (ja/nein, hoch/niedrig), brauchst du eine **logistische Regression**. Wir konstruieren dafür eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
+Die lineare Regression eignet sich nur für intervallskalierte abhängige Variablen — also Größen, die einen geordneten, kontinuierlichen Wertebereich haben. Was machst du, wenn dein Outcome nur zwei Werte hat? Etwa „wählt grün — wählt nicht grün", „hat einen Hochschulabschluss — hat keinen", „hat eine hohe Islamfeindlichkeit — hat eine niedrige"?
+
+Hier scheitert die lineare Regression. Sie würde vorhersagen, dass eine Person etwa mit Wahrscheinlichkeit 1.3 grün wählt — was offensichtlich unsinnig ist (Wahrscheinlichkeiten liegen zwischen 0 und 1). Die Lösung ist die **logistische Regression**: Sie modelliert nicht den Wert der abhängigen Variable selbst, sondern die *Wahrscheinlichkeit*, dass das Ereignis eintritt, und sorgt durch eine clevere Transformation (die logistische Funktion) dafür, dass die Vorhersagen immer zwischen 0 und 1 bleiben.
+
+Die Koeffizienten sind interpretierbar als **Odds Ratios** — der Faktor, um den sich die Chance (das Verhältnis von Eintreten zu Nicht-Eintreten) ändert, wenn der Prädiktor um eine Einheit steigt. Ein Odds Ratio von 1.5 für Bildung bedeutet: Eine Bildungsstufe höher zu sein erhöht die Chance des Outcomes um 50 Prozent. Ein Odds Ratio unter 1 bedeutet eine *Reduktion* der Chance.
+
+Wir konstruieren für unsere Mini-Studie eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
 
 **Frage:** Welche Merkmale unterscheiden Befragte mit hoher Islamfeindlichkeit von den anderen?
 

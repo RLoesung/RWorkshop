@@ -16,11 +16,13 @@ Bevor du diese Frage beantworten kannst, brauchst du den Datensatz auf deinem Re
 
 ## Worum es geht
 
-Sekundärdaten kommen selten in der Form, in der du sie für eine konkrete Analyse brauchst. Der ALLBUS 2023 hat **579 Variablen** mit kryptischen Namen wie `mm01`, `pa29`, `wghtpew`. Vier verschiedene Missing-Codes laufen mit. Hinter jeder Spalte stehen zwei Label-Schichten (Variablenlabel und Wertelabel), die SPSS-Anwender:innen kennen und nicht verlieren wollen.
+Stell dir vor, du bekommst von einer Kollegin einen USB-Stick mit der Aufschrift *„ALLBUS 2023 — viel Spaß"*. Du steckst ihn ein und öffnest die Datei. Was du siehst, ist nicht das, was du dir erhofft hast: 579 Spalten mit Namen wie `mm01`, `pa29`, `pt06`, `wghtpew`. Vier verschiedene negative Zahlen tauchen als „Wert" auf — `-9`, `-11`, `-42`. Manche Variablen sind als Zahl gespeichert, obwohl sie eigentlich eine Kategorie sind (`sex = 1` heißt „Mann"). Und die wirklichen Beschriftungen — das, was tatsächlich gefragt wurde — liegen irgendwo versteckt, unsichtbar im Hintergrund.
 
-Die *Datenmodifikation* ist in der quantitativen Sozialforschung kein Vorspann zur eigentlichen Analyse, sondern ihr methodischer Kern: über die Qualität jeder folgenden Auswertung wird hier entschieden. Wer in einem Forschungspapier eine *replizierbare* Analyse zeigen will, dokumentiert jeden Schritt — `read_spss()`, `set_na()`, `rec()`, `row_means()` — in einer einzigen Pipeline, die sich aus dem Skript heraus jederzeit nachvollziehen lässt.
+Genau dieser Zustand ist normal. Sekundärdatensätze aus der quantitativen Sozialforschung sehen *immer* so aus. Sie sind so gebaut, dass viele Menschen sie für viele unterschiedliche Fragen nutzen können — und das geht nur, wenn die Daten zunächst *roh* bleiben. Deine Aufgabe ist es, aus diesem Rohzustand einen Analyse-Datensatz zu machen, der zu *deiner* Forschungsfrage passt.
 
-Dieses Kapitel ist der **Anker** für die folgenden Methoden-Kapitel. Du legst hier den Datensatz an, mit dem du in @sec-univbivar Verteilungen beschreibst, in @sec-latente Strukturen prüfst und in @sec-erklaerung Hypothesen modellierst.
+Diese Schritte sind keine Vorarbeit, die man möglichst schnell hinter sich bringt. Sie sind der methodische Kern jeder ehrlichen Auswertung: Welche Fälle nimmst du raus? Wie behandelst du fehlende Werte? Wie übersetzt du `mm01 = 7` in „diese Person lehnt Muslime stark ab"? Jede dieser Entscheidungen beeinflusst, was am Ende rauskommt — und jede gehört in eine Pipeline, die du jederzeit reproduzieren kannst. *Das* ist offene Wissenschaft im konkreten Handwerk.
+
+Dieses Kapitel ist der **Anker** für alles, was folgt. Du legst hier den Analyse-Datensatz an, mit dem du in @sec-univbivar Verteilungen beschreibst, in @sec-latente Strukturen prüfst und in @sec-erklaerung Hypothesen modellierst. Wenn dieser Anker hält, halten alle späteren Befunde.
 
 ## Was du nach diesem Kapitel kannst {-}
 
@@ -196,7 +198,11 @@ allbus |>
 
 ## Datentypen verstehen
 
-Beim Einlesen von SPSS-Dateien erhältst du Spalten mit dem speziellen Typ `<haven_labelled>`. Sie verhalten sich wie Zahlen, tragen aber die Wertelabels mit. Mit `class()` siehst du den Typ einer Variable:
+Wenn du in SPSS arbeitest, fragst du dich selten, *welcher Typ* eine Variable ist. SPSS macht das im Hintergrund: eine Variable ist „numerisch" oder „string", und Wertelabels („1 = Mann, 2 = Frau") sind nur eine Beschriftungs-Schicht obendrauf. In R ist das ein bisschen anders — und am Anfang verwirrend.
+
+R kennt eine ganze Reihe von Datentypen: reine Zahlen (`numeric`), Text (`character`), Logik (`logical`), Kategorien mit fester Reihenfolge (`factor`). Beim Einlesen eines SPSS-Datensatzes kommt noch ein vierter Typ hinzu, den mariposa von haven übernimmt: `<haven_labelled>`. Das ist eine Art *Hybrid*: Die Spalte verhält sich nach außen wie eine Zahl, aber im Hintergrund tragen die Werte ihre SPSS-Wertelabels mit. So bleibt die Information „1 bedeutet Mann" erhalten, ohne dass du sie aus dem Codebook nachschlagen musst.
+
+Mit `class()` siehst du den Typ einer Variable:
 
 ```{r class-show}
 class(allbus$sex)
@@ -247,7 +253,9 @@ Das Ergebnis ist ein **benannter Character-Vektor** — pro Variable das hinterl
 
 ## Fehlende Werte deklarieren
 
-ALLBUS verwendet negative Codes für verschiedene Arten fehlender Werte:
+Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage — manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.
+
+Die GESIS unterscheidet in ALLBUS deshalb *vier* Arten von fehlenden Werten und kodiert sie mit klar unterscheidbaren negativen Zahlen:
 
 | Code  | Bedeutung                                |
 | ----: | ---------------------------------------- |
@@ -256,7 +264,9 @@ ALLBUS verwendet negative Codes für verschiedene Arten fehlender Werte:
 | `-9`  | KEINE ANGABE                             |
 | `-8`  | WEISS NICHT                              |
 
-Beim Einlesen werden diese in SPSS als *user-missing* deklarierten Codes automatisch zu **tagged NAs**. Das bedeutet: Sie zählen in Berechnungen als `NA`, behalten aber ihre ursprüngliche Information.
+Die Unterscheidung ist *inhaltlich wichtig*: ein „weiß nicht" ist methodisch etwas anderes als eine verweigerte Antwort, und ein „trifft nicht zu" (jemand hat die Frage gar nicht gestellt bekommen) ist wiederum etwas anderes als ein echter Datenfehler. Wenn du diese Codes als reguläre Zahlen behandelst — was passiert, wenn du sie einfach in einen Mittelwert wirfst — sind deine Ergebnisse Müll: ein „Durchschnittswert" von `-3.4` für Lebenszufriedenheit ist offensichtlich Unsinn.
+
+Beim Einlesen werden diese in SPSS als *user-missing* deklarierten Codes automatisch zu **tagged NAs**. „Tagged" heißt: sie zählen in Berechnungen als `NA` (also fehlend), behalten aber im Hintergrund die Information, *welcher* Missing-Typ sie sind. Du kannst sie also später trotzdem voneinander unterscheiden — etwa um zu zeigen, wie viele Personen „weiß nicht" gewählt haben.
 
 ::: {.callout-note}
 **Hintergrund: Split-Designs im ALLBUS.** Manche Itembatterien werden nur einer Hälfte der Stichprobe gestellt (Code `-11` für die andere Hälfte). Das gilt insbesondere für die `mm`-Items unserer Islamfeindlichkeits-Skala. Die effektive N für solche Splits liegt deshalb bei rund 2.500 statt 5.246 — methodisch *kein* Fehler, sondern Stichproben­architektur. In der Methodenbeschreibung gehört dieser Punkt erwähnt.

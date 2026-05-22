@@ -17,9 +17,21 @@ Nachdem du in @sec-datentransformation die Datenpräp-Pipeline gebaut und in @se
 
 ## Worum es geht
 
-Die uni- und bivariate Analyse ist die **Bühne, auf der jede multivariate Methode später aufbaut**: bevor du regressionierst, willst du wissen, wie deine Zielvariable verteilt ist und welche Prädiktoren überhaupt mit ihr korrelieren. Eine *univariate* Statistik beschreibt eine einzelne Variable (Verteilung, Mittelwert, Streuung). Eine *bivariate* Analyse fragt nach Beziehungen zwischen zwei Variablen — entweder als *Zusammenhang* (Korrelation, Chi²) oder als *Unterschied* (t-Test, ANOVA).
+Wer eine multivariate Regression rechnet, ohne vorher die Verteilung der Zielvariable angeschaut zu haben, arbeitet blind. Die Faustregel der empirischen Sozialforschung: *erst beschreiben, dann erklären*. Bevor du ein komplexes Modell aufsetzt, willst du wissen, wie deine Variablen aussehen — sind sie symmetrisch verteilt oder schief? Wo liegen die meisten Antworten? Korrelieren die wichtigsten Variablen überhaupt mit deiner Zielvariable, oder verlierst du Zeit mit irrelevanten Prädiktoren?
 
-Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test — Häufigkeit, Deskriptiva, Kreuztabelle, Korrelation, Mittelwertvergleich — jeweils gewichtet, mit Effektgröße und SPSS-vergleichbarem Output.
+Die Statistik nennt diese ersten Schritte **univariate** und **bivariate** Analyse. Die Trennung ist einfach:
+
+- *Univariat* heißt: eine Variable für sich allein. Wie ist sie verteilt? Wo liegt ihr Mittelwert? Wie stark streuen die Werte? Eine Histogramm-Frage.
+- *Bivariat* heißt: zwei Variablen gemeinsam. Hängen sie zusammen? Unterscheiden sich Gruppen? Eine Scatterplot- oder Boxplot-Frage.
+
+Bei der bivariaten Analyse gibt es zwei methodisch ähnliche, aber konzeptionell unterschiedliche Fragen, die du nicht verwechseln solltest:
+
+- **Zusammenhang** — variieren zwei Variablen gemeinsam? (Korrelation für metrische Variablen, Chi² für kategoriale.)
+- **Unterschied** — unterscheiden sich Gruppen in einer Variable? (t-Test, ANOVA für metrische Variablen pro Gruppe.)
+
+Beide Fragen beantworten denselben methodischen Kern: Gibt es einen statistisch belastbaren Zusammenhang zwischen zwei Variablen? Aber die Werkzeuge und die Berichtsformate sind unterschiedlich.
+
+Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test — Häufigkeit, Deskriptiva, Kreuztabelle, Korrelation, Mittelwertvergleich — jeweils gewichtet, mit Effektgröße und SPSS-vergleichbarem Output. Wenn du am Ende des Kapitels weißt, wie sich Islamfeindlichkeit verteilt, ob Ost und West sich unterscheiden, und ob Populismus damit zusammenhängt, hast du genau das Fundament gelegt, das du in @sec-erklaerung für die multivariate Modellierung brauchst.
 
 ## Was du nach diesem Kapitel kannst {-}
 
@@ -161,7 +173,9 @@ Die mariposa-Tests geben dir Effektgrößen automatisch zurück — du musst sie
 
 ### Kreuztabellen mit `crosstab()`
 
-`crosstab()` aus mariposa erzeugt eine Kreuztabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung.
+Bei *zwei kategorialen* Variablen — etwa Bildung × Region — kannst du keinen Mittelwertvergleich rechnen und keine Korrelation im klassischen Sinne. Die richtige Darstellung ist eine **Kreuztabelle**: Zeilen für die eine Variable, Spalten für die andere, Zellen mit den Häufigkeiten. Aus der Tabelle liest du direkt ab, ob bestimmte Kombinationen häufiger vorkommen als andere — der Standard-Anfang jeder Analyse mit kategorialen Variablen.
+
+`crosstab()` aus mariposa erzeugt diese Tabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung — also: was passiert in jeder Zeile, wenn man sie auf 100 Prozent skaliert? Damit liest du *bedingte Wahrscheinlichkeiten*: „Welcher Anteil der Westdeutschen hat hohe Bildung im Vergleich zu welchem Anteil der Ostdeutschen?".
 
 **Frage:** Verteilt sich Bildung anders in Ost und West?
 
@@ -174,7 +188,9 @@ Mit `prop = "col"` oder `prop = "total"` änderst du die Prozentuierungs-Richtun
 
 ### Chi-Quadrat-Test mit `chi_square()`
 
-Statt erst eine Kreuztabelle zu rechnen und *dann* den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs *V*, Phi, Gamma).
+Eine Kreuztabelle beschreibt — aber sie sagt dir noch nicht, ob die beobachteten Muster *statistisch belastbar* sind oder ob sie auch durch Zufall in der Stichprobe entstanden sein könnten. Genau diese Frage beantwortet der **Chi-Quadrat-Test** (χ²): Er vergleicht die tatsächlichen Häufigkeiten in jeder Zelle mit den Häufigkeiten, die man unter der Annahme *völliger Unabhängigkeit* zwischen den beiden Variablen erwarten würde. Sind die beobachteten Werte deutlich anders, gibt es einen Zusammenhang.
+
+Statt erst eine Kreuztabelle zu rechnen und *dann* den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs *V*, Phi, Gamma). Die Effektgrößen sind hier besonders wichtig: Wie beim t-Test wird χ² bei großen N fast immer signifikant; erst Cramérs *V* sagt dir, ob der Zusammenhang inhaltlich groß ist.
 
 **Frage:** Hängen Bildung und Region statistisch zusammen?
 
@@ -197,7 +213,17 @@ allbus |> chi_square(eastwest, educ, weights = wghtpew)
 
 ### Korrelation
 
-Drei Korrelationskoeffizienten, drei Funktionen — alle akzeptieren `weights =`:
+Eine **Korrelation** ist die einfachste Antwort auf die Frage: *„Bewegen sich zwei Variablen gemeinsam?"* Wer hohe Werte auf der einen Skala hat, hat auch hohe Werte auf der anderen? Oder genau umgekehrt? Oder gibt es keinen Zusammenhang?
+
+Der bekannteste Index dafür ist **Pearsons r**. Er liegt zwischen -1 und +1:
+
+- *r* = +1 → perfekter positiver Zusammenhang (steigt eines, steigt das andere proportional)
+- *r* =  0 → kein linearer Zusammenhang
+- *r* = -1 → perfekter negativer Zusammenhang
+
+In der Sozialforschung sind Werte um 0.4 schon ein deutlicher Befund. Werte über 0.7 sind selten — und wenn doch, oft ein Hinweis, dass die zwei Variablen letztlich dasselbe messen.
+
+Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzeptieren das `weights =`-Argument:
 
 | Funktion          | Skalenniveau                | Wann sinnvoll                                          |
 |-------------------|------------------------------|---------------------------------------------------------|
@@ -227,7 +253,9 @@ allbus |> pearson_cor(starts_with("mm0"), weights = wghtpew)
 
 ### t-Test mit `t_test()`
 
-Der unabhängige t-Test prüft, ob sich die Mittelwerte zweier Gruppen unterscheiden.
+Der **t-Test** ist eines der ältesten Werkzeuge der inferenziellen Statistik (William Gosset hat ihn 1908 unter dem Pseudonym „Student" veröffentlicht, weil sein Arbeitgeber Guinness Brauereigeheimnisse fürchtete). Die Frage, die er beantwortet, ist sehr konkret: *„Du siehst zwei Gruppen, die scheinbar unterschiedliche Mittelwerte haben. Wäre dieser Unterschied auch durch reinen Zufall in einer Stichprobe entstanden — oder ist er groß genug, dass man davon ausgehen kann, dass es in der Bevölkerung wirklich einen Unterschied gibt?"*
+
+Der t-Test gibt dir darauf drei Antworten in einem Aufruf: die *Stärke* des Unterschieds (Mittelwertdifferenz), die *Wahrscheinlichkeit* eines Zufallsbefunds (*p*-Wert) und die *Effektgröße* (Hedges' *g*) — also wie groß der Unterschied inhaltlich ist, unabhängig von der Stichprobengröße. Die letzte Zahl ist die wichtigste: bei N = 5000 ist *fast jeder* Unterschied statistisch signifikant. Erst die Effektgröße sagt dir, ob er auch inhaltlich relevant ist.
 
 **Frage:** Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?
 
@@ -263,7 +291,11 @@ Signifikanter Levene-Test → Varianzen unterscheiden sich → Welch-Variante is
 
 ### ANOVA mit `oneway_anova()`
 
-Für *drei oder mehr* Gruppen ist die einfaktorielle ANOVA dein Standardwerkzeug.
+Der t-Test funktioniert nur für *zwei* Gruppen. Sobald du drei oder mehr hast — etwa drei Bildungsgruppen oder fünf Altersklassen —, brauchst du ein anderes Werkzeug: die **einfaktorielle Varianzanalyse**, kurz ANOVA (*Analysis of Variance*).
+
+Ihr Trick ist elegant. Statt jedes Gruppenpaar einzeln zu vergleichen (was bei vielen Gruppen zu vielen falsch-positiven Befunden führen würde), prüft die ANOVA *eine einzige* Frage: *Streuen die Mittelwerte zwischen den Gruppen mehr, als man aufgrund der Streuung innerhalb der Gruppen erwarten würde?* Wenn ja, gibt es mindestens *einen* Gruppenunterschied. Welches Paar es genau ist, sagt die ANOVA dir nicht — das beantworten Post-Hoc-Tests, die später kommen.
+
+Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effektgröße **η²** (eta-quadrat): der Anteil der Varianz in der abhängigen Variable, der durch die Gruppierung erklärt wird. Ein η² von 0.01 bedeutet, dass die Gruppen 1 Prozent der Varianz erklären — statistisch oft signifikant bei großen N, aber inhaltlich winzig. Ein η² von 0.10 oder größer ist schon ein substanzieller Effekt.
 
 **Frage:** Hängt Islamfeindlichkeit mit Bildung zusammen?
 

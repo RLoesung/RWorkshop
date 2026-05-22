@@ -17,17 +17,33 @@ In @sec-datenimport hast du den Datensatz gelesen, Variablen gefunden und fehlen
 
 ## Worum es geht
 
-Eine einzige Survey-Frage misst selten zuverlässig, was sie messen soll. *„Sind Sie islamfeindlich?"* würde kaum jemand mit Ja beantworten — auch wer es ist. Deshalb arbeitet die empirische Sozialforschung mit **Itembatterien**: Mehrere Aussagen aus unterschiedlichen Perspektiven decken zusammen ein Konstrukt ab. Aus ihnen wird ein Skalenwert berechnet, der robuster ist als jede einzelne Frage.
+Frag jemanden direkt: *„Sind Sie islamfeindlich?"* — und du wirst fast immer ein Nein bekommen. Selbst von Menschen, die in Wahlumfragen rechtspopulistisch wählen und in Diskussionen klar abgrenzende Aussagen treffen. Das hat zwei Gründe. Erstens: Niemand will sich öffentlich als „islamfeindlich" bezeichnen — das ist ein Begriff, der negativ konnotiert ist. Zweitens: Einstellungen sind nicht so klar umrissen wie ein Ja-oder-Nein. Jemand kann findet *manche* Aspekte einer Religion problematisch, andere nicht — und ist deshalb *ein bisschen* islamskeptisch, ohne die ganze Etikette anzunehmen.
 
-Dieses Kapitel zeigt dir den Weg von der rohen Variable bis zur fertigen Skala:
+Die Sozialforschung löst dieses Problem mit einem alten Trick: Sie fragt **nicht direkt nach dem Konstrukt**, sondern nach mehreren konkreten Aussagen, die das Konstrukt indirekt erfassen. Statt „Sind Sie islamfeindlich?" fragt sie:
 
-1. **Neue Variablen erzeugen** (`mutate()`) — etwa aus zwei alten Variablen eine abgeleitete Größe.
-2. **Bedingungslogik** (`case_when()`, `if_else()`) — Kategorien neu schneiden.
+> *„Ich finde, dass die Ausübung des Islam in Deutschland beschränkt werden sollte."*
+
+und
+
+> *„Der Islam passt in unsere Gesellschaft."*
+
+und
+
+> *„Die Anwesenheit von Muslimen bringt Konflikte."*
+
+Zusammen ergeben diese sechs **Items** ein Bild davon, wie eine Person zur muslimischen Bevölkerung in Deutschland steht. Aus den Antworten wird ein einziger Skalenwert berechnet, der robuster und differenzierter ist als jede Einzelantwort.
+
+Diesen Übersetzungsschritt — *vom abstrakten Konstrukt zur messbaren Variable* — nennt die quantitative Sozialforschung **Operationalisierung**. Sie ist der methodische Kern jeder empirischen Studie: Eine Theorie kannst du nur dann an Daten prüfen, wenn du sie vorher in messbare Größen übersetzt hast.
+
+Dieses Kapitel zeigt dir den Weg von den sechs rohen Items bis zur fertigen Skala. Fünf Schritte:
+
+1. **Neue Variablen erzeugen** (`mutate()`) — etwa aus zwei alten Variablen eine abgeleitete Größe ableiten.
+2. **Bedingungslogik** (`case_when()`, `if_else()`) — Kategorien neu schneiden („wer < 30 ist, gilt als jung").
 3. **Rekodieren** (`rec()`) — die zentrale Operation: Werte umkodieren, Kategorien zusammenfassen, **umpolen** (Reverse Coding).
-4. **Skalen bilden** (`row_means()`) — aus mehreren Items einen Wert pro Befragte:n.
+4. **Skalen bilden** (`row_means()`) — aus mehreren Items einen Mittelwert pro Befragte:n.
 5. **Vergleichbar machen** (`pomps()`) — Skalen unterschiedlicher Bandbreite auf eine 0–100-Basis bringen.
 
-Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlichkeit** (`islamophobie`, 1–7) und **Populismus** (`populismus`, 1–5) — sauber aufgebaut und dokumentiert.
+Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlichkeit** (`islamophobie`, 1–7) und **Populismus** (`populismus`, 1–5) — sauber aufgebaut und dokumentiert. Damit gehst du ab @sec-univbivar in die Analyse.
 
 ## Was du nach diesem Kapitel kannst {-}
 
@@ -156,7 +172,9 @@ Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Überset
 
 ## Rekodierung mit `rec()` {#sec-rekodierung}
 
-Die wichtigste Funktion in diesem Kapitel: `rec()` aus mariposa. Sie ersetzt das, was du in SPSS unter `RECODE` kennst, kann aber mehr — sie versteht eine kompakte **Regel-Syntax**, behält Labels und arbeitet pipe-freundlich.
+Stell dir vor, du hast die Bildungsangaben von 5.246 Personen in der Variable `educ`. Werte 1 bis 7 stehen für sieben verschiedene Schulabschlüsse — vom Volksschulabschluss bis zum Abitur, plus „anderer Abschluss" als 7. Für eine Regression willst du das aber nicht als sieben Kategorien haben, sondern gröber: niedrig / mittel / hoch. Du *rekodierst* die Variable.
+
+Das ist die häufigste Datenoperation in der Sozialforschung — und gleichzeitig eine der fehleranfälligsten. Ein vertauschter Wert, eine vergessene Kategorie, und deine ganze Analyse läuft auf einem falschen Maßstab. SPSS hat dafür den `RECODE`-Befehl mit einer eigenen kleinen Syntax. mariposas `rec()`-Funktion macht dasselbe, ist aber für tidyverse-Workflows gebaut: pipe-freundlich, behält Labels, und versteht eine kompakte **Regel-Syntax**, in der du eine ganze Umkodierung in einer einzigen Zeichenkette ausdrückst.
 
 **Syntax:**
 
@@ -218,7 +236,11 @@ allbus |>
 
 ### Lehrstück: Umpolen (Reverse Coding)
 
-Die sechs Items unserer Islamfeindlichkeits-Skala sind **nicht alle in dieselbe Richtung gepolt**. Vier Items messen Zustimmung zu islamfeindlichen Aussagen (hoch = islamophob); zwei Items sind positiv formuliert (hoch = tolerant):
+Was passiert, wenn du sechs Items zu einer Skala zusammenrechnest, von denen vier in dieselbe Richtung formuliert sind und zwei *entgegengesetzt*? Du bekommst Müll. Die positiv formulierten Items ziehen den Mittelwert in die eine Richtung, die negativen in die andere — und am Ende heben sich Effekte auf, die eigentlich addiert werden sollten.
+
+Genau das ist der Fall bei unserer Islamfeindlichkeits-Skala. Die Forscher:innen haben die sechs Items absichtlich gemischt formuliert — vier negativ („Islam beschränken"), zwei positiv („Islam passt in die Gesellschaft"). Das ist eine bewusste Methode gegen einen klassischen Survey-Bias namens **Akquieszenz**: die Neigung mancher Befragten, Aussagen pauschal zuzustimmen, egal worum es geht. Wenn alle sechs Items gleich gepolt wären, würde diese Tendenz das Ergebnis verzerren. Durch die Mischung neutralisiert sie sich.
+
+Für *dich* heißt das: Bevor du die Items zu einer Skala zusammenrechnest, musst du die zwei positiv formulierten Items **umpolen** — also so umkodieren, dass am Ende alle sechs in dieselbe Richtung zeigen.
 
 ```{r mm-items, echo=FALSE}
 tibble::tribble(
@@ -291,7 +313,11 @@ Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable 
 
 ## Skalen bilden {#sec-skalen}
 
-Für die Mini-Studie willst du aus den sechs umgepolten Items eine **gewichtete Mittelwert-Skala** bauen. mariposa stellt dafür drei Zeilen-Funktionen bereit:
+Jetzt kommt der Moment, auf den dieses Kapitel zugelaufen ist: aus sechs umgepolten Items wird **eine** Skala. Das ist methodisch einfach — und konzeptionell der wichtigste Schritt zum Verstehen, was die Sozialforschung eigentlich macht.
+
+Die Logik ist die folgende: Wenn die sechs Items alle dasselbe Konstrukt messen (was du in @sec-latente noch faktorenanalytisch prüfst), dann ist *der Mittelwert über die sechs Items* eine bessere Schätzung der zugrundeliegenden Einstellung als jedes einzelne Item für sich. Einzelne Items rauschen — jeder Mensch versteht eine Frage etwas anders, hat einen schlechten Tag oder reagiert besonders auf einen Begriff. Über sechs Items mittelt sich das Rauschen raus, und übrig bleibt das gemeinsame Signal: die Hintergrundeinstellung.
+
+In SPSS würde das eine kurze `COMPUTE`-Anweisung sein. In R nutzt du `row_means()` aus mariposa, das genau für diesen Zweck gebaut ist. Es gibt drei verwandte Funktionen:
 
 | Funktion                                | Was sie tut                                          |
 | --------------------------------------- | ---------------------------------------------------- |
@@ -379,9 +405,13 @@ allbus |> describe(populismus)
 
 ## Skalen vergleichbar machen mit `pomps()` {#sec-pomps}
 
-Du hast jetzt zwei Skalen — `islamophobie` (1–7) und `populismus` (1–5). Ein Vergleich der reinen Mittelwerte ist **irreführend**: der Mittelwert von `islamophobie` läuft auf einer doppelt so weiten Skala wie der von `populismus`. „Populismus liegt im Schnitt bei 3, Islamfeindlichkeit bei 4" sagt für sich allein nichts über die *relative Intensität* der beiden Einstellungen aus.
+Stell dir vor, du sollst beurteilen, welcher Eindruck bei den Befragten *stärker* ausgeprägt ist: ihre Islamfeindlichkeit oder ihr Populismus? Mit den Original-Skalenwerten ist das eine Falle. Islamfeindlichkeit läuft von 1 bis 7, Populismus von 1 bis 5. Ein Mittelwert von 4 bedeutet auf der ersten Skala „leicht mittig", auf der zweiten „obere Hälfte". Ein direkter Vergleich der Mittelwerte ist also **irreführend** — du würdest Birnen mit Äpfeln vergleichen.
 
-Die Lösung ist die **POMPS**-Transformation (*Percent of Maximum Possible Scores*): Du rechnest beide Skalen auf einen gemeinsamen 0–100-Bereich um. Die Formel ist einfach:
+Die Lösung ist ein methodischer Klassiker: Beide Skalen werden auf einen gemeinsamen Bereich umgerechnet, typischerweise 0 bis 100. Eine Person mit dem Minimalwert ihrer Original-Skala landet auf 0, eine mit dem Maximalwert auf 100, und alles dazwischen wird linear umgerechnet. So sind die Werte direkt vergleichbar — wie wenn man Schul-Noten von zwei verschiedenen Notenssystemen in dieselbe Prozentschiene überführt.
+
+Die Methode heißt **POMPS** (*Percent of Maximum Possible Scores*). Sie ist in der Methodenliteratur seit Cohen et al. (1999) etabliert und ein Standardwerkzeug für Skalenvergleiche.
+
+Die Formel selbst ist banal — alle Werte werden auf einen Anteil relativ zur theoretischen Spannweite umgerechnet:
 
 $$
 \text{POMPS} = \frac{x - \text{min}}{\text{max} - \text{min}} \times 100

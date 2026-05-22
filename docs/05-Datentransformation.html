@@ -320,16 +320,30 @@ Hinweis
 </div>
 <section id="worum-es-geht" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="worum-es-geht"><span class="header-section-number">5.1</span> Worum es geht</h2>
-<p>Eine einzige Survey-Frage misst selten zuverlässig, was sie messen soll. <em>„Sind Sie islamfeindlich?“</em> würde kaum jemand mit Ja beantworten — auch wer es ist. Deshalb arbeitet die empirische Sozialforschung mit <strong>Itembatterien</strong>: Mehrere Aussagen aus unterschiedlichen Perspektiven decken zusammen ein Konstrukt ab. Aus ihnen wird ein Skalenwert berechnet, der robuster ist als jede einzelne Frage.</p>
-<p>Dieses Kapitel zeigt dir den Weg von der rohen Variable bis zur fertigen Skala:</p>
+<p>Frag jemanden direkt: <em>„Sind Sie islamfeindlich?“* — und du wirst fast immer ein Nein bekommen. Selbst von Menschen, die in Wahlumfragen rechtspopulistisch wählen und in Diskussionen klar abgrenzende Aussagen treffen. Das hat zwei Gründe. Erstens: Niemand will sich öffentlich als „islamfeindlich” bezeichnen — das ist ein Begriff, der negativ konnotiert ist. Zweitens: Einstellungen sind nicht so klar umrissen wie ein Ja-oder-Nein. Jemand kann findet </em>manche* Aspekte einer Religion problematisch, andere nicht — und ist deshalb <em>ein bisschen</em> islamskeptisch, ohne die ganze Etikette anzunehmen.</p>
+<p>Die Sozialforschung löst dieses Problem mit einem alten Trick: Sie fragt <strong>nicht direkt nach dem Konstrukt</strong>, sondern nach mehreren konkreten Aussagen, die das Konstrukt indirekt erfassen. Statt „Sind Sie islamfeindlich?” fragt sie:</p>
+<blockquote class="blockquote">
+<p><em>„Ich finde, dass die Ausübung des Islam in Deutschland beschränkt werden sollte.”</em></p>
+</blockquote>
+<p>und</p>
+<blockquote class="blockquote">
+<p><em>„Der Islam passt in unsere Gesellschaft.”</em></p>
+</blockquote>
+<p>und</p>
+<blockquote class="blockquote">
+<p><em>„Die Anwesenheit von Muslimen bringt Konflikte.”</em></p>
+</blockquote>
+<p>Zusammen ergeben diese sechs <strong>Items</strong> ein Bild davon, wie eine Person zur muslimischen Bevölkerung in Deutschland steht. Aus den Antworten wird ein einziger Skalenwert berechnet, der robuster und differenzierter ist als jede Einzelantwort.</p>
+<p>Diesen Übersetzungsschritt — <em>vom abstrakten Konstrukt zur messbaren Variable</em> — nennt die quantitative Sozialforschung <strong>Operationalisierung</strong>. Sie ist der methodische Kern jeder empirischen Studie: Eine Theorie kannst du nur dann an Daten prüfen, wenn du sie vorher in messbare Größen übersetzt hast.</p>
+<p>Dieses Kapitel zeigt dir den Weg von den sechs rohen Items bis zur fertigen Skala. Fünf Schritte:</p>
 <ol type="1">
-<li><strong>Neue Variablen erzeugen</strong> (<code>mutate()</code>) — etwa aus zwei alten Variablen eine abgeleitete Größe.</li>
-<li><strong>Bedingungslogik</strong> (<code>case_when()</code>, <code>if_else()</code>) — Kategorien neu schneiden.</li>
+<li><strong>Neue Variablen erzeugen</strong> (<code>mutate()</code>) — etwa aus zwei alten Variablen eine abgeleitete Größe ableiten.</li>
+<li><strong>Bedingungslogik</strong> (<code>case_when()</code>, <code>if_else()</code>) — Kategorien neu schneiden („wer &lt; 30 ist, gilt als jung”).</li>
 <li><strong>Rekodieren</strong> (<code>rec()</code>) — die zentrale Operation: Werte umkodieren, Kategorien zusammenfassen, <strong>umpolen</strong> (Reverse Coding).</li>
-<li><strong>Skalen bilden</strong> (<code>row_means()</code>) — aus mehreren Items einen Wert pro Befragte:n.</li>
+<li><strong>Skalen bilden</strong> (<code>row_means()</code>) — aus mehreren Items einen Mittelwert pro Befragte:n.</li>
 <li><strong>Vergleichbar machen</strong> (<code>pomps()</code>) — Skalen unterschiedlicher Bandbreite auf eine 0–100-Basis bringen.</li>
 </ol>
-<p>Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — <strong>Islamfeindlichkeit</strong> (<code>islamophobie</code>, 1–7) und <strong>Populismus</strong> (<code>populismus</code>, 1–5) — sauber aufgebaut und dokumentiert.</p>
+<p>Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — <strong>Islamfeindlichkeit</strong> (<code>islamophobie</code>, 1–7) und <strong>Populismus</strong> (<code>populismus</code>, 1–5) — sauber aufgebaut und dokumentiert. Damit gehst du ab <a href="07-Uni-Bivariate-Analyse.html" class="quarto-xref"><span>Kapitel 7</span></a> in die Analyse.</p>
 </section>
 <section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
@@ -548,7 +562,8 @@ Tipp
 </section>
 <section id="sec-rekodierung" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="sec-rekodierung"><span class="header-section-number">5.3</span> Rekodierung mit <code>rec()</code></h2>
-<p>Die wichtigste Funktion in diesem Kapitel: <code>rec()</code> aus mariposa. Sie ersetzt das, was du in SPSS unter <code>RECODE</code> kennst, kann aber mehr — sie versteht eine kompakte <strong>Regel-Syntax</strong>, behält Labels und arbeitet pipe-freundlich.</p>
+<p>Stell dir vor, du hast die Bildungsangaben von 5.246 Personen in der Variable <code>educ</code>. Werte 1 bis 7 stehen für sieben verschiedene Schulabschlüsse — vom Volksschulabschluss bis zum Abitur, plus „anderer Abschluss” als 7. Für eine Regression willst du das aber nicht als sieben Kategorien haben, sondern gröber: niedrig / mittel / hoch. Du <em>rekodierst</em> die Variable.</p>
+<p>Das ist die häufigste Datenoperation in der Sozialforschung — und gleichzeitig eine der fehleranfälligsten. Ein vertauschter Wert, eine vergessene Kategorie, und deine ganze Analyse läuft auf einem falschen Maßstab. SPSS hat dafür den <code>RECODE</code>-Befehl mit einer eigenen kleinen Syntax. mariposas <code>rec()</code>-Funktion macht dasselbe, ist aber für tidyverse-Workflows gebaut: pipe-freundlich, behält Labels, und versteht eine kompakte <strong>Regel-Syntax</strong>, in der du eine ganze Umkodierung in einer einzigen Zeichenkette ausdrückst.</p>
 <p><strong>Syntax:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rec</span>(variable, <span class="at">rules =</span> <span class="st">"1=1; 2:3=2; else=NA"</span>)</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -690,7 +705,9 @@ Tipp
 </section>
 <section id="lehrstück-umpolen-reverse-coding" class="level3" data-number="5.3.3">
 <h3 data-number="5.3.3" class="anchored" data-anchor-id="lehrstück-umpolen-reverse-coding"><span class="header-section-number">5.3.3</span> Lehrstück: Umpolen (Reverse Coding)</h3>
-<p>Die sechs Items unserer Islamfeindlichkeits-Skala sind <strong>nicht alle in dieselbe Richtung gepolt</strong>. Vier Items messen Zustimmung zu islamfeindlichen Aussagen (hoch = islamophob); zwei Items sind positiv formuliert (hoch = tolerant):</p>
+<p>Was passiert, wenn du sechs Items zu einer Skala zusammenrechnest, von denen vier in dieselbe Richtung formuliert sind und zwei <em>entgegengesetzt</em>? Du bekommst Müll. Die positiv formulierten Items ziehen den Mittelwert in die eine Richtung, die negativen in die andere — und am Ende heben sich Effekte auf, die eigentlich addiert werden sollten.</p>
+<p>Genau das ist der Fall bei unserer Islamfeindlichkeits-Skala. Die Forscher:innen haben die sechs Items absichtlich gemischt formuliert — vier negativ („Islam beschränken”), zwei positiv („Islam passt in die Gesellschaft”). Das ist eine bewusste Methode gegen einen klassischen Survey-Bias namens <strong>Akquieszenz</strong>: die Neigung mancher Befragten, Aussagen pauschal zuzustimmen, egal worum es geht. Wenn alle sechs Items gleich gepolt wären, würde diese Tendenz das Ergebnis verzerren. Durch die Mischung neutralisiert sie sich.</p>
+<p>Für <em>dich</em> heißt das: Bevor du die Items zu einer Skala zusammenrechnest, musst du die zwei positiv formulierten Items <strong>umpolen</strong> — also so umkodieren, dass am Ende alle sechs in dieselbe Richtung zeigen.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -837,7 +854,9 @@ Warnung
 </section>
 <section id="sec-skalen" class="level2" data-number="5.5">
 <h2 data-number="5.5" class="anchored" data-anchor-id="sec-skalen"><span class="header-section-number">5.5</span> Skalen bilden</h2>
-<p>Für die Mini-Studie willst du aus den sechs umgepolten Items eine <strong>gewichtete Mittelwert-Skala</strong> bauen. mariposa stellt dafür drei Zeilen-Funktionen bereit:</p>
+<p>Jetzt kommt der Moment, auf den dieses Kapitel zugelaufen ist: aus sechs umgepolten Items wird <strong>eine</strong> Skala. Das ist methodisch einfach — und konzeptionell der wichtigste Schritt zum Verstehen, was die Sozialforschung eigentlich macht.</p>
+<p>Die Logik ist die folgende: Wenn die sechs Items alle dasselbe Konstrukt messen (was du in <a href="08-Latente-Strukturen.html" class="quarto-xref"><span>Kapitel 8</span></a> noch faktorenanalytisch prüfst), dann ist <em>der Mittelwert über die sechs Items</em> eine bessere Schätzung der zugrundeliegenden Einstellung als jedes einzelne Item für sich. Einzelne Items rauschen — jeder Mensch versteht eine Frage etwas anders, hat einen schlechten Tag oder reagiert besonders auf einen Begriff. Über sechs Items mittelt sich das Rauschen raus, und übrig bleibt das gemeinsame Signal: die Hintergrundeinstellung.</p>
+<p>In SPSS würde das eine kurze <code>COMPUTE</code>-Anweisung sein. In R nutzt du <code>row_means()</code> aus mariposa, das genau für diesen Zweck gebaut ist. Es gibt drei verwandte Funktionen:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 42%">
@@ -1003,8 +1022,10 @@ Warnung
 </section>
 <section id="sec-pomps" class="level2" data-number="5.6">
 <h2 data-number="5.6" class="anchored" data-anchor-id="sec-pomps"><span class="header-section-number">5.6</span> Skalen vergleichbar machen mit <code>pomps()</code></h2>
-<p>Du hast jetzt zwei Skalen — <code>islamophobie</code> (1–7) und <code>populismus</code> (1–5). Ein Vergleich der reinen Mittelwerte ist <strong>irreführend</strong>: der Mittelwert von <code>islamophobie</code> läuft auf einer doppelt so weiten Skala wie der von <code>populismus</code>. „Populismus liegt im Schnitt bei 3, Islamfeindlichkeit bei 4” sagt für sich allein nichts über die <em>relative Intensität</em> der beiden Einstellungen aus.</p>
-<p>Die Lösung ist die <strong>POMPS</strong>-Transformation (<em>Percent of Maximum Possible Scores</em>): Du rechnest beide Skalen auf einen gemeinsamen 0–100-Bereich um. Die Formel ist einfach:</p>
+<p>Stell dir vor, du sollst beurteilen, welcher Eindruck bei den Befragten <em>stärker</em> ausgeprägt ist: ihre Islamfeindlichkeit oder ihr Populismus? Mit den Original-Skalenwerten ist das eine Falle. Islamfeindlichkeit läuft von 1 bis 7, Populismus von 1 bis 5. Ein Mittelwert von 4 bedeutet auf der ersten Skala „leicht mittig”, auf der zweiten „obere Hälfte”. Ein direkter Vergleich der Mittelwerte ist also <strong>irreführend</strong> — du würdest Birnen mit Äpfeln vergleichen.</p>
+<p>Die Lösung ist ein methodischer Klassiker: Beide Skalen werden auf einen gemeinsamen Bereich umgerechnet, typischerweise 0 bis 100. Eine Person mit dem Minimalwert ihrer Original-Skala landet auf 0, eine mit dem Maximalwert auf 100, und alles dazwischen wird linear umgerechnet. So sind die Werte direkt vergleichbar — wie wenn man Schul-Noten von zwei verschiedenen Notenssystemen in dieselbe Prozentschiene überführt.</p>
+<p>Die Methode heißt <strong>POMPS</strong> (<em>Percent of Maximum Possible Scores</em>). Sie ist in der Methodenliteratur seit Cohen et al.&nbsp;(1999) etabliert und ein Standardwerkzeug für Skalenvergleiche.</p>
+<p>Die Formel selbst ist banal — alle Werte werden auf einen Anteil relativ zur theoretischen Spannweite umgerechnet:</p>
 <p><span class="math display">\[
 \text{POMPS} = \frac{x - \text{min}}{\text{max} - \text{min}} \times 100
 \]</span></p>
