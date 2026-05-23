@@ -102,6 +102,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Suchen"
   }
 }</script><style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 </head>
 <body class="nav-sidebar floating quarto-light">
 
@@ -205,22 +231,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><a href="#worum-es-geht" id="toc-worum-es-geht" class="nav-link active" data-scroll-target="#worum-es-geht"><span class="header-section-number">8.1</span> Worum es geht</a></li>
   <li><a href="#was-du-nach-diesem-kapitel-kannst" id="toc-was-du-nach-diesem-kapitel-kannst" class="nav-link" data-scroll-target="#was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</a></li>
   <li>
-<a href="#sec-korrelationsmatrix" id="toc-sec-korrelationsmatrix" class="nav-link" data-scroll-target="#sec-korrelationsmatrix"><span class="header-section-number">8.2</span> Korrelationsmatrix</a>
+<a href="#sec-korrelationsmatrix" id="toc-sec-korrelationsmatrix" class="nav-link" data-scroll-target="#sec-korrelationsmatrix"><span class="header-section-number">8.2</span> Inter-Item-Korrelationen</a>
   <ul>
-<li><a href="#korrelationsmatrix-visualisieren" id="toc-korrelationsmatrix-visualisieren" class="nav-link" data-scroll-target="#korrelationsmatrix-visualisieren"><span class="header-section-number">8.2.1</span> Korrelationsmatrix visualisieren</a></li>
+<li><a href="#der-vorab-check-vor-jeder-faktorenanalyse" id="toc-der-vorab-check-vor-jeder-faktorenanalyse" class="nav-link" data-scroll-target="#der-vorab-check-vor-jeder-faktorenanalyse"><span class="header-section-number">8.2.1</span> Der Vorab-Check vor jeder Faktorenanalyse</a></li>
+  <li><a href="#matrix-berechnen" id="toc-matrix-berechnen" class="nav-link" data-scroll-target="#matrix-berechnen"><span class="header-section-number">8.2.2</span> Matrix berechnen</a></li>
+  <li><a href="#schwellen-lesen" id="toc-schwellen-lesen" class="nav-link" data-scroll-target="#schwellen-lesen"><span class="header-section-number">8.2.3</span> Schwellen lesen</a></li>
+  <li><a href="#heatmap-mit-ggplot2" id="toc-heatmap-mit-ggplot2" class="nav-link" data-scroll-target="#heatmap-mit-ggplot2"><span class="header-section-number">8.2.4</span> Heatmap mit ggplot2</a></li>
   </ul>
 </li>
   <li>
-<a href="#sec-efa" id="toc-sec-efa" class="nav-link" data-scroll-target="#sec-efa"><span class="header-section-number">8.3</span> Explorative Faktorenanalyse</a>
+<a href="#sec-kmo-bartlett" id="toc-sec-kmo-bartlett" class="nav-link" data-scroll-target="#sec-kmo-bartlett"><span class="header-section-number">8.3</span> Voraussetzungen prüfen — KMO und Bartlett</a>
   <ul>
-<li><a href="#einfaktor-l%C3%B6sung" id="toc-einfaktor-lösung" class="nav-link" data-scroll-target="#einfaktor-l%C3%B6sung"><span class="header-section-number">8.3.1</span> Einfaktor-Lösung</a></li>
-  <li><a href="#zwei-faktor-l%C3%B6sung-als-vergleich" id="toc-zwei-faktor-lösung-als-vergleich" class="nav-link" data-scroll-target="#zwei-faktor-l%C3%B6sung-als-vergleich"><span class="header-section-number">8.3.2</span> Zwei-Faktor-Lösung als Vergleich</a></li>
+<li><a href="#kmo-wie-viel-gemeinsame-varianz-steckt-%C3%BCberhaupt-drin" id="toc-kmo-wie-viel-gemeinsame-varianz-steckt-überhaupt-drin" class="nav-link" data-scroll-target="#kmo-wie-viel-gemeinsame-varianz-steckt-%C3%BCberhaupt-drin"><span class="header-section-number">8.3.1</span> KMO — wie viel <em>gemeinsame</em> Varianz steckt überhaupt drin?</a></li>
+  <li><a href="#bartlett-test-sind-die-korrelationen-%C3%BCberhaupt-von-null-verschieden" id="toc-bartlett-test-sind-die-korrelationen-überhaupt-von-null-verschieden" class="nav-link" data-scroll-target="#bartlett-test-sind-die-korrelationen-%C3%BCberhaupt-von-null-verschieden"><span class="header-section-number">8.3.2</span> Bartlett-Test — sind die Korrelationen überhaupt von Null verschieden?</a></li>
+  <li><a href="#beide-aus-einem-aufruf-ablesen" id="toc-beide-aus-einem-aufruf-ablesen" class="nav-link" data-scroll-target="#beide-aus-einem-aufruf-ablesen"><span class="header-section-number">8.3.3</span> Beide aus einem Aufruf ablesen</a></li>
   </ul>
 </li>
-  <li><a href="#sec-reliabilitaet" id="toc-sec-reliabilitaet" class="nav-link" data-scroll-target="#sec-reliabilitaet"><span class="header-section-number">8.4</span> Reliabilitätsanalyse</a></li>
-  <li><a href="#sec-cfa" id="toc-sec-cfa" class="nav-link" data-scroll-target="#sec-cfa"><span class="header-section-number">8.5</span> Konfirmatorische Faktorenanalyse als Ausblick</a></li>
+  <li>
+<a href="#sec-anzahl-faktoren" id="toc-sec-anzahl-faktoren" class="nav-link" data-scroll-target="#sec-anzahl-faktoren"><span class="header-section-number">8.4</span> Anzahl der Faktoren bestimmen</a>
+  <ul>
+<li><a href="#eigenwert-wie-viel-information-b%C3%BCndelt-ein-faktor" id="toc-eigenwert-wie-viel-information-bündelt-ein-faktor" class="nav-link" data-scroll-target="#eigenwert-wie-viel-information-b%C3%BCndelt-ein-faktor"><span class="header-section-number">8.4.1</span> Eigenwert — wie viel Information bündelt ein Faktor?</a></li>
+  <li><a href="#drei-kriterien-f%C3%BCr-die-anzahl-entscheidung" id="toc-drei-kriterien-für-die-anzahl-entscheidung" class="nav-link" data-scroll-target="#drei-kriterien-f%C3%BCr-die-anzahl-entscheidung"><span class="header-section-number">8.4.2</span> Drei Kriterien für die Anzahl-Entscheidung</a></li>
+  <li><a href="#scree-plot-die-knickstellen-diagnose" id="toc-scree-plot-die-knickstellen-diagnose" class="nav-link" data-scroll-target="#scree-plot-die-knickstellen-diagnose"><span class="header-section-number">8.4.3</span> Scree-Plot — die Knickstellen-Diagnose</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-efa-1" id="toc-sec-efa-1" class="nav-link" data-scroll-target="#sec-efa-1"><span class="header-section-number">8.5</span> Einfaktor-Lösung extrahieren</a>
+  <ul>
+<li><a href="#was-ist-eine-faktorladung" id="toc-was-ist-eine-faktorladung" class="nav-link" data-scroll-target="#was-ist-eine-faktorladung"><span class="header-section-number">8.5.1</span> Was ist eine Faktorladung?</a></li>
+  <li><a href="#modell-rechnen-und-ladungen-lesen" id="toc-modell-rechnen-und-ladungen-lesen" class="nav-link" data-scroll-target="#modell-rechnen-und-ladungen-lesen"><span class="header-section-number">8.5.2</span> Modell rechnen und Ladungen lesen</a></li>
+  <li><a href="#ladungen-visualisieren" id="toc-ladungen-visualisieren" class="nav-link" data-scroll-target="#ladungen-visualisieren"><span class="header-section-number">8.5.3</span> Ladungen visualisieren</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-efa-2" id="toc-sec-efa-2" class="nav-link" data-scroll-target="#sec-efa-2"><span class="header-section-number">8.6</span> Zwei-Faktor-Lösung mit Rotation</a></li>
+  <li>
+<a href="#sec-reliabilitaet" id="toc-sec-reliabilitaet" class="nav-link" data-scroll-target="#sec-reliabilitaet"><span class="header-section-number">8.7</span> Reliabilität — Cronbachs α</a>
+  <ul>
+<li><a href="#die-idee-ein-spaziergang-beispiel" id="toc-die-idee-ein-spaziergang-beispiel" class="nav-link" data-scroll-target="#die-idee-ein-spaziergang-beispiel"><span class="header-section-number">8.7.1</span> Die Idee: ein Spaziergang-Beispiel</a></li>
+  <li><a href="#die-formel-und-warum-sie-so-aussieht" id="toc-die-formel-und-warum-sie-so-aussieht" class="nav-link" data-scroll-target="#die-formel-und-warum-sie-so-aussieht"><span class="header-section-number">8.7.2</span> Die Formel — und warum sie so aussieht</a></li>
+  <li><a href="#%CE%B1-berechnen" id="toc-α-berechnen" class="nav-link" data-scroll-target="#%CE%B1-berechnen"><span class="header-section-number">8.7.3</span> α berechnen</a></li>
+  <li><a href="#item-statistiken-lesen" id="toc-item-statistiken-lesen" class="nav-link" data-scroll-target="#item-statistiken-lesen"><span class="header-section-number">8.7.4</span> Item-Statistiken lesen</a></li>
+  <li><a href="#%CE%B1-if-deleted-visualisieren" id="toc-α-if-deleted-visualisieren" class="nav-link" data-scroll-target="#%CE%B1-if-deleted-visualisieren"><span class="header-section-number">8.7.5</span> α-if-deleted visualisieren</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-cfa" id="toc-sec-cfa" class="nav-link" data-scroll-target="#sec-cfa"><span class="header-section-number">8.8</span> Konfirmatorische Faktorenanalyse als Ausblick</a></li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
+  <li><a href="#mini-glossar-begriffe-f%C3%BCr-latente-strukturen" id="toc-mini-glossar-begriffe-für-latente-strukturen" class="nav-link" data-scroll-target="#mini-glossar-begriffe-f%C3%BCr-latente-strukturen">Mini-Glossar: Begriffe für Latente Strukturen</a></li>
   <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></nav>
     </div>
@@ -271,20 +328,64 @@ Hinweis
 <strong>Reliabilität (Cronbachs α)</strong> — die Antwort auf: <em>„Sind die Items, die zusammen einen Faktor bilden, intern konsistent genug, um ein gemeinsamer Maßstab zu sein?“</em> Cronbachs α ist seit den 1950er Jahren der Standardindex dafür.</li>
 </ol>
 <p>Am Ende blicken wir kurz auf die <strong>konfirmatorische Faktorenanalyse (CFA)</strong> mit <code>lavaan</code> — den nächsten Schritt, wenn du eine konkrete Strukturhypothese <em>prüfen</em> statt nur <em>erkunden</em> willst. Die EFA fragt: „Welche Struktur passt am besten?“. Die CFA fragt: „Passt <em>diese</em> spezifische Struktur, die ich aus der Theorie behaupte, zu den Daten?”.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Was ist eine latente Variable?</strong> Stell dir das visuell als Pfeil-Diagramm vor:</p>
+<pre><code>            ┌──→ mm01
+            ├──→ mm02r
+[Islamfeindlichkeit] ──┼──→ mm03
+   (latent)            ├──→ mm04
+            ├──→ mm05r
+            └──→ mm06</code></pre>
+<p>Die Pfeile gehen <em>vom</em> unsichtbaren Faktor <em>zu</em> den beobachteten Items — die Annahme ist: <em>der Faktor erzeugt die Antworten</em>. Wer eine hohe Islamfeindlichkeit hat, kreuzt deshalb auf allen sechs Items eher zustimmende Werte an. Genau diese Pfeil-Richtung siehst du in CFA-Pfaddiagrammen wieder.</p>
+</div>
+</div>
 </section><section id="was-du-nach-diesem-kapitel-kannst" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-nach-diesem-kapitel-kannst">Was du nach diesem Kapitel kannst</h2>
 <ul>
-<li>Eine Korrelationsmatrix für eine Itembatterie aufstellen, interpretieren und als Heatmap visualisieren.</li>
-<li>Eine <strong>explorative Faktorenanalyse</strong> durchführen — inklusive KMO, Bartlett, Anzahl-Faktoren-Entscheidung und Rotation.</li>
+<li>Eine <strong>Inter-Item-Korrelationsmatrix</strong> aufstellen, lesen und als Heatmap mit ggplot2 visualisieren.</li>
 <li>
-<strong>Cronbachs α</strong> berechnen, Item-Statistiken lesen und problematische Items identifizieren.</li>
-<li>Den Unterschied zwischen PCA, EFA und CFA erklären — und wissen, wann welche Methode passt.</li>
+<strong>KMO</strong> und <strong>Bartlett-Test</strong> als Voraussetzungs-Check verstehen und im <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Output finden.</li>
+<li>Die <strong>Anzahl der Faktoren</strong> mit Eigenwert-Kriterium und händisch gezeichnetem <strong>Scree-Plot</strong> entscheiden.</li>
+<li>Eine <strong>explorative Faktorenanalyse</strong> rechnen, Faktorladungen lesen und als sortierten <strong>Bar-Chart</strong> visualisieren.</li>
+<li>Den Unterschied zwischen <strong>PCA</strong>, <strong>EFA</strong> und <strong>CFA</strong> erklären — und wissen, wann welche Methode passt.</li>
+<li>Eine Rotation (<code>varimax</code>, <code>oblimin</code>) bewusst auswählen.</li>
+<li>
+<strong>Cronbachs α</strong> berechnen, Item-Statistiken lesen, problematische Items identifizieren und <strong>α-if-deleted</strong> als Bar-Chart prüfen.</li>
 <li>Ein einfaches CFA-Modell mit <code>lavaan</code> aufsetzen und Fit-Indizes interpretieren.</li>
 </ul></section><section id="sec-korrelationsmatrix" class="level2" data-number="8.2"><h2 data-number="8.2" class="anchored" data-anchor-id="sec-korrelationsmatrix">
-<span class="header-section-number">8.2</span> Korrelationsmatrix</h2>
-<p>Bevor du eine EFA rechnest, schaust du dir die Korrelationen aller Skala-Items an. Hohe Inter-Item-Korrelationen sind die Grundvoraussetzung jeder sinnvollen Faktorisierung.</p>
+<span class="header-section-number">8.2</span> Inter-Item-Korrelationen</h2>
+<section id="der-vorab-check-vor-jeder-faktorenanalyse" class="level3" data-number="8.2.1"><h3 data-number="8.2.1" class="anchored" data-anchor-id="der-vorab-check-vor-jeder-faktorenanalyse">
+<span class="header-section-number">8.2.1</span> Der Vorab-Check vor jeder Faktorenanalyse</h3>
+<p>Stell dir vor, sechs Reporter:innen schicken ihre Berichte zur selben Lage. Wenn fünf davon ein ähnliches Bild zeichnen und einer komplett woanders steht — <em>dann weißt du schon vor jeder Analyse</em>: fünf messen vermutlich dasselbe, einer messt etwas anderes. Genau diese Vorab-Diagnose machen <strong>Inter-Item-Korrelationen</strong> für deine Skala.</p>
+<p>Sie sind die Grundvoraussetzung für jede sinnvolle Faktorisierung: Wenn die Items paarweise <em>nicht</em> miteinander korrelieren, gibt es nichts gemeinsam zu messen — eine EFA würde keine Faktoren finden, weil keine da sind.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Hintergrund: Was misst eine Korrelation mathematisch?</strong> Die Pearson-Korrelation <span class="math inline">\(r\)</span> ist die <em>standardisierte Kovarianz</em> — sie misst, wie stark zwei Variablen <em>gemeinsam</em> von ihrem jeweiligen Mittelwert abweichen, relativ zu ihrer Einzelstreuung:</p>
+<p><span class="math display">\[r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}\]</span></p>
+<p>Lies sie als: <em>„wie stark schwingen x und y gemeinsam — in Einheiten der typischen Schwingung jeder Variable einzeln.”</em> Durch die Division steht <span class="math inline">\(r\)</span> immer zwischen <span class="math inline">\(-1\)</span> (perfekt gegenläufig) und <span class="math inline">\(+1\)</span> (perfekt gleichläufig). Genau diese Zahl bekommst du im <code>pearson_cor()</code>-Output für jede Item-Paarung.</p>
+</div>
+</div>
+</section><section id="matrix-berechnen" class="level3" data-number="8.2.2"><h3 data-number="8.2.2" class="anchored" data-anchor-id="matrix-berechnen">
+<span class="header-section-number">8.2.2</span> Matrix berechnen</h3>
 <p><strong>Frage:</strong> Wie stark hängen die sechs Islamfeindlichkeits-Items untereinander zusammen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pearson Correlation: 6 variables [Weighted]
@@ -306,7 +407,37 @@ Hinweis
   15/15 pairs significant (p &lt; .05), N = 3321</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> mariposa gibt dir eine sauber formatierte Matrix mit Pearson-<em>r</em>, <em>p</em>-Werten und N pro Zelle. Werte zwischen 0.3 und 0.7 sind in einer gut funktionierenden Skala typisch — zu niedrig (&lt; 0.2) deutet auf ein Fremdkörper-Item hin, zu hoch (&gt; 0.85) auf Redundanz.</p>
+</section><section id="schwellen-lesen" class="level3" data-number="8.2.3"><h3 data-number="8.2.3" class="anchored" data-anchor-id="schwellen-lesen">
+<span class="header-section-number">8.2.3</span> Schwellen lesen</h3>
+<p>mariposa gibt dir eine sauber formatierte Matrix mit Pearson-<em>r</em>, <em>p</em>-Werten und N pro Zelle. Drei Schwellen helfen dir, was du siehst sofort einzuordnen:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 81%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Inter-Item-<em>r</em>
+</th>
+<th style="text-align: left;">Lesart</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.20</td>
+<td style="text-align: left;">
+<strong>Fremdkörper-Item</strong> — misst vermutlich etwas anderes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.30 – 0.70</td>
+<td style="text-align: left;">
+<strong>gesunder Bereich</strong> — Items hängen zusammen, aber nicht redundant</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt; 0.85</td>
+<td style="text-align: left;">
+<strong>Redundanz</strong> — zwei Items messen fast dasselbe; eines fast überflüssig</td>
+</tr>
+</tbody>
+</table>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -320,20 +451,24 @@ Hinweis
 <p><strong>Reviewer-Hinweis.</strong> Eine Inter-Item-Korrelationsmatrix gehört in den Anhang eines empirischen Papers, das eine selbstgebaute Skala benutzt. Sie ist der schnellste Sanity-Check für die Operationalisierung — wer dort einen Wert nahe 0 oder über 0.85 sieht, fängt an, sich Sorgen zu machen.</p>
 </div>
 </div>
-<section id="korrelationsmatrix-visualisieren" class="level3" data-number="8.2.1"><h3 data-number="8.2.1" class="anchored" data-anchor-id="korrelationsmatrix-visualisieren">
-<span class="header-section-number">8.2.1</span> Korrelationsmatrix visualisieren</h3>
-<p>Wenn du die Matrix lieber als <strong>Heatmap</strong> siehst, baust du sie mit ggplot2 selbst — das ist die tidyverse-Alternative zum klassischen <code>corrplot()</code>, mit voller Kontrolle über Farben und Beschriftung:</p>
+</section><section id="heatmap-mit-ggplot2" class="level3" data-number="8.2.4"><h3 data-number="8.2.4" class="anchored" data-anchor-id="heatmap-mit-ggplot2">
+<span class="header-section-number">8.2.4</span> Heatmap mit ggplot2</h3>
+<p>Eine Tabelle mit fünfzehn Zahlen liest sich zäh. Die gleiche Information als <strong>Heatmap</strong> ist auf einen Blick lesbar — dunkle Felder = starker Zusammenhang. Wir bauen sie händisch aus dem <code>pearson_cor()</code>-Output:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"pairwise"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cor_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cor_obj</span><span class="op">$</span><span class="va">matrices</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">correlations</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"Item1"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">Item1</span>, names_to <span class="op">=</span> <span class="st">"Item2"</span>, values_to <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">Item1</span>, <span class="va">Item2</span>, fill <span class="op">=</span> <span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">r</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_gradient2</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"blue"</span>, mid <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  <span class="fu">geom_tile</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%.2f"</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_gradient2</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"#2166ac"</span>, mid <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"#b2182b"</span>,</span>
 <span>                       midpoint <span class="op">=</span> <span class="fl">0</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="st">"r"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Inter-Item-Korrelationen der sechs Islamfeindlichkeits-Items"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, gewichtet mit wghtpew"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_fixed</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -342,43 +477,266 @@ Hinweis
 </div>
 </div>
 </div>
-<p>Die ggplot2-Grammatik dahinter kennst du aus <a href="06-Grafiken-Grundlagen.html" class="quarto-xref"><span>Kapitel 6</span></a>.</p>
-</section></section><section id="sec-efa" class="level2" data-number="8.3"><h2 data-number="8.3" class="anchored" data-anchor-id="sec-efa">
-<span class="header-section-number">8.3</span> Explorative Faktorenanalyse</h2>
-<p>Die Faktorenanalyse arbeitet wie ein statistisches Röntgengerät: Sie nimmt die <em>beobachteten</em> Korrelationen zwischen deinen Items und versucht zu erschließen, wie viele <em>unsichtbare</em> Dimensionen dahinter stehen müssen, damit dieses Korrelationsmuster zustande kommt.</p>
-<p>Die Idee ist konzeptuell elegant. Stell dir vor, alle sechs Islamfeindlichkeits-Items werden von einer einzigen Hintergrundeinstellung getrieben. Dann müssten <em>alle</em> Items deutlich miteinander korrelieren — denn jeder Befragte mit hoher Islamfeindlichkeit würde bei allen sechs Items hohe Werte ankreuzen, jeder mit niedriger entsprechend niedrige. Das wäre ein <strong>Ein-Faktor-Modell</strong>. Wenn aber zwei verschiedene Hintergrundeinstellungen die Items steuern — etwa „kognitive Stereotype” und „politische Restriktionsbereitschaft” —, würden manche Items stärker miteinander korrelieren als andere. Daraus ergäbe sich ein <strong>Zwei-Faktor-Modell</strong>.</p>
-<p>Die EFA prüft genau das. Sie ist <em>explorativ</em>, weil du der Methode <em>nicht</em> vorgibst, wie viele Faktoren es gibt — du probierst verschiedene Lösungen aus und entscheidest, welche am besten passt. mariposas <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code> integriert in einem Aufruf alles, was du dafür brauchst: KMO-Test (ist die Stichprobe überhaupt für eine Faktorenanalyse geeignet?), Bartlett-Test (sind die Korrelationen signifikant verschieden von Null?), Eigenwerte (wie viel Varianz erklärt jeder Faktor?), Faktorladungen (wie stark hängt jedes Item mit jedem Faktor zusammen?) und auf Wunsch eine Rotation (eine mathematische Drehung, die die Faktoren interpretierbarer macht).</p>
-<p><strong>Frage:</strong> Bilden die sechs Items eine <em>eindimensionale</em> Islamfeindlichkeits-Skala, oder gibt es Sub-Faktoren?</p>
-<section id="einfaktor-lösung" class="level3" data-number="8.3.1"><h3 data-number="8.3.1" class="anchored" data-anchor-id="einfaktor-lösung">
-<span class="header-section-number">8.3.1</span> Einfaktor-Lösung</h3>
+<p><strong>Lesart.</strong> Die Diagonale ist trivialerweise 1.0 (jedes Item korreliert perfekt mit sich selbst). Spannend sind die Off-Diagonal-Felder: alle sechs Items zeigen Werte deutlich über 0.3 — der Spaziergangs-Reporter aus dem Bild oben gibt’s hier nicht, alle messen offensichtlich dieselbe Richtung. Damit ist der Vorab-Check bestanden; die EFA kann starten.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Wichtig
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>mariposa-Tipp: Volle Matrix aus dem <code>pearson_cor()</code>-Objekt.</strong> <code>pearson_cor()</code> gibt dir nicht nur die Druckansicht — unter der Haube steckt ein strukturiertes Listen-Objekt. <code>cor_obj$matrices[[1]]$correlations</code> ist die quadratische Korrelationsmatrix (rownames = colnames = Variablennamen). Analog bekommst du <code>$p_values</code>, <code>$ci_lower</code>, <code>$ci_upper</code> und <code>$n_obs</code> als parallele Matrizen — alles, was du für eigene Visualisierungen brauchst, ohne <code><a href="https://rdrr.io/r/stats/cor.html">cor()</a></code> aus Base-R extra aufzurufen.</p>
+</div>
+</div>
+<p>Die Inter-Item-Korrelationen sind grün — alle Items hängen zusammen, keiner ist Fremdkörper. Jetzt geht es an die eigentliche Faktorenanalyse. Sie ist das statistische <strong>Röntgengerät</strong>: Sie nimmt die beobachteten Korrelationen und versucht zu erschließen, wie viele <em>unsichtbare</em> Dimensionen dahinter stehen müssen, damit dieses Muster zustande kommt.</p>
+<p>Stell dir vor, alle sechs Items werden von einer einzigen Hintergrundeinstellung getrieben. Dann müssen <em>alle</em> Items deutlich miteinander korrelieren — wer hohe Islamfeindlichkeit hat, kreuzt überall hoch an. Das wäre ein <strong>Ein-Faktor-Modell</strong>. Wenn aber <em>zwei</em> Hintergrundeinstellungen wirken (etwa „kognitive Stereotype” vs.&nbsp;„politisch-restriktive Haltung”), korrelieren manche Item-Paare stärker als andere — und es entsteht ein <strong>Zwei-Faktor-Modell</strong>. Die EFA prüft, welches passt.</p>
+<p>Wir gehen das <strong>Schritt für Schritt</strong> an: erst die Voraussetzungen (KMO, Bartlett), dann die Anzahl-Entscheidung (Eigenwerte, Scree-Plot), dann die endgültigen Modelle (Ein- vs.&nbsp;Zweifaktor) inklusive Rotation.</p>
+</section></section><section id="sec-kmo-bartlett" class="level2" data-number="8.3"><h2 data-number="8.3" class="anchored" data-anchor-id="sec-kmo-bartlett">
+<span class="header-section-number">8.3</span> Voraussetzungen prüfen — KMO und Bartlett</h2>
+<p>Bevor du die EFA überhaupt anstößt, prüfen zwei Tests, ob das Vorhaben <em>technisch</em> sinnvoll ist. Beide stehen automatisch oben in jedem <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Output — du musst sie nicht extra rechnen, aber du musst sie lesen können.</p>
+<section id="kmo-wie-viel-gemeinsame-varianz-steckt-überhaupt-drin" class="level3" data-number="8.3.1"><h3 data-number="8.3.1" class="anchored" data-anchor-id="kmo-wie-viel-gemeinsame-varianz-steckt-überhaupt-drin">
+<span class="header-section-number">8.3.1</span> KMO — wie viel <em>gemeinsame</em> Varianz steckt überhaupt drin?</h3>
+<p>Stell dir vor, du willst aus sechs Zeitungsartikeln einen Leitartikel destillieren. Wenn die Artikel inhaltlich überlappen, kein Problem. Wenn sie aber jeweils <em>völlig eigene</em> Themen abhandeln, lässt sich nichts gemeinsam herauspressen. Genau das misst der <strong>Kaiser-Meyer-Olkin-Wert (KMO)</strong>: Wie viel Anteil der Item-Varianz ist <em>partiell</em> (also nach Kontrolle aller anderen Items) noch übrig — und wie viel ist <em>gemeinsam</em>?</p>
+<p>Die Formel im Kern: <span class="math display">\[\text{KMO} = \frac{\sum r_{ij}^2}{\sum r_{ij}^2 + \sum a_{ij}^2}\]</span> mit <span class="math inline">\(r_{ij}\)</span> = paarweise Korrelationen und <span class="math inline">\(a_{ij}\)</span> = partielle Korrelationen (Korrelationen, nachdem der Einfluss aller anderen Items herausgerechnet wurde).</p>
+<p>Lies sie als: <em>„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen.”</em> KMO geht von 0 bis 1; Faustregeln:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">KMO</th>
+<th style="text-align: left;">Stichprobeneignung</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.90</td>
+<td style="text-align: left;">marvelous</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.80</td>
+<td style="text-align: left;">meritorious</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">middling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.60</td>
+<td style="text-align: left;">mediocre (Untergrenze)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.60</td>
+<td style="text-align: left;">Faktorenanalyse nicht empfohlen</td>
+</tr>
+</tbody>
+</table></section><section id="bartlett-test-sind-die-korrelationen-überhaupt-von-null-verschieden" class="level3" data-number="8.3.2"><h3 data-number="8.3.2" class="anchored" data-anchor-id="bartlett-test-sind-die-korrelationen-überhaupt-von-null-verschieden">
+<span class="header-section-number">8.3.2</span> Bartlett-Test — sind die Korrelationen überhaupt von Null verschieden?</h3>
+<p>Bartletts Sphärizitätstest stellt eine konservative Mindestfrage: Ist die Korrelationsmatrix überhaupt <em>signifikant verschieden</em> von einer Identitätsmatrix (eine Matrix, in der nur die Diagonale 1 ist und alle Off-Diagonal-Werte 0 — also völlige Unkorreliertheit)?</p>
+<p>Wenn der Test signifikant ist (<span class="math inline">\(p &lt; .05\)</span>), heißt das: <em>„zumindest </em>irgendeine* Korrelation in der Matrix ist von Null verschieden — also gibt es etwas zu faktorisieren.”* Bei N &gt; 1000 ist Bartlett fast immer signifikant; er ist eher ein <em>technischer Mindest-Check</em> als ein inhaltliches Argument. KMO ist die viel aussagekräftigere Größe.</p>
+</section><section id="beide-aus-einem-aufruf-ablesen" class="level3" data-number="8.3.3"><h3 data-number="8.3.3" class="anchored" data-anchor-id="beide-aus-einem-aufruf-ablesen">
+<span class="header-section-number">8.3.3</span> Beide aus einem Aufruf ablesen</h3>
+<p>Beides taucht oben im Standard-<code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Output auf. Wir rufen <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code> einmal mit <code>n_factors = 1</code> auf — die Anzahl ist hier egal, wir lesen nur den KMO/Bartlett-Block am Anfang:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Exploratory Factor Analysis: 6 items, 1 component (PCA/Unrotated)
-  KMO = 0.867 (Meritorious), Variance explained: 55.9%</code></pre>
+<pre><code>Exploratory Factor Analysis: 6 items, 1 component (PCA/Unrotated) [Weighted]
+  KMO = 0.862 (Meritorious), Variance explained: 54.7%</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> Du bekommst:</p>
+<p><strong>Lesart.</strong> Oben siehst du KMO und Bartlett-χ²/p.&nbsp;Liegt KMO ≥ 0.7 und ist Bartlett signifikant, sind die Voraussetzungen erfüllt — und die Anzahl-Entscheidung im nächsten Abschnitt kann starten.</p>
+</section></section><section id="sec-anzahl-faktoren" class="level2" data-number="8.4"><h2 data-number="8.4" class="anchored" data-anchor-id="sec-anzahl-faktoren">
+<span class="header-section-number">8.4</span> Anzahl der Faktoren bestimmen</h2>
+<section id="eigenwert-wie-viel-information-bündelt-ein-faktor" class="level3" data-number="8.4.1"><h3 data-number="8.4.1" class="anchored" data-anchor-id="eigenwert-wie-viel-information-bündelt-ein-faktor">
+<span class="header-section-number">8.4.1</span> Eigenwert — wie viel Information bündelt ein Faktor?</h3>
+<p>Stell dir vor, du presst die Information aus sechs Items in <em>einen</em> gemeinsamen Hintergrund-Faktor. Wie viel von der gesamten Item-Variation passt in diese eine Dimension? Genau das misst der <strong>Eigenwert</strong> <span class="math inline">\(\lambda\)</span>.</p>
+<p>Die intuitive Faustregel ist überraschend einfach: Jedes Item hat eine <em>standardisierte</em> Varianz von 1. Eigenwerte sind also „in Item-Einheiten” ablesbar:</p>
 <ul>
 <li>
-<strong>KMO</strong> — Stichprobeneignung. Faustregel: ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut.</li>
+<span class="math inline">\(\lambda = 1\)</span> → der Faktor bündelt so viel Information wie <em>ein einzelnes</em> Item — bringt nichts.</li>
 <li>
-<strong>Varianzanteil</strong> — wie viel der gemeinsamen Varianz die extrahierten Faktoren erklären.</li>
-<li>Die <strong>Ladungen</strong> zeigen, wie stark jedes Item mit dem Faktor zusammenhängt. Werte ≥ 0.5 sind brauchbar, ≥ 0.7 hoch.</li>
-</ul></section><section id="zwei-faktor-lösung-als-vergleich" class="level3" data-number="8.3.2"><h3 data-number="8.3.2" class="anchored" data-anchor-id="zwei-faktor-lösung-als-vergleich">
-<span class="header-section-number">8.3.2</span> Zwei-Faktor-Lösung als Vergleich</h3>
-<p>In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen <strong>kognitiv-stereotyper</strong> (z. B. <code>mm06</code> „Fanatiker”) und <strong>politisch-restriktiver</strong> (z. B. <code>mm04</code> „beobachten lassen”) Komponente unterschieden. Probieren wir es aus:</p>
+<span class="math inline">\(\lambda = 3\)</span> → der Faktor bündelt so viel wie <em>drei</em> Items — substanzieller Gewinn.</li>
+<li>
+<span class="math inline">\(\lambda = 0.3\)</span> → der Faktor bündelt weniger als ein Item — fängt nur Rauschen ein.</li>
+</ul>
+<p>Daraus die <strong>Kaiser-Regel</strong>: behalte alle Faktoren mit <span class="math inline">\(\lambda &gt; 1\)</span>. Sie ist einfach, robust und seit den 1960ern Standard — auch wenn neuere Methodik (siehe weiter unten) sie verfeinert.</p>
+</section><section id="drei-kriterien-für-die-anzahl-entscheidung" class="level3" data-number="8.4.2"><h3 data-number="8.4.2" class="anchored" data-anchor-id="drei-kriterien-für-die-anzahl-entscheidung">
+<span class="header-section-number">8.4.2</span> Drei Kriterien für die Anzahl-Entscheidung</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 49%">
+<col style="width: 34%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Kriterium</th>
+<th style="text-align: left;">Entscheidungs-Regel</th>
+<th style="text-align: left;">Stärke / Schwäche</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Kaiser</strong></td>
+<td style="text-align: left;">alle Faktoren mit <span class="math inline">\(\lambda &gt; 1\)</span>
+</td>
+<td style="text-align: left;">einfach; tendiert zu <em>Überschätzung</em>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Scree-Test</strong></td>
+<td style="text-align: left;">Faktoranzahl an der „Knickstelle” im Eigenwert-Plot</td>
+<td style="text-align: left;">visuell intuitiv; subjektiv</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Parallelanalyse</strong></td>
+<td style="text-align: left;">Vergleich mit Eigenwerten zufällig generierter Daten gleicher Größe</td>
+<td style="text-align: left;">methodischer Goldstandard; aufwendiger</td>
+</tr>
+</tbody>
+</table>
+<p>In den meisten Methoden-Lehrbüchern wird mittlerweile die Parallelanalyse empfohlen (über <code><a href="https://rdrr.io/pkg/psych/man/fa.parallel.html">psych::fa.parallel()</a></code>); für unseren Workshop reicht die Kombination aus Kaiser + visueller Scree-Plot — beides sehen wir direkt im nächsten Schritt.</p>
+</section><section id="scree-plot-die-knickstellen-diagnose" class="level3" data-number="8.4.3"><h3 data-number="8.4.3" class="anchored" data-anchor-id="scree-plot-die-knickstellen-diagnose">
+<span class="header-section-number">8.4.3</span> Scree-Plot — die Knickstellen-Diagnose</h3>
+<p>Der <strong>Scree-Plot</strong> (englisch <em>scree</em> = Geröllhang) zeigt die Eigenwerte als absteigende Linie. Stell dir einen Berg mit großen Felsbrocken oben und feinem Geröll unten vor: oben sind die „echten” Faktoren, unten die Rauschfaktoren. Genau diese Trennstelle suchst du.</p>
+<p>Aus dem <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Objekt liest du die Eigenwerte über <code>$eigenvalues</code> heraus und plottest sie händisch:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
-<span>      n_factors <span class="op">=</span> <span class="fl">2</span>, rotation <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  faktor    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span><span class="op">)</span>,</span>
+<span>  eigenwert <span class="op">=</span> <span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">faktor</span>, y <span class="op">=</span> <span class="va">eigenwert</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#1f77b4"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#1f77b4"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">1.08</span>, label <span class="op">=</span> <span class="st">"Kaiser-Schwelle (λ = 1)"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey40"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Faktor"</span>, y <span class="op">=</span> <span class="st">"Eigenwert (λ)"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Scree-Plot der sechs Islamfeindlichkeits-Items"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, gewichtet mit wghtpew"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/scree-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Du suchst zwei Signale: (a) wie viele Faktoren liegen über der Kaiser-Linie (<span class="math inline">\(\lambda &gt; 1\)</span>)? (b) Wo ist der deutlichste „Knick” in der Linie? Ein klar abgesetzter erster Eigenwert + flacher Rest = klassisches Bild einer eindimensionalen Skala. Zwei deutlich erhobene Werte = Hinweis auf zweidimensionale Struktur.</p>
+</section></section><section id="sec-efa-1" class="level2" data-number="8.5"><h2 data-number="8.5" class="anchored" data-anchor-id="sec-efa-1">
+<span class="header-section-number">8.5</span> Einfaktor-Lösung extrahieren</h2>
+<p>Du hast die Voraussetzungen geprüft und die Anzahl-Entscheidung getroffen. Jetzt das eigentliche Modell mit dem Fokus auf die Faktorladungen.</p>
+<section id="was-ist-eine-faktorladung" class="level3" data-number="8.5.1"><h3 data-number="8.5.1" class="anchored" data-anchor-id="was-ist-eine-faktorladung">
+<span class="header-section-number">8.5.1</span> Was ist eine Faktorladung?</h3>
+<p>Stell dir einen unsichtbaren <em>Faktor</em> als einen Drehknopf. Wer den Knopf nach oben dreht, kreuzt auf manchen Items stark zustimmend an — die Ladung ist hoch. Auf anderen Items reagiert die Antwort kaum mit — die Ladung ist niedrig. Die <strong>Faktorladung</strong> ist genau dieser Verbindungsgrad zwischen Item und Faktor.</p>
+<p>Mathematisch ist die Ladung in der Einfaktor-Lösung <em>gleich der Korrelation</em> zwischen Item und Faktor — sie geht von <span class="math inline">\(-1\)</span> bis <span class="math inline">\(+1\)</span>, mit den gewohnten Schwellen:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Ladung</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.30</td>
+<td style="text-align: left;">irrelevant</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.30 – 0.50</td>
+<td style="text-align: left;">mäßig</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0.50 – 0.70</td>
+<td style="text-align: left;">brauchbar</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">hoch (Item ist Kernindikator)</td>
+</tr>
+</tbody>
+</table></section><section id="modell-rechnen-und-ladungen-lesen" class="level3" data-number="8.5.2"><h3 data-number="8.5.2" class="anchored" data-anchor-id="modell-rechnen-und-ladungen-lesen">
+<span class="header-section-number">8.5.2</span> Modell rechnen und Ladungen lesen</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Exploratory Factor Analysis: 6 items, 2 components (PCA/Varimax)
-  KMO = 0.867 (Meritorious), Variance explained: 69.5%</code></pre>
+<pre><code>Exploratory Factor Analysis: 6 items, 1 component (PCA/Unrotated) [Weighted]
+  KMO = 0.862 (Meritorious), Variance explained: 54.7%</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> Du siehst eine zweite Spalte mit Ladungen. Wenn sich die Items klar auf je <em>einen</em> Faktor verteilen (hohe Ladung auf F1 <em>oder</em> F2, nicht beide), ist die Zwei-Faktor-Lösung interpretierbar. Wenn die Trennung unscharf bleibt, ist die Einfaktor-Lösung die sparsamere Wahl.</p>
+<p><strong>Lesart.</strong> Drei Blöcke im Output:</p>
+<ul>
+<li>
+<strong>KMO + Bartlett</strong> (oben) — wie bereits in <a href="#sec-kmo-bartlett" class="quarto-xref"><span>Kapitel 8.3</span></a> gelesen.</li>
+<li>
+<strong>Varianzanteil</strong> — wie viel der gemeinsamen Item-Varianz der Faktor erklärt. In gut funktionierenden Einfaktor-Skalen typischerweise 40–60 %.</li>
+<li>
+<strong>Ladungen</strong> (unten) — eine Spalte <code>PC1</code>, in der jedes Item seinen Verbindungsgrad zum Faktor steht.</li>
+</ul></section><section id="ladungen-visualisieren" class="level3" data-number="8.5.3"><h3 data-number="8.5.3" class="anchored" data-anchor-id="ladungen-visualisieren">
+<span class="header-section-number">8.5.3</span> Ladungen visualisieren</h3>
+<p>Eine Tabelle mit sechs Ladungen liest sich noch gut — aber ein <strong>sortierter Bar-Chart</strong> macht auf einen Blick sichtbar, welche Items am stärksten am Konstrukt hängen und welche eher Randindikatoren sind. Auch das bauen wir händisch aus dem <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Objekt:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">efa_1</span><span class="op">$</span><span class="va">loadings</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>ladung <span class="op">=</span> <span class="va">PC1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">ladung</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">item</span>, <span class="va">ladung</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Faktorladung"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Wie stark hängt jedes Item am latenten Faktor?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Senkrechte Linien: Schwellen brauchbar (0.5) und hoch (0.7)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/loadings-bar-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Items über 0.7 sind Kernindikatoren des Konstrukts; alles zwischen 0.5 und 0.7 ist brauchbar; alles unter 0.5 würde man theoretisch begründet behalten oder empirisch begründet entfernen. Der Bar-Chart ist zugleich eine <strong>Item-Trichter-Diagnose</strong>: wenn ein Item <em>deutlich</em> aus der Reihe fällt (z. B. &lt; 0.3 oder mit umgekehrtem Vorzeichen), ist das ein Hinweis auf einen Polungsfehler oder ein themenfremdes Item.</p>
+</section></section><section id="sec-efa-2" class="level2" data-number="8.6"><h2 data-number="8.6" class="anchored" data-anchor-id="sec-efa-2">
+<span class="header-section-number">8.6</span> Zwei-Faktor-Lösung mit Rotation</h2>
+<p>Was, wenn die Skala <em>nicht</em> eindimensional ist? In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen <strong>kognitiv-stereotyper</strong> (z. B. <code>mm06</code> „Fanatiker”) und <strong>politisch-restriktiver</strong> (z. B. <code>mm04</code> „beobachten lassen”) Komponente unterschieden. Probieren wir es aus — mit zwei Faktoren <em>und</em> Rotation.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Was ist Rotation?</strong> Wenn du mehr als einen Faktor extrahierst, ist die Aufteilung der Ladungen auf die Faktoren mathematisch <em>nicht eindeutig</em> — viele Lösungen sind statistisch gleichwertig. Eine <strong>Rotation</strong> ist eine geometrische Drehung der Faktor-Achsen, die <em>eine</em> interpretierbare Lösung erzwingt: jedes Item soll möglichst hoch auf <em>einem</em> Faktor laden und niedrig auf den anderen.</p>
+<p>Drei Rotations-Familien:</p>
+<ul>
+<li>
+<strong><code>"varimax"</code></strong> — orthogonal, Faktoren bleiben <strong>unkorreliert</strong>. Standard, wenn du die Faktoren später als unabhängige Konstrukte interpretierst.</li>
+<li>
+<strong><code>"oblimin"</code> / <code>"promax"</code></strong> — schräg, Faktoren dürfen <strong>korreliert</strong> sein. Realistischer in den Sozialwissenschaften, wo Konstrukte selten völlig unabhängig sind.</li>
+<li>
+<strong><code>"none"</code></strong> — keine Rotation. Selten, nur für reine Datenreduktion.</li>
+</ul>
+<p>Faustregel: Wenn dir theoretisch klar ist, dass die Konstrukte korrelieren (Islamfeindlichkeit und Populismus sind verwandt), nimm <code>oblimin</code>; sonst <code>varimax</code>.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">2</span>, rotation <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Exploratory Factor Analysis: 6 items, 2 components (PCA/Varimax) [Weighted]
+  KMO = 0.862 (Meritorious), Variance explained: 68.6%</code></pre>
+</div>
+</div>
+<p><strong>Lesart.</strong> Du siehst jetzt zwei Spalten <code>PC1</code> und <code>PC2</code>. Schau auf jede Zeile: lädt das Item <em>klar</em> auf einem Faktor (z. B. 0.78 und 0.12) oder <em>gleichmäßig</em> auf beiden (z. B. 0.55 und 0.49)? Klare Trennung = interpretierbare Zwei-Faktor-Lösung. Unscharfe Trennung = die Einfaktor-Lösung ist <em>sparsamer</em> und damit vorzuziehen — das <strong>Prinzip der Sparsamkeit</strong> (Ockhams Rasiermesser) ist in der Modellwahl ein starker Anker.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -392,59 +750,112 @@ Hinweis
 <p><strong>Hintergrund: PCA, EFA, CFA — was unterscheidet sie?</strong></p>
 <ul>
 <li>
-<strong>PCA</strong> (<code>method = "pca"</code>) sucht <em>Komponenten</em>, die maximal Varianz erklären — gut für Datenreduktion.</li>
+<strong>PCA</strong> (<code>extraction = "pca"</code>, Default in mariposa) sucht <em>Komponenten</em>, die maximal Varianz erklären — gut für Datenreduktion.</li>
 <li>
-<strong>EFA</strong> (<code>method = "ml"</code> oder <code>"minres"</code>) modelliert <em>latente Faktoren</em> hinter den Items — gut für Theoriebildung.</li>
+<strong>EFA</strong> (<code>extraction = "ml"</code>) modelliert <em>latente Faktoren</em> hinter den Items — gut für Theoriebildung.</li>
 <li>
-<strong>CFA</strong> (mit <code>lavaan</code>, siehe <a href="#sec-cfa" class="quarto-xref"><span>Kapitel 8.5</span></a>) <em>prüft</em> ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.</li>
+<strong>CFA</strong> (mit <code>lavaan</code>, siehe <a href="#sec-cfa" class="quarto-xref"><span>Kapitel 8.8</span></a>) <em>prüft</em> ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.</li>
 </ul>
-<p>In der Praxis: EFA, wenn du <em>erkundest</em>, CFA wenn du <em>bestätigst</em>.</p>
+<p>Faustregel: PCA für <em>Reduktion</em>, EFA für <em>Erkundung</em>, CFA für <em>Bestätigung</em>.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Hinweis
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Hintergrund: Wie viele Faktoren extrahieren?</strong> Die klassische Antwort heißt <strong>Kaiser-Kriterium</strong>: alle Faktoren mit Eigenwert &gt; 1. Konservativer ist der <strong>Scree-Test</strong>: man wählt die Faktoranzahl an der „Knickstelle” im Eigenwerteverlauf. Modern (und in der Methodenliteratur empfohlen): <strong>Parallelanalyse</strong> — Vergleich der empirischen Eigenwerte mit Eigenwerten zufällig generierter Daten gleicher Größe. mariposa zeigt dir alle Eigenwerte; den Vergleich mit Zufallsdaten musst du im Moment noch über <code><a href="https://rdrr.io/pkg/psych/man/fa.parallel.html">psych::fa.parallel()</a></code> machen, wenn dir die einfache Lösung nicht reicht.</p>
-</div>
-</div>
-</section></section><section id="sec-reliabilitaet" class="level2" data-number="8.4"><h2 data-number="8.4" class="anchored" data-anchor-id="sec-reliabilitaet">
-<span class="header-section-number">8.4</span> Reliabilitätsanalyse</h2>
-<p>Stell dir vor, du hast ein Maßband, das mal zu kurz, mal zu lang misst — je nachdem, wie das Wetter ist. Es wäre kein zuverlässiges Messinstrument. Genau dieses Konzept überträgt sich auf Skalen aus Survey-Items: Ein Skalenwert ist nur dann brauchbar, wenn die zugrundeliegenden Items auch <em>bei verschiedenen Befragten konsistent dasselbe</em> messen.</p>
-<p>Diese Eigenschaft heißt <strong>Reliabilität</strong>. Sie ist der zweite Validitäts-Pfeiler neben der Faktorstruktur: die EFA sagt dir, wie viele <em>Dimensionen</em> es gibt — die Reliabilitätsanalyse sagt dir, wie <em>eng</em> die Items innerhalb einer Dimension zusammenhängen.</p>
-<p>Der Standard-Index dafür heißt <strong>Cronbachs α</strong> (alpha) und ist seit 1951 in der Methodenliteratur etabliert. Er misst, wie konsistent die Items eines Konstrukts zusammen variieren — vereinfacht gesagt: wie hoch die durchschnittliche Inter-Item-Korrelation ist, korrigiert um die Anzahl der Items. α liegt zwischen 0 und 1 (theoretisch — empirisch fast immer zwischen 0.5 und 0.95).</p>
+</section><section id="sec-reliabilitaet" class="level2" data-number="8.7"><h2 data-number="8.7" class="anchored" data-anchor-id="sec-reliabilitaet">
+<span class="header-section-number">8.7</span> Reliabilität — Cronbachs α</h2>
+<section id="die-idee-ein-spaziergang-beispiel" class="level3" data-number="8.7.1"><h3 data-number="8.7.1" class="anchored" data-anchor-id="die-idee-ein-spaziergang-beispiel">
+<span class="header-section-number">8.7.1</span> Die Idee: ein Spaziergang-Beispiel</h3>
+<p>Stell dir vor, du fragst sechs Freund:innen, ob heute ein guter Tag für einen Spaziergang ist. Sagen alle sechs „ja klar”, weißt du: das Urteil ist <em>konsistent</em> — sie messen vermutlich dasselbe (Wetter, freie Zeit, Stimmung). Sagen drei „ja” und drei „nein”, misst die Skala vermutlich verschiedene Dinge — vielleicht haben drei aus dem Fenster geschaut, drei in ihren Kalender. <strong>Cronbachs α gießt genau diese Idee in eine Zahl.</strong></p>
+<p>Während die EFA dir sagt, wie viele <em>Dimensionen</em> in den Items stecken, beantwortet die Reliabilitätsanalyse eine andere Frage: <em>„Wenn die Items eine Dimension messen — wie </em>eng* tun sie das?“* Sie ist der zweite Validitäts-Pfeiler neben der Faktorstruktur.</p>
+</section><section id="die-formel-und-warum-sie-so-aussieht" class="level3" data-number="8.7.2"><h3 data-number="8.7.2" class="anchored" data-anchor-id="die-formel-und-warum-sie-so-aussieht">
+<span class="header-section-number">8.7.2</span> Die Formel — und warum sie so aussieht</h3>
+<p>Cronbachs α gibt es seit 1951 (nach Lee J. Cronbach). Die Formel sieht zunächst sperrig aus, ist aber zahm:</p>
+<p><span class="math display">\[\alpha = \frac{k \cdot \bar{r}}{1 + (k-1) \cdot \bar{r}}\]</span></p>
+<p>mit <span class="math inline">\(k\)</span> = Anzahl der Items und <span class="math inline">\(\bar{r}\)</span> = durchschnittliche Inter-Item-Korrelation.</p>
+<p>Lies sie als: <em>„je mehr Items, und je höher sie im Schnitt zusammenhängen, desto höher α.”</em> Zwei konkrete Rechenbeispiele machen das anschaulich:</p>
+<ul>
+<li>
+<span class="math inline">\(k = 6\)</span> Items mit <span class="math inline">\(\bar{r} = 0.5\)</span> → <span class="math inline">\(\alpha = (6 \cdot 0.5) / (1 + 5 \cdot 0.5) = 3 / 3.5 ≈ 0.86\)</span>.</li>
+<li>
+<span class="math inline">\(k = 2\)</span> Items mit derselben <span class="math inline">\(\bar{r} = 0.5\)</span> → <span class="math inline">\(\alpha = (2 \cdot 0.5) / (1 + 1 \cdot 0.5) = 1 / 1.5 ≈ 0.67\)</span>.</li>
+</ul>
+<p>Daraus die zentrale Faustregel: <strong>Mehr Items erkaufen Reliabilität — auch dann, wenn jedes einzelne Item nicht besser misst.</strong> Das ist auch der Grund, warum etablierte Skalen oft 8–12 Items haben statt nur 3–4.</p>
+</section><section id="α-berechnen" class="level3" data-number="8.7.3"><h3 data-number="8.7.3" class="anchored" data-anchor-id="α-berechnen">
+<span class="header-section-number">8.7.3</span> α berechnen</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reliability Analysis: 6 items [Weighted]
   Cronbach's Alpha = 0.833 (Good), N = 3071</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> Werte über α = 0.7 gelten als akzeptabel, über 0.8 als gut, über 0.9 als exzellent. Bei α &lt; 0.6 misst die Skala wahrscheinlich kein einheitliches Konstrukt.</p>
-<p>mariposa gibt dir zusätzlich pro Item:</p>
+<p><strong>Lesart.</strong> Der oberste Wert ist Cronbachs α. Faustregeln:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">α</th>
+<th style="text-align: left;">Bewertung</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.90</td>
+<td style="text-align: left;">excellent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.80</td>
+<td style="text-align: left;">good</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">acceptable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.60</td>
+<td style="text-align: left;">questionable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.60</td>
+<td style="text-align: left;">inakzeptabel</td>
+</tr>
+</tbody>
+</table></section><section id="item-statistiken-lesen" class="level3" data-number="8.7.4"><h3 data-number="8.7.4" class="anchored" data-anchor-id="item-statistiken-lesen">
+<span class="header-section-number">8.7.4</span> Item-Statistiken lesen</h3>
+<p>mariposa gibt dir zusätzlich für jedes Item:</p>
 <ul>
 <li>
-<strong>Item-Total-Korrelation</strong> — wie stark hängt das einzelne Item mit der Summe der anderen zusammen?</li>
+<strong>Item-Total-Korrelation</strong> — wie stark hängt das einzelne Item mit der Summe der <em>anderen</em> (das eigene weggenommen) zusammen? Schwellen: ≥ 0.30 brauchbar, ≥ 0.50 stark.</li>
 <li>
 <strong>α if item deleted</strong> — wie würde sich α verändern, wenn dieses Item entfernt würde?</li>
 </ul>
-<p>Daraus liest du:</p>
+<p>Daraus liest du sofort, <em>welches Item</em> die Skala trägt — und welches sie eher belastet:</p>
 <ul>
 <li>
 <strong>α steigt beim Entfernen</strong> → das Item passt nicht zur Skala, Kandidat zum Streichen.</li>
 <li>
 <strong>α sinkt beim Entfernen</strong> → das Item trägt zur Reliabilität bei, behalten.</li>
-<li>
-<strong>Item-Total-Korrelation &lt; 0.3</strong> → schwacher Beitrag, oft Hand in Hand mit dem ersten Punkt.</li>
-</ul>
-<p>Ein Beispiel: zeigt die Item-Statistik, dass „α if item deleted” für <code>mm04</code> von 0.84 auf 0.87 steigen würde, weißt du: <code>mm04</code> passt nicht ganz zu den anderen — vielleicht weil es eine andere Facette (staatliche Restriktion) anspricht als die übrigen Items (persönliche Einstellung). Entweder du behältst es bewusst (theoretisch begründet) oder entfernst es (empirisch begründet).</p>
+</ul></section><section id="α-if-deleted-visualisieren" class="level3" data-number="8.7.5"><h3 data-number="8.7.5" class="anchored" data-anchor-id="α-if-deleted-visualisieren">
+<span class="header-section-number">8.7.5</span> α-if-deleted visualisieren</h3>
+<p>Auch hier macht ein <strong>Bar-Chart</strong> den diagnostischen Blick auf einen Schlag möglich. Wir extrahieren <code>$item_total$alpha_if_deleted</code> aus dem mariposa-Objekt und legen die Gesamtschwelle als horizontale Referenzlinie:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rel_obj</span><span class="op">$</span><span class="va">item_total</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha_if_deleted</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">item</span>, <span class="va">alpha_if_deleted</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, y <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>           label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Gesamt-α = %.2f"</span>, <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span><span class="op">)</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"α nach Streichen dieses Items"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Welches Item trägt die Skala — welches belastet sie?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Gestrichelte Linie: Cronbachs α der vollständigen Skala"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/alpha-deleted-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Balken <strong>links</strong> der gestrichelten Linie heißt: <em>„α würde sinken, wenn ich dieses Item streiche”</em> → Item trägt zur Skala bei, behalten. Balken <strong>rechts</strong> der Linie heißt: <em>„α würde steigen”</em> → Kandidat zum Streichen. In einer gut funktionierenden Skala liegen idealerweise alle Balken (links der Linie und) dicht beisammen — kein Item ist Ausreißer.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -455,7 +866,7 @@ Warnung
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Vorsicht: Cronbachs α ist eine Untergrenze.</strong> Das berühmte α unterschätzt die wahre Reliabilität in fast allen Modellannahmen. In der modernen Methodenliteratur gilt <strong>McDonalds ω</strong> als sauberere Wahl, ist aber rechentechnisch aufwendiger (über <code>lavaan</code>-Modelle). Für ein Einsteigerbuch reicht α — wisse aber, dass es das gibt.</p>
+<p><strong>Vorsicht: Cronbachs α ist eine Untergrenze.</strong> α unterschätzt die wahre Reliabilität unter fast allen Modellannahmen. In der modernen Methodenliteratur gilt <strong>McDonalds ω</strong> als sauberere Wahl, ist aber rechentechnisch aufwendiger (über <code>lavaan</code>-Modelle). Für ein Einsteigerbuch reicht α — wisse aber, dass es das gibt.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -468,11 +879,11 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Reviewer-Hinweis.</strong> In einem Methodenbericht reicht <em>nicht</em> der α-Wert allein. Standard ist: α, Item-Total-Korrelationen aller Items, α-if-deleted aller Items — gerne in einer Tabelle. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.</p>
+<p><strong>Reviewer-Hinweis.</strong> In einem Methodenbericht reicht <em>nicht</em> der α-Wert allein. Standard ist: α + Item-Total-Korrelationen aller Items + α-if-deleted aller Items — gerne in einer Tabelle oder dem Bar-Chart oben. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.</p>
 </div>
 </div>
-</section><section id="sec-cfa" class="level2" data-number="8.5"><h2 data-number="8.5" class="anchored" data-anchor-id="sec-cfa">
-<span class="header-section-number">8.5</span> Konfirmatorische Faktorenanalyse als Ausblick</h2>
+</section></section><section id="sec-cfa" class="level2" data-number="8.8"><h2 data-number="8.8" class="anchored" data-anchor-id="sec-cfa">
+<span class="header-section-number">8.8</span> Konfirmatorische Faktorenanalyse als Ausblick</h2>
 <p>Bisher haben wir die Faktorstruktur <em>exploriert</em>. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen <em>einen</em> latenten Faktor” — und diese Hypothese <em>prüfen</em> willst, brauchst du eine <strong>konfirmatorische Faktorenanalyse</strong>. Dafür ist mariposa nicht gemacht; das übernimmt <code>lavaan</code>.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -489,11 +900,44 @@ Wichtig
 </div>
 <p>Installation einmalig:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lavaan"</span>, <span class="st">"semPlot"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lavaan"</span>, <span class="st">"semPlot"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>Bevor wir das Modell aufstellen — die lavaan-Modell-Syntax in drei Operatoren:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 36%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Operator</th>
+<th style="text-align: left;">Bedeutung</th>
+<th style="text-align: left;">Beispiel</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>=~</code></td>
+<td style="text-align: left;">
+<em>„manifestiert sich in”</em> — Faktor → Items</td>
+<td style="text-align: left;"><code>islam =~ mm01 + mm02r + mm03</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>~~</code></td>
+<td style="text-align: left;">
+<em>Kovarianz</em> — zwei Variablen dürfen korrelieren</td>
+<td style="text-align: left;"><code>mm02r ~~ mm05r</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>~</code></td>
+<td style="text-align: left;">
+<em>Regression</em> — Variable wird durch andere(n) vorhergesagt</td>
+<td style="text-align: left;"><code>islam ~ educ + age</code></td>
+</tr>
+</tbody>
+</table>
 <p>Aktivieren und Modell aufstellen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be">lavaan</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be">lavaan</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SachaEpskamp/semPlot">semPlot</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell_cfa</span> <span class="op">&lt;-</span> <span class="st">"islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"</span></span>
@@ -503,10 +947,32 @@ Wichtig
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span>, fit.measures <span class="op">=</span> <span class="cn">TRUE</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><code>fit.measures = TRUE</code> gibt dir CFI, TLI, RMSEA, SRMR — die Standard-Modellgüte-Indizes. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Was sind Fit-Indizes?</strong> Eine CFA prüft, ob dein spezifiziertes Modell zu den Daten passt. Statt nur einer einzelnen Kennzahl gibt es vier Standard-Maße, die <em>unterschiedliche</em> Vergleichs-Perspektiven liefern:</p>
+<ul>
+<li>
+<strong>CFI / TLI</strong> (<em>Comparative / Tucker-Lewis Fit Index</em>) — vergleichen dein Modell mit einem <em>Null-Modell</em> ohne Struktur. Werte gehen gegen 1; höher = besser.</li>
+<li>
+<strong>RMSEA</strong> (<em>Root Mean Square Error of Approximation</em>) — <em>absoluter</em> Fit, korrigiert für Modellkomplexität. Werte gehen gegen 0; niedriger = besser.</li>
+<li>
+<strong>SRMR</strong> (<em>Standardized Root Mean Square Residual</em>) — Durchschnitt der standardisierten Residuen. Niedriger = besser.</li>
+</ul>
+<p><code>fit.measures = TRUE</code> gibt dir alle vier auf einmal. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08. Ein gutes Modell erfüllt <em>mehrere</em> dieser Schwellen — eine einzelne Kennzahl ist nie alleinige Entscheidung.</p>
+</div>
+</div>
+<p>Mit <code>estimator = "MLR"</code> (Maximum Likelihood mit robusten Standardfehlern) bist du auf der sicheren Seite, wenn die Items nicht ideal normalverteilt sind. Für rein ordinale Items wäre <code>"WLSMV"</code> die sauberere Wahl, ist aber rechenintensiver.</p>
 <p>Eine Pfaddiagramm-Grafik:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/semPlot/man/semPaths.html">semPaths</a></span><span class="op">(</span><span class="va">fit</span>, whatLabels <span class="op">=</span> <span class="st">"std"</span>, layout <span class="op">=</span> <span class="st">"tree"</span>, edge.color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/semPlot/man/semPaths.html">semPaths</a></span><span class="op">(</span><span class="va">fit</span>, whatLabels <span class="op">=</span> <span class="st">"std"</span>, layout <span class="op">=</span> <span class="st">"tree"</span>, edge.color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -555,7 +1021,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -564,10 +1030,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa</a></span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
 <span>      n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -591,7 +1057,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -600,10 +1066,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
 <span>              weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -638,7 +1104,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösungs-Skizze">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -647,10 +1113,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be">lavaan</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be">lavaan</a></span><span class="op">)</span></span>
 <span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="st">'</span></span>
 <span><span class="st">  islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06</span></span>
 <span><span class="st">  mm02r ~~ mm05r</span></span>
@@ -676,14 +1142,82 @@ Hinweis
 </div>
 </section><section id="was-du-jetzt-weißt" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-jetzt-weißt">Was du jetzt weißt</h2>
 <ul>
-<li>Du erstellst gewichtete Korrelationsmatrizen mit <code>pearson_cor()</code> und visualisierst sie als Heatmap über ggplot2.</li>
-<li>Du führst eine EFA mit <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code> durch — inklusive KMO, Bartlett und Rotation.</li>
-<li>Du berechnest Cronbachs α mit <code>reliability()</code>, liest Item-Statistiken und identifizierst problematische Items.</li>
-<li>Du kennst den Unterschied zwischen PCA (Datenreduktion), EFA (explorativ) und CFA (konfirmatorisch).</li>
-<li>Du weißt, wann CFA mit <code>lavaan</code> sinnvoll ist und wie eine Minimalspezifikation inkl. Methoden-Effekt aussieht.</li>
+<li>Du erstellst gewichtete <strong>Inter-Item-Korrelationsmatrizen</strong> mit <code>pearson_cor()</code> und visualisierst sie als <strong>Heatmap</strong> händisch in ggplot2 (Quelle: <code>cor_obj$matrices[[1]]$correlations</code>).</li>
+<li>Du liest <strong>KMO</strong> und <strong>Bartlett</strong> als Voraussetzungs-Check und verstehst, was hinter den Formeln steckt.</li>
+<li>Du extrahierst <strong>Eigenwerte</strong> aus dem <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code>-Objekt und entscheidest die Anzahl Faktoren mit Kaiser-Regel und einem händisch gezeichneten <strong>Scree-Plot</strong>.</li>
+<li>Du führst eine <strong>EFA</strong> mit <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code> durch, liest Faktorladungen und visualisierst sie als sortierten <strong>Bar-Chart</strong>.</li>
+<li>Du wählst eine <strong>Rotation</strong> (<code>varimax</code>, <code>oblimin</code>) bewusst nach theoretischer Erwartung.</li>
+<li>Du kennst den Unterschied zwischen <strong>PCA</strong> (Datenreduktion), <strong>EFA</strong> (explorativ) und <strong>CFA</strong> (konfirmatorisch).</li>
+<li>Du berechnest <strong>Cronbachs α</strong> mit <code>reliability()</code>, liest Item-Statistiken, identifizierst problematische Items und stellst <strong>α-if-deleted</strong> als Bar-Chart dar.</li>
+<li>Du weißt, wann <strong>CFA</strong> mit <code>lavaan</code> sinnvoll ist und wie eine Minimalspezifikation inkl. Methoden-Effekt aussieht.</li>
 </ul>
 <p>Im nächsten Kapitel (<a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Kapitel 9</span></a>) wechseln wir das Genre: statt <em>Struktur</em> zu <em>Erklärung</em> — wir modellieren Islamfeindlichkeit als abhängige Variable und prüfen, welche soziostrukturellen und politischen Prädiktoren sie am besten erklären.</p>
-</section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
+</section><section id="mini-glossar-begriffe-für-latente-strukturen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="mini-glossar-begriffe-für-latente-strukturen">Mini-Glossar: Begriffe für Latente Strukturen</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 80%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Begriff</th>
+<th style="text-align: left;">Bedeutung in einem Satz</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>latent</strong></td>
+<td style="text-align: left;">unbeobachtete Hintergrund-Variable, die durch mehrere Items indirekt gemessen wird</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>manifest</strong></td>
+<td style="text-align: left;">direkt beobachtetes Item (eine Spalte im Datensatz)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Ladung</strong></td>
+<td style="text-align: left;">Verbindungsgrad Item ↔︎ Faktor; in Einfaktor-Lösung = Korrelation; ≥ 0.5 brauchbar, ≥ 0.7 hoch</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">
+<strong>Eigenwert</strong> (λ)</td>
+<td style="text-align: left;">wie viel standardisierte Item-Varianz ein Faktor bündelt; λ &gt; 1 = mehr als ein einzelnes Item (Kaiser-Regel)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>KMO</strong></td>
+<td style="text-align: left;">Anteil gemeinsamer (nicht partieller) Item-Varianz; ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Bartlett-Test</strong></td>
+<td style="text-align: left;">Test, ob die Korrelationsmatrix signifikant von der Identitätsmatrix abweicht — Mindestbedingung für jede EFA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Scree-Plot</strong></td>
+<td style="text-align: left;">Eigenwerte als absteigende Linie — Faktoranzahl an der „Knickstelle” oder Kaiser-Schwelle ablesen</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Rotation</strong></td>
+<td style="text-align: left;">geometrische Drehung der Faktor-Achsen für interpretierbare Lösung (orthogonal: <code>varimax</code>; schräg: <code>oblimin</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Cronbachs α</strong></td>
+<td style="text-align: left;">Reliabilitätsmaß: <span class="math inline">\(\alpha = k\bar{r} / (1 + (k-1)\bar{r})\)</span>; ab ≥ 0.7 akzeptabel</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Item-Total-Korrelation</strong></td>
+<td style="text-align: left;">Zusammenhang eines Items mit der Summe der übrigen Items; ≥ 0.3 brauchbar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>α-if-deleted</strong></td>
+<td style="text-align: left;">wie sich α verändert, wenn ein Item gestrichen wird — Diagnose für Skala-fremde Items</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Fit-Index</strong></td>
+<td style="text-align: left;">Maß für die Übereinstimmung zwischen CFA-Modell und Daten (CFI, TLI, RMSEA, SRMR)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Methoden-Effekt</strong></td>
+<td style="text-align: left;">systematische Antwort-Tendenz (z. B. Akquieszenz) — keine inhaltliche Sub-Dimension</td>
+</tr>
+</tbody>
+</table></section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
 <ul>
 <li>mariposa-Vignette <a href="https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html">„Scale Analysis”</a>.</li>
 <li>Yves Rosseel et al., <a href="https://lavaan.ugent.be/">lavaan-Dokumentation</a> — sehr lesbare Einführung in SEM mit R.</li>
