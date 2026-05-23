@@ -5,6 +5,14 @@ library(tidyverse)
 library(mariposa)
 source("R/_common.R")
 source("R/prep.R")
+
+# Kapitel-spezifische Ergaenzungen: educ_kat (drei Bildungsgruppen) und
+# labelled-zu-Faktor-Konvertierung NUR fuer eastwest (sex wird im
+# binomial_test als numerisch gebraucht — bleibt deshalb labelled).
+allbus <- allbus |>
+  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+      as.factor = TRUE, suffix = "_kat") |>
+  to_label(eastwest)
 ```
 
 Nachdem du in @sec-datentransformation die Datenpräp-Pipeline gebaut und in @sec-grafiken-basics die ggplot2-Grammatik kennengelernt hast, beginnt jetzt die eigentliche Analyse. Wir gehen Schritt für Schritt von der einzelnen Variable bis zu Zusammenhängen zwischen zwei Variablen — und beantworten dabei die ersten Teilfragen unserer Mini-Studie:
@@ -44,7 +52,7 @@ Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test 
 - Mittelwerte mehrerer Gruppen mit einer **einfaktoriellen ANOVA** vergleichen und vier Post-Hoc-Verfahren wählen.
 - Nicht-parametrische Alternativen anwenden, wenn Voraussetzungen verletzt sind.
 - Effektgrößen einordnen — wann ein signifikanter Test inhaltlich klein, mittel oder groß ist.
-- Erste Grafiken zu deinen Befunden erstellen.
+- Die drei Grundbegriffe statistischer Inferenz — **p-Wert**, **Standardfehler**, **Konfidenzintervall** — richtig lesen.
 
 ## Über Gewichtung
 
@@ -55,6 +63,58 @@ In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsenti
 :::
 
 In mariposa heißt das Argument durchgängig `weights = wghtpew` — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.
+
+## Inferenz verstehen — was hinter jedem Test steckt {#sec-inferenz}
+
+Bevor du den ersten Test rechnest, drei Begriffe, die in *jedem* Test-Output auftauchen — und die meisten Studis aus SPSS-Kursen *mechanisch* benutzen, ohne sie wirklich verstanden zu haben: **p-Wert**, **Standardfehler**, **Konfidenzintervall**. Wer diese drei richtig liest, kann jeden Test-Output sinnvoll interpretieren — wer sie missversteht, produziert Aussagen, die in einem Methoden-Seminar zerpflückt werden.
+
+### Was ist ein p-Wert?
+
+Stell dir vor, du wirfst eine Münze 100 mal und bekommst 60 mal Kopf. Ist die Münze gezinkt — oder ist 60:40 auch bei einer fairen Münze einfach mal drin?
+
+Der **p-Wert** beantwortet genau diese Frage. Er sagt dir, *wie wahrscheinlich* das beobachtete Ergebnis (oder ein noch extremeres) wäre, **wenn in Wirklichkeit nichts los ist** — also wenn die *Nullhypothese* stimmt. Bei der Münze heißt die Nullhypothese „Münze ist fair, Kopf-Wahrscheinlichkeit = 0.5". Ein p-Wert von 0.057 bedeutet: *wenn die Münze fair wäre, würdest du in 5.7 % aller Wiederholungs-Experimente 60 oder mehr Kopf-Treffer sehen*.
+
+Die Konvention `p < .05` heißt: *„Das Ergebnis ist so unwahrscheinlich unter der Nullhypothese, dass wir die Nullhypothese verwerfen — wir gehen davon aus, dass tatsächlich ein Effekt existiert."*
+
+::: {.callout-warning}
+**Vorsicht: Klassische p-Wert-Fehlinterpretationen.**
+
+- *„p < .05 heißt: nur 5 % Chance, dass die Nullhypothese stimmt."* — **Falsch.** Der p-Wert sagt nichts über die Wahrscheinlichkeit der Nullhypothese aus. Er sagt nur, *wie wahrscheinlich diese Daten* unter der Nullhypothese wären.
+- *„p < .05 heißt: der Effekt ist groß."* — **Falsch.** *p* misst, wie sicher du dir bist, *dass es einen Effekt gibt* — nicht, *wie groß* er ist. Bei N = 5.000 wird fast jeder noch so kleine Effekt signifikant. Effektgrößen messen die *Stärke*.
+- *„p = .04 ist signifikant, p = .06 ist nicht."* — die `.05`-Grenze ist Konvention, keine Naturkonstante. *p* = .051 und *p* = .049 sind statistisch fast identisch. Lies *p*-Werte als kontinuierliches Maß für Evidenz, nicht als binäres Urteil.
+:::
+
+### Was ist ein Standardfehler?
+
+Wenn du den ALLBUS 2023 *erneut* mit 5.246 anderen Befragten erheben würdest, käme nicht *exakt* derselbe Mittelwert für Islamfeindlichkeit heraus — sondern einer in der Nähe. Wenn du das 1.000 mal wiederholtest, hättest du 1.000 leicht unterschiedliche Mittelwerte. Die *Streuung dieser hypothetischen Mittelwerte* heißt **Standardfehler (SE)**.
+
+Der SE ist *nicht* dasselbe wie die Standardabweichung (SD):
+
+- **SD** = wie stark streuen die *einzelnen Befragten* um den Mittelwert? *„Wie unterschiedlich sind die Menschen?"*
+- **SE** = wie stark würde der *Mittelwert* streuen, wenn ich die Studie wiederholen würde? *„Wie präzise ist meine Schätzung?"*
+
+Der SE ist immer kleiner als die SD und schrumpft mit größerer Stichprobe (Formel: SE = SD / √N). Je größer N, desto präziser die Schätzung. Das ist der Grund, warum große Stichproben kleinere SE haben — und damit engere Konfidenzintervalle und kleinere p-Werte.
+
+### Was ist ein Konfidenzintervall?
+
+Das **95 %-Konfidenzintervall (KI)** ist die natürliche Erweiterung des Standardfehlers. Statt nur den Punktschätzer (z. B. Mittelwert = 4.2) zu berichten, gibst du das Intervall an, in dem der wahre Wert *plausibel* liegen könnte: *„M = 4.2, 95 %-KI [4.10, 4.30]"*. Faustregel: 95 %-KI ≈ Mittelwert ± 1.96 × SE.
+
+::: {.callout-warning}
+**Vorsicht: Die häufigste KI-Fehlinterpretation.** Ein 95 %-KI heißt *nicht* „der wahre Wert liegt mit 95 %iger Wahrscheinlichkeit drin". Es heißt: *wenn du die Studie unendlich oft wiederholen und jedes Mal ein KI berechnen würdest, würden 95 % aller solchen Intervalle den wahren Wert einschließen*. Der wahre Wert ist fest — das Intervall variiert über Wiederholungen.
+
+In der Praxis ist die *Faustregel* für die Lesart einfacher: *„Ein Wert außerhalb des 95 %-KI ist mit den Daten schwer vereinbar; ein Wert innerhalb ist mit den Daten vereinbar."*
+:::
+
+### Effektgrößen vs. Signifikanz — die Zwillingsfrage
+
+Ein Test beantwortet *zwei* Fragen, die du sauber trennen musst:
+
+1. **„Existiert der Effekt überhaupt?"** → *p*-Wert, Konfidenzintervall.
+2. **„Wie groß ist der Effekt?"** → Effektgröße (Cohens d, Hedges' g, Cramérs V, R²).
+
+Bei N = 5.246 (wie im ALLBUS) wird fast jeder Effekt signifikant — *p* sagt dir dann nur, dass du dir des Effekts sicher bist, nicht *ob er etwas bedeutet*. Die Effektgröße liefert das inhaltliche Urteil. Beide gehören in jeden Methodenbericht zusammen.
+
+In den folgenden Test-Outputs siehst du genau diese drei Bausteine immer wieder: *Schätzwert + p-Wert + KI + Effektgröße*. Wenn du sie zusammen liest, hast du das Werkzeug, um Befunde sauber zu kommunizieren.
 
 ## Univariate Statistik {#sec-univariat}
 
@@ -158,6 +218,18 @@ Beide Tests geben Erwartungswerte, Beobachtungen und einen p-Wert zurück — sa
 
 ## Bivariate Statistik {#sec-bivariat}
 
+**Welche Frage → welcher Test?** Bevor du in die Tests einsteigst, eine Landkarte. Welches Verfahren du brauchst, hängt vom *Skalenniveau* der zwei Variablen ab:
+
+| Variable 1                  | Variable 2                  | Test (mariposa)                                  | Effektgröße            |
+| :-------------------------- | :-------------------------- | :----------------------------------------------- | :--------------------- |
+| kategorial                  | kategorial                  | `chi_square()`                                   | Cramérs V / Phi        |
+| kategorial (2 Gruppen)      | metrisch                    | `t_test()`                                       | Hedges' g              |
+| kategorial (≥ 3 Gruppen)    | metrisch                    | `oneway_anova()`                                 | η²                     |
+| metrisch                    | metrisch                    | `pearson_cor()`                                  | r (selbst Effekt)      |
+| ordinal                     | ordinal                     | `spearman_rho()` / `kendall_tau()`               | ρ / τ                  |
+
+Wenn du dich verirrst — diese Tabelle ist dein Anker.
+
 ::: {.callout-note}
 **Hintergrund: Warum Effektgrößen?** Ein signifikanter *p*-Wert sagt dir nur, dass ein Unterschied oder Zusammenhang von Zufall verschieden ist — *wie stark* er ist, sagt er nicht. Bei großen Stichproben (wie 5.246 ALLBUS-Fällen) sind fast alle Unterschiede statistisch signifikant. Effektgrößen ergänzen den p-Wert um die **inhaltliche Größenordnung**. Faustregeln für die wichtigsten Maße:
 
@@ -184,11 +256,33 @@ allbus |>
   crosstab(eastwest, educ, weights = wghtpew)
 ```
 
-Mit `prop = "col"` oder `prop = "total"` änderst du die Prozentuierungs-Richtung; mit `show = "n"` siehst du nur die Zellenzahlen.
+**Drei Prozentuierungs-Richtungen** — und sie beantworten *verschiedene* Fragen:
+
+| Argument            | Lesart                                                       | Wann sinnvoll                              |
+| :------------------ | :----------------------------------------------------------- | :----------------------------------------- |
+| `prop = "row"` (Default) | „Wie verteilt sich Bildung *innerhalb* von Ost / West?"      | erklärende Variable in der Zeile           |
+| `prop = "col"`      | „Wie verteilt sich Ost / West *innerhalb* jeder Bildungsstufe?" | erklärende Variable in der Spalte          |
+| `prop = "total"`    | „Wie viel Prozent aller Fälle sind in jeder Zelle?"          | Gemeinsame Verteilung im Überblick         |
+
+Mit `show = "n"` siehst du nur die Zellenzahlen ohne Prozentuierung.
 
 ### Chi-Quadrat-Test mit `chi_square()`
 
 Eine Kreuztabelle beschreibt — aber sie sagt dir noch nicht, ob die beobachteten Muster *statistisch belastbar* sind oder ob sie auch durch Zufall in der Stichprobe entstanden sein könnten. Genau diese Frage beantwortet der **Chi-Quadrat-Test** (χ²): Er vergleicht die tatsächlichen Häufigkeiten in jeder Zelle mit den Häufigkeiten, die man unter der Annahme *völliger Unabhängigkeit* zwischen den beiden Variablen erwarten würde. Sind die beobachteten Werte deutlich anders, gibt es einen Zusammenhang.
+
+::: {.callout-note}
+**Konzept: Was vergleicht χ² konkret?** Stell dir eine kleine 2 × 2-Tabelle vor: Region (Ost/West) × Bildung (niedrig/hoch). Insgesamt 1.000 Befragte:
+
+|              | niedrige Bildung | hohe Bildung | **Summe** |
+|:------------ | ---:             | ---:         | ---:      |
+| **West**     | 350              | 450          | **800**   |
+| **Ost**      | 130              | 70           | **200**   |
+| **Summe**    | **480**          | **520**      | **1.000** |
+
+Wenn Region und Bildung *unabhängig* wären, müsste in jeder Zelle die Häufigkeit dem Produkt der Randanteile entsprechen. Beispiel West × hoch: 800/1000 × 520/1000 × 1000 = **416** wären *erwartet*. *Beobachtet* sind aber 450. Diese Differenz (450 − 416 = 34) ist für jede Zelle der Bauteil des χ²-Wertes; je größer alle Differenzen zusammen, desto größer χ² — desto unwahrscheinlicher die Unabhängigkeit.
+
+Genau diese Vergleichslogik („beobachtet vs. erwartet unter Unabhängigkeit") steckt unter der Haube von `chi_square()` — du musst sie nicht händisch rechnen, aber wenn du sie verstehst, weißt du auch, *warum* der Test bei kleinen erwarteten Häufigkeiten (< 5) instabil wird: dann fallen einzelne große Differenzen relativ stark ins Gewicht.
+:::
 
 Statt erst eine Kreuztabelle zu rechnen und *dann* den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs *V*, Phi, Gamma). Die Effektgrößen sind hier besonders wichtig: Wie beim t-Test wird χ² bei großen N fast immer signifikant; erst Cramérs *V* sagt dir, ob der Zusammenhang inhaltlich groß ist.
 
@@ -237,7 +331,7 @@ Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzep
 allbus |> pearson_cor(islamophobie, populismus, weights = wghtpew)
 ```
 
-**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa **+0.41** — das ist ein klar positiver, moderater Zusammenhang. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit.
+**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa **+0.41** — das ist ein klar positiver Zusammenhang. Nach der Effektgrößen-Faustregel oben (Cohen: r ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß) bedeutet das einen *mittleren bis großen* Effekt. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit. Das ist *kein* Schluss auf Kausalität — die Korrelation sagt nicht, ob Populismus Islamfeindlichkeit fördert oder umgekehrt oder ob beides von einer dritten Variable (z. B. Bildung) getrieben wird. Die multivariate Regression in @sec-regression zerlegt das.
 
 Eine ganze Korrelationsmatrix bekommst du, indem du mehrere Variablen oder einen `tidyselect`-Ausdruck übergibst:
 
@@ -250,6 +344,17 @@ allbus |> pearson_cor(starts_with("mm0"), weights = wghtpew)
 :::
 
 ## Mittelwertvergleiche {#sec-mvc}
+
+**Voraussetzungs-Checkliste.** Bevor du t-Test, ANOVA oder Korrelation rechnest — ein Mini-Check, was die Verfahren brauchen. In der Praxis sind sie bei großen Stichproben *robust* gegen kleinere Verletzungen; trotzdem gehört der Check zum Methoden-Bericht.
+
+| Test                 | Skalenniveau AV   | Verteilung               | Sonst-Annahme                | Bei N > 100             |
+| :------------------- | :---------------- | :----------------------- | :--------------------------- | :---------------------- |
+| `chi_square()`       | kategorial        | —                        | erwartete Häufigkeit ≥ 5     | unkritisch              |
+| `pearson_cor()`      | metrisch          | bivariat normal          | linearer Zusammenhang        | robust                  |
+| `t_test()` (Welch)   | metrisch (in Gruppen) | annähernd normal     | Welch-Variante deckt Varianzungleichheit | robust              |
+| `oneway_anova()`     | metrisch (in Gruppen) | annähernd normal     | Varianzhomogenität           | robust                  |
+
+Bei klar schiefen Verteilungen oder N < 30 pro Gruppe greifst du zu den nicht-parametrischen Alternativen (`mann_whitney()`, `kruskal_wallis()`, `spearman_rho()`).
 
 ### t-Test mit `t_test()`
 
@@ -300,15 +405,13 @@ Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effe
 **Frage:** Hängt Islamfeindlichkeit mit Bildung zusammen?
 
 ```{r anova}
-allbus_bildung <- allbus |>
-  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
-      as.factor = TRUE, suffix = "_kat")
-
-allbus_bildung |>
+allbus |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew)
 ```
 
-**Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird.
+*`educ_kat` ist die im Setup-Chunk dieses Kapitels gebildete Drei-Kategorien-Bildungsvariable (niedrig / mittel / hoch) — die brauchen wir in Kap. 7 und 9 immer wieder.*
+
+**Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird. Mit der Effektgrößen-Faustregel: η² ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß. *Visualisieren lässt sich der Gruppenunterschied direkt mit einem Boxplot — die Grammatik dazu hast du in @sec-grafiken-basics gelernt, und im Coefficient-Plot in @sec-erklaerung wird die ANOVA als Spezialfall der Regression noch einmal aufgegriffen.*
 
 ::: {.callout-note}
 **Forschungshintergrund: Bildung als Vorurteils-Prädiktor.** Bildung ist in der Sozialforschung der robusteste Prädiktor *gegen* gruppenbezogene Vorurteile — über Länder, Themen und Jahrzehnte hinweg. Die theoretische Debatte streitet, warum: *Liberalisierungs-Hypothese* (Bildung vermittelt liberale Werte direkt), *Kognitive-Komplexität-Hypothese* (Bildung erlaubt komplexere Bewertungen), *Status-Hypothese* (höher Gebildete fühlen sich weniger ökonomisch bedroht und weniger durch Outgroups herausgefordert). Eine ANOVA prüft *ob* der Effekt existiert; *welcher* der drei Erklärungsstränge stimmt, müsste über Mediator-Modelle oder qualitative Forschung beantwortet werden.
@@ -326,7 +429,7 @@ Eine signifikante ANOVA sagt dir „mindestens zwei Gruppen unterscheiden sich" 
 | `pairwise_wilcoxon()` | paarweise nicht-parametrisch                                 |
 
 ```{r tukey}
-allbus_bildung |>
+allbus |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
   tukey_test()
 ```
@@ -348,55 +451,6 @@ allbus |> mann_whitney(islamophobie, group = eastwest, weights = wghtpew)
 
 ::: {.callout-warning}
 **Vorsicht: Nicht reflexhaft zu non-parametrisch greifen.** Bei großen Stichproben sind *t*-Test und ANOVA gegenüber Verteilungsabweichungen sehr robust. Die nicht-parametrischen Tests verlieren etwas an statistischer Power. Wechsele die Methode bewusst — typischerweise bei stark schiefen Verteilungen mit kleinem N oder bei ordinaler AV — nicht als Sicherheits-Ritual.
-:::
-
-## Erste Grafiken zu deinen Befunden
-
-Die ggplot2-Grammatik kennst du aus @sec-grafiken-basics. Hier sind drei kompakte Standard-Visualisierungen, die du nach jeder Bi-/Univariat-Analyse einsetzen kannst — direkt anschlussfähig an die soeben gerechneten Tests.
-
-### Histogramm
-
-**Frage:** Wie verteilt sich Islamfeindlichkeit über die Stichprobe?
-
-```{r hist-kap5}
-allbus |>
-  filter(!is.na(islamophobie)) |>
-  ggplot(aes(x = islamophobie, weight = wghtpew)) +
-  geom_histogram(binwidth = 0.5, fill = "#2563eb", color = "white") +
-  labs(x = "Islamfeindlichkeit (1–7)", y = "Häufigkeit (gewichtet)",
-       title = "Verteilung der Islamfeindlichkeit",
-       caption = "ALLBUS 2023, gewichtet mit wghtpew")
-```
-
-### Boxplot nach Gruppen
-
-**Frage:** Wie verteilt sich Islamfeindlichkeit nach Bildungsgruppen?
-
-```{r boxplot}
-allbus_bildung |>
-  filter(!is.na(educ_kat), !is.na(islamophobie)) |>
-  ggplot(aes(x = educ_kat, y = islamophobie)) +
-  geom_boxplot(fill = "#e8f5ec") +
-  labs(x = "Bildungsgruppe", y = "Islamfeindlichkeit (1–7)",
-       caption = "ALLBUS 2023")
-```
-
-### Streudiagramm mit Regressionsgerade
-
-**Frage:** Wie sieht der Zusammenhang Islamfeindlichkeit ↔ Populismus aus?
-
-```{r scatter-kap5}
-allbus |>
-  filter(!is.na(islamophobie), !is.na(populismus)) |>
-  ggplot(aes(x = populismus, y = islamophobie)) +
-  geom_jitter(alpha = 0.2, color = "#1f77b4", width = 0.05, height = 0.05) +
-  geom_smooth(method = "lm", color = "black") +
-  labs(x = "Populismus (1–5, umgepolt)", y = "Islamfeindlichkeit (1–7)",
-       caption = "ALLBUS 2023")
-```
-
-::: {.callout-important}
-**mariposa-Tipp: Statistik in mariposa, Grafik in ggplot2.** mariposa hat bewusst keine eigene Plotting-Funktion. Das hat einen guten Grund: ggplot2 ist mächtig genug, dass jede:r Sozialwissenschaftler:in damit eigene Grafiken bauen kann — und du verstehst dabei, was wirklich passiert, statt einen Plotter-Wrapper-Output zu importieren.
 :::
 
 ## Übungen {-}
@@ -450,7 +504,7 @@ Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe 
 
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex4-kap5-loesung, eval=FALSE}
-allbus_bildung |>
+allbus |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
   tukey_test()
 ```
@@ -478,7 +532,6 @@ Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *
 - Du ordnest Effektgrößen mit Faustregeln (Cohen) inhaltlich ein.
 - Du vergleichst Gruppenmittelwerte mit `t_test()` und `oneway_anova()`, prüfst Voraussetzungen mit `levene_test()` und wählst zwischen vier Post-Hoc-Verfahren (`tukey_test`, `scheffe_test`, `dunn_test`, `pairwise_wilcoxon`).
 - Du kennst nicht-parametrische Alternativen (`mann_whitney`, `kruskal_wallis`, `wilcoxon_test`, `friedman_test`).
-- Du bringst deine Ergebnisse mit drei ggplot2-Standard-Grafiken zu Papier.
 
 In den nächsten zwei Kapiteln weiten wir den Blick auf multivariate Verfahren aus: in @sec-latente prüfen wir die Faktorstruktur und Reliabilität unserer Skalen, in @sec-erklaerung modellieren wir Islamfeindlichkeit als abhängige Variable über mehrere Prädiktoren gleichzeitig.
 
