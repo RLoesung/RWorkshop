@@ -360,15 +360,29 @@ Die **Tolerance** ist der Kehrwert: $\text{Tolerance} = 1/\text{VIF} = 1 - R^2_i
 | 5 – 10   | 0.10 – 0.20   | Warngrenze — prüfen             |
 | > 10     | < 0.10        | problematisch — handeln         |
 
-### VIF aus dem mariposa-Output
+### VIF händisch berechnen
 
-mariposa rechnet beide automatisch und gibt sie standardmäßig im `summary()`-Block aus:
+Statt einen Black-Box-Aufruf zu benutzen, rechnen wir den VIF *exakt nach der Formel oben* selbst — fünf Zeilen Code, die die Mathematik 1:1 spiegeln. Für jeden Prädiktor $x_i$ fitten wir eine **Hilfsregression** mit $x_i$ als abhängiger Variable und allen anderen Prädiktoren als Erklärenden, lesen $R^2_i$ ab und rechnen $1/(1-R^2_i)$:
 
-```{r vif-check}
-summary(modell, collinearity = TRUE)     # Standardeinstellung
+```{r vif-handisch}
+X <- model.matrix(modell)[, -1, drop = FALSE]   # Design-Matrix ohne Intercept
+
+vif_df <- tibble(praediktor = colnames(X)) |>
+  mutate(
+    VIF       = map_dbl(praediktor, \(p) {
+                  aux_r2 <- summary(lm(X[, p] ~ X[, setdiff(colnames(X), p)]))$r.squared
+                  1 / (1 - aux_r2)
+                }),
+    Tolerance = 1 / VIF
+  )
+vif_df
 ```
 
-Im Output siehst du einen `Collinearity`-Block mit VIF und Tolerance pro Prädiktor. Wenn ein VIF deutlich über 10 liegt: prüfen, ob sich einer der hochkorrelierten Prädiktoren weglassen oder zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.
+**Lesart.** Alle VIFs liegen klar unter 5 — keine Multikollinearitäts-Probleme. Die zwei Bildungs-Dummies (`educ_katmittel`, `educ_kathoch`) haben mit VIF ≈ 2 die höchsten Werte; das ist normal, weil sie *naturgemäß* miteinander korreliert sind (wer im einen Dummy 1 hat, hat im anderen 0). Wenn ein einzelner Prädiktor deutlich über VIF = 10 ausbrechen würde, müsstest du prüfen, ob er sich weglassen lässt, mit einem anderen zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.
+
+::: {.callout-note}
+**Hintergrund: `model.matrix()` als Brücke zwischen Formel und Zahlen.** `model.matrix(modell)` gibt dir die *Design-Matrix*, mit der das Modell intern rechnet — eine Spalte pro Modell-Term, inklusive der von R erzeugten Dummy-Variablen (siehe @sec-dummy). `[, -1]` schneidet die Intercept-Spalte ab; was übrig bleibt, sind die Prädiktoren-Spalten in genau der Reihenfolge, in der sie im Modell stehen. Für Kategorial-Variablen mit `k` Levels stehen dort `k − 1` Dummy-Spalten — entsprechend bekommt jeder Dummy seinen eigenen VIF.
+:::
 
 ## Residuen-Diagnostik händisch {#sec-residuen}
 
@@ -794,7 +808,12 @@ modell <- allbus |>
     formula = islamophobie ~ educ_kat + age + eastwest + sex + populismus,
     weights = wghtpew
   )
-summary(modell, collinearity = TRUE)
+
+X <- model.matrix(modell)[, -1, drop = FALSE]
+tibble(praediktor = colnames(X)) |>
+  mutate(VIF = map_dbl(praediktor, \(p) {
+    1 / (1 - summary(lm(X[, p] ~ X[, setdiff(colnames(X), p)]))$r.squared)
+  }))
 ```
 :::
 

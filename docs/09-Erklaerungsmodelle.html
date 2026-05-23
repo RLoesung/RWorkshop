@@ -255,7 +255,7 @@ window.Quarto = {
   <ul>
 <li><a href="#die-formel-ist-%C3%BCberraschend-einfach" id="toc-die-formel-ist-überraschend-einfach" class="nav-link" data-scroll-target="#die-formel-ist-%C3%BCberraschend-einfach"><span class="header-section-number">9.5.1</span> Die Formel ist überraschend einfach</a></li>
   <li><a href="#faustregeln" id="toc-faustregeln" class="nav-link" data-scroll-target="#faustregeln"><span class="header-section-number">9.5.2</span> Faustregeln</a></li>
-  <li><a href="#vif-aus-dem-mariposa-output" id="toc-vif-aus-dem-mariposa-output" class="nav-link" data-scroll-target="#vif-aus-dem-mariposa-output"><span class="header-section-number">9.5.3</span> VIF aus dem mariposa-Output</a></li>
+  <li><a href="#vif-h%C3%A4ndisch-berechnen" id="toc-vif-händisch-berechnen" class="nav-link" data-scroll-target="#vif-h%C3%A4ndisch-berechnen"><span class="header-section-number">9.5.3</span> VIF händisch berechnen</a></li>
   </ul>
 </li>
   <li>
@@ -871,67 +871,48 @@ Tipp
 <td style="text-align: left;">problematisch — handeln</td>
 </tr>
 </tbody>
-</table></section><section id="vif-aus-dem-mariposa-output" class="level3" data-number="9.5.3"><h3 data-number="9.5.3" class="anchored" data-anchor-id="vif-aus-dem-mariposa-output">
-<span class="header-section-number">9.5.3</span> VIF aus dem mariposa-Output</h3>
-<p>mariposa rechnet beide automatisch und gibt sie standardmäßig im <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-Block aus:</p>
+</table></section><section id="vif-händisch-berechnen" class="level3" data-number="9.5.3"><h3 data-number="9.5.3" class="anchored" data-anchor-id="vif-händisch-berechnen">
+<span class="header-section-number">9.5.3</span> VIF händisch berechnen</h3>
+<p>Statt einen Black-Box-Aufruf zu benutzen, rechnen wir den VIF <em>exakt nach der Formel oben</em> selbst — fünf Zeilen Code, die die Mathematik 1:1 spiegeln. Für jeden Prädiktor <span class="math inline">\(x_i\)</span> fitten wir eine <strong>Hilfsregression</strong> mit <span class="math inline">\(x_i\)</span> als abhängiger Variable und allen anderen Prädiktoren als Erklärenden, lesen <span class="math inline">\(R^2_i\)</span> ab und rechnen <span class="math inline">\(1/(1-R^2_i)\)</span>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span>, collinearity <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>     <span class="co"># Standardeinstellung</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>   <span class="co"># Design-Matrix ohne Intercept</span></span>
+<span></span>
+<span><span class="va">vif_df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>praediktor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    VIF       <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">praediktor</span>, \<span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                  <span class="va">aux_r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="va">p</span><span class="op">]</span> <span class="op">~</span> <span class="va">X</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="va">p</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span>
+<span>                  <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">aux_r2</span><span class="op">)</span></span>
+<span>                <span class="op">}</span><span class="op">)</span>,</span>
+<span>    Tolerance <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">VIF</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">vif_df</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Weighted Linear Regression Results
-----------------------------------
-- Formula: islamophobie ~ educ_kat + age + eastwest + sex + populismus
-- Method: ENTER (all predictors)
-- N: 1881
-- Weights: wghtpew
-
-  Descriptive Statistics
-  ----------------------------------------------------------------------
-  Variable                                    Mean     Std.Dev.      N
-  ----------------------------------------------------------------------
-  islamophobie                               3.968        1.456   1881
-  educ_kat                                   2.259        0.796   1881
-  age                                       51.875       18.094   1881
-  eastwest                                   1.168        0.374   1881
-  sex                                        1.488        0.501   1881
-  populismus                                 3.310        0.772   1881
-  ----------------------------------------------------------------------
-
-  Model Summary
-  ------------------------------------------------------------
-  R                              0.550
-  R Square                       0.303
-  Adjusted R Square              0.301
-  Std. Error of Estimate         1.218
-  ------------------------------------------------------------
-
-  ANOVA
-  ------------------------------------------------------------------------------
-  Source           Sum of Squares    df      Mean Square          F     Sig.
-  ------------------------------------------------------------------------------
-  Regression             1206.947     5          241.389    162.766    0.000 ***
-  Residual               2780.714  1875            1.483                     
-  Total                  3987.661  1880                                      
-  ------------------------------------------------------------------------------
-
-  Coefficients
-  ----------------------------------------------------------------------------------------
-  Term                               B  Std.Error     Beta          t     Sig. 
-  ----------------------------------------------------------------------------------------
-  (Intercept)                    0.808      0.195               4.152    0.000 ***
-  educ_katmittel                 0.012      0.082    0.004      0.148    0.882 
-  educ_kathoch                  -0.424      0.082   -0.145     -5.174    0.000 ***
-  age                            0.024      0.002    0.298     14.501    0.000 ***
-  eastwestNEUE BUNDESLAE...      0.339      0.077    0.087      4.404    0.000 ***
-  sexFRAU                        0.124      0.056    0.042      2.190    0.029 *
-  sexDIVERS                     -0.854      1.090   -0.015     -0.783    0.434 
-  populismus                     0.603      0.040    0.320     15.105    0.000 ***
-  ----------------------------------------------------------------------------------------
-
-Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
+<pre><code># A tibble: 7 × 3
+  praediktor                   VIF Tolerance
+  &lt;chr&gt;                      &lt;dbl&gt;     &lt;dbl&gt;
+1 educ_katmittel              1.91     0.523
+2 educ_kathoch                2.23     0.448
+3 age                         1.13     0.882
+4 eastwestNEUE BUNDESLAENDER  1.08     0.924
+5 sexFRAU                     1.01     0.991
+6 sexDIVERS                   1.00     0.997
+7 populismus                  1.22     0.821</code></pre>
 </div>
 </div>
-<p>Im Output siehst du einen <code>Collinearity</code>-Block mit VIF und Tolerance pro Prädiktor. Wenn ein VIF deutlich über 10 liegt: prüfen, ob sich einer der hochkorrelierten Prädiktoren weglassen oder zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.</p>
+<p><strong>Lesart.</strong> Alle VIFs liegen klar unter 5 — keine Multikollinearitäts-Probleme. Die zwei Bildungs-Dummies (<code>educ_katmittel</code>, <code>educ_kathoch</code>) haben mit VIF ≈ 2 die höchsten Werte; das ist normal, weil sie <em>naturgemäß</em> miteinander korreliert sind (wer im einen Dummy 1 hat, hat im anderen 0). Wenn ein einzelner Prädiktor deutlich über VIF = 10 ausbrechen würde, müsstest du prüfen, ob er sich weglassen lässt, mit einem anderen zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Hintergrund: <code><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix()</a></code> als Brücke zwischen Formel und Zahlen.</strong> <code>model.matrix(modell)</code> gibt dir die <em>Design-Matrix</em>, mit der das Modell intern rechnet — eine Spalte pro Modell-Term, inklusive der von R erzeugten Dummy-Variablen (siehe <a href="#sec-dummy" class="quarto-xref"><span>Kapitel 9.3</span></a>). <code>[, -1]</code> schneidet die Intercept-Spalte ab; was übrig bleibt, sind die Prädiktoren-Spalten in genau der Reihenfolge, in der sie im Modell stehen. Für Kategorial-Variablen mit <code>k</code> Levels stehen dort <code>k − 1</code> Dummy-Spalten — entsprechend bekommt jeder Dummy seinen eigenen VIF.</p>
+</div>
+</div>
 </section></section><section id="sec-residuen" class="level2" data-number="9.6"><h2 data-number="9.6" class="anchored" data-anchor-id="sec-residuen">
 <span class="header-section-number">9.6</span> Residuen-Diagnostik händisch</h2>
 <p>Eine lineare Regression macht vier zentrale Annahmen über das, was nach dem Modellfit <em>übrig bleibt</em> — die <strong>Residuen</strong> (beobachtetes minus vorhergesagtes y). Bei großen Stichproben sind die Annahmen meist robust, aber jeder Methodenbericht sollte sie <em>visuell</em> prüfen. Die Standard-Diagnose besteht aus vier Plots — wir bauen sie händisch aus dem mariposa-Modell mit ggplot2 und kombinieren sie mit <code>patchwork</code>.</p>
@@ -1630,7 +1611,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1639,7 +1620,7 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -1666,7 +1647,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1675,7 +1656,7 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -1683,7 +1664,12 @@ Wichtig
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span>, collinearity <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="fu">tibble</span><span class="op">(</span>praediktor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>VIF <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">praediktor</span>, \<span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="va">p</span><span class="op">]</span> <span class="op">~</span> <span class="va">X</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="va">p</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1702,7 +1688,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1711,7 +1697,7 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
