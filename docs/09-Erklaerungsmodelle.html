@@ -261,7 +261,7 @@ window.Quarto = {
   <li>
 <a href="#sec-residuen" id="toc-sec-residuen" class="nav-link" data-scroll-target="#sec-residuen"><span class="header-section-number">9.6</span> Residuen-Diagnostik händisch</a>
   <ul>
-<li><a href="#warum-nicht-plotmodellmodel" id="toc-warum-nicht-plotmodellmodel" class="nav-link" data-scroll-target="#warum-nicht-plotmodellmodel"><span class="header-section-number">9.6.1</span> Warum nicht <code>plot(modell$model)</code>?</a></li>
+<li><a href="#warum-nicht-plotmodell" id="toc-warum-nicht-plotmodell" class="nav-link" data-scroll-target="#warum-nicht-plotmodell"><span class="header-section-number">9.6.1</span> Warum nicht <code>plot(modell)</code>?</a></li>
   <li><a href="#die-vier-annahmen-und-ihre-diagnose-plots" id="toc-die-vier-annahmen-und-ihre-diagnose-plots" class="nav-link" data-scroll-target="#die-vier-annahmen-und-ihre-diagnose-plots"><span class="header-section-number">9.6.2</span> Die vier Annahmen und ihre Diagnose-Plots</a></li>
   <li><a href="#modell-residuen-extrahieren" id="toc-modell-residuen-extrahieren" class="nav-link" data-scroll-target="#modell-residuen-extrahieren"><span class="header-section-number">9.6.3</span> Modell-Residuen extrahieren</a></li>
   <li><a href="#die-vier-plots-bauen" id="toc-die-vier-plots-bauen" class="nav-link" data-scroll-target="#die-vier-plots-bauen"><span class="header-section-number">9.6.4</span> Die vier Plots bauen</a></li>
@@ -476,8 +476,8 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 <span class="header-section-number">9.2.3</span> Regressionsgerade händisch zeichnen</h3>
 <p>Anders als beim Quick-and-dirty-<code>geom_smooth(method = "lm")</code> extrahieren wir die Koeffizienten direkt aus dem Modell und zeichnen die Gerade mit <code>geom_abline()</code>. Das macht den Zusammenhang Modell ↔︎ Visualisierung sichtbar:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="st">"(Intercept)"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">slope</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="st">"populismus"</span><span class="op">]</span><span class="op">]</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">)</span><span class="op">[[</span><span class="st">"(Intercept)"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">slope</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">)</span><span class="op">[[</span><span class="st">"populismus"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -722,8 +722,7 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 <p>Metrische Prädiktoren bleiben in der bekannten Lesart: <code>age</code> (Beta = 0.30, <em>p</em> &lt; .001) wirkt positiv — ältere Befragte haben höhere Werte.</p>
 <p><strong>Bild dazu — R² als Tortenstück.</strong> Das Modell erklärt einen <em>Anteil</em> der Varianz in Islamfeindlichkeit. Wie groß ist dieser Anteil — und wie groß bleibt der unerklärte Rest? Die R²-Zahl aus dem Output, sichtbar gemacht:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
-<span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">modell</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="va">modell</span><span class="op">$</span><span class="va">model_summary</span><span class="op">$</span><span class="va">R_squared</span></span>
 <span></span>
 <span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  anteil <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"erklärt durch Modell (R²)"</span>, <span class="st">"unerklärt (Residuen)"</span><span class="op">)</span>,</span>
@@ -786,7 +785,7 @@ Hinweis
 <section id="modelle-vergleichen" class="level3" data-number="9.4.1"><h3 data-number="9.4.1" class="anchored" data-anchor-id="modelle-vergleichen">
 <span class="header-section-number">9.4.1</span> Modelle vergleichen</h3>
 <p>Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell <em>signifikant</em> verbessert, rechnest du beide Modelle und vergleichst sie mit <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>.</p>
-<p>mariposas <code>linear_regression()</code> gibt ein <strong>Listenobjekt</strong> zurück — eine Sammlung aus Modell, Koeffizienten-Tabelle, Diagnostik-Werten und Metadaten. Das eigentliche <code>lm</code>-Objekt aus base R (das <em>technische</em> Statistik-Modell) liegt darin unter <code>$model</code>. Damit kannst du es an Standard-R-Funktionen wie <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> oder <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code> weiterreichen — die erwarten ein klassisches <code>lm</code>-Objekt, kein mariposa-Listenobjekt:</p>
+<p>mariposas <code>linear_regression()</code> gibt ein Objekt zurück, das <em>direkt</em> von <code>lm</code> erbt (<code>class = c("linear_regression", "lm")</code>). Du musst nichts extrahieren — die Standard-R-Funktionen wie <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code>, <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html">confint()</a></code> und <code><a href="https://rdrr.io/r/stats/vcov.html">vcov()</a></code> arbeiten unmittelbar mit dem Modell:</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Beide Modelle muessen auf demselben Fall-Set rechnen, sonst lehnt anova() ab.</span></span>
 <span><span class="va">allbus_modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -799,7 +798,7 @@ Hinweis
 <span>  <span class="fu">linear_regression</span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
 <span>                    weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html">anova</a></span><span class="op">(</span><span class="va">m_basis</span><span class="op">$</span><span class="va">model</span>, <span class="va">m_voll</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>   <span class="co"># F-Test auf inkrementelle Varianzaufklaerung</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html">anova</a></span><span class="op">(</span><span class="va">m_basis</span>, <span class="va">m_voll</span><span class="op">)</span>   <span class="co"># F-Test auf inkrementelle Varianzaufklaerung</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -935,9 +934,9 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 </section></section><section id="sec-residuen" class="level2" data-number="9.6"><h2 data-number="9.6" class="anchored" data-anchor-id="sec-residuen">
 <span class="header-section-number">9.6</span> Residuen-Diagnostik händisch</h2>
 <p>Eine lineare Regression macht vier zentrale Annahmen über das, was nach dem Modellfit <em>übrig bleibt</em> — die <strong>Residuen</strong> (beobachtetes minus vorhergesagtes y). Bei großen Stichproben sind die Annahmen meist robust, aber jeder Methodenbericht sollte sie <em>visuell</em> prüfen. Die Standard-Diagnose besteht aus vier Plots — wir bauen sie händisch aus dem mariposa-Modell mit ggplot2 und kombinieren sie mit <code>patchwork</code>.</p>
-<section id="warum-nicht-plotmodellmodel" class="level3" data-number="9.6.1"><h3 data-number="9.6.1" class="anchored" data-anchor-id="warum-nicht-plotmodellmodel">
-<span class="header-section-number">9.6.1</span> Warum nicht <code>plot(modell$model)</code>?</h3>
-<p>Base R bietet <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> auf jedem <code>lm</code>-Objekt: vier Diagnose-Plots in einer Zeile. Schnell, aber im 1995er-Look und kaum stilistisch ins Buch einpassbar. Mit <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code> extrahierst du die Modell-Residuen als sauberes Tibble — ab dann ist es ganz normale ggplot2-Mechanik.</p>
+<section id="warum-nicht-plotmodell" class="level3" data-number="9.6.1"><h3 data-number="9.6.1" class="anchored" data-anchor-id="warum-nicht-plotmodell">
+<span class="header-section-number">9.6.1</span> Warum nicht <code>plot(modell)</code>?</h3>
+<p>Base R bietet <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> auf jedem <code>lm</code>-Objekt — und weil mariposa-Modelle von <code>lm</code> erben, funktioniert <code>plot(modell)</code> direkt: vier Diagnose-Plots in einer Zeile. Schnell, aber im 1995er-Look und kaum stilistisch ins Buch einpassbar. Mit <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code> extrahierst du stattdessen die Modell-Residuen als sauberes Tibble — ab dann ist es ganz normale ggplot2-Mechanik.</p>
 </section><section id="die-vier-annahmen-und-ihre-diagnose-plots" class="level3" data-number="9.6.2"><h3 data-number="9.6.2" class="anchored" data-anchor-id="die-vier-annahmen-und-ihre-diagnose-plots">
 <span class="header-section-number">9.6.2</span> Die vier Annahmen und ihre Diagnose-Plots</h3>
 <table class="caption-top table">
@@ -979,7 +978,7 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">diagnose_df</span> <span class="op">&lt;-</span> <span class="va">modell</span><span class="op">$</span><span class="va">model</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html">augment</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">diagnose_df</span> <span class="op">&lt;-</span> <span class="va">modell</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html">augment</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">glimpse</span><span class="op">(</span><span class="va">diagnose_df</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1,881
@@ -1068,7 +1067,7 @@ Wichtig
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>mariposa-Tipp: Modell-Listenobjekt vs.&nbsp;lm-Objekt.</strong> Die mariposa-Funktion <code>linear_regression()</code> gibt ein <strong>Listenobjekt</strong> zurück, in dem das eigentliche <code>lm</code>-Objekt unter <code>$model</code> liegt. Alle Standard-R-Funktionen (<code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code>, <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code>, <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>) erwarten das <code>lm</code>-Objekt — daher <code>modell$model |&gt; augment()</code>, nicht <code>modell |&gt; augment()</code>.</p>
+<p><strong>mariposa-Tipp: Direkt-Dispatch seit 0.6.3.</strong> Das Ergebnis von <code>linear_regression()</code> <em>ist</em> ein <code>lm</code>-Objekt (es erbt direkt davon: <code>class = c("linear_regression", "lm")</code>). Alle Standard-R-Funktionen und <code>broom</code>-Generics (<code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code>, <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html">confint()</a></code>, <code><a href="https://rdrr.io/r/stats/vcov.html">vcov()</a></code>, <code><a href="https://rdrr.io/r/stats/residuals.html">residuals()</a></code>, <code><a href="https://rdrr.io/r/stats/fitted.values.html">fitted()</a></code>, <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>, <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code>) dispatchen unmittelbar — du musst nichts mehr extrahieren. Wenn du <em>zusätzlich</em> die SPSS-Style-Tabellen aus mariposa brauchst, findest du sie als Slots am selben Objekt: <code>modell$coef_table</code>, <code>modell$anova_table</code>, <code>modell$model_summary</code> (mit <code>R_squared</code>, <code>adj_R_squared</code>, <code>std_error</code>).</p>
 </div>
 </div>
 </section></section><section id="sec-anova-mult" class="level2" data-number="9.7"><h2 data-number="9.7" class="anchored" data-anchor-id="sec-anova-mult">
@@ -1303,7 +1302,7 @@ Warnung
 </div>
 </div>
 </div>
-<p><strong>Lesart.</strong> Der rote Anteil ist die <em>Wahrscheinlichkeit</em> — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein <em>Wahrscheinlichkeits-Zuwachs von 60 %</em>, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent” sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (<code>predict(modell$model, type = "response")</code>) als OR zu paraphrasieren.</p>
+<p><strong>Lesart.</strong> Der rote Anteil ist die <em>Wahrscheinlichkeit</em> — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein <em>Wahrscheinlichkeits-Zuwachs von 60 %</em>, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent” sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (<code>predict(modell, type = "response")</code>) als OR zu paraphrasieren.</p>
 </div>
 </div>
 <p>Wir konstruieren für unsere Mini-Studie eine Dummy-Variable: „hohe Islamfeindlichkeit” (Skalenwert ≥ 4).</p>
@@ -1425,7 +1424,7 @@ Hinweis
 <li>
 <strong>Specificity</strong> — Anteil der wirklichen „niedrig”-Fälle, die korrekt erkannt wurden.</li>
 </ul>
-<p>Aus den Vorhersagen <code>predict(modell_log$model, type = "response")</code> baust du sie dir bei Bedarf manuell oder mit dem Paket <code>caret</code>.</p>
+<p>Aus den Vorhersagen <code>predict(modell_log, type = "response")</code> baust du sie dir bei Bedarf manuell oder mit dem Paket <code>caret</code>.</p>
 </div>
 </div>
 <section id="die-sigmoid-kurve-mit-echten-daten" class="level3" data-number="9.8.1"><h3 data-number="9.8.1" class="anchored" data-anchor-id="die-sigmoid-kurve-mit-echten-daten">
@@ -1463,7 +1462,7 @@ Hinweis
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">modell</span><span class="op">$</span><span class="va">model</span> <span class="op">|&gt;</span></span>
+<span><span class="va">modell</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">|&gt;</span>           <span class="co"># Konstante interessiert hier nicht</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">term</span>, <span class="va">estimate</span><span class="op">)</span>,</span>
@@ -1472,7 +1471,7 @@ Hinweis
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Koeffizient mit 95 %-KI"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Was erklärt Islamfeindlichkeit in Deutschland 2023?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell$model)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/coef-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
@@ -1710,9 +1709,9 @@ Hinweis
 <li>Du rechnest eine <strong>einfache lineare Regression</strong> (<code>y ~ x</code>) mit <code>linear_regression()</code>, liest Intercept, Steigung, R² und F, und zeichnest die Regressionsgerade <strong>händisch</strong> mit <code>geom_abline()</code> aus den Modell-Koeffizienten.</li>
 <li>Du verstehst die <strong>OLS-Logik</strong> („kleinste Quadrate”) als Gummizug-Bild und kennst die Formel für <span class="math inline">\(\hat{\beta}\)</span> als standardisierte Kovarianz.</li>
 <li>Du rechnest eine <strong>multiple lineare Regression</strong> mit <code>linear_regression()</code> und interpretierst Beta-Koeffizienten, R², adjustiertes R² und Modell-F.</li>
-<li>Du vergleichst Modelle mit <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code> und kennst den Unterschied von mariposa-Listenobjekt und <code>$model</code>-<code>lm</code>-Objekt.</li>
+<li>Du vergleichst Modelle mit <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code> — mariposa-Modelle erben seit 0.6.3 direkt von <code>lm</code>, alle Standard-R-Funktionen dispatchen ohne <code>$model</code>-Extraktion.</li>
 <li>Du prüfst <strong>Multikollinearität</strong> mit VIF und Tolerance, kennst die Formel <span class="math inline">\(\text{VIF}_i = 1 / (1 - R^2_i)\)</span> und die Faustregel VIF &gt; 10.</li>
-<li>Du baust die <strong>vier Residuen-Standardplots</strong> händisch mit <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code> + ggplot2 + patchwork und ersetzt damit <code>plot(modell$model)</code>.</li>
+<li>Du baust die <strong>vier Residuen-Standardplots</strong> händisch mit <code><a href="https://generics.r-lib.org/reference/augment.html">broom::augment()</a></code> + ggplot2 + patchwork und ersetzt damit das schmucklose <code>plot(modell)</code>.</li>
 <li>Du rechnest mehrfaktorielle <strong>ANOVA</strong> (<code>factorial_anova()</code>) und <strong>ANCOVA</strong> (<code>ancova()</code>) und visualisierst Interaktionen mit eigenen Linienplots.</li>
 <li>Du rechnest eine <strong>logistische Regression</strong> mit <code>logistic_regression()</code>, liest Odds Ratios und kennst Accuracy, Sensitivity und Specificity als ergänzende Klassifikationsmaße.</li>
 <li>Du visualisierst Regressionsergebnisse als <strong>Coefficient-Plot</strong> mit <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code> + <code>geom_pointrange()</code>.</li>
