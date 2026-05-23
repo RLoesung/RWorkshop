@@ -449,12 +449,20 @@ p_rl <- diagnose_df |>
 **Lesart.** Bei N ≈ 3000 (wie hier) sind sichtbare Abweichungen eher die Ausnahme — die LOESS-Linien sollten weitgehend flach um 0 (bzw. horizontal bei Scale-Location) verlaufen. Wenn der QQ-Plot an den Enden deutlich von der Diagonale abweicht, ist die Annahme der Normalverteilung der Residuen verletzt — bei großen Stichproben dank des **Zentralen Grenzwertsatzes** meist unproblematisch. Auffällige Einzelpunkte mit hoher Leverage prüfst du gezielt mit `diagnose_df |> filter(.cooksd > 4/n())` — Cook's-Distance-Werte über 1 sind echte Verdachtsfälle.
 
 ::: {.callout-important}
-**mariposa-Tipp: Direkt-Dispatch seit 0.6.3.1.** Das Ergebnis von `linear_regression()` *ist* ein `lm`-Objekt (es erbt direkt davon: `class = c("linear_regression", "lm")`). Alle Standard-R-Funktionen und `broom`-Generics dispatchen unmittelbar — du musst nichts mehr extrahieren:
+**mariposa-Tipp: Was funktioniert direkt mit `modell`?** mariposa-Modelle verhalten sich wie normale `lm`-Objekte — alle Standard-Werkzeuge dispatchen direkt:
 
-- **base R**: `anova()`, `predict()`, `coef()`, `confint()`, `vcov()`, `residuals()`, `fitted()`, `plot()`
-- **broom**: `tidy(modell, conf.int = TRUE)` (term-Tabelle mit KI), `glance(modell)` (Modell-Kennzahlen: R², F, AIC, BIC …), `augment(modell)` (Daten + Residuen + Leverage)
+- **base R**: `anova(modell)`, `predict(modell)`, `coef(modell)`, `confint(modell)`, `residuals(modell)`, `plot(modell)`
+- **broom**: `tidy(modell, conf.int = TRUE)` (Koeffizienten-Tabelle mit KI), `glance(modell)` (Modell-Kennzahlen: R², F, AIC, BIC …), `augment(modell)` (Daten + Residuen + Leverage)
 
-Wenn du *zusätzlich* die SPSS-Style-Tabellen aus mariposa brauchst, findest du sie als Slots am selben Objekt: `modell$coef_table`, `modell$anova_table`, `modell$model_summary` (mit `R_squared`, `adj_R_squared`, `std_error`).
+Drei SPSS-Style-Tabellen sind *zusätzlich* als Slots am Modell verfügbar — direkt verwendbar als Tibbles für `kable()`, `gt()` oder eigene ggplot2-Bauten:
+
+```{r mariposa-slots}
+modell$model_summary    # R, R², adj. R², Std. Error des Modells
+modell$coef_table       # SPSS-Style Koeffizienten als Tibble
+modell$anova_table      # SPSS-Style ANOVA des Modells als Tibble
+```
+
+Die Slots sind dasselbe, was `summary(modell)` *druckt* — nur als programmatisch nutzbare Tibbles. Mit `knitr::kable(modell$coef_table)` baust du dir die Regressions-Tabelle für die Hausarbeit ohne händisches Abtippen.
 :::
 
 ## ANOVA mit mehreren Faktoren {#sec-anova-mult}

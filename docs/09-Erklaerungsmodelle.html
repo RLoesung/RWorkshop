@@ -1068,15 +1068,55 @@ Wichtig
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>mariposa-Tipp: Direkt-Dispatch seit 0.6.3.1.</strong> Das Ergebnis von <code>linear_regression()</code> <em>ist</em> ein <code>lm</code>-Objekt (es erbt direkt davon: <code>class = c("linear_regression", "lm")</code>). Alle Standard-R-Funktionen und <code>broom</code>-Generics dispatchen unmittelbar — du musst nichts mehr extrahieren:</p>
+<p><strong>mariposa-Tipp: Was funktioniert direkt mit <code>modell</code>?</strong> mariposa-Modelle verhalten sich wie normale <code>lm</code>-Objekte — alle Standard-Werkzeuge dispatchen direkt:</p>
 <ul>
 <li>
-<strong>base R</strong>: <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code>, <code><a href="https://rdrr.io/r/stats/coef.html">coef()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html">confint()</a></code>, <code><a href="https://rdrr.io/r/stats/vcov.html">vcov()</a></code>, <code><a href="https://rdrr.io/r/stats/residuals.html">residuals()</a></code>, <code><a href="https://rdrr.io/r/stats/fitted.values.html">fitted()</a></code>, <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>
+<strong>base R</strong>: <code>anova(modell)</code>, <code>predict(modell)</code>, <code>coef(modell)</code>, <code>confint(modell)</code>, <code>residuals(modell)</code>, <code>plot(modell)</code>
 </li>
 <li>
-<strong>broom</strong>: <code>tidy(modell, conf.int = TRUE)</code> (term-Tabelle mit KI), <code>glance(modell)</code> (Modell-Kennzahlen: R², F, AIC, BIC …), <code>augment(modell)</code> (Daten + Residuen + Leverage)</li>
+<strong>broom</strong>: <code>tidy(modell, conf.int = TRUE)</code> (Koeffizienten-Tabelle mit KI), <code>glance(modell)</code> (Modell-Kennzahlen: R², F, AIC, BIC …), <code>augment(modell)</code> (Daten + Residuen + Leverage)</li>
 </ul>
-<p>Wenn du <em>zusätzlich</em> die SPSS-Style-Tabellen aus mariposa brauchst, findest du sie als Slots am selben Objekt: <code>modell$coef_table</code>, <code>modell$anova_table</code>, <code>modell$model_summary</code> (mit <code>R_squared</code>, <code>adj_R_squared</code>, <code>std_error</code>).</p>
+<p>Drei SPSS-Style-Tabellen sind <em>zusätzlich</em> als Slots am Modell verfügbar — direkt verwendbar als Tibbles für <code>kable()</code>, <code>gt()</code> oder eigene ggplot2-Bauten:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">model_summary</span>    <span class="co"># R, R², adj. R², Std. Error des Modells</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$R
+[1] 0.5501549
+
+$R_squared
+[1] 0.3026704
+
+$adj_R_squared
+[1] 0.3008108
+
+$std_error
+[1] 1.217802</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">coef_table</span>       <span class="co"># SPSS-Style Koeffizienten als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 8
+  Term                    B Std.Error     Beta      t        p CI_lower CI_upper
+  &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)        0.808    0.195   NA        4.15  3.45e- 5   0.426    1.19  
+2 educ_katmittel     0.0122   0.0820   0.00382  0.148 8.82e- 1  -0.149    0.173 
+3 educ_kathoch      -0.424    0.0819  -0.145   -5.17  2.53e- 7  -0.584   -0.263 
+4 age                0.0240   0.00166  0.298   14.5   3.04e-45   0.0208   0.0273
+5 eastwestNEUE BUN…  0.339    0.0770   0.0872   4.40  1.12e- 5   0.188    0.490 
+6 sexFRAU            0.124    0.0564   0.0424   2.19  2.86e- 2   0.0129   0.234 
+7 sexDIVERS         -0.854    1.09    -0.0151  -0.783 4.34e- 1  -2.99     1.28  
+8 populismus         0.603    0.0399   0.320   15.1   9.82e-49   0.525    0.681 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">anova_table</span>      <span class="co"># SPSS-Style ANOVA des Modells als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  Source     Sum_of_Squares    df Mean_Square F_statistic        Sig
+  &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 Regression          1207.    5       241.          163.  6.04e-144
+2 Residual            2781. 1875.        1.48         NA  NA        
+3 Total               3988. 1880.       NA            NA  NA        </code></pre>
+</div>
+</div>
+<p>Die Slots sind dasselbe, was <code>summary(modell)</code> <em>druckt</em> — nur als programmatisch nutzbare Tibbles. Mit <code>knitr::kable(modell$coef_table)</code> baust du dir die Regressions-Tabelle für die Hausarbeit ohne händisches Abtippen.</p>
 </div>
 </div>
 </section></section><section id="sec-anova-mult" class="level2" data-number="9.7"><h2 data-number="9.7" class="anchored" data-anchor-id="sec-anova-mult">
@@ -1087,7 +1127,7 @@ Wichtig
 </h3>
 <p><strong>Frage:</strong> Wirkt der Bildungseffekt auf Islamfeindlichkeit in Ost und West gleich, oder unterscheidet er sich?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">factorial_anova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>                  between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">educ_kat</span>, <span class="va">eastwest</span><span class="op">)</span>,</span>
 <span>                  weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1123,7 +1163,7 @@ Hinweis
 <span class="header-section-number">9.7.2</span> Interaktion direkt sichtbar machen</h3>
 <p>Das <em>aus dem ANOVA-Modell oben</em> rechnest du dir selbst — mit den Werkzeugen aus Kap. 5 und 6:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    mw <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
@@ -1166,7 +1206,7 @@ Hinweis
 <p>Die <strong>Kovarianzanalyse</strong> mischt ANOVA und Regression: Du hast einen kategorialen Gruppierungsfaktor (z. B. Bildung) und eine kontinuierliche <strong>Kovariate</strong> (z. B. Alter). ANCOVA testet den Gruppenunterschied, <em>nachdem</em> der Einfluss der Kovariate herausgerechnet wurde.</p>
 <p><strong>Frage:</strong> Unterscheiden sich Bildungsgruppen in der Islamfeindlichkeit, wenn das Alter konstant gehalten wird?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ancova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>         between <span class="op">=</span> <span class="va">educ_kat</span>, covariate <span class="op">=</span> <span class="va">age</span>,</span>
 <span>         weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1207,7 +1247,7 @@ Hinweis
 </div>
 <p><strong>Die S-Kurve dahinter.</strong> Warum die Logit-Transformation der zentrale Trick der logistischen Regression ist, sieht man am besten visuell — die Funktion, die Logit zurück in Wahrscheinlichkeit übersetzt, ist eine <strong>S-Kurve</strong> (Sigmoid):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  logit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>, <span class="fl">6</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span>
 <span>  wahrscheinlichkeit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1284,7 +1324,7 @@ Warnung
 <p>Das OR von 2.0 sagt: <em>„Frauen haben das Doppelte der Odds.”</em> Die <em>Wahrscheinlichkeit</em> steigt aber nur von 0.25 auf 0.40 — also um <strong>60 %</strong>, <em>nicht</em> um 100 %. Bei kleinen Wahrscheinlichkeiten (≤ 0.10) ist OR ≈ Wahrscheinlichkeits-Faktor; bei großen wird die Diskrepanz spürbar.</p>
 <p>Visualisiert man die gleiche 2×2-Tabelle als gestackte Balken, sieht man die Wahrscheinlichkeiten direkt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  gruppe  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                   levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Outcome = 1"</span>, <span class="st">"Outcome = 0"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
@@ -1330,7 +1370,7 @@ Warnung
 </div>
 <p><strong>Frage:</strong> Welche Merkmale unterscheiden Befragte mit hoher Islamfeindlichkeit von den anderen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>islam_hoch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">&gt;=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell_log</span> <span class="op">&lt;-</span> <span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
@@ -1356,7 +1396,7 @@ Warnung
 </ul>
 <p>Die volle Tabelle mit Koeffizienten, <strong>Odds Ratios</strong> und Konfidenzintervallen wieder mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Logistic Regression Results
@@ -1440,7 +1480,7 @@ Hinweis
 <span class="header-section-number">9.8.1</span> Die Sigmoid-Kurve mit echten Daten</h3>
 <p>Die abstrakte Sigmoid-Kurve von oben — jetzt mit Daten. Wir zeichnen die Wahrscheinlichkeit für <code>islam_hoch = 1</code> als Funktion von <code>populismus</code>. Die 0/1-Punkte (jittert sichtbar gemacht) sind echte Befragte, die schwarze Kurve ist eine logistische Regression nur mit Populismus als Prädiktor:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.08</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>,</span>
@@ -1469,7 +1509,7 @@ Hinweis
 <span class="header-section-number">9.9.1</span> Coefficient-Plots: Regressionsergebnisse visualisieren</h3>
 <p>Das wirkungsvollste Format ist ein <strong>Coefficient-Plot</strong>: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht der Plot für unser Hauptmodell aus — direkt aus dem <code>lm</code>-Objekt via <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1519,7 +1559,7 @@ Hinweis
 <span class="header-section-number">9.9.2</span> Mehrere Grafiken kombinieren mit patchwork</h3>
 <p><code>patchwork</code> ist der moderne Ersatz für <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">gridExtra::grid.arrange()</a></code>. Du speicherst Grafiken als Objekte und kombinierst sie mit <code>+</code>, <code>/</code> und <code>|</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"#2563eb"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1566,7 +1606,7 @@ Wichtig
 <span class="header-section-number">9.9.3</span> Grafiken speichern</h3>
 <p><code>ggsave()</code> exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
 <span>  filename <span class="op">=</span> <span class="st">"befunde_mini_studie.png"</span>,</span>
 <span>  plot     <span class="op">=</span> <span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span><span class="op">)</span> <span class="op">/</span> <span class="va">p3</span>,</span>
 <span>  width    <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -1602,7 +1642,7 @@ Wichtig
 <div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">*</span> <span class="va">populismus</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -1638,7 +1678,7 @@ Wichtig
 <div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -1674,7 +1714,7 @@ Wichtig
 <div id="callout-24" class="callout-24-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>demo_zufrieden <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">ps03</span> <span class="op">&lt;=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">logistic_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">demo_zufrieden</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">islamophobie</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
