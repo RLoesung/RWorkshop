@@ -367,15 +367,12 @@ Statt einen Black-Box-Aufruf zu benutzen, rechnen wir den VIF *exakt nach der Fo
 ```{r vif-handisch}
 X <- model.matrix(modell)[, -1, drop = FALSE]   # Design-Matrix ohne Intercept
 
-vif_df <- tibble(praediktor = colnames(X)) |>
-  mutate(
-    VIF       = map_dbl(praediktor, \(p) {
-                  aux_r2 <- summary(lm(X[, p] ~ X[, setdiff(colnames(X), p)]))$r.squared
-                  1 / (1 - aux_r2)
-                }),
-    Tolerance = 1 / VIF
-  )
-vif_df
+tibble(
+  praediktor = colnames(X),
+  VIF        = map_dbl(seq_len(ncol(X)),
+                       \(i) 1 / (1 - summary(lm(X[, i] ~ X[, -i]))$r.squared)),
+  Tolerance  = 1 / VIF
+)
 ```
 
 **Lesart.** Alle VIFs liegen klar unter 5 — keine Multikollinearitäts-Probleme. Die zwei Bildungs-Dummies (`educ_katmittel`, `educ_kathoch`) haben mit VIF ≈ 2 die höchsten Werte; das ist normal, weil sie *naturgemäß* miteinander korreliert sind (wer im einen Dummy 1 hat, hat im anderen 0). Wenn ein einzelner Prädiktor deutlich über VIF = 10 ausbrechen würde, müsstest du prüfen, ob er sich weglassen lässt, mit einem anderen zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.
@@ -810,10 +807,11 @@ modell <- allbus |>
   )
 
 X <- model.matrix(modell)[, -1, drop = FALSE]
-tibble(praediktor = colnames(X)) |>
-  mutate(VIF = map_dbl(praediktor, \(p) {
-    1 / (1 - summary(lm(X[, p] ~ X[, setdiff(colnames(X), p)]))$r.squared)
-  }))
+tibble(
+  praediktor = colnames(X),
+  VIF        = map_dbl(seq_len(ncol(X)),
+                       \(i) 1 / (1 - summary(lm(X[, i] ~ X[, -i]))$r.squared))
+)
 ```
 :::
 
