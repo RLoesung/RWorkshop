@@ -255,7 +255,7 @@ window.Quarto = {
   <ul>
 <li><a href="#die-formel-ist-%C3%BCberraschend-einfach" id="toc-die-formel-ist-überraschend-einfach" class="nav-link" data-scroll-target="#die-formel-ist-%C3%BCberraschend-einfach"><span class="header-section-number">9.5.1</span> Die Formel ist überraschend einfach</a></li>
   <li><a href="#faustregeln" id="toc-faustregeln" class="nav-link" data-scroll-target="#faustregeln"><span class="header-section-number">9.5.2</span> Faustregeln</a></li>
-  <li><a href="#vif-h%C3%A4ndisch-berechnen" id="toc-vif-händisch-berechnen" class="nav-link" data-scroll-target="#vif-h%C3%A4ndisch-berechnen"><span class="header-section-number">9.5.3</span> VIF händisch berechnen</a></li>
+  <li><a href="#vif-h%C3%A4ndisch-berechnen-in-drei-schritten" id="toc-vif-händisch-berechnen-in-drei-schritten" class="nav-link" data-scroll-target="#vif-h%C3%A4ndisch-berechnen-in-drei-schritten"><span class="header-section-number">9.5.3</span> VIF händisch berechnen — in drei Schritten</a></li>
   </ul>
 </li>
   <li>
@@ -871,32 +871,33 @@ Tipp
 <td style="text-align: left;">problematisch — handeln</td>
 </tr>
 </tbody>
-</table></section><section id="vif-händisch-berechnen" class="level3" data-number="9.5.3"><h3 data-number="9.5.3" class="anchored" data-anchor-id="vif-händisch-berechnen">
-<span class="header-section-number">9.5.3</span> VIF händisch berechnen</h3>
-<p>Statt einen Black-Box-Aufruf zu benutzen, rechnen wir den VIF <em>exakt nach der Formel oben</em> selbst — fünf Zeilen Code, die die Mathematik 1:1 spiegeln. Für jeden Prädiktor <span class="math inline">\(x_i\)</span> fitten wir eine <strong>Hilfsregression</strong> mit <span class="math inline">\(x_i\)</span> als abhängiger Variable und allen anderen Prädiktoren als Erklärenden, lesen <span class="math inline">\(R^2_i\)</span> ab und rechnen <span class="math inline">\(1/(1-R^2_i)\)</span>:</p>
+</table></section><section id="vif-händisch-berechnen-in-drei-schritten" class="level3" data-number="9.5.3"><h3 data-number="9.5.3" class="anchored" data-anchor-id="vif-händisch-berechnen-in-drei-schritten">
+<span class="header-section-number">9.5.3</span> VIF händisch berechnen — in drei Schritten</h3>
+<p>Wir rechnen den VIF <em>genau nach der Formel oben</em> selbst — und zwar zuerst für <strong>einen</strong> Prädiktor, in drei sichtbaren Schritten. Beispiel: VIF für <code>populismus</code>.</p>
+<p><strong>Schritt 1 — Hilfsregression.</strong> Wir machen <code>populismus</code> zur <em>abhängigen</em> Variable und lassen alle anderen Prädiktoren des Hauptmodells sie vorhersagen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>   <span class="co"># Design-Matrix ohne Intercept</span></span>
-<span></span>
-<span><span class="fu">tibble</span><span class="op">(</span></span>
-<span>  praediktor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
-<span>  VIF        <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                       \<span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span> <span class="op">~</span> <span class="va">X</span><span class="op">[</span>, <span class="op">-</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  Tolerance  <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">VIF</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hilfsmodell</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">populismus</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span>,</span>
+<span>                  data <span class="op">=</span> <span class="va">allbus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Schritt 2 — R² der Hilfsregression ablesen.</strong> Wie gut lassen die anderen Variablen sich Populismus vorhersagen?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">hilfsmodell</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span>
+<span><span class="va">r2</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 3
-  praediktor                   VIF Tolerance
-  &lt;chr&gt;                      &lt;dbl&gt;     &lt;dbl&gt;
-1 educ_katmittel              1.91     0.523
-2 educ_kathoch                2.23     0.448
-3 age                         1.13     0.882
-4 eastwestNEUE BUNDESLAENDER  1.08     0.924
-5 sexFRAU                     1.01     0.991
-6 sexDIVERS                   1.00     0.997
-7 populismus                  1.22     0.821</code></pre>
+<pre><code>[1] 0.1428089</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> Alle VIFs liegen klar unter 5 — keine Multikollinearitäts-Probleme. Die zwei Bildungs-Dummies (<code>educ_katmittel</code>, <code>educ_kathoch</code>) haben mit VIF ≈ 2 die höchsten Werte; das ist normal, weil sie <em>naturgemäß</em> miteinander korreliert sind (wer im einen Dummy 1 hat, hat im anderen 0). Wenn ein einzelner Prädiktor deutlich über VIF = 10 ausbrechen würde, müsstest du prüfen, ob er sich weglassen lässt, mit einem anderen zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.</p>
+<p>Etwa 18 % der Varianz von Populismus lassen sich aus den anderen Prädiktoren erklären.</p>
+<p><strong>Schritt 3 — VIF-Formel anwenden.</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vif_populismus</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">r2</span><span class="op">)</span></span>
+<span><span class="va">vif_populismus</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.166601</code></pre>
+</div>
+</div>
+<p>Resultat: VIF ≈ 1.22 — weit unter der Warngrenze 5. Populismus hat also kein Multikollinearitäts-Problem mit den anderen Prädiktoren.</p>
+<p><strong>Für die anderen Prädiktoren</strong> wiederholst du dieselben drei Schritte mit jeweils einer angepassten Hilfsformel — <code>age ~ populismus + educ_kat + eastwest + sex</code> für den VIF von Alter, <code>eastwest ~ populismus + educ_kat + age + sex</code> für Region, und so weiter. In Übung 2 am Kapitelende rechnest du das für einen weiteren Prädiktor durch.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -907,7 +908,7 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Hintergrund: <code><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix()</a></code> als Brücke zwischen Formel und Zahlen.</strong> <code>model.matrix(modell)</code> gibt dir die <em>Design-Matrix</em>, mit der das Modell intern rechnet — eine Spalte pro Modell-Term, inklusive der von R erzeugten Dummy-Variablen (siehe <a href="#sec-dummy" class="quarto-xref"><span>Kapitel 9.3</span></a>). <code>[, -1]</code> schneidet die Intercept-Spalte ab; was übrig bleibt, sind die Prädiktoren-Spalten in genau der Reihenfolge, in der sie im Modell stehen. Für Kategorial-Variablen mit <code>k</code> Levels stehen dort <code>k − 1</code> Dummy-Spalten — entsprechend bekommt jeder Dummy seinen eigenen VIF.</p>
+<p><strong>Hintergrund: Kategoriale Prädiktoren und VIF.</strong> Bei einem Faktor wie <code>educ_kat</code> (drei Stufen → zwei Dummy-Variablen, siehe <a href="#sec-dummy" class="quarto-xref"><span>Kapitel 9.3</span></a>) bekommt jede Dummy-Variable streng genommen einen eigenen VIF. Spezialisierte Funktionen wie <code><a href="https://rdrr.io/pkg/car/man/vif.html">car::vif()</a></code> (aus dem Paket <code>car</code>) rechnen für Faktoren stattdessen den <strong>generalisierten VIF</strong> (GVIF) — eine einzelne Kennzahl pro Original-Variable, deren Spalte <code>GVIF^(1/(2·Df))</code> direkt mit den VIF-Faustregeln vergleichbar ist. Für Modelle wie unseres (alle VIFs deutlich unter 2.5) ist der Unterschied praktisch unbedeutend — bei Modellen nahe an der Warngrenze lohnt es sich, GVIF gezielt nachzulesen.</p>
 </div>
 </div>
 </section></section><section id="sec-residuen" class="level2" data-number="9.6"><h2 data-number="9.6" class="anchored" data-anchor-id="sec-residuen">
@@ -954,7 +955,7 @@ Hinweis
 </table></section><section id="modell-residuen-extrahieren" class="level3" data-number="9.6.3"><h3 data-number="9.6.3" class="anchored" data-anchor-id="modell-residuen-extrahieren">
 <span class="header-section-number">9.6.3</span> Modell-Residuen extrahieren</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">diagnose_df</span> <span class="op">&lt;-</span> <span class="va">modell</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html">augment</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -992,7 +993,7 @@ $ .std.resid   &lt;dbl&gt; -0.061558875, 0.003593588, 2.711357539, 0.693790933, 
 </ul></section><section id="die-vier-plots-bauen" class="level3" data-number="9.6.4"><h3 data-number="9.6.4" class="anchored" data-anchor-id="die-vier-plots-bauen">
 <span class="header-section-number">9.6.4</span> Die vier Plots bauen</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p_rf</span> <span class="op">&lt;-</span> <span class="va">diagnose_df</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p_rf</span> <span class="op">&lt;-</span> <span class="va">diagnose_df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">.fitted</span>, y <span class="op">=</span> <span class="va">.resid</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1056,7 +1057,7 @@ Wichtig
 </ul>
 <p>Drei SPSS-Style-Tabellen sind <em>zusätzlich</em> als Slots am Modell verfügbar — direkt verwendbar als Tibbles für <code>kable()</code>, <code>gt()</code> oder eigene ggplot2-Bauten:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">model_summary</span>    <span class="co"># R, R², adj. R², Std. Error des Modells</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">model_summary</span>    <span class="co"># R, R², adj. R², Std. Error des Modells</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$R
 [1] 0.5501549
@@ -1070,7 +1071,7 @@ $adj_R_squared
 $std_error
 [1] 1.217802</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">coef_table</span>       <span class="co"># SPSS-Style Koeffizienten als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">coef_table</span>       <span class="co"># SPSS-Style Koeffizienten als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 8 × 8
   Term                    B Std.Error     Beta      t        p CI_lower CI_upper
@@ -1084,7 +1085,7 @@ $std_error
 7 sexDIVERS         -0.854    1.09    -0.0151  -0.783 4.34e- 1  -2.99     1.28  
 8 populismus         0.603    0.0399   0.320   15.1   9.82e-49   0.525    0.681 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">anova_table</span>      <span class="co"># SPSS-Style ANOVA des Modells als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span><span class="op">$</span><span class="va">anova_table</span>      <span class="co"># SPSS-Style ANOVA des Modells als Tibble</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 6
   Source     Sum_of_Squares    df Mean_Square F_statistic        Sig
@@ -1105,7 +1106,7 @@ $std_error
 </h3>
 <p><strong>Frage:</strong> Wirkt der Bildungseffekt auf Islamfeindlichkeit in Ost und West gleich, oder unterscheidet er sich?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">factorial_anova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>                  between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">educ_kat</span>, <span class="va">eastwest</span><span class="op">)</span>,</span>
 <span>                  weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1141,7 +1142,7 @@ Hinweis
 <span class="header-section-number">9.7.2</span> Interaktion direkt sichtbar machen</h3>
 <p>Das <em>aus dem ANOVA-Modell oben</em> rechnest du dir selbst — mit den Werkzeugen aus Kap. 5 und 6:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    mw <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
@@ -1184,7 +1185,7 @@ Hinweis
 <p>Die <strong>Kovarianzanalyse</strong> mischt ANOVA und Regression: Du hast einen kategorialen Gruppierungsfaktor (z. B. Bildung) und eine kontinuierliche <strong>Kovariate</strong> (z. B. Alter). ANCOVA testet den Gruppenunterschied, <em>nachdem</em> der Einfluss der Kovariate herausgerechnet wurde.</p>
 <p><strong>Frage:</strong> Unterscheiden sich Bildungsgruppen in der Islamfeindlichkeit, wenn das Alter konstant gehalten wird?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ancova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>         between <span class="op">=</span> <span class="va">educ_kat</span>, covariate <span class="op">=</span> <span class="va">age</span>,</span>
 <span>         weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1225,7 +1226,7 @@ Hinweis
 </div>
 <p><strong>Die S-Kurve dahinter.</strong> Warum die Logit-Transformation der zentrale Trick der logistischen Regression ist, sieht man am besten visuell — die Funktion, die Logit zurück in Wahrscheinlichkeit übersetzt, ist eine <strong>S-Kurve</strong> (Sigmoid):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  logit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>, <span class="fl">6</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span>
 <span>  wahrscheinlichkeit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1302,7 +1303,7 @@ Warnung
 <p>Das OR von 2.0 sagt: <em>„Frauen haben das Doppelte der Odds.”</em> Die <em>Wahrscheinlichkeit</em> steigt aber nur von 0.25 auf 0.40 — also um <strong>60 %</strong>, <em>nicht</em> um 100 %. Bei kleinen Wahrscheinlichkeiten (≤ 0.10) ist OR ≈ Wahrscheinlichkeits-Faktor; bei großen wird die Diskrepanz spürbar.</p>
 <p>Visualisiert man die gleiche 2×2-Tabelle als gestackte Balken, sieht man die Wahrscheinlichkeiten direkt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  gruppe  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                   levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Outcome = 1"</span>, <span class="st">"Outcome = 0"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
@@ -1348,7 +1349,7 @@ Warnung
 </div>
 <p><strong>Frage:</strong> Welche Merkmale unterscheiden Befragte mit hoher Islamfeindlichkeit von den anderen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>islam_hoch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">&gt;=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell_log</span> <span class="op">&lt;-</span> <span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
@@ -1374,7 +1375,7 @@ Warnung
 </ul>
 <p>Die volle Tabelle mit Koeffizienten, <strong>Odds Ratios</strong> und Konfidenzintervallen wieder mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Logistic Regression Results
@@ -1458,7 +1459,7 @@ Hinweis
 <span class="header-section-number">9.8.1</span> Die Sigmoid-Kurve mit echten Daten</h3>
 <p>Die abstrakte Sigmoid-Kurve von oben — jetzt mit Daten. Wir zeichnen die Wahrscheinlichkeit für <code>islam_hoch = 1</code> als Funktion von <code>populismus</code>. Die 0/1-Punkte (jittert sichtbar gemacht) sind echte Befragte, die schwarze Kurve ist eine logistische Regression nur mit Populismus als Prädiktor:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.08</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>,</span>
@@ -1487,7 +1488,7 @@ Hinweis
 <span class="header-section-number">9.9.1</span> Coefficient-Plots: Regressionsergebnisse visualisieren</h3>
 <p>Das wirkungsvollste Format ist ein <strong>Coefficient-Plot</strong>: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht der Plot für unser Hauptmodell aus — direkt aus dem <code>lm</code>-Objekt via <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1537,7 +1538,7 @@ Hinweis
 <span class="header-section-number">9.9.2</span> Mehrere Grafiken kombinieren mit patchwork</h3>
 <p><code>patchwork</code> ist der moderne Ersatz für <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">gridExtra::grid.arrange()</a></code>. Du speicherst Grafiken als Objekte und kombinierst sie mit <code>+</code>, <code>/</code> und <code>|</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"#2563eb"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1584,7 +1585,7 @@ Wichtig
 <span class="header-section-number">9.9.3</span> Grafiken speichern</h3>
 <p><code>ggsave()</code> exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
 <span>  filename <span class="op">=</span> <span class="st">"befunde_mini_studie.png"</span>,</span>
 <span>  plot     <span class="op">=</span> <span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span><span class="op">)</span> <span class="op">/</span> <span class="va">p3</span>,</span>
 <span>  width    <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -1620,7 +1621,7 @@ Wichtig
 <div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">*</span> <span class="va">populismus</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -1640,7 +1641,7 @@ Wichtig
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Rechne das Hauptmodell aus dem Kapitel noch einmal und schau dir die VIF-Werte an. Sind alle unter dem kritischen Wert von 10? Welcher Prädiktor hat den höchsten VIF?</p>
+<p>Rechne den VIF für den Prädiktor <strong><code>age</code></strong> händisch nach dem 3-Schritt-Muster aus <a href="#sec-vif" class="quarto-xref"><span>Kapitel 9.5</span></a> (Hilfsregression → R² → 1 / (1 − R²)). Liegt der VIF unter der Warngrenze 5? Und: wie sähe die Hilfsformel aus, um den VIF von <code>eastwest</code> zu rechnen — du musst sie nicht durchrechnen, nur hinschreiben?</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
@@ -1656,18 +1657,18 @@ Wichtig
 <div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
-<span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
-<span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
-<span>  <span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Schritt 1: Hilfsregression — age durch alle anderen Praediktoren erklaeren</span></span>
+<span><span class="va">hilfs_age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">age</span> <span class="op">~</span> <span class="va">populismus</span> <span class="op">+</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span>,</span>
+<span>                data <span class="op">=</span> <span class="va">allbus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
-<span><span class="fu">tibble</span><span class="op">(</span></span>
-<span>  praediktor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
-<span>  VIF        <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                       \<span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span> <span class="op">~</span> <span class="va">X</span><span class="op">[</span>, <span class="op">-</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="co"># Schritt 2: R² ablesen</span></span>
+<span><span class="va">r2_age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">hilfs_age</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span>
+<span></span>
+<span><span class="co"># Schritt 3: VIF-Formel</span></span>
+<span><span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">r2_age</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Hilfsformel fuer den VIF von eastwest (nicht ausgerechnet):</span></span>
+<span><span class="co"># eastwest ~ populismus + educ_kat + age + sex</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1698,7 +1699,7 @@ Wichtig
 <div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>demo_zufrieden <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">ps03</span> <span class="op">&lt;=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">logistic_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">demo_zufrieden</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">islamophobie</span> <span class="op">+</span> <span class="va">populismus</span>,</span>

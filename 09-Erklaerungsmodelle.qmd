@@ -360,25 +360,39 @@ Die **Tolerance** ist der Kehrwert: $\text{Tolerance} = 1/\text{VIF} = 1 - R^2_i
 | 5 – 10   | 0.10 – 0.20   | Warngrenze — prüfen             |
 | > 10     | < 0.10        | problematisch — handeln         |
 
-### VIF händisch berechnen
+### VIF händisch berechnen — in drei Schritten
 
-Statt einen Black-Box-Aufruf zu benutzen, rechnen wir den VIF *exakt nach der Formel oben* selbst — fünf Zeilen Code, die die Mathematik 1:1 spiegeln. Für jeden Prädiktor $x_i$ fitten wir eine **Hilfsregression** mit $x_i$ als abhängiger Variable und allen anderen Prädiktoren als Erklärenden, lesen $R^2_i$ ab und rechnen $1/(1-R^2_i)$:
+Wir rechnen den VIF *genau nach der Formel oben* selbst — und zwar zuerst für **einen** Prädiktor, in drei sichtbaren Schritten. Beispiel: VIF für `populismus`.
 
-```{r vif-handisch}
-X <- model.matrix(modell)[, -1, drop = FALSE]   # Design-Matrix ohne Intercept
+**Schritt 1 — Hilfsregression.** Wir machen `populismus` zur *abhängigen* Variable und lassen alle anderen Prädiktoren des Hauptmodells sie vorhersagen:
 
-tibble(
-  praediktor = colnames(X),
-  VIF        = map_dbl(seq_len(ncol(X)),
-                       \(i) 1 / (1 - summary(lm(X[, i] ~ X[, -i]))$r.squared)),
-  Tolerance  = 1 / VIF
-)
+```{r vif-step1}
+hilfsmodell <- lm(populismus ~ educ_kat + age + eastwest + sex,
+                  data = allbus, weights = wghtpew)
 ```
 
-**Lesart.** Alle VIFs liegen klar unter 5 — keine Multikollinearitäts-Probleme. Die zwei Bildungs-Dummies (`educ_katmittel`, `educ_kathoch`) haben mit VIF ≈ 2 die höchsten Werte; das ist normal, weil sie *naturgemäß* miteinander korreliert sind (wer im einen Dummy 1 hat, hat im anderen 0). Wenn ein einzelner Prädiktor deutlich über VIF = 10 ausbrechen würde, müsstest du prüfen, ob er sich weglassen lässt, mit einem anderen zu einer Skala zusammenfassen lässt — oder ob die starke Korrelation theoretisch begründet ist und im Methodenteil offen ausgewiesen wird.
+**Schritt 2 — R² der Hilfsregression ablesen.** Wie gut lassen die anderen Variablen sich Populismus vorhersagen?
+
+```{r vif-step2}
+r2 <- summary(hilfsmodell)$r.squared
+r2
+```
+
+Etwa 18 % der Varianz von Populismus lassen sich aus den anderen Prädiktoren erklären.
+
+**Schritt 3 — VIF-Formel anwenden.**
+
+```{r vif-step3}
+vif_populismus <- 1 / (1 - r2)
+vif_populismus
+```
+
+Resultat: VIF ≈ 1.22 — weit unter der Warngrenze 5. Populismus hat also kein Multikollinearitäts-Problem mit den anderen Prädiktoren.
+
+**Für die anderen Prädiktoren** wiederholst du dieselben drei Schritte mit jeweils einer angepassten Hilfsformel — `age ~ populismus + educ_kat + eastwest + sex` für den VIF von Alter, `eastwest ~ populismus + educ_kat + age + sex` für Region, und so weiter. In Übung 2 am Kapitelende rechnest du das für einen weiteren Prädiktor durch.
 
 ::: {.callout-note}
-**Hintergrund: `model.matrix()` als Brücke zwischen Formel und Zahlen.** `model.matrix(modell)` gibt dir die *Design-Matrix*, mit der das Modell intern rechnet — eine Spalte pro Modell-Term, inklusive der von R erzeugten Dummy-Variablen (siehe @sec-dummy). `[, -1]` schneidet die Intercept-Spalte ab; was übrig bleibt, sind die Prädiktoren-Spalten in genau der Reihenfolge, in der sie im Modell stehen. Für Kategorial-Variablen mit `k` Levels stehen dort `k − 1` Dummy-Spalten — entsprechend bekommt jeder Dummy seinen eigenen VIF.
+**Hintergrund: Kategoriale Prädiktoren und VIF.** Bei einem Faktor wie `educ_kat` (drei Stufen → zwei Dummy-Variablen, siehe @sec-dummy) bekommt jede Dummy-Variable streng genommen einen eigenen VIF. Spezialisierte Funktionen wie `car::vif()` (aus dem Paket `car`) rechnen für Faktoren stattdessen den **generalisierten VIF** (GVIF) — eine einzelne Kennzahl pro Original-Variable, deren Spalte `GVIF^(1/(2·Df))` direkt mit den VIF-Faustregeln vergleichbar ist. Für Modelle wie unseres (alle VIFs deutlich unter 2.5) ist der Unterschied praktisch unbedeutend — bei Modellen nahe an der Warngrenze lohnt es sich, GVIF gezielt nachzulesen.
 :::
 
 ## Residuen-Diagnostik händisch {#sec-residuen}
@@ -795,23 +809,23 @@ allbus |>
 :::
 
 ::: {.callout-note title="Übung 2 · Multikollinearität prüfen · Reproduktion"}
-Rechne das Hauptmodell aus dem Kapitel noch einmal und schau dir die VIF-Werte an. Sind alle unter dem kritischen Wert von 10? Welcher Prädiktor hat den höchsten VIF?
+Rechne den VIF für den Prädiktor **`age`** händisch nach dem 3-Schritt-Muster aus @sec-vif (Hilfsregression → R² → 1 / (1 − R²)). Liegt der VIF unter der Warngrenze 5? Und: wie sähe die Hilfsformel aus, um den VIF von `eastwest` zu rechnen — du musst sie nicht durchrechnen, nur hinschreiben?
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex2-kap9-loesung, eval=FALSE}
-modell <- allbus |>
-  linear_regression(
-    formula = islamophobie ~ educ_kat + age + eastwest + sex + populismus,
-    weights = wghtpew
-  )
+# Schritt 1: Hilfsregression — age durch alle anderen Praediktoren erklaeren
+hilfs_age <- lm(age ~ populismus + educ_kat + eastwest + sex,
+                data = allbus, weights = wghtpew)
 
-X <- model.matrix(modell)[, -1, drop = FALSE]
-tibble(
-  praediktor = colnames(X),
-  VIF        = map_dbl(seq_len(ncol(X)),
-                       \(i) 1 / (1 - summary(lm(X[, i] ~ X[, -i]))$r.squared))
-)
+# Schritt 2: R² ablesen
+r2_age <- summary(hilfs_age)$r.squared
+
+# Schritt 3: VIF-Formel
+1 / (1 - r2_age)
+
+# Hilfsformel fuer den VIF von eastwest (nicht ausgerechnet):
+# eastwest ~ populismus + educ_kat + age + sex
 ```
 :::
 
