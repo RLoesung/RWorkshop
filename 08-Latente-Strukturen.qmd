@@ -3,6 +3,7 @@
 ```{r setup-kap8, include=FALSE}
 library(tidyverse)
 library(mariposa)
+library(patchwork)
 source("R/_common.R")
 source("R/prep.R")
 ```
@@ -140,7 +141,36 @@ Die Formel im Kern:
 $$\text{KMO} = \frac{\sum r_{ij}^2}{\sum r_{ij}^2 + \sum a_{ij}^2}$$
 mit $r_{ij}$ = paarweise Korrelationen und $a_{ij}$ = partielle Korrelationen (Korrelationen, nachdem der Einfluss aller anderen Items herausgerechnet wurde).
 
-Lies sie als: *„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen."* KMO geht von 0 bis 1; Faustregeln:
+Lies sie als: *„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen."*
+
+**Bild dazu.** Stell dir pro Item zwei Anteile vor: einen **gemeinsamen Teil** (gut für Faktorisierung) und einen **partiellen Teil** (was nur dieses Item allein erklärt). KMO ist der Mittelwert des gemeinsamen Anteils über alle Items:
+
+```{r kmo-illustration, fig.height=3.2}
+tibble(
+  item       = paste0("mm0", 1:6),
+  gemeinsam  = c(0.72, 0.68, 0.65, 0.55, 0.70, 0.60),
+) |>
+  mutate(partiell = 1 - gemeinsam) |>
+  pivot_longer(c(gemeinsam, partiell),
+               names_to = "anteil", values_to = "wert") |>
+  ggplot(aes(x = item, y = wert, fill = anteil)) +
+  geom_col(width = 0.7) +
+  geom_hline(yintercept = 0.7, linetype = "dashed", color = "grey40") +
+  annotate("text", x = 6.4, y = 0.72,
+           label = "KMO-Schwelle ≈ 0.7",
+           color = "grey30", size = 3, hjust = 1) +
+  scale_fill_manual(
+    values = c(gemeinsam = "#1f77b4", partiell = "grey80"),
+    labels = c("gemeinsame Varianz", "partielle Varianz"),
+    name = NULL
+  ) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(x = NULL, y = "Anteil je Item",
+       title = "KMO: wie viel Varianz ist gemeinsam, wie viel bleibt partiell?",
+       caption = "Schematische Darstellung. KMO mittelt den blauen Anteil über alle Items.")
+```
+
+**Lesart.** Je größer der blaue (gemeinsame) Anteil, desto höher der KMO. Items mit fast nur grauer (partieller) Varianz tragen *nichts* zu einem gemeinsamen Faktor bei — eine EFA wäre dort sinnlos. Die Schwellen-Tabelle für die Praxis:
 
 | KMO         | Stichprobeneignung   |
 | :---------- | :------------------- |
@@ -238,6 +268,38 @@ Mathematisch ist die Ladung in der Einfaktor-Lösung *gleich der Korrelation* zw
 | 0.50 – 0.70 | brauchbar                      |
 | ≥ 0.70     | hoch (Item ist Kernindikator)   |
 
+**Bild dazu.** Der Faktor in der Mitte, die Items strahlen aus — Linien-Dicke = Ladungsstärke. Items mit dicker Linie hängen *stark* am Faktor, Items mit dünner Linie hängen *schwach*:
+
+```{r faktorladung-radial, fig.height=4.2}
+faktor_radial <- tibble(
+  item   = paste0("mm0", c(1, 2, 3, 4, 5, 6)),
+  ladung = c(0.85, 0.55, 0.78, 0.40, 0.72, 0.62),
+  winkel = seq(0, 2 * pi, length.out = 7)[1:6]
+) |>
+  mutate(x = cos(winkel), y = sin(winkel))
+
+ggplot(faktor_radial) +
+  geom_segment(aes(x = 0, y = 0, xend = x, yend = y,
+                   linewidth = ladung),
+               color = "#1f77b4", lineend = "round") +
+  geom_point(aes(x = x, y = y), size = 5, color = "#1f77b4") +
+  geom_label(aes(x = x * 1.20, y = y * 1.20,
+                 label = sprintf("%s\nλ = %.2f", item, ladung)),
+             size = 3.2, label.size = NA, fill = "white") +
+  annotate("point", x = 0, y = 0, size = 16,
+           color = "black", fill = "#fbbf24", shape = 21) +
+  annotate("text", x = 0, y = 0, label = "Faktor",
+           fontface = "bold", size = 4) +
+  scale_linewidth_continuous(range = c(0.5, 3.5)) +
+  coord_fixed(xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5)) +
+  theme_void() +
+  theme(legend.position = "none") +
+  labs(title = "Faktorladung als Verbindungsstärke",
+       caption = "Dicke der Linie = wie stark das Item am Faktor dranhängt.")
+```
+
+**Lesart.** Items wie `mm01` (λ = 0.85) sind **Kernindikatoren** — sie reagieren stark, wenn der Faktor sich „dreht". Items wie `mm04` (λ = 0.40) sind nur **Randindikatoren**. Die Ladungen aus der echten EFA unten siehst du gleich in der Output-Tabelle und als Bar-Chart.
+
 ### Modell rechnen und Ladungen lesen
 
 ```{r efa-1}
@@ -290,6 +352,42 @@ Drei Rotations-Familien:
 
 Faustregel: Wenn dir theoretisch klar ist, dass die Konstrukte korrelieren (Islamfeindlichkeit und Populismus sind verwandt), nimm `oblimin`; sonst `varimax`.
 :::
+
+**Bild dazu.** Was bewirkt eine Rotation visuell? Sechs Items im 2D-Faktor-Raum, *vor* und *nach* einer Varimax-Rotation. Vor der Rotation laden die Items diffus auf beiden Achsen; nach der Rotation sind sie sauber an *je einer* Achse ausgerichtet:
+
+```{r rotation-vor-nach, fig.height=3.8}
+items_unrot <- tibble(
+  item = paste0("mm0", 1:6),
+  F1 = c(0.65, 0.55, 0.50, 0.40, 0.45, 0.35),
+  F2 = c(-0.40, -0.50, 0.60, 0.55, -0.45, 0.50)
+)
+
+items_rot <- tibble(
+  item = paste0("mm0", 1:6),
+  F1 = c(0.80, 0.85, 0.10, 0.05, 0.75, 0.10),
+  F2 = c(0.05, 0.10, 0.85, 0.80, 0.10, 0.80)
+)
+
+baseplot <- function(d, ttl, sub) {
+  ggplot(d, aes(F1, F2, label = item)) +
+    geom_hline(yintercept = 0, color = "grey50") +
+    geom_vline(xintercept = 0, color = "grey50") +
+    geom_segment(aes(x = 0, y = 0, xend = F1, yend = F2),
+                 color = "#1f77b4", alpha = 0.5) +
+    geom_point(size = 3, color = "#1f77b4") +
+    geom_text(nudge_y = 0.08, size = 3) +
+    coord_fixed(xlim = c(-1, 1), ylim = c(-1, 1)) +
+    labs(x = "Faktor 1", y = "Faktor 2",
+         title = ttl, subtitle = sub)
+}
+
+baseplot(items_unrot, "Vor der Rotation",
+         "Ladungen verteilen sich auf beide Achsen") +
+baseplot(items_rot, "Nach Varimax-Rotation",
+         "Jedes Item lädt klar auf einer Achse")
+```
+
+**Lesart.** Links: keine Achse beschreibt klar einen Faktor — Items hängen schräg in der Luft. Rechts: durch die Drehung sind Items entweder *fast nur* an Faktor 1 angeheftet (rechts) oder *fast nur* an Faktor 2 (oben). Genau das macht die Interpretation lesbar: *„F1 = diese Item-Gruppe, F2 = jene Item-Gruppe."*
 
 ```{r efa-2}
 allbus |>
@@ -436,6 +534,39 @@ summary(fit, fit.measures = TRUE, standardized = TRUE)
 
 `fit.measures = TRUE` gibt dir alle vier auf einmal. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08. Ein gutes Modell erfüllt *mehrere* dieser Schwellen — eine einzelne Kennzahl ist nie alleinige Entscheidung.
 :::
+
+**Bild dazu.** Ein „Fit-Ampel"-Plot — vier Indizes auf einen Blick, grün = Schwelle erfüllt, rot = verfehlt (schematische Beispielwerte für ein gut passendes Modell):
+
+```{r fit-indizes-ampel, fig.height=2.8}
+tibble(
+  index     = c("CFI", "TLI", "RMSEA", "SRMR"),
+  wert      = c(0.96, 0.95, 0.055, 0.06),
+  schwelle  = c(0.95, 0.95, 0.06, 0.08),
+  richtung  = c("höher = besser", "höher = besser",
+                "niedriger = besser", "niedriger = besser")
+) |>
+  mutate(
+    erfuellt = if_else(richtung == "höher = besser",
+                       wert >= schwelle, wert <= schwelle),
+    label    = sprintf("%.3f", wert)
+  ) |>
+  ggplot(aes(x = wert, y = fct_rev(index), fill = erfuellt)) +
+  geom_col(width = 0.6) +
+  geom_vline(aes(xintercept = schwelle),
+             linetype = "dashed", color = "grey40") +
+  geom_text(aes(label = label), hjust = -0.2, size = 3.2) +
+  scale_fill_manual(
+    values = c(`TRUE` = "#16a34a", `FALSE` = "#d62728"),
+    labels = c("verfehlt", "Schwelle erfüllt"),
+    name = NULL
+  ) +
+  facet_wrap(~ richtung, scales = "free_x", ncol = 2) +
+  labs(x = "Wert", y = NULL,
+       title = "Fit-Indizes als Ampel-Diagnose",
+       caption = "grün = Schwelle erfüllt · gestrichelte Linie = Faustregel-Schwelle")
+```
+
+**Lesart.** Alle vier Balken grün → Modell passt sauber. Liegt ein Index knapp daneben, ist das noch kein Beinbruch — zwei oder mehr verfehlte Indizes sind ein Warnsignal.
 
 Mit `estimator = "MLR"` (Maximum Likelihood mit robusten Standardfehlern) bist du auf der sicheren Seite, wenn die Items nicht ideal normalverteilt sind. Für rein ordinale Items wäre `"WLSMV"` die sauberere Wahl, ist aber rechenintensiver.
 
