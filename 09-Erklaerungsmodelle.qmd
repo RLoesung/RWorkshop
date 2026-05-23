@@ -150,6 +150,53 @@ allbus |>
 **Hintergrund: Was tut `geom_smooth(method = "lm")` eigentlich?** Genau dasselbe wie wir oben — es fittet ein `lm`-Modell und zeichnet die Gerade. Der Unterschied ist *Sichtbarkeit*: bei `geom_smooth()` bleibt das Modell unsichtbar, du siehst nur das Ergebnis. Bei `geom_abline()` aus extrahierten Koeffizienten zeigst du, dass die Gerade *aus* dem Modell kommt — methodisch und didaktisch sauberer. In Publikationen verwendet man je nach Kontext beides; im Lehrtext lohnt der Mehraufwand.
 :::
 
+## Kategoriale Prädiktoren — Dummy-Codierung {#sec-dummy}
+
+Die einfache Regression hatte einen *metrischen* Prädiktor — Populismus auf einer 1–5-Skala. Sobald die multiple Regression im nächsten Abschnitt loslegt, kommen auch *kategoriale* Prädiktoren ins Modell: Bildung in drei Stufen, Region in Ost/West, Geschlecht in Frau/Mann/Divers. Regressionsmodelle rechnen aber mit *Zahlen*. Wie verträgt sich das?
+
+R löst das mit einem Trick, der **Dummy-Codierung** heißt — und du musst ihn verstehen, um die Output-Tabelle nicht falsch zu lesen.
+
+### Die Idee: aus k Levels werden k − 1 Dummies
+
+Bei einem Faktor mit `k` Ausprägungen erzeugt R intern `k − 1` neue 0/1-Variablen (die **Dummies**). Eine Original-Ausprägung wird zur **Referenz** — sie taucht im Output *nicht* als eigene Zeile auf, sondern ist im Intercept absorbiert.
+
+Für `educ_kat` mit drei Stufen sieht die interne Codierung so aus:
+
+| Originalwert       | `educ_katmittel` | `educ_kathoch` |
+|:------------------ |:----------------:|:--------------:|
+| niedrig (Referenz) |        0         |       0        |
+| mittel             |        1         |       0        |
+| hoch               |        0         |       1        |
+
+Jeder Befragte bekommt ein Paar 0/1-Werte. „Niedrige Bildung" heißt: beide Dummies sind 0 — die Person *ist* die Referenz. Das Modell schätzt dann *zwei* Koeffizienten:
+
+- `educ_katmittel` = *„Unterschied von mittel- zu niedrig-Bildung"*
+- `educ_kathoch` = *„Unterschied von hoch- zu niedrig-Bildung"*
+
+Die Referenz selbst hat keinen Koeffizienten — er wäre per Definition 0. Das ist wichtig für die Lesart: jede dummy-Zeile im Output bedeutet *„Differenz zur Referenzgruppe"*, nicht *„absoluter Wert"*.
+
+### Wer wird Referenz?
+
+R nimmt das **erste Level** des Faktors. Bei `educ_kat` ist das `niedrig` (so wurde der Faktor im Setup definiert: `1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]`). Wenn du eine andere Vergleichsbasis möchtest — etwa weil du die *mittlere* Bildung als „normal" und „hoch/niedrig" als Abweichungen verstehen willst —, ändere die Reihenfolge mit `fct_relevel()`:
+
+```{r relevel-demo, eval=FALSE}
+allbus <- allbus |>
+  mutate(educ_kat = fct_relevel(educ_kat, "mittel"))
+```
+
+Danach würde der Output `educ_katniedrig` und `educ_kathoch` zeigen — beide jetzt im Vergleich zu *mittel*.
+
+**Wichtig: R², Modell-F und alle Vorhersagen ändern sich dabei nicht.** Nur die Lesart der einzelnen Koeffizienten verschiebt sich. Die Wahl der Referenz ist eine *interpretative*, keine inhaltliche Entscheidung.
+
+::: {.callout-important}
+**mariposa-Tipp: Das `factors`-Argument.** Seit Version 0.6.2 kontrollierst du in `linear_regression()` und `logistic_regression()` explizit, wie Faktor-Prädiktoren behandelt werden:
+
+- `factors = "dummy"` (**Default**) — wie oben beschrieben, k − 1 Dummy-Kontraste. Konsistent mit base R `lm()`.
+- `factors = "numeric"` — der Faktor wird in seine Integer-Codes (1, 2, 3, …) konvertiert und als *skaliert* behandelt; du bekommst *eine* Steigung statt k − 1 Kontraste. Reproduziert SPSS `REGRESSION` mit ordinal codierten Variablen.
+
+Die Wahl zwischen beiden ist eine *Annahme über das Skalenniveau*: behandelst du Bildung als ordinal-äquidistant (von Stufe 2 zu Stufe 3 ist derselbe Sprung wie von Stufe 1 zu Stufe 2 → `numeric`)? Oder als rein kategorial mit unbekanntem Abstand zwischen den Stufen (`dummy`)? Im Lehrbuch nehmen wir den `dummy`-Default, weil er methodisch *konservativer* ist — er erzwingt keine Äquidistanz-Annahme.
+:::
+
 ## Multiple lineare Regression {#sec-regression}
 
 Die einfache Regression hatte einen Prädiktor — Populismus. Aber Islamfeindlichkeit hängt vermutlich nicht *nur* von Populismus ab: Bildung, Alter, Region und Geschlecht spielen ebenfalls eine Rolle, und sie hängen untereinander zusammen. Die **multiple lineare Regression** fügt alle gleichzeitig ins Modell ein und zeigt, was bei jedem einzelnen Prädiktor *übrig bleibt*, wenn die anderen kontrolliert sind. Das ist die wichtigste Methode der gesamten quantitativen Sozialforschung.
@@ -173,6 +220,8 @@ Visualisiert als Pfeil-Diagramm:
 ```
 
 Die Differenz von −0.07 ist *der Teil des Bildungseffekts, der eigentlich über Populismus läuft*: Höher Gebildete sind im Schnitt weniger populistisch, und Populismus erklärt Islamfeindlichkeit besser als Bildung allein. Was nach Kontrolle übrig bleibt (−0.13), ist der *direkte* Bildungseffekt, der *nicht* über Populismus vermittelt ist. Genau diese Zerlegung in *direkte* und *vermittelte* Effekte ist der Mehrwert multivariater Modellierung.
+
+*Hinweis: Die Zahlen hier sind illustrativ. Die exakte Zerlegung hängt von der Modellspezifikation ab (z. B. davon, ob Bildung als metrisch oder als Dummy-codiert kategorial eingeht — siehe @sec-dummy). Das Prinzip — Aufspaltung in direkten und indirekten Effekt — bleibt unverändert.*
 :::
 
 Die wichtigste Zahl für die Gesamtgüte des Modells ist **R²**: der Anteil der Varianz in der abhängigen Variable, den das Modell erklärt. Ein R² von 0.30 bedeutet: deine Prädiktoren erklären 30 Prozent der Streuung in der abhängigen Variable; 70 Prozent bleiben unerklärt (durch Variablen, die du nicht im Modell hast, durch Messfehler, durch Zufall). In der Sozialforschung sind R² über 0.30 schon ein deutlicher Befund — perfekte Erklärung mit R² nahe 1 gibt es nur in den Naturwissenschaften.
@@ -201,12 +250,22 @@ summary(modell)
 
 **Lesart.** Die `Coefficients`-Tabelle ist das Herzstück:
 
-- **B** — unstandardisierte Koeffizienten. Interpretation: „Wenn x um eine Einheit steigt, ändert sich y um B Einheiten."
+- **B** — unstandardisierte Koeffizienten. Interpretation für metrische Prädiktoren: „Wenn x um eine Einheit steigt, ändert sich y um B Einheiten." Für Dummy-Variablen (z. B. `educ_kathoch`): „Differenz zur Referenzgruppe."
 - **Std. Error** und **t-Wert** — Präzision der Schätzung.
-- **Beta** — standardisierte Koeffizienten. Skalenunabhängig und damit direkt vergleichbar zwischen den Prädiktoren — die wichtigste Hilfe, um zu sagen, *welcher* Prädiktor relativ am stärksten wirkt.
+- **Beta** — standardisierte Koeffizienten. Skalenunabhängig und damit direkt vergleichbar zwischen Prädiktoren — die wichtigste Hilfe, um zu sagen, *welcher* Prädiktor relativ am stärksten wirkt.
 - **Sig.** — *p*-Werte.
 
-In unserem Modell ist `populismus` mit einem Beta von rund 0.33 der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher. Bildung wirkt negativ (höhere Bildung → weniger Islamfeindlichkeit), Alter und Ost-Region positiv.
+In unserem Modell ist `populismus` mit einem Beta von **0.32** der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher.
+
+Beim **Bildungseffekt** zeigt die Dummy-Codierung jetzt etwas Spannendes, das die alte „Bildung wirkt negativ"-Lesart verdeckt hatte: *mittlere* Bildung unterscheidet sich praktisch *nicht* von *niedriger* (`educ_katmittel`: Beta ≈ 0.00, *p* = .88, nicht signifikant). Erst *hohe* Bildung senkt Islamfeindlichkeit deutlich (`educ_kathoch`: Beta = −0.15, *p* < .001). Der Bildungseffekt ist also **kein gleichmäßiges Gefälle** über die drei Stufen, sondern ein **Hoch-Bildungs-Effekt** — eine inhaltlich wichtige Differenzierung, die nur die Dummy-Codierung sichtbar macht.
+
+Die anderen kategorialen Prädiktoren sind ähnlich zu lesen:
+
+- `eastwestNEUE BUNDESLÄNDER` (Beta = 0.09, *p* < .001) — Befragte aus den neuen Bundesländern haben höhere Islamfeindlichkeit als Befragte aus den alten (= Referenz).
+- `sexFRAU` (Beta = 0.04, *p* = .03) — schwacher positiver Effekt für Frauen vs. Männer (= Referenz).
+- `sexDIVERS` (Beta = −0.02, *p* = .43) — nicht signifikant; aber Vorsicht, das ist eine *sehr* kleine Gruppe im ALLBUS, die Schätzung ist instabil.
+
+Metrische Prädiktoren bleiben in der bekannten Lesart: `age` (Beta = 0.30, *p* < .001) wirkt positiv — ältere Befragte haben höhere Werte.
 
 **Bild dazu — R² als Tortenstück.** Das Modell erklärt einen *Anteil* der Varianz in Islamfeindlichkeit. Wie groß ist dieser Anteil — und wie groß bleibt der unerklärte Rest? Die R²-Zahl aus dem Output, sichtbar gemacht:
 
@@ -778,6 +837,9 @@ Damit hast du den gesamten Werkzeugkasten dieses Buchs zusammen: SPSS-Daten → 
 | **Beta (β)**          | standardisierter Effekt: relative Stärke der Prädiktoren *innerhalb* eines Modells       |
 | **Standardfehler**    | Präzision der Koeffizienten-Schätzung; kleiner = präziser                                |
 | **Residuum**          | beobachtetes y minus vorhergesagtes y — der Anteil, den das Modell *nicht* erklärt        |
+| **Dummy-Variable**    | 0/1-Hilfsvariable, die *eine* Faktor-Ausprägung gegen die Referenz absetzt                |
+| **Referenzkategorie** | die Faktor-Ausprägung ohne eigenen Dummy — alle anderen Dummies sind Vergleiche zu ihr   |
+| **Treatment-Kontrast** | R-Standard-Kodierungsschema: erste Level = Referenz, restliche werden zu Dummies         |
 | **R²**                | Anteil der erklärten Varianz in der AV; in Sozialwissenschaften meist 0.05 – 0.30        |
 | **adjustiertes R²**   | R² korrigiert für Anzahl der Prädiktoren — fair für Modellvergleiche                     |
 | **VIF**               | *Variance Inflation Factor* — $\text{VIF}_i = 1/(1-R^2_i)$; > 10 problematisch           |
