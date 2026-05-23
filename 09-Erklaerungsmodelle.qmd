@@ -270,7 +270,8 @@ Metrische Prädiktoren bleiben in der bekannten Lesart: `age` (Beta = 0.30, *p* 
 **Bild dazu — R² als Tortenstück.** Das Modell erklärt einen *Anteil* der Varianz in Islamfeindlichkeit. Wie groß ist dieser Anteil — und wie groß bleibt der unerklärte Rest? Die R²-Zahl aus dem Output, sichtbar gemacht:
 
 ```{r r2-anteil, fig.height=1.8}
-r2 <- modell$model_summary$R_squared
+library(broom)
+r2 <- broom::glance(modell)$r.squared
 
 tibble(
   anteil = factor(c("erklärt durch Modell (R²)", "unerklärt (Residuen)"),
@@ -448,7 +449,12 @@ p_rl <- diagnose_df |>
 **Lesart.** Bei N ≈ 3000 (wie hier) sind sichtbare Abweichungen eher die Ausnahme — die LOESS-Linien sollten weitgehend flach um 0 (bzw. horizontal bei Scale-Location) verlaufen. Wenn der QQ-Plot an den Enden deutlich von der Diagonale abweicht, ist die Annahme der Normalverteilung der Residuen verletzt — bei großen Stichproben dank des **Zentralen Grenzwertsatzes** meist unproblematisch. Auffällige Einzelpunkte mit hoher Leverage prüfst du gezielt mit `diagnose_df |> filter(.cooksd > 4/n())` — Cook's-Distance-Werte über 1 sind echte Verdachtsfälle.
 
 ::: {.callout-important}
-**mariposa-Tipp: Direkt-Dispatch seit 0.6.3.** Das Ergebnis von `linear_regression()` *ist* ein `lm`-Objekt (es erbt direkt davon: `class = c("linear_regression", "lm")`). Alle Standard-R-Funktionen und `broom`-Generics (`anova()`, `predict()`, `coef()`, `confint()`, `vcov()`, `residuals()`, `fitted()`, `broom::tidy()`, `broom::augment()`) dispatchen unmittelbar — du musst nichts mehr extrahieren. Wenn du *zusätzlich* die SPSS-Style-Tabellen aus mariposa brauchst, findest du sie als Slots am selben Objekt: `modell$coef_table`, `modell$anova_table`, `modell$model_summary` (mit `R_squared`, `adj_R_squared`, `std_error`).
+**mariposa-Tipp: Direkt-Dispatch seit 0.6.3.1.** Das Ergebnis von `linear_regression()` *ist* ein `lm`-Objekt (es erbt direkt davon: `class = c("linear_regression", "lm")`). Alle Standard-R-Funktionen und `broom`-Generics dispatchen unmittelbar — du musst nichts mehr extrahieren:
+
+- **base R**: `anova()`, `predict()`, `coef()`, `confint()`, `vcov()`, `residuals()`, `fitted()`, `plot()`
+- **broom**: `tidy(modell, conf.int = TRUE)` (term-Tabelle mit KI), `glance(modell)` (Modell-Kennzahlen: R², F, AIC, BIC …), `augment(modell)` (Daten + Residuen + Leverage)
+
+Wenn du *zusätzlich* die SPSS-Style-Tabellen aus mariposa brauchst, findest du sie als Slots am selben Objekt: `modell$coef_table`, `modell$anova_table`, `modell$model_summary` (mit `R_squared`, `adj_R_squared`, `std_error`).
 :::
 
 ## ANOVA mit mehreren Faktoren {#sec-anova-mult}
