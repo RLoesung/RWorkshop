@@ -205,8 +205,9 @@ mariposa hat **bewusst keine Plot-Funktionen**. Alle Grafik-Wrapper aus sjPlot/c
 
 Diese Pakete bleiben begründet drin, weil mariposa hier (Stand 0.6.1) bewusst nicht anbietet:
 
-- **`lavaan`** + **`semPlot`** — Konfirmatorische Faktorenanalyse, Strukturgleichungsmodelle (Kap. 5).
+- **`lavaan`** + **`semPlot`** — Konfirmatorische Faktorenanalyse, Strukturgleichungsmodelle (Kap. 8).
 - **`patchwork`** — Multi-Plot-Komposition (Tidyverse-nahes Ersatz für gridExtra).
+- **`broom`** — Modell-Output → Tibble. In Kap. 9 für `augment()` (Residuen-Diagnostik) und `tidy()` (Coefficient-Plot) als Brücke zwischen `lm`-Objekt und ggplot2. Gehört zur tidymodels-Familie und wird im Lehrtext explizit als „nicht Teil des Kern-Stacks, aber tidyverse-nah" eingeführt.
 - **`haven`** — wird transitiv über mariposa benutzt; explizites `library(haven)` nur, wenn `as_factor()` direkt verwendet wird (eher nicht).
 
 Alles andere fliegt raus.
