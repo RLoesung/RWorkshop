@@ -76,6 +76,36 @@ Der **p-Wert** beantwortet genau diese Frage. Er sagt dir, *wie wahrscheinlich* 
 
 Die Konvention `p < .05` heißt: *„Das Ergebnis ist so unwahrscheinlich unter der Nullhypothese, dass wir die Nullhypothese verwerfen — wir gehen davon aus, dass tatsächlich ein Effekt existiert."*
 
+**Bild dazu.** Stell dir die Verteilung möglicher Testergebnisse unter der Nullhypothese als Glockenkurve vor. Die roten Flächen am Rand sind der **Ablehnungsbereich** — landest du dort mit deinem Befund, ist er „statistisch signifikant":
+
+```{r p-value-plot, fig.height=3.4}
+p_data <- tibble(z = seq(-4, 4, length.out = 500)) |>
+  mutate(d = dnorm(z))
+
+ggplot(p_data, aes(x = z, y = d)) +
+  geom_area(data = filter(p_data, z >= qnorm(0.975)),
+            fill = "#d62728", alpha = 0.7) +
+  geom_area(data = filter(p_data, z <= qnorm(0.025)),
+            fill = "#d62728", alpha = 0.7) +
+  geom_line(linewidth = 1) +
+  geom_vline(xintercept = c(qnorm(0.025), qnorm(0.975)),
+             linetype = "dashed", color = "grey40") +
+  annotate("text", x = 0, y = 0.18,
+           label = "Bereich, in dem die Nullhypothese\nplausibel bleibt (95 %)",
+           size = 3.5) +
+  annotate("text", x = 2.8, y = 0.06,
+           label = "p < .025\n(rechts)",
+           color = "#d62728", size = 3) +
+  annotate("text", x = -2.8, y = 0.06,
+           label = "p < .025\n(links)",
+           color = "#d62728", size = 3) +
+  labs(x = "Teststatistik (z)", y = "Wahrscheinlichkeitsdichte",
+       title = "Der p-Wert: wie weit am Rand liegt mein Befund?",
+       caption = "Rote Flächen zusammen = α = 5 % · zweiseitige Konvention")
+```
+
+**Lesart.** Je weiter dein Befund in eine rote Fläche reicht, desto kleiner wird der p-Wert — und desto unwahrscheinlicher ist er unter der Nullhypothese. Bei *p* = .03 liegst du gerade so im roten Bereich; bei *p* = .001 liegst du *tief* darin.
+
 ::: {.callout-warning}
 **Vorsicht: Klassische p-Wert-Fehlinterpretationen.**
 
@@ -95,6 +125,31 @@ Der SE ist *nicht* dasselbe wie die Standardabweichung (SD):
 
 Der SE ist immer kleiner als die SD und schrumpft mit größerer Stichprobe (Formel: SE = SD / √N). Je größer N, desto präziser die Schätzung. Das ist der Grund, warum große Stichproben kleinere SE haben — und damit engere Konfidenzintervalle und kleinere p-Werte.
 
+**Bild dazu.** Wir können das *simulieren*: Ziehen 1.000 Mal eine zufällige Sub-Stichprobe (je N = 500) aus dem ALLBUS und rechnen den Mittelwert. Die Streuung dieser 1.000 Mittelwerte *ist* der Standardfehler — sichtbar gemacht:
+
+```{r se-simulation, fig.height=3.4}
+set.seed(42)
+sim_mw <- replicate(1000, {
+  ziehung <- sample(allbus$islamophobie, 500, replace = TRUE)
+  mean(ziehung, na.rm = TRUE)
+})
+
+tibble(mittelwert = sim_mw) |>
+  ggplot(aes(x = mittelwert)) +
+  geom_histogram(binwidth = 0.02, fill = "#1f77b4", color = "white") +
+  geom_vline(xintercept = mean(sim_mw), color = "black", linewidth = 1) +
+  annotate("text", x = mean(sim_mw), y = 90,
+           label = sprintf("Ø Mittelwert = %.2f\nSE = %.3f",
+                           mean(sim_mw), sd(sim_mw)),
+           hjust = -0.05, color = "grey20", size = 3.2) +
+  labs(x = "Stichproben-Mittelwert (1.000 Wiederholungen, je N = 500)",
+       y = "Häufigkeit",
+       title = "Der Standardfehler als sichtbare Verteilung",
+       caption = "Die Breite dieser Verteilung ist der Standardfehler.")
+```
+
+**Lesart.** Hätten wir nur eine einzige ALLBUS-Erhebung — wäre der Mittelwert irgendwo in dieser Verteilung gelandet. Die Standardabweichung der gezeigten Verteilung ist der **Standardfehler** unserer Schätzung.
+
 ### Was ist ein Konfidenzintervall?
 
 Das **95 %-Konfidenzintervall (KI)** ist die natürliche Erweiterung des Standardfehlers. Statt nur den Punktschätzer (z. B. Mittelwert = 4.2) zu berichten, gibst du das Intervall an, in dem der wahre Wert *plausibel* liegen könnte: *„M = 4.2, 95 %-KI [4.10, 4.30]"*. Faustregel: 95 %-KI ≈ Mittelwert ± 1.96 × SE.
@@ -104,6 +159,39 @@ Das **95 %-Konfidenzintervall (KI)** ist die natürliche Erweiterung des Standar
 
 In der Praxis ist die *Faustregel* für die Lesart einfacher: *„Ein Wert außerhalb des 95 %-KI ist mit den Daten schwer vereinbar; ein Wert innerhalb ist mit den Daten vereinbar."*
 :::
+
+**Bild dazu.** Simulieren wir 100 hypothetische Studien (je N = 200) aus dem ALLBUS, rechnen für jede den Mittelwert und das 95 %-KI — und schauen, *wie viele* den wahren Wert einschließen:
+
+```{r ki-simulation, fig.height=5.5}
+set.seed(2026)
+wahrer_wert <- mean(allbus$islamophobie, na.rm = TRUE)
+
+sim_kis <- map_dfr(1:100, function(i) {
+  ziehung <- sample(allbus$islamophobie, 200, replace = TRUE)
+  ziehung <- ziehung[!is.na(ziehung)]
+  mw <- mean(ziehung)
+  se <- sd(ziehung) / sqrt(length(ziehung))
+  tibble(studie = i, mw = mw,
+         lower = mw - 1.96 * se,
+         upper = mw + 1.96 * se)
+})
+
+sim_kis |>
+  mutate(enthaelt = lower <= wahrer_wert & wahrer_wert <= upper) |>
+  ggplot(aes(x = mw, y = studie, xmin = lower, xmax = upper,
+             color = enthaelt)) +
+  geom_pointrange(size = 0.2, linewidth = 0.4) +
+  geom_vline(xintercept = wahrer_wert, linewidth = 1, color = "black") +
+  scale_color_manual(values = c(`TRUE` = "#1f77b4", `FALSE` = "#d62728"),
+                     labels = c("KI verfehlt wahren Wert", "KI enthält wahren Wert"),
+                     name = NULL) +
+  labs(x = "Mittelwert mit 95 %-KI (schwarze Linie = wahrer Wert)",
+       y = "Hypothetische Studie",
+       title = "100 hypothetische Studien — 100 Konfidenzintervalle",
+       caption = "Etwa 5 von 100 KIs verfehlen den wahren Wert — genau die 5 % Irrtumswahrscheinlichkeit.")
+```
+
+**Lesart.** Du siehst SOFORT, was „95 %-Konfidenz" wirklich heißt: ungefähr 95 von 100 Intervallen schließen den wahren Wert ein, etwa 5 verfehlen ihn (rote Pointranges). Die *einzelne* Studie weißt du nicht, ob sie zu den 95 oder zu den 5 gehört — aber *im Mittel* trifft das Verfahren in 95 % der Fälle.
 
 ### Effektgrößen vs. Signifikanz — die Zwillingsfrage
 
@@ -157,6 +245,36 @@ Mehrere Variablen gleichzeitig:
 ```{r describe-multi}
 allbus |> describe(islamophobie, populismus, age, weights = wghtpew)
 ```
+
+::: {.callout-note}
+**Konzept: Was sind Schiefe und Wölbung?** Zwei Formmaße, die der `describe()`-Output für jede Variable mitliefert — und die einen guten *Verteilungs-Charakter* auf einen Blick verraten.
+
+- **Schiefe** = Symmetrie. *Symmetrisch* (Schiefe ≈ 0) → klassische Glocke. *Linksschief* (negativ) → langer Ausläufer nach links (typisch bei Zufriedenheits-Skalen, wo die meisten „hoch" antworten). *Rechtsschief* (positiv) → langer Ausläufer nach rechts (typisch bei Einkommens-Verteilungen).
+- **Wölbung** (Kurtosis) = Spitze vs. flach. Hoch (leptokurtisch) = spitze Verteilung mit dicken Rändern; niedrig (platykurtisch) = flachere Verteilung.
+
+Drei Schiefen im Vergleich:
+
+```{r schiefe-bilder, fig.height=2.8}
+set.seed(7)
+n <- 2000
+tibble(
+  linksschief  = 10 - rbeta(n, 2, 8) * 10,
+  symmetrisch  = rnorm(n, 5, 1.5),
+  rechtsschief = rbeta(n, 2, 8) * 10
+) |>
+  pivot_longer(everything(), names_to = "form", values_to = "wert") |>
+  mutate(form = factor(form,
+                       levels = c("linksschief", "symmetrisch", "rechtsschief"))) |>
+  ggplot(aes(x = wert, fill = form)) +
+  geom_histogram(bins = 40, color = "white") +
+  facet_wrap(~ form, scales = "free_y") +
+  scale_fill_manual(values = c("#2ca02c", "#1f77b4", "#d62728")) +
+  theme(legend.position = "none") +
+  labs(x = NULL, y = "Häufigkeit",
+       title = "Drei Verteilungsformen — drei Schiefe-Werte",
+       caption = "links: Schiefe < 0 · mitte: ≈ 0 · rechts: > 0")
+```
+:::
 
 ### Einzelne Kennwerte
 
@@ -309,13 +427,39 @@ allbus |> chi_square(eastwest, educ, weights = wghtpew)
 
 Eine **Korrelation** ist die einfachste Antwort auf die Frage: *„Bewegen sich zwei Variablen gemeinsam?"* Wer hohe Werte auf der einen Skala hat, hat auch hohe Werte auf der anderen? Oder genau umgekehrt? Oder gibt es keinen Zusammenhang?
 
-Der bekannteste Index dafür ist **Pearsons r**. Er liegt zwischen -1 und +1:
+Der bekannteste Index dafür ist **Pearsons r**. Mathematisch ist er die *standardisierte Kovarianz* — die gemeinsame Schwingung zweier Variablen, geteilt durch die Einzelstreuung:
+
+$$r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}$$
+
+Lies sie als: *„wie stark schwingen x und y gemeinsam — in Einheiten der typischen Einzel-Schwingung."* Durch die Division liegt $r$ immer zwischen $-1$ und $+1$:
 
 - *r* = +1 → perfekter positiver Zusammenhang (steigt eines, steigt das andere proportional)
 - *r* =  0 → kein linearer Zusammenhang
 - *r* = -1 → perfekter negativer Zusammenhang
 
 In der Sozialforschung sind Werte um 0.4 schon ein deutlicher Befund. Werte über 0.7 sind selten — und wenn doch, oft ein Hinweis, dass die zwei Variablen letztlich dasselbe messen.
+
+**Wie sehen verschiedene Korrelationen aus?** Vier simulierte Punktwolken — von „völlig wirr" bis „klar geneigt":
+
+```{r korr-vier-bilder, fig.height=2.6}
+set.seed(11)
+sim_cor <- function(r, n = 200) {
+  x <- rnorm(n); y <- r * x + sqrt(1 - r^2) * rnorm(n)
+  tibble(x = x, y = y, r_label = sprintf("r = %.1f", r))
+}
+
+bind_rows(sim_cor(0), sim_cor(0.3), sim_cor(0.5), sim_cor(0.8)) |>
+  mutate(r_label = factor(r_label,
+                          levels = c("r = 0.0", "r = 0.3", "r = 0.5", "r = 0.8"))) |>
+  ggplot(aes(x, y)) +
+  geom_point(alpha = 0.4, color = "#1f77b4", size = 1) +
+  facet_wrap(~ r_label, ncol = 4) +
+  labs(x = NULL, y = NULL,
+       title = "Wie sehen Pearson-r-Werte aus?",
+       caption = "Vier Stichproben mit unterschiedlichem r")
+```
+
+**Lesart.** Bei *r* = 0 ist die Wolke rund. Bei *r* = 0.3 ist eine *leichte* Neigung erkennbar. Bei *r* = 0.5 wird sie eindeutig. Bei *r* = 0.8 ist die Wolke fast eine schräge Ellipse. Vergleich mit dem ALLBUS-Wert: **+0.41** für Islamfeindlichkeit × Populismus sieht etwa wie das *r* = 0.3 – 0.5-Bild oben aus.
 
 Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzeptieren das `weights =`-Argument:
 
@@ -362,6 +506,30 @@ Der **t-Test** ist eines der ältesten Werkzeuge der inferenziellen Statistik (W
 
 Der t-Test gibt dir darauf drei Antworten in einem Aufruf: die *Stärke* des Unterschieds (Mittelwertdifferenz), die *Wahrscheinlichkeit* eines Zufallsbefunds (*p*-Wert) und die *Effektgröße* (Hedges' *g*) — also wie groß der Unterschied inhaltlich ist, unabhängig von der Stichprobengröße. Die letzte Zahl ist die wichtigste: bei N = 5000 ist *fast jeder* Unterschied statistisch signifikant. Erst die Effektgröße sagt dir, ob er auch inhaltlich relevant ist.
 
+**Bild dazu.** Stell dir zwei Glockenkurven für zwei Gruppen vor. Die Mittelwertdifferenz allein sagt noch nichts — entscheidend ist sie *relativ zur Überlappung* der Verteilungen:
+
+```{r t-test-plot, fig.height=3.2}
+t_data <- tibble(x = seq(-1, 7, length.out = 500)) |>
+  mutate(`Gruppe A (M = 2)` = dnorm(x, mean = 2, sd = 1),
+         `Gruppe B (M = 4)` = dnorm(x, mean = 4, sd = 1))
+
+t_data |>
+  pivot_longer(-x, names_to = "gruppe", values_to = "d") |>
+  ggplot(aes(x = x, y = d, fill = gruppe)) +
+  geom_area(alpha = 0.4, position = "identity") +
+  geom_vline(xintercept = c(2, 4), linetype = "dashed", color = "grey40") +
+  annotate("segment", x = 2, xend = 4, y = 0.46, yend = 0.46,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm"))) +
+  annotate("text", x = 3, y = 0.49,
+           label = "Mittelwertdifferenz = 2", size = 3.5) +
+  scale_fill_manual(values = c("#1f77b4", "#d62728"), name = NULL) +
+  labs(x = "Wert", y = "Dichte",
+       title = "Was prüft der t-Test? Differenz relativ zur Streuung.",
+       caption = expression(paste("t = (Differenz der Mittelwerte) / SE der Differenz")))
+```
+
+**Lesart.** Je größer die Differenz und je *schmaler* die beiden Verteilungen (= je kleiner die Streuung), desto klarer trennen sich die Gruppen — und desto größer wird *t*. Wären beide Verteilungen *breit* (mit viel Überlappung), wäre selbst eine Differenz von 2 nicht signifikant.
+
 **Frage:** Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?
 
 ```{r t-test}
@@ -401,6 +569,46 @@ Der t-Test funktioniert nur für *zwei* Gruppen. Sobald du drei oder mehr hast �
 Ihr Trick ist elegant. Statt jedes Gruppenpaar einzeln zu vergleichen (was bei vielen Gruppen zu vielen falsch-positiven Befunden führen würde), prüft die ANOVA *eine einzige* Frage: *Streuen die Mittelwerte zwischen den Gruppen mehr, als man aufgrund der Streuung innerhalb der Gruppen erwarten würde?* Wenn ja, gibt es mindestens *einen* Gruppenunterschied. Welches Paar es genau ist, sagt die ANOVA dir nicht — das beantworten Post-Hoc-Tests, die später kommen.
 
 Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effektgröße **η²** (eta-quadrat): der Anteil der Varianz in der abhängigen Variable, der durch die Gruppierung erklärt wird. Ein η² von 0.01 bedeutet, dass die Gruppen 1 Prozent der Varianz erklären — statistisch oft signifikant bei großen N, aber inhaltlich winzig. Ein η² von 0.10 oder größer ist schon ein substanzieller Effekt.
+
+**Bild dazu.** Die ANOVA zerlegt die Gesamtstreuung in zwei Bausteine. Drei Gruppen mit ihren Mittelwerten (Rauten) und Einzelfällen (Punkte):
+
+```{r anova-between-within, fig.height=3.6}
+set.seed(3)
+anova_demo <- tibble(
+  gruppe = factor(rep(c("Gruppe A", "Gruppe B", "Gruppe C"), each = 50)),
+  wert   = c(rnorm(50, 3, 1), rnorm(50, 5, 1), rnorm(50, 4, 1))
+)
+means       <- anova_demo |> summarise(mw = mean(wert), .by = gruppe)
+grand_mean  <- mean(anova_demo$wert)
+
+ggplot(anova_demo, aes(x = gruppe, y = wert)) +
+  geom_jitter(alpha = 0.3, color = "#1f77b4",
+              width = 0.12, height = 0) +
+  geom_hline(yintercept = grand_mean,
+             linetype = "dashed", color = "grey40") +
+  geom_point(data = means, aes(y = mw),
+             size = 5, color = "black", shape = 18) +
+  geom_segment(data = means,
+               aes(x = gruppe, xend = gruppe,
+                   y = grand_mean, yend = mw),
+               arrow = arrow(length = unit(0.18, "cm")),
+               color = "#d62728", linewidth = 0.8) +
+  annotate("text", x = 0.6, y = grand_mean + 0.18,
+           label = "Gesamt-Mittelwert",
+           color = "grey30", size = 3, hjust = 0) +
+  annotate("text", x = 3.35, y = means$mw[3] + 0.4,
+           label = "BETWEEN:\nGruppe – Gesamt",
+           color = "#d62728", size = 3, hjust = 0) +
+  annotate("text", x = 1.35, y = 1.5,
+           label = "WITHIN:\nEinzelfall – Gruppe",
+           color = "#1f77b4", size = 3, hjust = 0) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  labs(x = NULL, y = "Wert",
+       title = "Die ANOVA-Frage: Streuung zwischen vs. innerhalb der Gruppen",
+       caption = expression(paste("F = (Between-Varianz) / (Within-Varianz) — große F-Werte → Gruppen unterscheiden sich klar")))
+```
+
+**Lesart.** *Between* (rote Pfeile) = wie weit liegen die Gruppen-Mittelwerte auseinander? *Within* (blaue Punkte um die Rauten) = wie stark streuen die Einzelfälle *innerhalb* jeder Gruppe? Der F-Wert ist das Verhältnis: groß zwischen, klein innerhalb → klar getrennte Gruppen, hoher F-Wert, kleiner p-Wert.
 
 **Frage:** Hängt Islamfeindlichkeit mit Bildung zusammen?
 
@@ -534,6 +742,28 @@ Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *
 - Du kennst nicht-parametrische Alternativen (`mann_whitney`, `kruskal_wallis`, `wilcoxon_test`, `friedman_test`).
 
 In den nächsten zwei Kapiteln weiten wir den Blick auf multivariate Verfahren aus: in @sec-latente prüfen wir die Faktorstruktur und Reliabilität unserer Skalen, in @sec-erklaerung modellieren wir Islamfeindlichkeit als abhängige Variable über mehrere Prädiktoren gleichzeitig.
+
+## Mini-Glossar: Begriffe für Uni- und Bivariate Analyse {-}
+
+| Begriff                  | Bedeutung in einem Satz                                                                  |
+| :----------------------- | :--------------------------------------------------------------------------------------- |
+| **Nullhypothese (H₀)**   | Annahme „kein Effekt"; wird verworfen, wenn der p-Wert klein genug ist                   |
+| **p-Wert**               | Wahrscheinlichkeit, das beobachtete (oder ein extremeres) Ergebnis unter H₀ zu sehen     |
+| **Signifikanz**          | Konvention: p < .05 → Effekt gilt als statistisch belastbar                              |
+| **Standardabweichung (SD)** | Streuung der Einzelfälle um den Mittelwert                                            |
+| **Standardfehler (SE)**  | Streuung der Schätzung über hypothetische Wiederholungen; SE = SD / √N                   |
+| **Konfidenzintervall (KI)** | Intervall, das in 95 % wiederholter Studien den wahren Wert einschließt                |
+| **Effektgröße**          | Maß für die *Stärke* eines Befunds — unabhängig von N                                    |
+| **Schiefe**              | Symmetrie einer Verteilung; positiv = lange Ausläufer nach rechts                        |
+| **Wölbung (Kurtosis)**   | „Spitzigkeit" einer Verteilung; hoch = spitze Verteilung mit dicken Rändern              |
+| **Pearson r**            | linearer Zusammenhang; $r = \text{Cov}(x,y) / (\text{SD}(x) \cdot \text{SD}(y))$         |
+| **Spearman ρ**           | rangbasierte Korrelation — robust bei nichtlinearen Zusammenhängen                       |
+| **Cramérs V**            | Effektgröße für Chi²; 0 – 1; ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß                       |
+| **Hedges' g / Cohens d** | standardisierte Mittelwertdifferenz; ≥ .20 klein, ≥ .50 mittel, ≥ .80 groß               |
+| **η² (eta-Quadrat)**     | Anteil erklärter Varianz in ANOVA; ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß                 |
+| **t-Statistik**          | (Mittelwertdifferenz) / (gepoolter Standardfehler)                                       |
+| **F-Statistik (ANOVA)**  | (Between-Varianz) / (Within-Varianz) — groß = Gruppen klar getrennt                      |
+| **Post-Hoc**             | Folgetest nach signifikanter ANOVA — klärt, welche Gruppenpaare sich unterscheiden       |
 
 ## Weiterführend {-}
 

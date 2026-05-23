@@ -102,6 +102,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Suchen"
   }
 }</script><style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 </head>
 <body class="nav-sidebar floating quarto-light">
 
@@ -242,6 +268,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
+  <li><a href="#mini-glossar-begriffe-f%C3%BCr-uni--und-bivariate-analyse" id="toc-mini-glossar-begriffe-für-uni--und-bivariate-analyse" class="nav-link" data-scroll-target="#mini-glossar-begriffe-f%C3%BCr-uni--und-bivariate-analyse">Mini-Glossar: Begriffe für Uni- und Bivariate Analyse</a></li>
   <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/07-Uni-Bivariate-Analyse.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/07-Uni-Bivariate-Analyse.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></nav>
     </div>
@@ -334,6 +361,39 @@ Tipp
 <p>Stell dir vor, du wirfst eine Münze 100 mal und bekommst 60 mal Kopf. Ist die Münze gezinkt — oder ist 60:40 auch bei einer fairen Münze einfach mal drin?</p>
 <p>Der <strong>p-Wert</strong> beantwortet genau diese Frage. Er sagt dir, <em>wie wahrscheinlich</em> das beobachtete Ergebnis (oder ein noch extremeres) wäre, <strong>wenn in Wirklichkeit nichts los ist</strong> — also wenn die <em>Nullhypothese</em> stimmt. Bei der Münze heißt die Nullhypothese „Münze ist fair, Kopf-Wahrscheinlichkeit = 0.5”. Ein p-Wert von 0.057 bedeutet: <em>wenn die Münze fair wäre, würdest du in 5.7 % aller Wiederholungs-Experimente 60 oder mehr Kopf-Treffer sehen</em>.</p>
 <p>Die Konvention <code>p &lt; .05</code> heißt: <em>„Das Ergebnis ist so unwahrscheinlich unter der Nullhypothese, dass wir die Nullhypothese verwerfen — wir gehen davon aus, dass tatsächlich ein Effekt existiert.”</em></p>
+<p><strong>Bild dazu.</strong> Stell dir die Verteilung möglicher Testergebnisse unter der Nullhypothese als Glockenkurve vor. Die roten Flächen am Rand sind der <strong>Ablehnungsbereich</strong> — landest du dort mit deinem Befund, ist er „statistisch signifikant”:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p_data</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span>, length.out <span class="op">=</span> <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>d <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">p_data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">z</span>, y <span class="op">=</span> <span class="va">d</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_area</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">p_data</span>, <span class="va">z</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">0.975</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            fill <span class="op">=</span> <span class="st">"#d62728"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_area</span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">p_data</span>, <span class="va">z</span> <span class="op">&lt;=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">0.025</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            fill <span class="op">=</span> <span class="st">"#d62728"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">0.025</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">qnorm</a></span><span class="op">(</span><span class="fl">0.975</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0.18</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"Bereich, in dem die Nullhypothese\nplausibel bleibt (95 %)"</span>,</span>
+<span>           size <span class="op">=</span> <span class="fl">3.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2.8</span>, y <span class="op">=</span> <span class="fl">0.06</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"p &lt; .025\n(rechts)"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"#d62728"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="op">-</span><span class="fl">2.8</span>, y <span class="op">=</span> <span class="fl">0.06</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"p &lt; .025\n(links)"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"#d62728"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Teststatistik (z)"</span>, y <span class="op">=</span> <span class="st">"Wahrscheinlichkeitsdichte"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Der p-Wert: wie weit am Rand liegt mein Befund?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Rote Flächen zusammen = α = 5 % · zweiseitige Konvention"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/p-value-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Je weiter dein Befund in eine rote Fläche reicht, desto kleiner wird der p-Wert — und desto unwahrscheinlicher ist er unter der Nullhypothese. Bei <em>p</em> = .03 liegst du gerade so im roten Bereich; bei <em>p</em> = .001 liegst du <em>tief</em> darin.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -368,6 +428,34 @@ Warnung
 </li>
 </ul>
 <p>Der SE ist immer kleiner als die SD und schrumpft mit größerer Stichprobe (Formel: SE = SD / √N). Je größer N, desto präziser die Schätzung. Das ist der Grund, warum große Stichproben kleinere SE haben — und damit engere Konfidenzintervalle und kleinere p-Werte.</p>
+<p><strong>Bild dazu.</strong> Wir können das <em>simulieren</em>: Ziehen 1.000 Mal eine zufällige Sub-Stichprobe (je N = 500) aus dem ALLBUS und rechnen den Mittelwert. Die Streuung dieser 1.000 Mittelwerte <em>ist</em> der Standardfehler — sichtbar gemacht:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">sim_mw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">replicate</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="op">{</span></span>
+<span>  <span class="va">ziehung</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span>, <span class="fl">500</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ziehung</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span>mittelwert <span class="op">=</span> <span class="va">sim_mw</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mittelwert</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.02</span>, fill <span class="op">=</span> <span class="st">"#1f77b4"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sim_mw</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sim_mw</span><span class="op">)</span>, y <span class="op">=</span> <span class="fl">90</span>,</span>
+<span>           label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Ø Mittelwert = %.2f\nSE = %.3f"</span>,</span>
+<span>                           <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">sim_mw</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">sim_mw</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>           hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.05</span>, color <span class="op">=</span> <span class="st">"grey20"</span>, size <span class="op">=</span> <span class="fl">3.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Stichproben-Mittelwert (1.000 Wiederholungen, je N = 500)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Häufigkeit"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Der Standardfehler als sichtbare Verteilung"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Die Breite dieser Verteilung ist der Standardfehler."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/se-simulation-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Hätten wir nur eine einzige ALLBUS-Erhebung — wäre der Mittelwert irgendwo in dieser Verteilung gelandet. Die Standardabweichung der gezeigten Verteilung ist der <strong>Standardfehler</strong> unserer Schätzung.</p>
 </section><section id="was-ist-ein-konfidenzintervall" class="level3" data-number="7.3.3"><h3 data-number="7.3.3" class="anchored" data-anchor-id="was-ist-ein-konfidenzintervall">
 <span class="header-section-number">7.3.3</span> Was ist ein Konfidenzintervall?</h3>
 <p>Das <strong>95 %-Konfidenzintervall (KI)</strong> ist die natürliche Erweiterung des Standardfehlers. Statt nur den Punktschätzer (z. B. Mittelwert = 4.2) zu berichten, gibst du das Intervall an, in dem der wahre Wert <em>plausibel</em> liegen könnte: <em>„M = 4.2, 95 %-KI [4.10, 4.30]“</em>. Faustregel: 95 %-KI ≈ Mittelwert ± 1.96 × SE.</p>
@@ -385,6 +473,42 @@ Warnung
 <p>In der Praxis ist die <em>Faustregel</em> für die Lesart einfacher: <em>„Ein Wert außerhalb des 95 %-KI ist mit den Daten schwer vereinbar; ein Wert innerhalb ist mit den Daten vereinbar.”</em></p>
 </div>
 </div>
+<p><strong>Bild dazu.</strong> Simulieren wir 100 hypothetische Studien (je N = 200) aus dem ALLBUS, rechnen für jede den Mittelwert und das 95 %-KI — und schauen, <em>wie viele</em> den wahren Wert einschließen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span>
+<span><span class="va">wahrer_wert</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sim_kis</span> <span class="op">&lt;-</span> <span class="fu">map_dfr</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">ziehung</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">ziehung</span> <span class="op">&lt;-</span> <span class="va">ziehung</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">ziehung</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">mw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ziehung</span><span class="op">)</span></span>
+<span>  <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">ziehung</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ziehung</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">tibble</span><span class="op">(</span>studie <span class="op">=</span> <span class="va">i</span>, mw <span class="op">=</span> <span class="va">mw</span>,</span>
+<span>         lower <span class="op">=</span> <span class="va">mw</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span>,</span>
+<span>         upper <span class="op">=</span> <span class="va">mw</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sim_kis</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>enthaelt <span class="op">=</span> <span class="va">lower</span> <span class="op">&lt;=</span> <span class="va">wahrer_wert</span> <span class="op">&amp;</span> <span class="va">wahrer_wert</span> <span class="op">&lt;=</span> <span class="va">upper</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mw</span>, y <span class="op">=</span> <span class="va">studie</span>, xmin <span class="op">=</span> <span class="va">lower</span>, xmax <span class="op">=</span> <span class="va">upper</span>,</span>
+<span>             color <span class="op">=</span> <span class="va">enthaelt</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_pointrange</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.2</span>, linewidth <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">wahrer_wert</span>, linewidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"#1f77b4"</span>, `FALSE` <span class="op">=</span> <span class="st">"#d62728"</span><span class="op">)</span>,</span>
+<span>                     labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"KI verfehlt wahren Wert"</span>, <span class="st">"KI enthält wahren Wert"</span><span class="op">)</span>,</span>
+<span>                     name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Mittelwert mit 95 %-KI (schwarze Linie = wahrer Wert)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Hypothetische Studie"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"100 hypothetische Studien — 100 Konfidenzintervalle"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Etwa 5 von 100 KIs verfehlen den wahren Wert — genau die 5 % Irrtumswahrscheinlichkeit."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/ki-simulation-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Du siehst SOFORT, was „95 %-Konfidenz” wirklich heißt: ungefähr 95 von 100 Intervallen schließen den wahren Wert ein, etwa 5 verfehlen ihn (rote Pointranges). Die <em>einzelne</em> Studie weißt du nicht, ob sie zu den 95 oder zu den 5 gehört — aber <em>im Mittel</em> trifft das Verfahren in 95 % der Fälle.</p>
 </section><section id="effektgrößen-vs.-signifikanz-die-zwillingsfrage" class="level3" data-number="7.3.4"><h3 data-number="7.3.4" class="anchored" data-anchor-id="effektgrößen-vs.-signifikanz-die-zwillingsfrage">
 <span class="header-section-number">7.3.4</span> Effektgrößen vs.&nbsp;Signifikanz — die Zwillingsfrage</h3>
 <p>Ein Test beantwortet <em>zwei</em> Fragen, die du sauber trennen musst:</p>
@@ -404,7 +528,7 @@ Warnung
 <p><code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> aus mariposa ist das R-Pendant zu SPSS’ <code>FREQUENCIES</code> — gleicher Output (Wert, Label, N, Prozent, gültige Prozent, kumulierte Prozent) plus oben kurz die Streumaße.</p>
 <p><strong>Frage:</strong> Wie ist die Verteilung von Ost und West im gewichteten Sample?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Frequency Analysis Results
@@ -426,7 +550,7 @@ eastwest (ERHEBUNGSGEBIET (WOHNGEBIET): WEST - OST)
 <p><strong>Lesart.</strong> Die gewichteten Häufigkeiten spiegeln das tatsächliche Verhältnis Ost/West in der deutschen Bevölkerung — ca. 83 % West, 17 % Ost. In den ungewichteten Rohdaten wäre Ost stärker vertreten gewesen.</p>
 <p>Für eine ganze Itembatterie kombinierst du <code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> mit <code>tidyselect</code>-Helfern:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Frequency Analysis Results
@@ -599,7 +723,7 @@ Tipp
 <p>Mit <code>describe()</code> bekommst du Mittelwert, Median, Standardabweichung, Range, IQR und Schiefe für eine oder mehrere Variablen.</p>
 <p><strong>Frage:</strong> Wo liegt der durchschnittliche Skalenwert für Islamfeindlichkeit?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Descriptive Statistics
@@ -612,7 +736,7 @@ Weighted Descriptive Statistics
 <p><strong>Lesart.</strong> Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5).</p>
 <p>Mehrere Variablen gleichzeitig:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, <span class="va">age</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, <span class="va">age</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Descriptive Statistics
@@ -622,6 +746,52 @@ Weighted Descriptive Statistics
    populismus  3.354  3.286  0.759     4  1.000    0.056      3204.6
           age 52.104 54.000 18.289    81 29.000   -0.009      4721.9
 ----------------------------------------</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Was sind Schiefe und Wölbung?</strong> Zwei Formmaße, die der <code>describe()</code>-Output für jede Variable mitliefert — und die einen guten <em>Verteilungs-Charakter</em> auf einen Blick verraten.</p>
+<ul>
+<li>
+<strong>Schiefe</strong> = Symmetrie. <em>Symmetrisch</em> (Schiefe ≈ 0) → klassische Glocke. <em>Linksschief</em> (negativ) → langer Ausläufer nach links (typisch bei Zufriedenheits-Skalen, wo die meisten „hoch” antworten). <em>Rechtsschief</em> (positiv) → langer Ausläufer nach rechts (typisch bei Einkommens-Verteilungen).</li>
+<li>
+<strong>Wölbung</strong> (Kurtosis) = Spitze vs.&nbsp;flach. Hoch (leptokurtisch) = spitze Verteilung mit dicken Rändern; niedrig (platykurtisch) = flachere Verteilung.</li>
+</ul>
+<p>Drei Schiefen im Vergleich:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  linksschief  <span class="op">=</span> <span class="fl">10</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">2</span>, <span class="fl">8</span><span class="op">)</span> <span class="op">*</span> <span class="fl">10</span>,</span>
+<span>  symmetrisch  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">5</span>, <span class="fl">1.5</span><span class="op">)</span>,</span>
+<span>  rechtsschief <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">2</span>, <span class="fl">8</span><span class="op">)</span> <span class="op">*</span> <span class="fl">10</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"form"</span>, values_to <span class="op">=</span> <span class="st">"wert"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">form</span>,</span>
+<span>                       levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"linksschief"</span>, <span class="st">"symmetrisch"</span>, <span class="st">"rechtsschief"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wert</span>, fill <span class="op">=</span> <span class="va">form</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">form</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#2ca02c"</span>, <span class="st">"#1f77b4"</span>, <span class="st">"#d62728"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Häufigkeit"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Drei Verteilungsformen — drei Schiefe-Werte"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"links: Schiefe &lt; 0 · mitte: ≈ 0 · rechts: &gt; 0"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/schiefe-bilder-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section><section id="einzelne-kennwerte" class="level3" data-number="7.4.3"><h3 data-number="7.4.3" class="anchored" data-anchor-id="einzelne-kennwerte">
@@ -680,7 +850,7 @@ Weighted Descriptive Statistics
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Mean Statistics
@@ -693,7 +863,7 @@ Weighted Mean Statistics
 </div>
 <p>Im Zusammenspiel mit <code>group_by()</code>/<code>summarise()</code> baust du dir eigene Subgruppen-Tabellen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    n          <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -717,7 +887,7 @@ Weighted Mean Statistics
 <p>Wenn du prüfen willst, ob eine beobachtete Häufigkeit signifikant von einem <strong>theoretischen</strong> Anteil abweicht, brauchst du keinen Vergleich mit einer anderen Variable — ein Test gegen einen festen Wert genügt.</p>
 <p><strong>Frage:</strong> Weicht der Frauenanteil in der gewichteten Stichprobe signifikant von 50 % ab?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span>     <span class="co"># nur Mann/Frau (Divers eigene Kategorie)</span></span>
 <span>  <span class="fu">binomial_test</span><span class="op">(</span><span class="va">sex</span>, p <span class="op">=</span> <span class="fl">0.5</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -752,7 +922,7 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 </div>
 <p>Für mehr als zwei Ausprägungen — etwa „ist die Bildungsverteilung gleichmäßig auf alle Stufen?” — ist <code>chisq_gof()</code> der <strong>Goodness-of-Fit-Test</strong>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chisq_gof</span><span class="op">(</span><span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chisq_gof</span><span class="op">(</span><span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Weighted Chi-Square Goodness-of-Fit Test Results
 ------------------------------------------------
@@ -890,7 +1060,7 @@ Hinweis
 <p><code>crosstab()</code> aus mariposa erzeugt diese Tabelle inklusive Zeilen-/Spalten-/Gesamtprozenten. Standard ist die Zeilenprozentuierung — also: was passiert in jeder Zeile, wenn man sie auf 100 Prozent skaliert? Damit liest du <em>bedingte Wahrscheinlichkeiten</em>: „Welcher Anteil der Westdeutschen hat hohe Bildung im Vergleich zu welchem Anteil der Ostdeutschen?“.</p>
 <p><strong>Frage:</strong> Verteilt sich Bildung anders in Ost und West?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">crosstab</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -999,7 +1169,7 @@ Hinweis
 <p>Statt erst eine Kreuztabelle zu rechnen und <em>dann</em> den χ²-Test anzustoßen, gibt dir mariposa beides in einer Zeile — der Test kommt mit Effektgrößen (Cramérs <em>V</em>, Phi, Gamma). Die Effektgrößen sind hier besonders wichtig: Wie beim t-Test wird χ² bei großen N fast immer signifikant; erst Cramérs <em>V</em> sagt dir, ob der Zusammenhang inhaltlich groß ist.</p>
 <p><strong>Frage:</strong> Hängen Bildung und Region statistisch zusammen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chi_square</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">chi_square</span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">educ</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Chi-Squared Test: eastwest × educ [Weighted]
   chi2(6) = 83.582, p &lt; 0.001 ***, V = 0.128 (small), N = 5131</code></pre>
@@ -1035,7 +1205,9 @@ Hinweis
 </section><section id="korrelation" class="level3" data-number="7.5.3"><h3 data-number="7.5.3" class="anchored" data-anchor-id="korrelation">
 <span class="header-section-number">7.5.3</span> Korrelation</h3>
 <p>Eine <strong>Korrelation</strong> ist die einfachste Antwort auf die Frage: <em>„Bewegen sich zwei Variablen gemeinsam?“</em> Wer hohe Werte auf der einen Skala hat, hat auch hohe Werte auf der anderen? Oder genau umgekehrt? Oder gibt es keinen Zusammenhang?</p>
-<p>Der bekannteste Index dafür ist <strong>Pearsons r</strong>. Er liegt zwischen -1 und +1:</p>
+<p>Der bekannteste Index dafür ist <strong>Pearsons r</strong>. Mathematisch ist er die <em>standardisierte Kovarianz</em> — die gemeinsame Schwingung zweier Variablen, geteilt durch die Einzelstreuung:</p>
+<p><span class="math display">\[r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}\]</span></p>
+<p>Lies sie als: <em>„wie stark schwingen x und y gemeinsam — in Einheiten der typischen Einzel-Schwingung.”</em> Durch die Division liegt <span class="math inline">\(r\)</span> immer zwischen <span class="math inline">\(-1\)</span> und <span class="math inline">\(+1\)</span>:</p>
 <ul>
 <li>
 <em>r</em> = +1 → perfekter positiver Zusammenhang (steigt eines, steigt das andere proportional)</li>
@@ -1045,6 +1217,31 @@ Hinweis
 <em>r</em> = -1 → perfekter negativer Zusammenhang</li>
 </ul>
 <p>In der Sozialforschung sind Werte um 0.4 schon ein deutlicher Befund. Werte über 0.7 sind selten — und wenn doch, oft ein Hinweis, dass die zwei Variablen letztlich dasselbe messen.</p>
+<p><strong>Wie sehen verschiedene Korrelationen aus?</strong> Vier simulierte Punktwolken — von „völlig wirr” bis „klar geneigt”:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span></span>
+<span><span class="va">sim_cor</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">r</span>, <span class="va">n</span> <span class="op">=</span> <span class="fl">200</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">r</span> <span class="op">*</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">r</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span>  <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, r_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"r = %.1f"</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">bind_rows</span><span class="op">(</span><span class="fu">sim_cor</span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="fu">sim_cor</span><span class="op">(</span><span class="fl">0.3</span><span class="op">)</span>, <span class="fu">sim_cor</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, <span class="fu">sim_cor</span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>r_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">r_label</span>,</span>
+<span>                          levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"r = 0.0"</span>, <span class="st">"r = 0.3"</span>, <span class="st">"r = 0.5"</span>, <span class="st">"r = 0.8"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.4</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">r_label</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Wie sehen Pearson-r-Werte aus?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Vier Stichproben mit unterschiedlichem r"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/korr-vier-bilder-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Bei <em>r</em> = 0 ist die Wolke rund. Bei <em>r</em> = 0.3 ist eine <em>leichte</em> Neigung erkennbar. Bei <em>r</em> = 0.5 wird sie eindeutig. Bei <em>r</em> = 0.8 ist die Wolke fast eine schräge Ellipse. Vergleich mit dem ALLBUS-Wert: <strong>+0.41</strong> für Islamfeindlichkeit × Populismus sieht etwa wie das <em>r</em> = 0.3 – 0.5-Bild oben aus.</p>
 <p>Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzeptieren das <code>weights =</code>-Argument:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1077,7 +1274,7 @@ Hinweis
 </table>
 <p><strong>Frage:</strong> Hängen Islamfeindlichkeit und Populismus zusammen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">populismus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pearson Correlation: islamophobie x populismus [Weighted]
   r = 0.406, p &lt; 0.001 ***, N = 1903</code></pre>
@@ -1086,7 +1283,7 @@ Hinweis
 <p><strong>Lesart.</strong> Der gewichtete Pearson-<em>r</em> liegt bei etwa <strong>+0.41</strong> — das ist ein klar positiver Zusammenhang. Nach der Effektgrößen-Faustregel oben (Cohen: r ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß) bedeutet das einen <em>mittleren bis großen</em> Effekt. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit. Das ist <em>kein</em> Schluss auf Kausalität — die Korrelation sagt nicht, ob Populismus Islamfeindlichkeit fördert oder umgekehrt oder ob beides von einer dritten Variable (z. B. Bildung) getrieben wird. Die multivariate Regression in <a href="09-Erklaerungsmodelle.html#sec-regression" class="quarto-xref"><span>Kapitel 9.3</span></a> zerlegt das.</p>
 <p>Eine ganze Korrelationsmatrix bekommst du, indem du mehrere Variablen oder einen <code>tidyselect</code>-Ausdruck übergibst:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"mm0"</span><span class="op">)</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="fu">starts_with</span><span class="op">(</span><span class="st">"mm0"</span><span class="op">)</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pearson Correlation: 9 variables [Weighted]
   mm07 x mm01:                   r = 0.619, p &lt; 0.001 *** 
@@ -1197,9 +1394,36 @@ Tipp
 </h3>
 <p>Der <strong>t-Test</strong> ist eines der ältesten Werkzeuge der inferenziellen Statistik (William Gosset hat ihn 1908 unter dem Pseudonym „Student” veröffentlicht, weil sein Arbeitgeber Guinness Brauereigeheimnisse fürchtete). Die Frage, die er beantwortet, ist sehr konkret: <em>„Du siehst zwei Gruppen, die scheinbar unterschiedliche Mittelwerte haben. Wäre dieser Unterschied auch durch reinen Zufall in einer Stichprobe entstanden — oder ist er groß genug, dass man davon ausgehen kann, dass es in der Bevölkerung wirklich einen Unterschied gibt?“</em></p>
 <p>Der t-Test gibt dir darauf drei Antworten in einem Aufruf: die <em>Stärke</em> des Unterschieds (Mittelwertdifferenz), die <em>Wahrscheinlichkeit</em> eines Zufallsbefunds (<em>p</em>-Wert) und die <em>Effektgröße</em> (Hedges’ <em>g</em>) — also wie groß der Unterschied inhaltlich ist, unabhängig von der Stichprobengröße. Die letzte Zahl ist die wichtigste: bei N = 5000 ist <em>fast jeder</em> Unterschied statistisch signifikant. Erst die Effektgröße sagt dir, ob er auch inhaltlich relevant ist.</p>
+<p><strong>Bild dazu.</strong> Stell dir zwei Glockenkurven für zwei Gruppen vor. Die Mittelwertdifferenz allein sagt noch nichts — entscheidend ist sie <em>relativ zur Überlappung</em> der Verteilungen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">t_data</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">7</span>, length.out <span class="op">=</span> <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>`Gruppe A (M = 2)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="fl">2</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>         `Gruppe B (M = 4)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="fl">4</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">t_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">x</span>, names_to <span class="op">=</span> <span class="st">"gruppe"</span>, values_to <span class="op">=</span> <span class="st">"d"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">d</span>, fill <span class="op">=</span> <span class="va">gruppe</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_area</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.4</span>, position <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"segment"</span>, x <span class="op">=</span> <span class="fl">2</span>, xend <span class="op">=</span> <span class="fl">4</span>, y <span class="op">=</span> <span class="fl">0.46</span>, yend <span class="op">=</span> <span class="fl">0.46</span>,</span>
+<span>           arrow <span class="op">=</span> <span class="fu">arrow</span><span class="op">(</span>ends <span class="op">=</span> <span class="st">"both"</span>, length <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">3</span>, y <span class="op">=</span> <span class="fl">0.49</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"Mittelwertdifferenz = 2"</span>, size <span class="op">=</span> <span class="fl">3.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#1f77b4"</span>, <span class="st">"#d62728"</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Wert"</span>, y <span class="op">=</span> <span class="st">"Dichte"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Was prüft der t-Test? Differenz relativ zur Streuung."</span>,</span>
+<span>       caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"t = (Differenz der Mittelwerte) / SE der Differenz"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/t-test-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Je größer die Differenz und je <em>schmaler</em> die beiden Verteilungen (= je kleiner die Streuung), desto klarer trennen sich die Gruppen — und desto größer wird <em>t</em>. Wären beide Verteilungen <em>breit</em> (mit viel Überlappung), wäre selbst eine Differenz von 2 nicht signifikant.</p>
 <p><strong>Frage:</strong> Unterscheiden sich Ost und West in ihrer Islamfeindlichkeit?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">t_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">t_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>t-Test: islamophobie by eastwest [Weighted]
   t(764.0) = -8.784, p &lt; 0.001 ***, g = -0.431 (small), N = 3344</code></pre>
@@ -1257,7 +1481,7 @@ Hinweis
 <div class="callout-body-container callout-body">
 <p><strong>Hintergrund: Varianzhomogenität prüfen.</strong> Wenn du explizit testen willst, ob die Varianzen in den Gruppen gleich sind, ist der <strong>Levene-Test</strong> das Standardwerkzeug:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">t_test</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">levene_test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1297,9 +1521,52 @@ Recommendation based on Levene test:
 <p>Der t-Test funktioniert nur für <em>zwei</em> Gruppen. Sobald du drei oder mehr hast — etwa drei Bildungsgruppen oder fünf Altersklassen —, brauchst du ein anderes Werkzeug: die <strong>einfaktorielle Varianzanalyse</strong>, kurz ANOVA (<em>Analysis of Variance</em>).</p>
 <p>Ihr Trick ist elegant. Statt jedes Gruppenpaar einzeln zu vergleichen (was bei vielen Gruppen zu vielen falsch-positiven Befunden führen würde), prüft die ANOVA <em>eine einzige</em> Frage: <em>Streuen die Mittelwerte zwischen den Gruppen mehr, als man aufgrund der Streuung innerhalb der Gruppen erwarten würde?</em> Wenn ja, gibt es mindestens <em>einen</em> Gruppenunterschied. Welches Paar es genau ist, sagt die ANOVA dir nicht — das beantworten Post-Hoc-Tests, die später kommen.</p>
 <p>Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effektgröße <strong>η²</strong> (eta-quadrat): der Anteil der Varianz in der abhängigen Variable, der durch die Gruppierung erklärt wird. Ein η² von 0.01 bedeutet, dass die Gruppen 1 Prozent der Varianz erklären — statistisch oft signifikant bei großen N, aber inhaltlich winzig. Ein η² von 0.10 oder größer ist schon ein substanzieller Effekt.</p>
+<p><strong>Bild dazu.</strong> Die ANOVA zerlegt die Gesamtstreuung in zwei Bausteine. Drei Gruppen mit ihren Mittelwerten (Rauten) und Einzelfällen (Punkte):</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">anova_demo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  gruppe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Gruppe A"</span>, <span class="st">"Gruppe B"</span>, <span class="st">"Gruppe C"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  wert   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">4</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">means</span>       <span class="op">&lt;-</span> <span class="va">anova_demo</span> <span class="op">|&gt;</span> <span class="fu">summarise</span><span class="op">(</span>mw <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">wert</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">gruppe</span><span class="op">)</span></span>
+<span><span class="va">grand_mean</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">anova_demo</span><span class="op">$</span><span class="va">wert</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">anova_demo</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">gruppe</span>, y <span class="op">=</span> <span class="va">wert</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>,</span>
+<span>              width <span class="op">=</span> <span class="fl">0.12</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">grand_mean</span>,</span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">means</span>, <span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">mw</span><span class="op">)</span>,</span>
+<span>             size <span class="op">=</span> <span class="fl">5</span>, color <span class="op">=</span> <span class="st">"black"</span>, shape <span class="op">=</span> <span class="fl">18</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_segment</span><span class="op">(</span>data <span class="op">=</span> <span class="va">means</span>,</span>
+<span>               <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">gruppe</span>, xend <span class="op">=</span> <span class="va">gruppe</span>,</span>
+<span>                   y <span class="op">=</span> <span class="va">grand_mean</span>, yend <span class="op">=</span> <span class="va">mw</span><span class="op">)</span>,</span>
+<span>               arrow <span class="op">=</span> <span class="fu">arrow</span><span class="op">(</span>length <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.18</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>               color <span class="op">=</span> <span class="st">"#d62728"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">0.6</span>, y <span class="op">=</span> <span class="va">grand_mean</span> <span class="op">+</span> <span class="fl">0.18</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"Gesamt-Mittelwert"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">3.35</span>, y <span class="op">=</span> <span class="va">means</span><span class="op">$</span><span class="va">mw</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">+</span> <span class="fl">0.4</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"BETWEEN:\nGruppe – Gesamt"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"#d62728"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">1.35</span>, y <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"WITHIN:\nEinzelfall – Gruppe"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"#1f77b4"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_discrete</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>add <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Wert"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Die ANOVA-Frage: Streuung zwischen vs. innerhalb der Gruppen"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"F = (Between-Varianz) / (Within-Varianz) — große F-Werte → Gruppen unterscheiden sich klar"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="07-Uni-Bivariate-Analyse_files/figure-html/anova-between-within-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> <em>Between</em> (rote Pfeile) = wie weit liegen die Gruppen-Mittelwerte auseinander? <em>Within</em> (blaue Punkte um die Rauten) = wie stark streuen die Einzelfälle <em>innerhalb</em> jeder Gruppe? Der F-Wert ist das Verhältnis: groß zwischen, klein innerhalb → klar getrennte Gruppen, hoher F-Wert, kleiner p-Wert.</p>
 <p><strong>Frage:</strong> Hängt Islamfeindlichkeit mit Bildung zusammen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">oneway_anova</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">educ_kat</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>One-Way ANOVA: islamophobie by educ_kat [Weighted]
@@ -1353,7 +1620,7 @@ Hinweis
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">oneway_anova</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">educ_kat</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tukey_test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1419,7 +1686,7 @@ Interpretation:
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">mann_whitney</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">mann_whitney</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">eastwest</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mann-Whitney U Test: islamophobie by eastwest [Weighted]
   U = 598,939, Z = 10.882, p &lt; 0.001 ***, r = 0.185 (small), N = 3344</code></pre>
@@ -1453,7 +1720,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1462,10 +1729,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html">frequency</a></span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">describe</span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">w_skew</span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">w_kurtosis</span><span class="op">(</span><span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1487,7 +1754,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1496,10 +1763,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    n  <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -1526,7 +1793,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1535,10 +1802,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">ls01</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">ls01</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">st01</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">ps03</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1559,7 +1826,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1568,10 +1835,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">oneway_anova</span><span class="op">(</span><span class="va">islamophobie</span>, group <span class="op">=</span> <span class="va">educ_kat</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tukey_test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1619,7 +1886,88 @@ Hinweis
 <li>Du kennst nicht-parametrische Alternativen (<code>mann_whitney</code>, <code>kruskal_wallis</code>, <code>wilcoxon_test</code>, <code>friedman_test</code>).</li>
 </ul>
 <p>In den nächsten zwei Kapiteln weiten wir den Blick auf multivariate Verfahren aus: in <a href="08-Latente-Strukturen.html" class="quarto-xref"><span>Kapitel 8</span></a> prüfen wir die Faktorstruktur und Reliabilität unserer Skalen, in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Kapitel 9</span></a> modellieren wir Islamfeindlichkeit als abhängige Variable über mehrere Prädiktoren gleichzeitig.</p>
-</section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
+</section><section id="mini-glossar-begriffe-für-uni--und-bivariate-analyse" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="mini-glossar-begriffe-für-uni--und-bivariate-analyse">Mini-Glossar: Begriffe für Uni- und Bivariate Analyse</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 78%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Begriff</th>
+<th style="text-align: left;">Bedeutung in einem Satz</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Nullhypothese (H₀)</strong></td>
+<td style="text-align: left;">Annahme „kein Effekt”; wird verworfen, wenn der p-Wert klein genug ist</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>p-Wert</strong></td>
+<td style="text-align: left;">Wahrscheinlichkeit, das beobachtete (oder ein extremeres) Ergebnis unter H₀ zu sehen</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Signifikanz</strong></td>
+<td style="text-align: left;">Konvention: p &lt; .05 → Effekt gilt als statistisch belastbar</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Standardabweichung (SD)</strong></td>
+<td style="text-align: left;">Streuung der Einzelfälle um den Mittelwert</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Standardfehler (SE)</strong></td>
+<td style="text-align: left;">Streuung der Schätzung über hypothetische Wiederholungen; SE = SD / √N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Konfidenzintervall (KI)</strong></td>
+<td style="text-align: left;">Intervall, das in 95 % wiederholter Studien den wahren Wert einschließt</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Effektgröße</strong></td>
+<td style="text-align: left;">Maß für die <em>Stärke</em> eines Befunds — unabhängig von N</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Schiefe</strong></td>
+<td style="text-align: left;">Symmetrie einer Verteilung; positiv = lange Ausläufer nach rechts</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Wölbung (Kurtosis)</strong></td>
+<td style="text-align: left;">„Spitzigkeit” einer Verteilung; hoch = spitze Verteilung mit dicken Rändern</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Pearson r</strong></td>
+<td style="text-align: left;">linearer Zusammenhang; <span class="math inline">\(r = \text{Cov}(x,y) / (\text{SD}(x) \cdot \text{SD}(y))\)</span>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Spearman ρ</strong></td>
+<td style="text-align: left;">rangbasierte Korrelation — robust bei nichtlinearen Zusammenhängen</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Cramérs V</strong></td>
+<td style="text-align: left;">Effektgröße für Chi²; 0 – 1; ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Hedges’ g / Cohens d</strong></td>
+<td style="text-align: left;">standardisierte Mittelwertdifferenz; ≥ .20 klein, ≥ .50 mittel, ≥ .80 groß</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>η² (eta-Quadrat)</strong></td>
+<td style="text-align: left;">Anteil erklärter Varianz in ANOVA; ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>t-Statistik</strong></td>
+<td style="text-align: left;">(Mittelwertdifferenz) / (gepoolter Standardfehler)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>F-Statistik (ANOVA)</strong></td>
+<td style="text-align: left;">(Between-Varianz) / (Within-Varianz) — groß = Gruppen klar getrennt</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Post-Hoc</strong></td>
+<td style="text-align: left;">Folgetest nach signifikanter ANOVA — klärt, welche Gruppenpaare sich unterscheiden</td>
+</tr>
+</tbody>
+</table></section><section id="weiterführend" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="weiterführend">Weiterführend</h2>
 <ul>
 <li>mariposa-Vignetten <a href="https://yannickdiehl.github.io/mariposa/articles/descriptive-statistics.html">„Descriptive Statistics”</a>, <a href="https://yannickdiehl.github.io/mariposa/articles/hypothesis-testing.html">„Hypothesis Testing”</a> und <a href="https://yannickdiehl.github.io/mariposa/articles/correlation-analysis.html">„Correlation Analysis”</a>.</li>
 <li>Andy Field et al., <em>Discovering Statistics Using R</em> — Kapitel zu Mittelwertvergleichen und Korrelation.</li>
