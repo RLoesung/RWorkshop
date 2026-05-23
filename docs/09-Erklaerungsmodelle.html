@@ -268,7 +268,12 @@ window.Quarto = {
   <li><a href="#ancova-mit-ancova" id="toc-ancova-mit-ancova" class="nav-link" data-scroll-target="#ancova-mit-ancova"><span class="header-section-number">9.6.3</span> ANCOVA mit <code>ancova()</code></a></li>
   </ul>
 </li>
-  <li><a href="#sec-logistic" id="toc-sec-logistic" class="nav-link" data-scroll-target="#sec-logistic"><span class="header-section-number">9.7</span> Logistische Regression</a></li>
+  <li>
+<a href="#sec-logistic" id="toc-sec-logistic" class="nav-link" data-scroll-target="#sec-logistic"><span class="header-section-number">9.7</span> Logistische Regression</a>
+  <ul>
+<li><a href="#die-sigmoid-kurve-mit-echten-daten" id="toc-die-sigmoid-kurve-mit-echten-daten" class="nav-link" data-scroll-target="#die-sigmoid-kurve-mit-echten-daten"><span class="header-section-number">9.7.1</span> Die Sigmoid-Kurve mit echten Daten</a></li>
+  </ul>
+</li>
   <li>
 <a href="#befunde-grafisch-kommunizieren" id="toc-befunde-grafisch-kommunizieren" class="nav-link" data-scroll-target="#befunde-grafisch-kommunizieren"><span class="header-section-number">9.8</span> Befunde grafisch kommunizieren</a>
   <ul>
@@ -353,6 +358,34 @@ Hinweis
 <span class="header-section-number">9.2.1</span> Die Gummizug-Idee</h3>
 <p>Stell dir die Regressionsgerade als einen <strong>Gummizug</strong>, den du durch eine Punktewolke ziehst. Jeder Datenpunkt zerrt die Gerade zu sich hin. Das Verfahren sucht die Position, in der die Summe aller (quadrierten) Zerrkräfte minimal ist — daher der Name <strong>Methode der kleinsten Quadrate</strong> (engl. <em>ordinary least squares</em>, OLS).</p>
 <p><em>Warum quadriert?</em> Zwei Gründe in einem Satz: Vorzeichen weg (Abweichungen über und unter der Geraden heben sich sonst auf) — und große Abweichungen werden stärker bestraft (ein Punkt 4 Einheiten daneben zerrt 16-mal stärker als ein Punkt 1 Einheit daneben).</p>
+<p><strong>Bild dazu.</strong> Punktwolke, Gerade — und die roten Striche zeigen genau das, was OLS minimiert: die senkrechten <strong>Residuen</strong> zwischen Beobachtung und Vorhersage:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">gummi_demo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span>,</span>
+<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">2.8</span>, <span class="fl">4.5</span>, <span class="fl">4.0</span>, <span class="fl">5.8</span>, <span class="fl">6.5</span>, <span class="fl">7.2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">m_gummi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">gummi_demo</span><span class="op">)</span></span>
+<span><span class="va">gummi_demo</span><span class="op">$</span><span class="va">y_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">m_gummi</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">gummi_demo</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>xend <span class="op">=</span> <span class="va">x</span>, yend <span class="op">=</span> <span class="va">y_hat</span><span class="op">)</span>,</span>
+<span>               color <span class="op">=</span> <span class="st">"#d62728"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_abline</span><span class="op">(</span>intercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_gummi</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>              slope     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_gummi</span><span class="op">)</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>              color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Prädiktor x"</span>, y <span class="op">=</span> <span class="st">"Outcome y"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"OLS: was genau wird minimiert?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Schwarze Linie = Regressionsgerade · rote Striche = Residuen. OLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/ols-gummizug-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Jeder blaue Punkt zieht die Gerade ein Stück zu sich hin — wie ein Gummizug. Die Gerade ist die <em>eindeutige</em> Position, in der die Summe der quadrierten roten Striche so klein wie möglich wird. Würdest du die Gerade nur ein bisschen drehen oder verschieben, würde diese Summe sofort größer.</p>
 <p>Die geschlossene Lösung für die Steigung sieht so aus:</p>
 <p><span class="math display">\[\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}\]</span></p>
 <p>Lies sie als: <em>„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut.”</em> R rechnet das in Mikrosekunden aus; was du im Output unter <code>Estimate</code> siehst, ist genau diese Zahl.</p>
@@ -360,7 +393,7 @@ Hinweis
 <span class="header-section-number">9.2.2</span> Modell rechnen</h3>
 <p><strong>Frage:</strong> Wie viel von der Islamfeindlichkeit lässt sich <em>allein</em> durch Populismus erklären?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m_einfach</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">m_einfach</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">~</span> <span class="va">populismus</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">m_einfach</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -380,7 +413,7 @@ Hinweis
 </ul>
 <p>Die vollständige Tabelle mit Intercept und Steigung kommt mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Linear Regression Results
@@ -428,7 +461,7 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 <span class="header-section-number">9.2.3</span> Regressionsgerade händisch zeichnen</h3>
 <p>Anders als beim Quick-and-dirty-<code>geom_smooth(method = "lm")</code> extrahieren wir die Koeffizienten direkt aus dem Modell und zeichnen die Gerade mit <code>geom_abline()</code>. Das macht den Zusammenhang Modell ↔︎ Visualisierung sichtbar:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="st">"(Intercept)"</span><span class="op">]</span><span class="op">]</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="st">"(Intercept)"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">slope</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">m_einfach</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">[[</span><span class="st">"populismus"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -478,8 +511,17 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Konzept: Was heißt „kontrolliert für”?</strong> Ein konkretes Zahlenbeispiel macht das greifbar. Du rechnest erst eine <em>bivariate</em> Regression (<code>islamophobie ~ bildung</code>) und bekommst einen Koeffizienten von z. B. -0.20: höhere Bildung → niedrigere Islamfeindlichkeit. Dann nimmst du Populismus mit ins Modell (<code>islamophobie ~ bildung + populismus</code>) — und der Bildungs-Koeffizient schrumpft auf z. B. -0.13.</p>
-<p>Die Differenz von -0.07 ist <em>der Teil des Bildungseffekts, der eigentlich über Populismus läuft</em>: Höher Gebildete sind im Schnitt weniger populistisch, und Populismus erklärt Islamfeindlichkeit besser als Bildung allein. Was nach Kontrolle übrig bleibt (-0.13), ist der <em>direkte</em> Bildungseffekt, der <em>nicht</em> über Populismus vermittelt ist. Genau diese Zerlegung in <em>direkte</em> und <em>vermittelte</em> Effekte ist der Mehrwert multivariater Modellierung.</p>
+<p><strong>Konzept: Was heißt „kontrolliert für”?</strong> Ein konkretes Zahlenbeispiel macht das greifbar. Du rechnest erst eine <em>bivariate</em> Regression (<code>islamophobie ~ bildung</code>) und bekommst einen Koeffizienten von z. B. −0.20: höhere Bildung → niedrigere Islamfeindlichkeit. Dann nimmst du Populismus mit ins Modell (<code>islamophobie ~ bildung + populismus</code>) — und der Bildungs-Koeffizient schrumpft auf z. B. −0.13.</p>
+<p>Visualisiert als Pfeil-Diagramm:</p>
+<pre><code>                          indirekt (−0.07)
+                ┌─────► Populismus ─────┐
+                │                       ▼
+   Bildung ─────┤                     Islamfeindlichkeit
+                │                       ▲
+                └──── direkt (−0.13) ───┘
+
+   Gesamt-Effekt Bildung: −0.20 = direkt (−0.13) + indirekt (−0.07)</code></pre>
+<p>Die Differenz von −0.07 ist <em>der Teil des Bildungseffekts, der eigentlich über Populismus läuft</em>: Höher Gebildete sind im Schnitt weniger populistisch, und Populismus erklärt Islamfeindlichkeit besser als Bildung allein. Was nach Kontrolle übrig bleibt (−0.13), ist der <em>direkte</em> Bildungseffekt, der <em>nicht</em> über Populismus vermittelt ist. Genau diese Zerlegung in <em>direkte</em> und <em>vermittelte</em> Effekte ist der Mehrwert multivariater Modellierung.</p>
 </div>
 </div>
 <p>Die wichtigste Zahl für die Gesamtgüte des Modells ist <strong>R²</strong>: der Anteil der Varianz in der abhängigen Variable, den das Modell erklärt. Ein R² von 0.30 bedeutet: deine Prädiktoren erklären 30 Prozent der Streuung in der abhängigen Variable; 70 Prozent bleiben unerklärt (durch Variablen, die du nicht im Modell hast, durch Messfehler, durch Zufall). In der Sozialforschung sind R² über 0.30 schon ein deutlicher Befund — perfekte Erklärung mit R² nahe 1 gibt es nur in den Naturwissenschaften.</p>
@@ -498,7 +540,7 @@ Hinweis
 </div>
 <p><strong>Frage:</strong> Welche Variablen erklären Islamfeindlichkeit am besten — Bildung, Alter, Region, Geschlecht, Populismus?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -512,7 +554,7 @@ Hinweis
 </div>
 <p>Die Kurzfassung zeigt dir R², adjustiertes R², den F-Test des Gesamtmodells und das N — gut für einen schnellen Überblick <em>„Passt das Modell überhaupt?“</em>. Die volle SPSS-Style-Tabelle mit allen Koeffizienten bekommst du mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> — die brauchst du, sobald es um <em>einzelne</em> Prädiktoren geht:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Linear Regression Results
@@ -566,6 +608,36 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 <strong>Sig.</strong> — <em>p</em>-Werte.</li>
 </ul>
 <p>In unserem Modell ist <code>populismus</code> mit einem Beta von rund 0.33 der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher. Bildung wirkt negativ (höhere Bildung → weniger Islamfeindlichkeit), Alter und Ost-Region positiv.</p>
+<p><strong>Bild dazu — R² als Tortenstück.</strong> Das Modell erklärt einen <em>Anteil</em> der Varianz in Islamfeindlichkeit. Wie groß ist dieser Anteil — und wie groß bleibt der unerklärte Rest? Die R²-Zahl aus dem Output, sichtbar gemacht:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
+<span><span class="va">r2</span> <span class="op">&lt;-</span> <span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html">glance</a></span><span class="op">(</span><span class="va">modell</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">$</span><span class="va">r.squared</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  anteil <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"erklärt durch Modell (R²)"</span>, <span class="st">"unerklärt (Residuen)"</span><span class="op">)</span>,</span>
+<span>                  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"unerklärt (Residuen)"</span>, <span class="st">"erklärt durch Modell (R²)"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  wert   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">r2</span>, <span class="fl">1</span> <span class="op">-</span> <span class="va">r2</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">wert</span>, y <span class="op">=</span> <span class="st">""</span>, fill <span class="op">=</span> <span class="va">anteil</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%.0f %%"</span>, <span class="va">wert</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            position <span class="op">=</span> <span class="fu">position_stack</span><span class="op">(</span>vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>            color <span class="op">=</span> <span class="st">"white"</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">4.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`erklärt durch Modell (R²)` <span class="op">=</span> <span class="st">"#1f77b4"</span>,</span>
+<span>                                `unerklärt (Residuen)` <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span>,</span>
+<span>                    name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html">percent</a></span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Wie viel Varianz erklärt das Modell? R² = %.2f"</span>, <span class="va">r2</span><span class="op">)</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Sozialwissenschafts-typisch: R² um 0.20 – 0.30 ist ein deutlicher Befund."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/r2-anteil-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Der blaue Anteil ist der Befund: <em>„so viel von der Streuung in Islamfeindlichkeit lässt sich mit unseren fünf Prädiktoren erklären.”</em> Der graue Rest geht auf alle Variablen, die <em>nicht</em> im Modell stehen, plus Messfehler und Zufall.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -604,7 +676,7 @@ Hinweis
 <p>Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell <em>signifikant</em> verbessert, rechnest du beide Modelle und vergleichst sie mit <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>.</p>
 <p>mariposas <code>linear_regression()</code> gibt ein <strong>Listenobjekt</strong> zurück — eine Sammlung aus Modell, Koeffizienten-Tabelle, Diagnostik-Werten und Metadaten. Das eigentliche <code>lm</code>-Objekt aus base R (das <em>technische</em> Statistik-Modell) liegt darin unter <code>$model</code>. Damit kannst du es an Standard-R-Funktionen wie <code><a href="https://rdrr.io/r/stats/anova.html">anova()</a></code>, <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> oder <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code> weiterreichen — die erwarten ein klassisches <code>lm</code>-Objekt, kein mariposa-Listenobjekt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Beide Modelle muessen auf demselben Fall-Set rechnen, sonst lehnt anova() ab.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Beide Modelle muessen auf demselben Fall-Set rechnen, sonst lehnt anova() ab.</span></span>
 <span><span class="va">allbus_modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">drop_na</span><span class="op">(</span><span class="va">islamophobie</span>, <span class="va">educ_kat</span>, <span class="va">age</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">populismus</span><span class="op">)</span></span>
 <span></span>
@@ -691,7 +763,7 @@ Tipp
 <span class="header-section-number">9.4.3</span> VIF aus dem mariposa-Output</h3>
 <p>mariposa rechnet beide automatisch und gibt sie standardmäßig im <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-Block aus:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span>, collinearity <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>     <span class="co"># Standardeinstellung</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell</span>, collinearity <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>     <span class="co"># Standardeinstellung</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Linear Regression Results
@@ -778,7 +850,7 @@ Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 </table></section><section id="modell-residuen-extrahieren" class="level3" data-number="9.5.3"><h3 data-number="9.5.3" class="anchored" data-anchor-id="modell-residuen-extrahieren">
 <span class="header-section-number">9.5.3</span> Modell-Residuen extrahieren</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">diagnose_df</span> <span class="op">&lt;-</span> <span class="va">modell</span><span class="op">$</span><span class="va">model</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html">augment</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -816,7 +888,7 @@ $ .std.resid   &lt;dbl&gt; 0.09799960, -0.04408372, 2.85484673, 0.85126740, 0.03
 </ul></section><section id="die-vier-plots-bauen" class="level3" data-number="9.5.4"><h3 data-number="9.5.4" class="anchored" data-anchor-id="die-vier-plots-bauen">
 <span class="header-section-number">9.5.4</span> Die vier Plots bauen</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p_rf</span> <span class="op">&lt;-</span> <span class="va">diagnose_df</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p_rf</span> <span class="op">&lt;-</span> <span class="va">diagnose_df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">.fitted</span>, y <span class="op">=</span> <span class="va">.resid</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -881,7 +953,7 @@ Wichtig
 </h3>
 <p><strong>Frage:</strong> Wirkt der Bildungseffekt auf Islamfeindlichkeit in Ost und West gleich, oder unterscheidet er sich?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">factorial_anova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>                  between <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">educ_kat</span>, <span class="va">eastwest</span><span class="op">)</span>,</span>
 <span>                  weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -917,7 +989,7 @@ Hinweis
 <span class="header-section-number">9.6.2</span> Interaktion direkt sichtbar machen</h3>
 <p>Das <em>aus dem ANOVA-Modell oben</em> rechnest du dir selbst — mit den Werkzeugen aus Kap. 5 und 6:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
 <span>    mw <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
@@ -960,7 +1032,7 @@ Hinweis
 <p>Die <strong>Kovarianzanalyse</strong> mischt ANOVA und Regression: Du hast einen kategorialen Gruppierungsfaktor (z. B. Bildung) und eine kontinuierliche <strong>Kovariate</strong> (z. B. Alter). ANCOVA testet den Gruppenunterschied, <em>nachdem</em> der Einfluss der Kovariate herausgerechnet wurde.</p>
 <p><strong>Frage:</strong> Unterscheiden sich Bildungsgruppen in der Islamfeindlichkeit, wenn das Alter konstant gehalten wird?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ancova</span><span class="op">(</span><span class="va">islamophobie</span>,</span>
 <span>         between <span class="op">=</span> <span class="va">educ_kat</span>, covariate <span class="op">=</span> <span class="va">age</span>,</span>
 <span>         weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1001,7 +1073,7 @@ Hinweis
 </div>
 <p><strong>Die S-Kurve dahinter.</strong> Warum die Logit-Transformation der zentrale Trick der logistischen Regression ist, sieht man am besten visuell — die Funktion, die Logit zurück in Wahrscheinlichkeit übersetzt, ist eine <strong>S-Kurve</strong> (Sigmoid):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  logit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>, <span class="fl">6</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span>
 <span>  wahrscheinlichkeit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">logit</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1076,7 +1148,36 @@ Warnung
 </li>
 </ul>
 <p>Das OR von 2.0 sagt: <em>„Frauen haben das Doppelte der Odds.”</em> Die <em>Wahrscheinlichkeit</em> steigt aber nur von 0.25 auf 0.40 — also um <strong>60 %</strong>, <em>nicht</em> um 100 %. Bei kleinen Wahrscheinlichkeiten (≤ 0.10) ist OR ≈ Wahrscheinlichkeits-Faktor; bei großen wird die Diskrepanz spürbar.</p>
-<p>Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent” sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (<code>predict(modell$model, type = "response")</code>) als OR zu paraphrasieren.</p>
+<p>Visualisiert man die gleiche 2×2-Tabelle als gestackte Balken, sieht man die Wahrscheinlichkeiten direkt:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  gruppe  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>                   levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Männer"</span>, <span class="st">"Frauen"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Outcome = 1"</span>, <span class="st">"Outcome = 0"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>                   levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Outcome = 0"</span>, <span class="st">"Outcome = 1"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  n       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">75</span>, <span class="fl">40</span>, <span class="fl">60</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">gruppe</span>, y <span class="op">=</span> <span class="va">n</span>, fill <span class="op">=</span> <span class="va">outcome</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"fill"</span>, width <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%d (%.0f %%)"</span>, <span class="va">n</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            position <span class="op">=</span> <span class="fu">position_fill</span><span class="op">(</span>vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>            color <span class="op">=</span> <span class="st">"white"</span>, fontface <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`Outcome = 1` <span class="op">=</span> <span class="st">"#d62728"</span>,</span>
+<span>                                `Outcome = 0` <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span>,</span>
+<span>                    name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_flip</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Anteil"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"OR = 2.0 in Bildern: Wahrscheinlichkeit steigt von 25 % auf 40 %"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Wahrscheinlichkeits-Zuwachs = 15 Prozentpunkte (= 60 % relativ) — nicht 100 %."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/or-stacked-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Der rote Anteil ist die <em>Wahrscheinlichkeit</em> — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein <em>Wahrscheinlichkeits-Zuwachs von 60 %</em>, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent” sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (<code>predict(modell$model, type = "response")</code>) als OR zu paraphrasieren.</p>
 </div>
 </div>
 <p>Wir konstruieren für unsere Mini-Studie eine Dummy-Variable: „hohe Islamfeindlichkeit” (Skalenwert ≥ 4).</p>
@@ -1095,7 +1196,7 @@ Warnung
 </div>
 <p><strong>Frage:</strong> Welche Merkmale unterscheiden Befragte mit hoher Islamfeindlichkeit von den anderen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>islam_hoch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">&gt;=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">modell_log</span> <span class="op">&lt;-</span> <span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
@@ -1121,7 +1222,7 @@ Warnung
 </ul>
 <p>Die volle Tabelle mit Koeffizienten, <strong>Odds Ratios</strong> und Konfidenzintervallen wieder mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">modell_log</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Logistic Regression Results
@@ -1199,25 +1300,51 @@ Hinweis
 <p>Aus den Vorhersagen <code>predict(modell_log$model, type = "response")</code> baust du sie dir bei Bedarf manuell oder mit dem Paket <code>caret</code>.</p>
 </div>
 </div>
-</section><section id="befunde-grafisch-kommunizieren" class="level2" data-number="9.8"><h2 data-number="9.8" class="anchored" data-anchor-id="befunde-grafisch-kommunizieren">
+<section id="die-sigmoid-kurve-mit-echten-daten" class="level3" data-number="9.7.1"><h3 data-number="9.7.1" class="anchored" data-anchor-id="die-sigmoid-kurve-mit-echten-daten">
+<span class="header-section-number">9.7.1</span> Die Sigmoid-Kurve mit echten Daten</h3>
+<p>Die abstrakte Sigmoid-Kurve von oben — jetzt mit Daten. Wir zeichnen die Wahrscheinlichkeit für <code>islam_hoch = 1</code> als Funktion von <code>populismus</code>. Die 0/1-Punkte (jittert sichtbar gemacht) sind echte Befragte, die schwarze Kurve ist eine logistische Regression nur mit Populismus als Prädiktor:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus_dummy</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islam_hoch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.08</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>,</span>
+<span>              width <span class="op">=</span> <span class="fl">0.05</span>, height <span class="op">=</span> <span class="fl">0.06</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>              method.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span>,</span>
+<span>              color <span class="op">=</span> <span class="st">"black"</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>                     labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html">percent</a></span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Populismus (1–5, umgepolt)"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Wahrscheinlichkeit (Islamfeindlichkeit ≥ 4)"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Sigmoid trifft echte Daten"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Punkte (jitter) = einzelne Befragte (oben = islam_hoch = 1) · Kurve = logistische Regression"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/sigmoid-real-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Lesart.</strong> Bei niedrigem Populismus (links) liegt die Wahrscheinlichkeit für hohe Islamfeindlichkeit unter 30 %. Bei hohem Populismus (rechts) steigt sie auf über 80 %. Die <em>Form</em> — flach-steil-flach — ist exakt die Sigmoid-Kurve aus dem abstrakten Plot oben, nur jetzt mit echten ALLBUS-Daten gefüllt. <strong>Genau das modelliert die logistische Regression.</strong></p>
+</section></section><section id="befunde-grafisch-kommunizieren" class="level2" data-number="9.8"><h2 data-number="9.8" class="anchored" data-anchor-id="befunde-grafisch-kommunizieren">
 <span class="header-section-number">9.8</span> Befunde grafisch kommunizieren</h2>
 <p>Die Modelle stehen, die Koeffizienten sind interpretiert — jetzt fehlt nur noch die Kommunikation. In einer Hausarbeit, einem Paper oder einer Präsentation ist eine Regressions-Tabelle solider Standard; eine <em>Grafik</em> macht das Ergebnis auf einen Blick lesbar.</p>
 <section id="sec-coefplot" class="level3" data-number="9.8.1"><h3 data-number="9.8.1" class="anchored" data-anchor-id="sec-coefplot">
 <span class="header-section-number">9.8.1</span> Coefficient-Plots: Regressionsergebnisse visualisieren</h3>
-<p>Das wirkungsvollste Format ist ein <strong>Coefficient-Plot</strong>: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht eine direkt aus dem Modell der Mini-Studie motivierte Visualisierung aus:</p>
+<p>Das wirkungsvollste Format ist ein <strong>Coefficient-Plot</strong>: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht der Plot für unser Hauptmodell aus — direkt aus dem <code>lm</code>-Objekt via <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
-<span>  term  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Bildung"</span>, <span class="st">"Alter"</span>, <span class="st">"Ost vs. West"</span>, <span class="st">"Geschlecht"</span>, <span class="st">"Populismus"</span><span class="op">)</span>,</span>
-<span>  beta  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.13</span>, <span class="fl">0.30</span>, <span class="fl">0.10</span>, <span class="fl">0.05</span>, <span class="fl">0.33</span><span class="op">)</span>,</span>
-<span>  lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.18</span>, <span class="fl">0.26</span>, <span class="fl">0.04</span>, <span class="op">-</span><span class="fl">0.01</span>, <span class="fl">0.27</span><span class="op">)</span>,</span>
-<span>  upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.08</span>, <span class="fl">0.34</span>, <span class="fl">0.16</span>, <span class="fl">0.10</span>, <span class="fl">0.39</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">beta</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">term</span>, <span class="va">beta</span><span class="op">)</span>, xmin <span class="op">=</span> <span class="va">lower</span>, xmax <span class="op">=</span> <span class="va">upper</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">modell</span><span class="op">$</span><span class="va">model</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">|&gt;</span>           <span class="co"># Konstante interessiert hier nicht</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">term</span>, <span class="va">estimate</span><span class="op">)</span>,</span>
+<span>             xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_pointrange</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Standardisierter Koeffizient (Beta)"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Koeffizient mit 95 %-KI"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Was erklärt Islamfeindlichkeit in Deutschland 2023?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression, ALLBUS 2023, gewichtet"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell$model)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/coef-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
@@ -1225,24 +1352,20 @@ Hinweis
 </div>
 </div>
 </div>
-<p><strong>Lesart.</strong> Auf einen Blick siehst du <em>welcher</em> Prädiktor <em>wie stark</em> wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die Null-Linie überschneiden, sind statistisch unsicher (im Beispiel: Geschlecht).</p>
-<p>In der Praxis ziehst du die Werte (<code>beta</code>, <code>lower</code>, <code>upper</code>) nicht händisch aus dem Modell — das <code>broom</code>-Paket extrahiert sie als sauberes Tibble, das du direkt in <code>ggplot()</code> schickst:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># einmalig installieren: install.packages("broom")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/">broom</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">modell</span><span class="op">$</span><span class="va">model</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">!=</span> <span class="st">"(Intercept)"</span><span class="op">)</span> <span class="op">|&gt;</span>           <span class="co"># Konstante nicht plotten</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">estimate</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">term</span>, <span class="va">estimate</span><span class="op">)</span>,</span>
-<span>             xmin <span class="op">=</span> <span class="va">conf.low</span>, xmax <span class="op">=</span> <span class="va">conf.high</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_pointrange</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Koeffizient mit 95 %-KI"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>       title <span class="op">=</span> <span class="st">"Was erklärt Islamfeindlichkeit?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression, ALLBUS 2023, gewichtet"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Lesart.</strong> Auf einen Blick siehst du <em>welcher</em> Prädiktor <em>wie stark</em> wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die <em>gestrichelte Null-Linie überschneiden</em>, sind statistisch unsicher — der Effekt unterscheidet sich nicht klar von 0.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p><code>broom</code> ist nicht Teil des Buch-Stacks, gehört aber zur tidymodels-Familie und ist <em>die</em> Brücke zwischen statistischen Modellen und ggplot2.</p>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Hintergrund: Was tut <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy()</a></code>?</strong> <code><a href="https://generics.r-lib.org/reference/tidy.html">tidy()</a></code> nimmt das <code>lm</code>-Objekt und packt die Coefficients-Tabelle in ein normales Tibble mit den Spalten <code>term</code>, <code>estimate</code>, <code>std.error</code>, <code>statistic</code>, <code>p.value</code> — plus <code>conf.low</code>/<code>conf.high</code> bei <code>conf.int = TRUE</code>. Damit ist jeder Modell-Output direkt ggplot2-tauglich, ohne dass du Werte abtippst. <code>broom</code> gehört zur tidymodels-Familie und ist die de-facto-Standardbrücke zwischen statistischen Modellen und Tidyverse-Workflows.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1260,7 +1383,7 @@ Hinweis
 <span class="header-section-number">9.8.2</span> Mehrere Grafiken kombinieren mit patchwork</h3>
 <p><code>patchwork</code> ist der moderne Ersatz für <code><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">gridExtra::grid.arrange()</a></code>. Du speicherst Grafiken als Objekte und kombinierst sie mit <code>+</code>, <code>/</code> und <code>|</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"#2563eb"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1307,7 +1430,7 @@ Wichtig
 <span class="header-section-number">9.8.3</span> Grafiken speichern</h3>
 <p><code>ggsave()</code> exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggsave</span><span class="op">(</span></span>
 <span>  filename <span class="op">=</span> <span class="st">"befunde_mini_studie.png"</span>,</span>
 <span>  plot     <span class="op">=</span> <span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span><span class="op">)</span> <span class="op">/</span> <span class="va">p3</span>,</span>
 <span>  width    <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -1331,7 +1454,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1340,10 +1463,10 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">*</span> <span class="va">populismus</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -1367,7 +1490,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1376,10 +1499,10 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">linear_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">islamophobie</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">populismus</span>,</span>
 <span>    weights <span class="op">=</span> <span class="va">wghtpew</span></span>
@@ -1403,7 +1526,7 @@ Wichtig
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1412,10 +1535,10 @@ Wichtig
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>demo_zufrieden <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">ps03</span> <span class="op">&lt;=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">logistic_regression</span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">demo_zufrieden</span> <span class="op">~</span> <span class="va">educ_kat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">eastwest</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">islamophobie</span> <span class="op">+</span> <span class="va">populismus</span>,</span>

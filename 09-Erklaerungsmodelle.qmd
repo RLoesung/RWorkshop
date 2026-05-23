@@ -63,6 +63,31 @@ Stell dir die Regressionsgerade als einen **Gummizug**, den du durch eine Punkte
 
 *Warum quadriert?* Zwei Gründe in einem Satz: Vorzeichen weg (Abweichungen über und unter der Geraden heben sich sonst auf) — und große Abweichungen werden stärker bestraft (ein Punkt 4 Einheiten daneben zerrt 16-mal stärker als ein Punkt 1 Einheit daneben).
 
+**Bild dazu.** Punktwolke, Gerade — und die roten Striche zeigen genau das, was OLS minimiert: die senkrechten **Residuen** zwischen Beobachtung und Vorhersage:
+
+```{r ols-gummizug, fig.height=3.4}
+set.seed(2)
+gummi_demo <- tibble(
+  x = c(1, 2, 3, 4, 5, 6, 7),
+  y = c(2.5, 2.8, 4.5, 4.0, 5.8, 6.5, 7.2)
+)
+m_gummi <- lm(y ~ x, data = gummi_demo)
+gummi_demo$y_hat <- predict(m_gummi)
+
+ggplot(gummi_demo, aes(x = x, y = y)) +
+  geom_segment(aes(xend = x, yend = y_hat),
+               color = "#d62728", linewidth = 0.8) +
+  geom_abline(intercept = coef(m_gummi)[[1]],
+              slope     = coef(m_gummi)[[2]],
+              color = "black", linewidth = 1) +
+  geom_point(size = 4, color = "#1f77b4") +
+  labs(x = "Prädiktor x", y = "Outcome y",
+       title = "OLS: was genau wird minimiert?",
+       caption = "Schwarze Linie = Regressionsgerade · rote Striche = Residuen. OLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird.")
+```
+
+**Lesart.** Jeder blaue Punkt zieht die Gerade ein Stück zu sich hin — wie ein Gummizug. Die Gerade ist die *eindeutige* Position, in der die Summe der quadrierten roten Striche so klein wie möglich wird. Würdest du die Gerade nur ein bisschen drehen oder verschieben, würde diese Summe sofort größer.
+
 Die geschlossene Lösung für die Steigung sieht so aus:
 
 $$\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}$$
@@ -132,9 +157,22 @@ Die einfache Regression hatte einen Prädiktor — Populismus. Aber Islamfeindli
 Statt einer Geraden im 2D-Raum suchst du jetzt eine *Ebene* (zwei Prädiktoren) oder eine höherdimensionale Fläche (mehr Prädiktoren), die durch die Punktewolke passt. Jeder Prädiktor bekommt einen eigenen Koeffizienten — und dieser Koeffizient liest sich: *„Wenn diese Variable um eine Einheit steigt, **bei gleichzeitiger Konstanthaltung aller anderen Variablen**, ändert sich y um diesen Wert."* Das „bei Konstanthaltung" ist der entscheidende Punkt — genau dadurch isoliert die multiple Regression unabhängige Effekte.
 
 ::: {.callout-note}
-**Konzept: Was heißt „kontrolliert für"?** Ein konkretes Zahlenbeispiel macht das greifbar. Du rechnest erst eine *bivariate* Regression (`islamophobie ~ bildung`) und bekommst einen Koeffizienten von z. B. -0.20: höhere Bildung → niedrigere Islamfeindlichkeit. Dann nimmst du Populismus mit ins Modell (`islamophobie ~ bildung + populismus`) — und der Bildungs-Koeffizient schrumpft auf z. B. -0.13.
+**Konzept: Was heißt „kontrolliert für"?** Ein konkretes Zahlenbeispiel macht das greifbar. Du rechnest erst eine *bivariate* Regression (`islamophobie ~ bildung`) und bekommst einen Koeffizienten von z. B. −0.20: höhere Bildung → niedrigere Islamfeindlichkeit. Dann nimmst du Populismus mit ins Modell (`islamophobie ~ bildung + populismus`) — und der Bildungs-Koeffizient schrumpft auf z. B. −0.13.
 
-Die Differenz von -0.07 ist *der Teil des Bildungseffekts, der eigentlich über Populismus läuft*: Höher Gebildete sind im Schnitt weniger populistisch, und Populismus erklärt Islamfeindlichkeit besser als Bildung allein. Was nach Kontrolle übrig bleibt (-0.13), ist der *direkte* Bildungseffekt, der *nicht* über Populismus vermittelt ist. Genau diese Zerlegung in *direkte* und *vermittelte* Effekte ist der Mehrwert multivariater Modellierung.
+Visualisiert als Pfeil-Diagramm:
+
+```
+                          indirekt (−0.07)
+                ┌─────► Populismus ─────┐
+                │                       ▼
+   Bildung ─────┤                     Islamfeindlichkeit
+                │                       ▲
+                └──── direkt (−0.13) ───┘
+
+   Gesamt-Effekt Bildung: −0.20 = direkt (−0.13) + indirekt (−0.07)
+```
+
+Die Differenz von −0.07 ist *der Teil des Bildungseffekts, der eigentlich über Populismus läuft*: Höher Gebildete sind im Schnitt weniger populistisch, und Populismus erklärt Islamfeindlichkeit besser als Bildung allein. Was nach Kontrolle übrig bleibt (−0.13), ist der *direkte* Bildungseffekt, der *nicht* über Populismus vermittelt ist. Genau diese Zerlegung in *direkte* und *vermittelte* Effekte ist der Mehrwert multivariater Modellierung.
 :::
 
 Die wichtigste Zahl für die Gesamtgüte des Modells ist **R²**: der Anteil der Varianz in der abhängigen Variable, den das Modell erklärt. Ein R² von 0.30 bedeutet: deine Prädiktoren erklären 30 Prozent der Streuung in der abhängigen Variable; 70 Prozent bleiben unerklärt (durch Variablen, die du nicht im Modell hast, durch Messfehler, durch Zufall). In der Sozialforschung sind R² über 0.30 schon ein deutlicher Befund — perfekte Erklärung mit R² nahe 1 gibt es nur in den Naturwissenschaften.
@@ -169,6 +207,33 @@ summary(modell)
 - **Sig.** — *p*-Werte.
 
 In unserem Modell ist `populismus` mit einem Beta von rund 0.33 der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher. Bildung wirkt negativ (höhere Bildung → weniger Islamfeindlichkeit), Alter und Ost-Region positiv.
+
+**Bild dazu — R² als Tortenstück.** Das Modell erklärt einen *Anteil* der Varianz in Islamfeindlichkeit. Wie groß ist dieser Anteil — und wie groß bleibt der unerklärte Rest? Die R²-Zahl aus dem Output, sichtbar gemacht:
+
+```{r r2-anteil, fig.height=1.8}
+library(broom)
+r2 <- broom::glance(modell$model)$r.squared
+
+tibble(
+  anteil = factor(c("erklärt durch Modell (R²)", "unerklärt (Residuen)"),
+                  levels = c("unerklärt (Residuen)", "erklärt durch Modell (R²)")),
+  wert   = c(r2, 1 - r2)
+) |>
+  ggplot(aes(x = wert, y = "", fill = anteil)) +
+  geom_col(width = 0.4) +
+  geom_text(aes(label = sprintf("%.0f %%", wert * 100)),
+            position = position_stack(vjust = 0.5),
+            color = "white", fontface = "bold", size = 4.5) +
+  scale_fill_manual(values = c(`erklärt durch Modell (R²)` = "#1f77b4",
+                                `unerklärt (Residuen)` = "grey60"),
+                    name = NULL) +
+  scale_x_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(x = NULL, y = NULL,
+       title = sprintf("Wie viel Varianz erklärt das Modell? R² = %.2f", r2),
+       caption = "Sozialwissenschafts-typisch: R² um 0.20 – 0.30 ist ein deutlicher Befund.")
+```
+
+**Lesart.** Der blaue Anteil ist der Befund: *„so viel von der Streuung in Islamfeindlichkeit lässt sich mit unseren fünf Prädiktoren erklären."* Der graue Rest geht auf alle Variablen, die *nicht* im Modell stehen, plus Messfehler und Zufall.
 
 ::: {.callout-note}
 **Konzept: B oder Beta — wann was?** Beide Koeffizienten antworten auf verschiedene Fragen:
@@ -450,7 +515,32 @@ tibble(
 
 Das OR von 2.0 sagt: *„Frauen haben das Doppelte der Odds."* Die *Wahrscheinlichkeit* steigt aber nur von 0.25 auf 0.40 — also um **60 %**, *nicht* um 100 %. Bei kleinen Wahrscheinlichkeiten (≤ 0.10) ist OR ≈ Wahrscheinlichkeits-Faktor; bei großen wird die Diskrepanz spürbar.
 
-Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent" sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (`predict(modell$model, type = "response")`) als OR zu paraphrasieren.
+Visualisiert man die gleiche 2×2-Tabelle als gestackte Balken, sieht man die Wahrscheinlichkeiten direkt:
+
+```{r or-stacked, fig.height=2.6}
+tibble(
+  gruppe  = factor(rep(c("Männer", "Frauen"), each = 2),
+                   levels = c("Männer", "Frauen")),
+  outcome = factor(rep(c("Outcome = 1", "Outcome = 0"), 2),
+                   levels = c("Outcome = 0", "Outcome = 1")),
+  n       = c(25, 75, 40, 60)
+) |>
+  ggplot(aes(x = gruppe, y = n, fill = outcome)) +
+  geom_col(position = "fill", width = 0.4) +
+  geom_text(aes(label = sprintf("%d (%.0f %%)", n, n)),
+            position = position_fill(vjust = 0.5),
+            color = "white", fontface = "bold") +
+  scale_fill_manual(values = c(`Outcome = 1` = "#d62728",
+                                `Outcome = 0` = "grey60"),
+                    name = NULL) +
+  scale_y_continuous(labels = scales::percent) +
+  coord_flip() +
+  labs(x = NULL, y = "Anteil",
+       title = "OR = 2.0 in Bildern: Wahrscheinlichkeit steigt von 25 % auf 40 %",
+       caption = "Wahrscheinlichkeits-Zuwachs = 15 Prozentpunkte (= 60 % relativ) — nicht 100 %.")
+```
+
+**Lesart.** Der rote Anteil ist die *Wahrscheinlichkeit* — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein *Wahrscheinlichkeits-Zuwachs von 60 %*, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent" sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (`predict(modell$model, type = "response")`) als OR zu paraphrasieren.
 :::
 
 Wir konstruieren für unsere Mini-Studie eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
@@ -497,50 +587,57 @@ Odds Ratios > 1 erhöhen, < 1 verringern die Wahrscheinlichkeit des Outcomes.
 Aus den Vorhersagen `predict(modell_log$model, type = "response")` baust du sie dir bei Bedarf manuell oder mit dem Paket `caret`.
 :::
 
+### Die Sigmoid-Kurve mit echten Daten
+
+Die abstrakte Sigmoid-Kurve von oben — jetzt mit Daten. Wir zeichnen die Wahrscheinlichkeit für `islam_hoch = 1` als Funktion von `populismus`. Die 0/1-Punkte (jittert sichtbar gemacht) sind echte Befragte, die schwarze Kurve ist eine logistische Regression nur mit Populismus als Prädiktor:
+
+```{r sigmoid-real, fig.height=3.4}
+allbus_dummy |>
+  filter(!is.na(populismus), !is.na(islam_hoch)) |>
+  ggplot(aes(x = populismus, y = islam_hoch)) +
+  geom_jitter(alpha = 0.08, color = "#1f77b4",
+              width = 0.05, height = 0.06) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              color = "black", linewidth = 1.2, se = FALSE) +
+  scale_y_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1),
+                     labels = scales::percent) +
+  labs(x = "Populismus (1–5, umgepolt)",
+       y = "Wahrscheinlichkeit (Islamfeindlichkeit ≥ 4)",
+       title = "Sigmoid trifft echte Daten",
+       caption = "Punkte (jitter) = einzelne Befragte (oben = islam_hoch = 1) · Kurve = logistische Regression")
+```
+
+**Lesart.** Bei niedrigem Populismus (links) liegt die Wahrscheinlichkeit für hohe Islamfeindlichkeit unter 30 %. Bei hohem Populismus (rechts) steigt sie auf über 80 %. Die *Form* — flach-steil-flach — ist exakt die Sigmoid-Kurve aus dem abstrakten Plot oben, nur jetzt mit echten ALLBUS-Daten gefüllt. **Genau das modelliert die logistische Regression.**
+
 ## Befunde grafisch kommunizieren
 
 Die Modelle stehen, die Koeffizienten sind interpretiert — jetzt fehlt nur noch die Kommunikation. In einer Hausarbeit, einem Paper oder einer Präsentation ist eine Regressions-Tabelle solider Standard; eine *Grafik* macht das Ergebnis auf einen Blick lesbar.
 
 ### Coefficient-Plots: Regressionsergebnisse visualisieren {#sec-coefplot}
 
-Das wirkungsvollste Format ist ein **Coefficient-Plot**: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht eine direkt aus dem Modell der Mini-Studie motivierte Visualisierung aus:
+Das wirkungsvollste Format ist ein **Coefficient-Plot**: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht der Plot für unser Hauptmodell aus — direkt aus dem `lm`-Objekt via `broom::tidy()`:
 
 ```{r coef-plot}
-tibble(
-  term  = c("Bildung", "Alter", "Ost vs. West", "Geschlecht", "Populismus"),
-  beta  = c(-0.13, 0.30, 0.10, 0.05, 0.33),
-  lower = c(-0.18, 0.26, 0.04, -0.01, 0.27),
-  upper = c(-0.08, 0.34, 0.16, 0.10, 0.39)
-) |>
-  ggplot(aes(x = beta, y = fct_reorder(term, beta), xmin = lower, xmax = upper)) +
-  geom_pointrange() +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
-  labs(x = "Standardisierter Koeffizient (Beta)", y = NULL,
-       title = "Was erklärt Islamfeindlichkeit in Deutschland 2023?",
-       caption = "Multiple lineare Regression, ALLBUS 2023, gewichtet")
-```
-
-**Lesart.** Auf einen Blick siehst du *welcher* Prädiktor *wie stark* wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die Null-Linie überschneiden, sind statistisch unsicher (im Beispiel: Geschlecht).
-
-In der Praxis ziehst du die Werte (`beta`, `lower`, `upper`) nicht händisch aus dem Modell — das `broom`-Paket extrahiert sie als sauberes Tibble, das du direkt in `ggplot()` schickst:
-
-```{r coef-plot-real, eval=FALSE}
-# einmalig installieren: install.packages("broom")
 library(broom)
 
 modell$model |>
   tidy(conf.int = TRUE) |>
-  filter(term != "(Intercept)") |>           # Konstante nicht plotten
+  filter(term != "(Intercept)") |>           # Konstante interessiert hier nicht
   ggplot(aes(x = estimate, y = fct_reorder(term, estimate),
              xmin = conf.low, xmax = conf.high)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
   labs(x = "Koeffizient mit 95 %-KI", y = NULL,
-       title = "Was erklärt Islamfeindlichkeit?",
-       caption = "Multiple lineare Regression, ALLBUS 2023, gewichtet")
+       title = "Was erklärt Islamfeindlichkeit in Deutschland 2023?",
+       caption = "Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell$model)")
 ```
 
-`broom` ist nicht Teil des Buch-Stacks, gehört aber zur tidymodels-Familie und ist *die* Brücke zwischen statistischen Modellen und ggplot2.
+**Lesart.** Auf einen Blick siehst du *welcher* Prädiktor *wie stark* wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die *gestrichelte Null-Linie überschneiden*, sind statistisch unsicher — der Effekt unterscheidet sich nicht klar von 0.
+
+::: {.callout-note}
+**Hintergrund: Was tut `broom::tidy()`?** `tidy()` nimmt das `lm`-Objekt und packt die Coefficients-Tabelle in ein normales Tibble mit den Spalten `term`, `estimate`, `std.error`, `statistic`, `p.value` — plus `conf.low`/`conf.high` bei `conf.int = TRUE`. Damit ist jeder Modell-Output direkt ggplot2-tauglich, ohne dass du Werte abtippst. `broom` gehört zur tidymodels-Familie und ist die de-facto-Standardbrücke zwischen statistischen Modellen und Tidyverse-Workflows.
+:::
 
 ::: {.callout-note}
 **Reviewer-Hinweis.** Coefficient-Plots haben sich in der politik- und sozialwissenschaftlichen Empirie als Standard etabliert (vgl. Gelman & Hill 2007; King et al. 2000). Sie ersetzen *nicht* die vollständige Tabelle im Anhang, machen das Ergebnis aber für nicht-statistisch Geschulte zugänglich — was in interdisziplinärer Forschung den Unterschied macht.
