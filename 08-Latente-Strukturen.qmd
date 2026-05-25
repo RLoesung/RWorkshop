@@ -143,34 +143,7 @@ mit $r_{ij}$ = paarweise Korrelationen und $a_{ij}$ = partielle Korrelationen (K
 
 Lies sie als: *„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen."*
 
-**Bild dazu.** Stell dir pro Item zwei Anteile vor: einen **gemeinsamen Teil** (gut für Faktorisierung) und einen **partiellen Teil** (was nur dieses Item allein erklärt). KMO ist der Mittelwert des gemeinsamen Anteils über alle Items:
-
-```{r kmo-illustration, fig.height=3.2}
-tibble(
-  item       = paste0("mm0", 1:6),
-  gemeinsam  = c(0.72, 0.68, 0.65, 0.55, 0.70, 0.60),
-) |>
-  mutate(partiell = 1 - gemeinsam) |>
-  pivot_longer(c(gemeinsam, partiell),
-               names_to = "anteil", values_to = "wert") |>
-  ggplot(aes(x = item, y = wert, fill = anteil)) +
-  geom_col(width = 0.7, position = position_stack(reverse = TRUE)) +
-  geom_hline(yintercept = 0.7, linetype = "dashed", color = "grey40") +
-  annotate("text", x = 6.4, y = 0.72,
-           label = "KMO-Schwelle ≈ 0.7",
-           color = "grey30", size = 3, hjust = 1) +
-  scale_fill_manual(
-    values = c(gemeinsam = "#1f77b4", partiell = "grey80"),
-    labels = c("gemeinsame Varianz", "partielle Varianz"),
-    name = NULL
-  ) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs(x = NULL, y = "Anteil je Item",
-       title = "KMO: wie viel Varianz ist gemeinsam, wie viel bleibt partiell?",
-       caption = "Schematische Darstellung. KMO mittelt den blauen Anteil über alle Items.")
-```
-
-**Lesart.** Je größer der blaue (gemeinsame) Anteil, desto höher der KMO. Items mit fast nur grauer (partieller) Varianz tragen *nichts* zu einem gemeinsamen Faktor bei — eine EFA wäre dort sinnlos. Die Schwellen-Tabelle für die Praxis:
+Konzeptuell ist KMO der Mittelwert über alle Items: pro Item wird der **gemeinsame** Anteil (gut für Faktorisierung) gegen den **partiellen** Anteil abgewogen, und der KMO selbst ist das Aggregat dieser Anteile. Die Pro-Item-Werte (offiziell **MSA** — *Measure of Sampling Adequacy*) sehen wir gleich konkret im Diagnose-Block — mit echten Werten aus unserem Modell und als Plot. Die Schwellen-Tabelle für die Praxis:
 
 | KMO         | Stichprobeneignung   |
 | :---------- | :------------------- |
@@ -217,6 +190,33 @@ tibble(item = names(efa_vor$kmo$per_item),
 ```
 
 Faustregel pro Item: **MSA ≥ 0.5** akzeptabel, **< 0.5** Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.
+
+Visuell — gemeinsame (blau) vs. partielle (grau) Varianz pro Item, mit der MSA-Schwelle 0.5 als gestrichelter Linie:
+
+```{r kmo-msa-plot, fig.height=3.2}
+tibble(item      = names(efa_vor$kmo$per_item),
+       gemeinsam = efa_vor$kmo$per_item) |>
+  mutate(partiell = 1 - gemeinsam) |>
+  pivot_longer(c(gemeinsam, partiell),
+               names_to = "anteil", values_to = "wert") |>
+  ggplot(aes(x = item, y = wert, fill = anteil)) +
+  geom_col(width = 0.7, position = position_stack(reverse = TRUE)) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "grey40") +
+  annotate("text", x = 6.4, y = 0.52,
+           label = "MSA-Schwelle 0.5",
+           color = "grey30", size = 3, hjust = 1) +
+  scale_fill_manual(
+    values = c(gemeinsam = "#1f77b4", partiell = "grey80"),
+    labels = c("gemeinsame Varianz (MSA)", "partielle Varianz"),
+    name = NULL
+  ) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(x = NULL, y = "Anteil je Item",
+       title = "Wie viel gemeinsame Varianz hat jedes Item?",
+       caption = "Echte Werte aus efa_vor$kmo$per_item · ALLBUS 2023, gewichtet")
+```
+
+Alle Balken zeigen den blauen Anteil weit über der 0.5-Schwelle — visuell bestätigt, was die Tabelle oben in Zahlen liefert.
 
 **Gesamt-Lesart.** Alle drei Ebenen sind grün: Gesamt-KMO 0.86, Bartlett signifikant, jedes einzelne Item MSA ≥ 0.85. Die Anzahl-Entscheidung im nächsten Abschnitt kann starten.
 

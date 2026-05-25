@@ -502,38 +502,7 @@ Wichtig
 <p>Stell dir vor, du willst aus sechs Zeitungsartikeln einen Leitartikel destillieren. Wenn die Artikel inhaltlich überlappen, kein Problem. Wenn sie aber jeweils <em>völlig eigene</em> Themen abhandeln, lässt sich nichts gemeinsam herauspressen. Genau das misst der <strong>Kaiser-Meyer-Olkin-Wert (KMO)</strong>: Wie viel Anteil der Item-Varianz ist <em>partiell</em> (also nach Kontrolle aller anderen Items) noch übrig — und wie viel ist <em>gemeinsam</em>?</p>
 <p>Die Formel im Kern: <span class="math display">\[\text{KMO} = \frac{\sum r_{ij}^2}{\sum r_{ij}^2 + \sum a_{ij}^2}\]</span> mit <span class="math inline">\(r_{ij}\)</span> = paarweise Korrelationen und <span class="math inline">\(a_{ij}\)</span> = partielle Korrelationen (Korrelationen, nachdem der Einfluss aller anderen Items herausgerechnet wurde).</p>
 <p>Lies sie als: <em>„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen.”</em></p>
-<p><strong>Bild dazu.</strong> Stell dir pro Item zwei Anteile vor: einen <strong>gemeinsamen Teil</strong> (gut für Faktorisierung) und einen <strong>partiellen Teil</strong> (was nur dieses Item allein erklärt). KMO ist der Mittelwert des gemeinsamen Anteils über alle Items:</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
-<span>  item       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"mm0"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>,</span>
-<span>  gemeinsam  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.72</span>, <span class="fl">0.68</span>, <span class="fl">0.65</span>, <span class="fl">0.55</span>, <span class="fl">0.70</span>, <span class="fl">0.60</span><span class="op">)</span>,</span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>partiell <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">gemeinsam</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">gemeinsam</span>, <span class="va">partiell</span><span class="op">)</span>,</span>
-<span>               names_to <span class="op">=</span> <span class="st">"anteil"</span>, values_to <span class="op">=</span> <span class="st">"wert"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">item</span>, y <span class="op">=</span> <span class="va">wert</span>, fill <span class="op">=</span> <span class="va">anteil</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_col</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="fu">position_stack</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.7</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">6.4</span>, y <span class="op">=</span> <span class="fl">0.72</span>,</span>
-<span>           label <span class="op">=</span> <span class="st">"KMO-Schwelle ≈ 0.7"</span>,</span>
-<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
-<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>gemeinsam <span class="op">=</span> <span class="st">"#1f77b4"</span>, partiell <span class="op">=</span> <span class="st">"grey80"</span><span class="op">)</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gemeinsame Varianz"</span>, <span class="st">"partielle Varianz"</span><span class="op">)</span>,</span>
-<span>    name <span class="op">=</span> <span class="cn">NULL</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html">percent_format</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Anteil je Item"</span>,</span>
-<span>       title <span class="op">=</span> <span class="st">"KMO: wie viel Varianz ist gemeinsam, wie viel bleibt partiell?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Schematische Darstellung. KMO mittelt den blauen Anteil über alle Items."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/kmo-illustration-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Lesart.</strong> Je größer der blaue (gemeinsame) Anteil, desto höher der KMO. Items mit fast nur grauer (partieller) Varianz tragen <em>nichts</em> zu einem gemeinsamen Faktor bei — eine EFA wäre dort sinnlos. Die Schwellen-Tabelle für die Praxis:</p>
+<p>Konzeptuell ist KMO der Mittelwert über alle Items: pro Item wird der <strong>gemeinsame</strong> Anteil (gut für Faktorisierung) gegen den <strong>partiellen</strong> Anteil abgewogen, und der KMO selbst ist das Aggregat dieser Anteile. Die Pro-Item-Werte (offiziell <strong>MSA</strong> — <em>Measure of Sampling Adequacy</em>) sehen wir gleich konkret im Diagnose-Block — mit echten Werten aus unserem Modell und als Plot. Die Schwellen-Tabelle für die Praxis:</p>
 <table class="caption-top table">
 <thead><tr class="header">
 <th style="text-align: left;">KMO</th>
@@ -570,7 +539,7 @@ Wichtig
 <p>Wir rufen <code><a href="https://rdrr.io/pkg/lavaan/man/efa.html">efa()</a></code> einmal mit <code>n_factors = 1</code> auf und speichern das Ergebnis — die Faktoranzahl ist hier egal, wir interessieren uns nur für die Voraussetzungs-Werte. Aus dem zurückgegebenen Objekt liest du <em>drei</em> Diagnose-Ebenen heraus.</p>
 <p><strong>Ebene 1: Gesamt-KMO.</strong> Der kompakte Print zeigt ihn als zentrale Zahl:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">efa_vor</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -582,7 +551,7 @@ Wichtig
 <p>Gesamt-KMO ≈ 0.86 — die Stichprobe ist als Ganzes „meritorious” geeignet (siehe Schwellen-Tabelle oben).</p>
 <p><strong>Ebene 2: Bartlett-Test.</strong> Aus dem Objekt-Slot <code>$bartlett</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span><span class="op">$</span><span class="va">bartlett</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span><span class="op">$</span><span class="va">bartlett</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$chi_sq
 [1] 6532.633
@@ -597,7 +566,7 @@ $p_value
 <p>χ² ≈ 6533 bei df = 15 und <em>p</em> &lt; .001 — die Korrelationsmatrix ist klar verschieden von einer Identitätsmatrix. Mindest-Voraussetzung erfüllt.</p>
 <p><strong>Ebene 3: Per-Item-KMO (MSA).</strong> Das ist der eigentlich spannende Diagnose-Schritt — er zeigt, ob <em>jedes einzelne Item</em> ins gemeinsame Faktormodell passt. Im Output-Objekt liegt er als named numeric in <code>$kmo$per_item</code>; wir packen ihn in ein Tibble:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
 <span>       MSA  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -612,6 +581,36 @@ $p_value
 </div>
 </div>
 <p>Faustregel pro Item: <strong>MSA ≥ 0.5</strong> akzeptabel, <strong>&lt; 0.5</strong> Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.</p>
+<p>Visuell — gemeinsame (blau) vs.&nbsp;partielle (grau) Varianz pro Item, mit der MSA-Schwelle 0.5 als gestrichelter Linie:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<span>       gemeinsam <span class="op">=</span> <span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>partiell <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">gemeinsam</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">gemeinsam</span>, <span class="va">partiell</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"anteil"</span>, values_to <span class="op">=</span> <span class="st">"wert"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">item</span>, y <span class="op">=</span> <span class="va">wert</span>, fill <span class="op">=</span> <span class="va">anteil</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="fu">position_stack</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">6.4</span>, y <span class="op">=</span> <span class="fl">0.52</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"MSA-Schwelle 0.5"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>gemeinsam <span class="op">=</span> <span class="st">"#1f77b4"</span>, partiell <span class="op">=</span> <span class="st">"grey80"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gemeinsame Varianz (MSA)"</span>, <span class="st">"partielle Varianz"</span><span class="op">)</span>,</span>
+<span>    name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html">percent_format</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Anteil je Item"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Wie viel gemeinsame Varianz hat jedes Item?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Echte Werte aus efa_vor$kmo$per_item · ALLBUS 2023, gewichtet"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/kmo-msa-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Alle Balken zeigen den blauen Anteil weit über der 0.5-Schwelle — visuell bestätigt, was die Tabelle oben in Zahlen liefert.</p>
 <p><strong>Gesamt-Lesart.</strong> Alle drei Ebenen sind grün: Gesamt-KMO 0.86, Bartlett signifikant, jedes einzelne Item MSA ≥ 0.85. Die Anzahl-Entscheidung im nächsten Abschnitt kann starten.</p>
 </section></section><section id="sec-anzahl-faktoren" class="level2" data-number="8.4"><h2 data-number="8.4" class="anchored" data-anchor-id="sec-anzahl-faktoren">
 <span class="header-section-number">8.4</span> Anzahl der Faktoren bestimmen</h2>
