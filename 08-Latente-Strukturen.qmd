@@ -186,17 +186,39 @@ Bartletts Sphärizitätstest stellt eine konservative Mindestfrage: Ist die Korr
 
 Wenn der Test signifikant ist ($p < .05$), heißt das: *„zumindest *irgendeine* Korrelation in der Matrix ist von Null verschieden — also gibt es etwas zu faktorisieren."* Bei N > 1000 ist Bartlett fast immer signifikant; er ist eher ein *technischer Mindest-Check* als ein inhaltliches Argument. KMO ist die viel aussagekräftigere Größe.
 
-### Beide aus einem Aufruf ablesen
+### Drei Diagnose-Ebenen aus einem Aufruf
 
-Beides taucht oben im Standard-`efa()`-Output auf. Wir rufen `efa()` einmal mit `n_factors = 1` auf — die Anzahl ist hier egal, wir lesen nur den KMO/Bartlett-Block am Anfang:
+Wir rufen `efa()` einmal mit `n_factors = 1` auf und speichern das Ergebnis — die Faktoranzahl ist hier egal, wir interessieren uns nur für die Voraussetzungs-Werte. Aus dem zurückgegebenen Objekt liest du *drei* Diagnose-Ebenen heraus.
+
+**Ebene 1: Gesamt-KMO.** Der kompakte Print zeigt ihn als zentrale Zahl:
 
 ```{r efa-vor}
-allbus |>
+efa_vor <- allbus |>
   efa(mm01, mm02r, mm03, mm04, mm05r, mm06,
       weights = wghtpew, n_factors = 1)
+efa_vor
 ```
 
-**Lesart.** Oben siehst du KMO und Bartlett-χ²/p. Liegt KMO ≥ 0.7 und ist Bartlett signifikant, sind die Voraussetzungen erfüllt — und die Anzahl-Entscheidung im nächsten Abschnitt kann starten.
+Gesamt-KMO ≈ 0.86 — die Stichprobe ist als Ganzes „meritorious" geeignet (siehe Schwellen-Tabelle oben).
+
+**Ebene 2: Bartlett-Test.** Aus dem Objekt-Slot `$bartlett`:
+
+```{r efa-bartlett}
+efa_vor$bartlett
+```
+
+χ² ≈ 6533 bei df = 15 und *p* < .001 — die Korrelationsmatrix ist klar verschieden von einer Identitätsmatrix. Mindest-Voraussetzung erfüllt.
+
+**Ebene 3: Per-Item-KMO (MSA).** Das ist der eigentlich spannende Diagnose-Schritt — er zeigt, ob *jedes einzelne Item* ins gemeinsame Faktormodell passt. Im Output-Objekt liegt er als named numeric in `$kmo$per_item`; wir packen ihn in ein Tibble:
+
+```{r efa-msa}
+tibble(item = names(efa_vor$kmo$per_item),
+       MSA  = round(efa_vor$kmo$per_item, 3))
+```
+
+Faustregel pro Item: **MSA ≥ 0.5** akzeptabel, **< 0.5** Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.
+
+**Gesamt-Lesart.** Alle drei Ebenen sind grün: Gesamt-KMO 0.86, Bartlett signifikant, jedes einzelne Item MSA ≥ 0.85. Die Anzahl-Entscheidung im nächsten Abschnitt kann starten.
 
 ## Anzahl der Faktoren bestimmen {#sec-anzahl-faktoren}
 
