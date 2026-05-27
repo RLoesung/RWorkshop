@@ -74,7 +74,8 @@ gummi_demo <- tibble(
 m_gummi <- lm(y ~ x, data = gummi_demo)
 gummi_demo$y_hat <- predict(m_gummi)
 
-ggplot(gummi_demo, aes(x = x, y = y)) +
+gummi_demo |>
+  ggplot(aes(x = x, y = y)) +
   geom_segment(aes(xend = x, yend = y_hat),
                color = "#d62728", linewidth = 0.8) +
   geom_abline(intercept = coef(m_gummi)[[1]],

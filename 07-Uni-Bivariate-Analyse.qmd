@@ -82,7 +82,8 @@ Die Konvention `p < .05` heißt: *„Das Ergebnis ist so unwahrscheinlich unter 
 p_data <- tibble(z = seq(-4, 4, length.out = 500)) |>
   mutate(d = dnorm(z))
 
-ggplot(p_data, aes(x = z, y = d)) +
+p_data |>
+  ggplot(aes(x = z, y = d)) +
   geom_area(data = filter(p_data, z >= qnorm(0.975)),
             fill = "#d62728", alpha = 0.7) +
   geom_area(data = filter(p_data, z <= qnorm(0.025)),
@@ -581,7 +582,8 @@ anova_demo <- tibble(
 means       <- anova_demo |> summarise(mw = mean(wert), .by = gruppe)
 grand_mean  <- mean(anova_demo$wert)
 
-ggplot(anova_demo, aes(x = gruppe, y = wert)) +
+anova_demo |>
+  ggplot(aes(x = gruppe, y = wert)) +
   geom_jitter(alpha = 0.3, color = "#1f77b4",
               width = 0.12, height = 0) +
   geom_hline(yintercept = grand_mean,

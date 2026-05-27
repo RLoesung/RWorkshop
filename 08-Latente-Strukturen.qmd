@@ -300,7 +300,8 @@ faktor_radial <- tibble(
 ) |>
   mutate(x = cos(winkel), y = sin(winkel))
 
-ggplot(faktor_radial) +
+faktor_radial |>
+  ggplot() +
   geom_segment(aes(x = 0, y = 0, xend = x, yend = y,
                    linewidth = ladung),
                color = "#1f77b4", lineend = "round") +
@@ -391,7 +392,8 @@ items_rot <- tibble(
 )
 
 baseplot <- function(d, ttl, sub) {
-  ggplot(d, aes(F1, F2, label = item)) +
+  d |>
+    ggplot(aes(F1, F2, label = item)) +
     geom_hline(yintercept = 0, color = "grey50") +
     geom_vline(xintercept = 0, color = "grey50") +
     geom_segment(aes(x = 0, y = 0, xend = F1, yend = F2),
