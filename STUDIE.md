@@ -1,8 +1,10 @@
 # Mini-Studie — Roter Faden durch den RWorkshop
 
-**Datensatz.** ALLBUS 2023 (`ALLBUS2023.sav`, N = 5246, 579 Variablen). Vertriebsstand GESIS.
+**Datensatz.** ALLBUS 2023 (`ALLBUS2023.sav`, N = 5246, 579 Variablen), GESIS-Studiennummer ZA8901.
 
 **Skala.** Sechs Items zur Einstellung gegenüber Muslimen / dem Islam in Deutschland. In der deutschsprachigen Forschung etabliert unter dem Begriff **Muslimfeindlichkeit / Islamfeindlichkeit** (vgl. Decker & Brähler; Pickel/Pickel). Wir verwenden im Lehrbuch durchgängig den Skalennamen `islamophobie` aus pragmatischen Gründen (kurz, international anschlussfähig).
+
+**Stand.** Kapitelnummern und Befunde beziehen sich auf die 9-Kapitel-Fassung, gerendert mit mariposa 0.7.4 (November 2026).
 
 ---
 
@@ -10,7 +12,7 @@
 
 > *Wer trägt islamfeindliche Einstellungen in Deutschland 2023, und wie hängen sie mit politischen Orientierungen und Soziostruktur zusammen?*
 
-Diese Frage trägt sich durch alle Methoden-Kapitel (3–6) und ist gleichzeitig der inhaltliche Roter Faden, an dem jede Methode mindestens einmal demonstriert wird.
+Diese Frage trägt sich durch den gesamten Daten- und Methodenteil (Kap. 4–9) und ist der inhaltliche rote Faden, an dem jede Methode mindestens einmal demonstriert wird.
 
 ---
 
@@ -18,28 +20,29 @@ Diese Frage trägt sich durch alle Methoden-Kapitel (3–6) und ist gleichzeitig
 
 ### 2.1 Skalen-Items (latente AV)
 
-Alle sechs Items 7-stufig (1 = „stimme gar nicht zu" … 7 = „stimme voll und ganz zu"); Missing-Codes -42, -11, -9, -8. Skala ist Teil eines **Split-Moduls** (TNZ-Code -11 für die andere Stichprobenhälfte), gültige N pro Item ≈ 3300–3440.
+Alle sechs Items 7-stufig (1 = „stimme gar nicht zu" … 7 = „stimme voll und ganz zu"); Missing-Codes -42, -11, -9, -8. Die Skala ist Teil eines **Split-Moduls** (TNZ-Code -11 für die andere Stichprobenhälfte), gültige N pro Item ≈ 3300–3450.
 
 | Variable | Wortlaut (Kurzform) | Polung |
 |---|---|---|
-| `mm01` | Islamausübung in Deutschland beschränken | hoch = islamophob |
+| `mm01` | Islamausübung in Deutschland beschränken | hoch = islamfeindlich |
 | `mm02` → `mm02r` | Islam passt in die deutsche Gesellschaft | **umpolen** |
-| `mm03` | Anwesenheit von Muslimen bringt Konflikt | hoch = islamophob |
-| `mm04` | Staat sollte islamische Gruppen beobachten | hoch = islamophob |
+| `mm03` | Anwesenheit von Muslimen bringt Konflikt | hoch = islamfeindlich |
+| `mm04` | Staat sollte islamische Gruppen beobachten | hoch = islamfeindlich |
 | `mm05` → `mm05r` | Muslimischer Bürgermeister in Ordnung | **umpolen** |
-| `mm06` | Unter Muslimen sind viele rel. Fanatiker | hoch = islamophob |
+| `mm06` | Unter Muslimen sind viele rel. Fanatiker | hoch = islamfeindlich |
 
-**Gebildete Skala:** `islamophobie` = `row_means(mm01, mm02r, mm03, mm04, mm05r, mm06, min_valid = 5)` (5 von 6 Items müssen valide sein).
+**Gebildete Skala:** `islamophobie` = Mittelwert aus `mm01, mm02r, mm03, mm04, mm05r, mm06` mit `min_valid = 5` (5 von 6 Items müssen valide sein).
 
 ### 2.2 Korrelate / weitere AV
 
-| Variable | Bedeutung |
-|---|---|
-| `ls01` | Allgemeine Lebenszufriedenheit (0–10) |
-| `st01` | Vertrauen in Mitmenschen |
-| `ps03` | Zufriedenheit mit Demokratie in Deutschland |
-| `pa29`–`pa35` | Populismus-Items (Schulz et al. 2017), als Skala `populismus` aggregierbar |
-| `pt03`, `pt15` | Vertrauen Bundestag / Parteien (Einzel-Indikatoren politisches Vertrauen) |
+| Variable | Bedeutung | Verwendung |
+|---|---|---|
+| `pa29`–`pa35` | Populismus-Items (Schulz et al. 2017), 5-stufig **invers** → `pa29r`–`pa35r` | Skala `populismus` (`min_valid = 6`), zentraler Prädiktor in Kap. 7–9 |
+| `ps03` | Zufriedenheit mit der Demokratie in Deutschland (1 = sehr zufrieden … 6 = sehr unzufrieden) | Übungen Kap. 7 und 9 |
+| `ls01` | Allgemeine Lebenszufriedenheit (0–10) | Übung Kap. 7 |
+| `st01` | Vertrauen in Mitmenschen | Übung Kap. 7 |
+
+Reserve, derzeit nicht im Buch verwendet: `pt03`, `pt15` (Vertrauen Bundestag / Parteien), `agec` (Alter kategorial), `incc` (Nettoeinkommen kategorial).
 
 ### 2.3 Unabhängige Variablen (Soziostruktur)
 
@@ -48,117 +51,107 @@ Alle sechs Items 7-stufig (1 = „stimme gar nicht zu" … 7 = „stimme voll un
 | `eastwest` | Erhebungsgebiet West (1) / Ost (2) |
 | `sex` | Geschlecht (1 Mann, 2 Frau, 3 Divers, -9 KA, -42 Datenfehler) |
 | `age` | Alter metrisch |
-| `agec` | Alter kategorial (Reserve, falls Klassen gewünscht) |
-| `educ` | Allgemeiner Schulabschluss (1–7) — primäre Bildungsvariable |
-| `isced97` | ISCED 1997 — Alternative für internationale Vergleichbarkeit |
-| `incc` | Nettoeinkommen kategorial (Reserve) |
+| `educ` | Allgemeiner Schulabschluss (1–7; 6 = anderer Abschluss, 7 = noch Schüler:in) — primäre Bildungsvariable |
+| `educ_kat` | aus `educ` abgeleitet: 1–2 = niedrig, 3 = mittel, 4–5 = hoch, sonst NA (Setup-Chunks von Kap. 6, 7 und 9) |
+| `isced97` | ISCED 1997 — Alternative für internationale Vergleichbarkeit (Kap. 5, Kontrollvariable in Kap. 7) |
 
 ### 2.4 Gewicht
 
 | Variable | Zweck |
 |---|---|
-| `wghtpew` | Personenbezogenes Ost-West-Gewicht (Standardanwendung) |
+| `wghtpew` | Personenbezogenes Ost-West-Gewicht (Standardanwendung in allen Analysen) |
 
 ---
 
-## 3 — Datenpräp-Pipeline (Kap. 3)
+## 3 — Datenpräp-Pipeline (Kap. 5)
 
-Das, was in Kap. 3 verbindlich erzeugt wird und in Kap. 4–6 als Voraussetzung gilt:
+Die verbindliche Fassung steht in **`R/prep.R`**. Kap. 5 baut sie Schritt für Schritt auf (der Abschnitt „Die komplette Datenpräp-Pipeline" zeigt sie am Stück); Kap. 6–9 laden sie im Setup-Chunk per `source("R/prep.R")`, damit jedes Kapitel allein rendert. Änderungen an der Pipeline immer in Kap. 5 **und** in `R/prep.R` nachziehen.
 
-```r
-library(tidyverse)
-library(mariposa)
+Die Schritte:
 
-allbus <- read_spss("ALLBUS2023.sav") |>
-  # mm-Items: 7-stufig, 1=lehne ab, 7=stimme zu. mm02 und mm05 umpolen.
-  rec(mm02, rules = "rev", suffix = "r") |>
-  rec(mm05, rules = "rev", suffix = "r") |>
-  # pa-Items: 5-stufig INVERS, 1=stimme zu, 5=lehne ab. Alle 7 umpolen.
-  rec(pa29, rules = "rev", suffix = "r") |>
-  rec(pa30, rules = "rev", suffix = "r") |>
-  rec(pa31, rules = "rev", suffix = "r") |>
-  rec(pa32, rules = "rev", suffix = "r") |>
-  rec(pa33, rules = "rev", suffix = "r") |>
-  rec(pa34, rules = "rev", suffix = "r") |>
-  rec(pa35, rules = "rev", suffix = "r") |>
-  mutate(
-    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
-                             min_valid = 5),
-    populismus   = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
-                             min_valid = 6)
-  )
-```
+1. `read_spss("ALLBUS2023.sav")` — fehlende Werte werden als *tagged NAs* gelesen.
+2. `mm02` und `mm05` mit `rec(rules = "rev", suffix = "r")` umpolen.
+3. Alle sieben `pa`-Items umpolen (5-stufig invers: `1 = stimme zu` → `5 = lehne ab`).
+4. Skalen bilden: `islamophobie` (6 Items, `min_valid = 5`) und `populismus` (7 Items, `min_valid = 6`) mit `row_means()`.
+5. POMPS-Versionen `islamophobie_p` und `populismus_p` (0–100) mit `pomps()`.
 
-**Polungs-Hinweis.** Die `mm`-Items sind 7-stufig (`1=lehne ab` → `7=stimme zu`); die `pa`-Items sind 5-stufig und **invers** (`1=stimme zu` → `5=lehne ab`). Beide Skalen werden so umgepolt, dass am Ende einheitlich hoch = mehr von der gemessenen Einstellung (Islamfeindlichkeit bzw. Populismus) gilt. Dieser Schritt ist Pflicht *vor* der Skalenbildung — er wird in Kap. 3 als Lehrstück eingeführt.
+**Polungs-Hinweis.** Die `mm`-Items sind 7-stufig (`1 = lehne ab` → `7 = stimme zu`); die `pa`-Items sind 5-stufig und **invers**. Beide Skalen werden so umgepolt, dass am Ende einheitlich hoch = mehr von der gemessenen Einstellung gilt. Seit mariposa 0.7.4 nimmt `rules = "rev"` die Skalengrenzen aus den Wertelabels — Kap. 5 zeigt den Kontroll-Chunk `count(mm02, mm02r)`.
 
-**Lehrbuch-Klammer.** Diese Pipeline wird in Kap. 3 schrittweise aufgebaut, mit Halt für Erklärungen nach jedem Schritt (Frage → Code → Lesart). In Kap. 4–6 wird sie am Kapitelanfang in einem versteckten Setup-Chunk erneut ausgeführt, damit jedes Kapitel reproduzierbar bleibt.
+**Kapitelspezifische Ergänzungen** (nicht in `R/prep.R`): `educ_kat` in Kap. 6, 7 und 9; der Dummy `islam_hoch = as.integer(islamophobie >= 4)` (Skalenmitte) für die logistische Regression in Kap. 9.
 
 ---
 
 ## 4 — Methoden-Mapping pro Kapitel
 
-### Kap. 3 — Datenmodifikation
-- `read_spss("ALLBUS2023.sav")`, Daten ansehen.
-- **Split-Designs erklären** anhand `mm01`-Items (TNZ-Code -11 als Brücke zur Stichprobenarchitektur).
-- Fehlende Werte mit `set_na()` deklarieren.
-- `eastwest`, `sex`, `educ` als Faktor (`to_label()`).
-- **Reverse Coding** mit `rec()` — zentrales Lehrbeispiel für Skalenbildung.
-- Skala `islamophobie` mit `row_means()`.
-- Populismus-Skala als zweite Übung mit gleichem Muster (alle Items in derselben Richtung — Kontrast zu mm).
-- Codebook-Auszug mit `codebook(allbus, mm01:mm06)` als Abrundung.
+### Kap. 4 — Datenimport und Inspektion
+- `read_spss("ALLBUS2023.sav")`, Daten ansehen, Variablen finden mit `find_var()`, `codebook()`.
+- `select()`, `filter()`, `arrange()`; Datentypen und labelled-Vektoren.
+- Variablen- und Wertelabels lesen und setzen (`var_label()`, `val_labels()`).
+- **Split-Design** anhand der `mm`-Items erklären (TNZ-Code -11); fehlende Werte mit `set_na()` deklarieren, `na_frequencies()`.
 
-### Kap. 4 — Uni- und Bivariate Datenanalyse
-- Häufigkeiten einzelner Items: `frequency(allbus, mm03, weights = wghtpew)`.
-- Deskriptive Statistik der Skala: `describe(allbus, islamophobie, weights = wghtpew)`.
-- Kreuztabelle Bildungsstufen × Skalenterzile (Skala vorher in 3 Klassen geschnitten): `crosstab(...)` + χ² mit `chi_square()`.
-- `t_test(allbus, islamophobie, group = eastwest, weights = wghtpew)` — klassischer Mittelwertvergleich Ost vs. West.
-- Pearson-Korrelation Islamophobie ↔ Populismus, Islamophobie ↔ `ls01`, Islamophobie ↔ `ps03` — auch das mit `pearson_cor()`.
+### Kap. 5 — Daten transformieren und Skalen bilden
+- `mutate()`, `case_when()`, `recode_values()`, `group_by()`/`summarise()`, Joins, `pivot_*()`.
+- **Rekodierung** mit `rec()` (Bildung kategorisieren, Dichotomisieren, Quartile), Dummies mit `to_dummy()`, Standardisieren.
+- **Reverse Coding** als zentrales Lehrstück; Skalen `islamophobie` und `populismus` mit `row_means()`, Antwortstil mit `row_count()`, Vergleichbarkeit mit `pomps()`.
+- Die komplette Pipeline (Abschnitt 3).
 
-### Kap. 5 — Multivariate Datenanalyse
-- Korrelationsmatrix der 6 Items: `pearson_cor(allbus, mm01, mm02r, mm03, mm04, mm05r, mm06)`.
-- **EFA** mit `efa()`. Diskussion: 1-Faktor-Lösung (globale Islamfeindlichkeit) vs. 2-Faktor-Lösung (kognitiv-stereotyp vs. politisch-restriktiv). KMO + Bartlett aus dem `efa()`-Output ablesen.
-- **Cronbachs α** mit `reliability(mm01, mm02r, mm03, mm04, mm05r, mm06)` — Erwartung α ≈ .85–.90.
-- Multiple Regression `linear_regression(islamophobie ~ educ + age + eastwest + sex + populismus + ls01, weights = wghtpew)`.
-- Logistische Regression: Dummy „hohe Islamophobie" (Skalenwert ≥ Median) ~ Soziostruktur mit `logistic_regression()`.
-- **CFA-Ausblick** mit `lavaan::cfa()` — kurzer Restbedarf-Abschnitt, der zeigt, dass mariposa hier bewusst abgibt und das Lehrbuch nicht alles im Eigenpaket erzwingen will.
+### Kap. 6 — Visualisierung Grundlagen
+- Grammar of Graphics; Geoms für kategoriale und kontinuierliche Variablen.
+- Facets (Ost/West, Bildung), Farben und `theme_rworkshop()`, Beschriftungen, Ausblick auf `patchwork`.
 
-### Kap. 6 — Grafiken
-- **Likert-Plot** der 6 Items (divergierende Farbskala, gewichtet) als zentrale Grafik.
-- Histogramm / Boxplot der Skala nach Bildungsgruppen.
-- Streudiagramm Islamophobie × Populismus mit Regressionsgerade nach Ost/West (facettiert).
-- Koeffizienten-Plot der multiplen Regression aus Kap. 5.
-- Multi-Plot-Komposition mit `patchwork`.
+### Kap. 7 — Uni- und bivariate Analyse
+- Gewichtung; Inferenz-Grundlagen (p-Wert, Standardfehler, Konfidenzintervall, Effektgröße).
+- `frequency()`, `describe()`, `w_*()`-Kennwerte, `binomial_test()`, `chisq_gof()`.
+- `crosstab()` (inkl. Residuen) und `chi_square()` für Bildung × Region.
+- `pearson_cor()` (Islamfeindlichkeit ↔ Populismus, Item-Matrix), `partial_cor()`, `normality_test()`.
+- `t_test()` Ost vs. West, `oneway_anova()` nach Bildung mit Tukey-Post-Hoc, nicht-parametrische Alternativen.
+
+### Kap. 8 — Latente Strukturen
+- Inter-Item-Korrelationen, KMO (inkl. MSA pro Item) und Bartlett.
+- Anzahl der Faktoren (Eigenwerte, Scree-Plot); **EFA** mit `efa()` als Einfaktor- und Zwei-Faktor-Lösung mit Rotation.
+- **Reliabilität** mit `reliability()` (Cronbachs α, McDonalds ω, Item-Statistiken, α-if-deleted).
+- **CFA-Ausblick** mit `lavaan::cfa()` und `semPlot::semPaths()`.
+
+### Kap. 9 — Erklärungsmodelle
+- Einfache und multiple lineare Regression mit `linear_regression()`, Dummy-Codierung, Modellvergleich.
+- VIF händisch und aus `summary()`, Residuen-Diagnostik händisch.
+- `factorial_anova()` (Bildung × Region), `ancova()` mit Randmitteln.
+- `logistic_regression()` für `islam_hoch`, Odds Ratios und `marginal_effects()`.
+- Coefficient-Plot und Komposition mit `patchwork`.
 
 ---
 
-## 5 — Erwartete Befunde als didaktischer Spannungsbogen
+## 5 — Erwartungen und Befunde
 
-Damit das Lehrbuch nicht in „wir rechnen jetzt mal" verfällt, formulieren wir am Kapitelanfang explizite Hypothesen und prüfen am Kapitelende:
+Die Erwartungen wurden vor der Auswertung als didaktischer Spannungsbogen formuliert. Die Befunde stammen aus den gerenderten Kapiteln (mariposa 0.7.4, gewichtet mit `wghtpew`).
 
-- **Bildung** ist der robusteste Prädiktor (negativ): höher gebildete Befragte zeigen geringere Werte.
-- **Ost/West** liefert moderate Unterschiede (Ost tendenziell höher).
-- **Alter** korreliert positiv (ältere Kohorten höher).
-- **Politische Variablen** sind die stärksten Korrelate: Populismus positiv, Demokratiezufriedenheit negativ.
-- **EFA** ergibt 1-Faktor-Lösung als sparsame, vertretbare Lösung; 2-Faktor-Lösung ist methodisch verteidigbar, in einem Lehrbuch aber overkill (didaktischer Punkt: Sparsamkeit vor maximaler Erklärungskraft).
-
-Diese Erwartungen sind Lehrmaterial — keine vorab-Prüfung gegen das Datenmaterial. Wenn die Auswertung in der Migration anders ausfällt, wird der Text entsprechend angepasst.
+| Erwartung | Befund | Kapitel |
+|---|---|---|
+| **Bildung** ist ein robuster Prädiktor (negativ). | Bestätigt, vor allem für *hohe* Bildung: Gruppenmittel 4.68 / 4.45 / 3.48 (niedrig / mittel / hoch), η² = .125. Nach Kontrolle des Alters verschwindet der Abstand niedrig–mittel; hohe Bildung senkt die Wahrscheinlichkeit hoher Islamfeindlichkeit um rund 25 Prozentpunkte (AME). | 7, 9 |
+| **Ost/West** zeigt moderate Unterschiede (Ost höher). | Bestätigt: West 3.90, Ost 4.55 (Hedges' g ≈ −0.43); der Unterschied bleibt im multiplen Modell bestehen. Die Interaktion Bildung × Region ist **nicht** signifikant (p = .19) — der Bildungseffekt ist in Ost und West ähnlich. | 7, 9 |
+| **Alter** korreliert positiv. | Bestätigt, aber klein: OR = 1.028 pro Lebensjahr in der logistischen Regression. | 9 |
+| **Politische Variablen** sind die stärksten Korrelate: Populismus positiv, Demokratiezufriedenheit negativ. | Bestätigt: r(Islamfeindlichkeit, Populismus) = .40, partiell (Alter, Bildung kontrolliert) .37; Populismus ist mit Beta ≈ 0.32 der stärkste Prädiktor, das Gesamtmodell erklärt R² = .30. Demokratie-Unzufriedenheit (`ps03`, hoch = unzufrieden) korreliert mit r = .33. | 7, 9 |
+| **EFA** ergibt eine sparsame Einfaktor-Lösung; eine Zwei-Faktor-Lösung trennt „kognitiv-stereotyp" von „politisch-restriktiv". | Einfaktor-Lösung bestätigt (54.7 % erklärte Varianz). Die Zwei-Faktor-Lösung trennt aber die beiden umgepolten Items (`mm02r`, `mm05r`) ab — ein **Methodenfaktor**, keine inhaltliche Dimension. | 8 |
+| **Reliabilität**: Cronbachs α ≈ .85–.90. | Knapp darunter: α = .83, ω = .84 — gut reliabel. | 8 |
 
 ---
 
 ## 6 — Was die Wahl bewusst ausschließt
 
-- **CFA als Hauptmethode**: Erwähnt als Ausblick in Kap. 5, nicht als zentrale Übung. Lavaan-Code als sauberes, gekapseltes Beispiel; keine SEM-Pfadmodelle.
+- **CFA als Hauptmethode**: als Ausblick in Kap. 8, nicht als zentrale Übung. Lavaan-Code als sauberes, gekapseltes Beispiel (`lavaan::`-Präfix, weil `library(lavaan)` mariposas `efa()` überdeckt); keine SEM-Pfadmodelle.
 - **Längsschnittvergleich** mit früheren ALLBUS-Wellen: zu komplex für ein Einsteigerbuch, wäre eine Erweiterungsidee für eine spätere Auflage.
-- **Itemresponse-Theorie**: Skala bleibt klassisch über Faktorenanalyse + Cronbach; IRT wäre Overkill.
-- **Anderer Datensatz** für einzelne Beispiele: erlaubt (z. B. ein eingebauter Tidyverse-Datensatz für einen sehr einfachen Einstieg), aber jede Methode wird **mindestens einmal** an der ALLBUS-Islamophobie-Pipeline demonstriert.
+- **Item-Response-Theorie**: Die Skala bleibt klassisch über Faktorenanalyse + Reliabilität; IRT wäre Overkill.
+- **Anderer Datensatz** für einzelne Beispiele: erlaubt (z. B. ein kleiner Demo-Datensatz für einen sehr einfachen Einstieg), aber jede Methode wird **mindestens einmal** an der ALLBUS-Islamfeindlichkeits-Pipeline demonstriert.
 
 ---
 
-## 7 — Verifikations-Pflichten beim Migrieren
+## 7 — Verifikations-Pflichten
 
-Wenn ein Migrations-Pass ein Kapitel anfasst, gilt:
+Wenn ein Pass ein Kapitel anfasst, gilt:
 
-- [ ] Datenpräp-Pipeline aus Abschnitt 3 läuft fehlerfrei am Kapitelanfang (Setup-Chunk).
+- [ ] Die Datenpräp-Pipeline (`R/prep.R`) läuft fehlerfrei im Setup-Chunk.
 - [ ] Mindestens eine Methode des Kapitels ist an der `islamophobie`-Skala demonstriert.
-- [ ] Ergebnisse aus „Erwartete Befunde" (Abschnitt 5) werden im Kapitel angesprochen oder mit Hinweis abweichend kommentiert.
-- [ ] Forschungsfrage aus Abschnitt 1 wird im Kapitelfließtext sichtbar — nicht nur im Setup.
+- [ ] Die Befunde aus Abschnitt 5 werden im Kapitel angesprochen oder abweichend kommentiert.
+- [ ] Die Forschungsfrage aus Abschnitt 1 ist im Kapitelfließtext sichtbar — nicht nur im Setup.
+
+Nach einem **mariposa-Update** zusätzlich: jedes Kapitel mit `error = TRUE` knitten, auch die `eval=FALSE`-Lösungschunks einmal erzwungen ausführen, und jede Zahl in den Lesart-Texten gegen die echte Ausgabe prüfen. Die Lesarten zitieren viele konkrete Werte; kompakter Print und `summary()` zeigen unterschiedlich viel.

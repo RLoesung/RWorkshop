@@ -1,6 +1,6 @@
 # Style Guide — RWorkshop 2026
 
-**Zweck.** Didaktischer und stilistischer Vertrag für die Modernisierung. Geltungsbereich: alle `.Rmd`/`.qmd`-Kapitel des RWorkshop. Code-Konventionen für die R-Snippets stehen in `MIGRATION.md`; *dieser* Guide regelt **Aufbau, Sprache und Vermittlung**.
+**Zweck.** Didaktischer und stilistischer Vertrag für die Modernisierung. Geltungsbereich: alle `.qmd`-Kapitel des RWorkshop. Code-Konventionen für die R-Snippets stehen in `MIGRATION.md`; *dieser* Guide regelt **Aufbau, Sprache und Vermittlung**.
 
 ---
 
@@ -32,7 +32,7 @@ Jedes Methoden-Kapitel hat **mindestens** diese Abschnitte, in dieser Reihenfolg
 ## [Methodische Abschnitte nach Frage → Code → Lesart]
 
 ## Übungen
-[3–5 Aufgaben, Lösungen in code-fold: true]
+[in der Regel vier Aufgaben, Lösungen als eingeklappte Callouts — siehe Abschnitt 7]
 
 ## Was du jetzt weißt
 [knappe Wiederholung der Lernziele als Selbstcheck]
@@ -56,7 +56,7 @@ Jedes Methoden-Kapitel hat **mindestens** diese Abschnitte, in dieser Reihenfolg
 
 ## 4 — Callout-Boxen
 
-Vier Typen, einheitlich gesetzt. In Quarto: `::: {.callout-…}`-Syntax. In bookdown: per CSS-Klasse.
+Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`.
 
 **SPSS → R** (`.callout-tip` mit eigenem Icon-Override)
 > Brücke für Umsteiger:innen aus SPSS. Direktvergleich Syntax/Output. Nicht inflationär — nur wo der Übergang nicht offensichtlich ist.
@@ -103,7 +103,7 @@ Statt `# kommentar`-Wüste im Chunk.
 
 ## 6 — ggplot2-Konvention
 
-- Ein **zentrales Theme** `theme_rworkshop()`, einmal in `index.Rmd` (oder einem `_setup.R`) definiert. Per `theme_set()` global aktiv.
+- Ein **zentrales Theme** `theme_rworkshop()`, einmal in `R/_common.R` definiert und dort per `theme_set()` global aktiv gesetzt. Die Kapitel laden die Datei im Setup-Chunk mit `source("R/_common.R")`.
 - **Variablenlabels** auf Achsen, nicht technische Namen. Bei labelled-Variablen über `to_label()` lösen.
 - **Farbskala** konsistent: kategoriale Variablen über eine ALLBUS-Palette (Ost/West, Geschlecht, Bildung — barrierearm getestet); kontinuierliche Variablen über `viridis`.
 - **Patchwork** für Multi-Plots: `p1 + p2 / p3` statt `gridExtra::grid.arrange()`.
@@ -124,13 +124,13 @@ allbus |>
 
 ## 7 — Übungsformat
 
-Am Kapitelende, 3–5 Aufgaben, ansteigender Schwierigkeit:
+Am Kapitelende stehen in der Regel vier Aufgaben mit ansteigender Schwierigkeit:
 
-1. **Reproduktion** — Anwende, was im Kapitel direkt gezeigt wurde, auf eine andere Variable.
+1. **Reproduktion** (meist zwei Aufgaben) — anwenden, was im Kapitel direkt gezeigt wurde, auf eine andere Variable.
 2. **Transfer** — Kombination zweier Techniken aus dem Kapitel.
-3. **Eigenständig** — kleine Forschungsfrage, eigene Variablenwahl, offene Lesart.
+3. **Mini-Forschungsfrage** — kleine eigene Forschungsfrage, eigene Variablenwahl, offene Lesart. In der Regel ohne Musterlösung; über die Kapitel hinweg entsteht so ein eigenes kleines Projekt.
 
-Lösung in **code-fold: true** direkt darunter, mit kurzem Interpretations-Satz. Lernende sollen erst selbst versuchen.
+Jede Aufgabe ist ein `.callout-note` mit dem Titel „Übung *n* · *Thema* · *Typ*". Die Lösung folgt direkt darunter als eingeklappter `.callout-tip` (`title="Lösung" collapse="true"`), mit kurzem Interpretations-Satz. Lernende sollen erst selbst versuchen.
 
 ---
 
@@ -140,7 +140,7 @@ Jedes Kapitel muss **alleine** rendern können:
 
 - Eigener Setup-Chunk (`echo = FALSE`) lädt Pakete und liest ALLBUS 2023 ein.
 - Keine Abhängigkeit von Variablen, die in einem früheren Kapitel definiert wurden.
-- Wenn ein Kapitel auf einem in Kap. 3 erstellten Analyse-Datensatz aufbaut: diesen am Kapitelanfang neu erzeugen (idealerweise per `source()` aus einem geteilten `R/prep.R`).
+- Wenn ein Kapitel auf dem in Kap. 5 erstellten Analyse-Datensatz aufbaut, erzeugt es ihn am Kapitelanfang neu, und zwar per `source("R/prep.R")`. `R/prep.R` ist die einzige verbindliche Fassung der Datenpräp-Pipeline. Ändert sich die Pipeline in Kap. 5, wird `R/prep.R` mitgezogen.
 
 ---
 
@@ -165,4 +165,4 @@ Statt: *„wie oben/unten/in Kapitel 3.4 …"*.
 
 ## 11 — Mini-Studie als roter Faden
 
-Der gesamte Methodenteil (Kap. 3–6) wird durch **eine** Forschungsfrage aus ALLBUS 2023 getragen. Variablenauswahl, Forschungsfrage und Methoden-Mapping siehe `STUDIE.md` (folgt). Andere Beispiele dürfen ergänzend kommen, aber die Mini-Studie ist der Anker, an dem jede Methode mindestens einmal demonstriert wird.
+Der gesamte Daten- und Methodenteil (Kap. 4–9) wird durch **eine** Forschungsfrage aus ALLBUS 2023 getragen. Variablenauswahl, Forschungsfrage und Methoden-Mapping siehe `STUDIE.md`. Andere Beispiele dürfen ergänzend kommen, aber die Mini-Studie ist der Anker, an dem jede Methode mindestens einmal demonstriert wird.

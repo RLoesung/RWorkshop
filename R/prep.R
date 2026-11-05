@@ -1,5 +1,5 @@
 # Reproduzierbare Datenpraep-Pipeline der Mini-Studie.
-# Siehe Kap. 4 (Abschnitt "Die komplette Datenpraep-Pipeline") und
+# Siehe Kap. 5 (Abschnitt "Die komplette Datenpraep-Pipeline") und
 # STUDIE.md Abschnitt 3. Per source("R/prep.R") in jedem
 # Methoden-Kapitel eingebunden, damit jedes .qmd-File eigenstaendig
 # rendert (STYLE.md Abschnitt 8).
