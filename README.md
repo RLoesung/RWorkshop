@@ -83,6 +83,6 @@ Fehler gefunden, etwas unklar, Idee für eine Übung? Über ein [Issue](https://
 
 ## Autor:innen
 
-Yannick Diehl und Daniel Moosdorf, mit Beiträgen von Jakob Krüger.
+Yannick Diehl und Daniel Moosdorf.
 
 Was sich wann geändert hat, steht in [`NEWS.md`](NEWS.md).
