@@ -2,13 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.8.25">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>6&nbsp; Visualisierung — Grundlagen – R Workshop – Sozialwissenschaften</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -68,14 +65,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./05-Datentransformation.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6499386a99bca6986a49a1d91551f074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -119,7 +117,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R Workshop – Sozialwissenschaften</a> 
         <div class="sidebar-tools-main">
@@ -137,7 +137,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Vorwort</span></a>
+ <span class="menu-text">0&nbsp; Vorwort</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -230,6 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#sec-facets" id="toc-sec-facets" class="nav-link" data-scroll-target="#sec-facets"><span class="header-section-number">6.5</span> Subgruppen aufteilen mit Facets</a></li>
   <li><a href="#sec-themes" id="toc-sec-themes" class="nav-link" data-scroll-target="#sec-themes"><span class="header-section-number">6.6</span> Farben und Themes</a></li>
   <li><a href="#beschriftungen" id="toc-beschriftungen" class="nav-link" data-scroll-target="#beschriftungen"><span class="header-section-number">6.7</span> Beschriftungen</a></li>
+  <li><a href="#grafiken-speichern-und-kombinieren-ausblick" id="toc-grafiken-speichern-und-kombinieren-ausblick" class="nav-link" data-scroll-target="#grafiken-speichern-und-kombinieren-ausblick"><span class="header-section-number">6.8</span> Grafiken speichern und kombinieren — Ausblick</a></li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
   <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
@@ -299,6 +300,23 @@ Hinweis
 <span>  <span class="fu">geom_...</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>                      <span class="co"># Layer</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Die <code>aes()</code>-Funktion (kurz für <em>aesthetics</em>) macht die Übersetzung: „nimm diese Spalte und mappe sie auf diese visuelle Eigenschaft” — also etwa Bildungs-Variable → x-Achse, Skalenwert → y-Achse, Geschlecht → Farbe. Danach kommen die <code>geom_*()</code>-Funktionen als sichtbare Schicht oben drauf: Balken, Punkte, Boxen, was du brauchst.</p>
 <p>Auffällig: Die Schichten werden mit <code>+</code> verbunden, nicht mit der tidyverse-Pipe <code>|&gt;</code>. Das hat historische Gründe — ggplot2 ist älter als die native Pipe und hat seinen eigenen Operator behalten. Du kannst dir merken: alles vor <code>ggplot(...)</code> mit <code>|&gt;</code>, alles nach <code>ggplot(...)</code> mit <code>+</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warnung
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Vorsicht: <code>+</code> vs.&nbsp;<code>|&gt;</code>.</strong> Wenn du versehentlich <code>|&gt;</code> zwischen <code>ggplot(...)</code> und einem <code>geom_*()</code>-Layer setzt, bekommst du eine kryptische Fehlermeldung wie:</p>
+<pre><code>Error in geom_bar(): could not find function "geom_bar"</code></pre>
+<p>oder</p>
+<pre><code>Error: `mapping` must be created by `aes()`</code></pre>
+<p>Heilmittel: ein <code>+</code> statt <code>|&gt;</code> zwischen den ggplot2-Schichten — sonst bleibt alles wie gewohnt.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -316,7 +334,7 @@ Hinweis
 <span class="header-section-number">6.2.1</span> Erste Grafik: Häufigkeitsverteilung eines Items</h3>
 <p><strong>Frage:</strong> Wie verteilen sich die Antworten auf das Item <code>mm03</code> („Anwesenheit von Muslimen bringt Konflikt”)?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">mm03</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mm03</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_bar</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#2563eb"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -332,11 +350,24 @@ Hinweis
 </div>
 </div>
 <p><strong>Lesart.</strong> Die Skala läuft von 1 („stimme gar nicht zu”) bis 7 („stimme voll und ganz zu”). Die Verteilung zeigt, in welche Richtung die Befragten tendieren.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong><code>weight =</code> (ggplot2) vs.&nbsp;<code>weights =</code> (mariposa).</strong> Beide gewichten — gleiches Konzept, andere Schreibung. ggplot2 nutzt <code>weight</code> (Singular, ohne s) als <em>Aesthetic</em> innerhalb von <code>aes()</code>; mariposa-Funktionen wie <code><a href="https://rdrr.io/r/stats/time.html">frequency()</a></code> oder <code>t_test()</code> nutzen <code>weights</code> (Plural, mit s) als Funktionsargument. Wer beides im selben Skript schreibt, vertippt sich gelegentlich — und ungewichtete Outputs sind keine Fehlermeldung, sondern stillschweigend falsch.</p>
+</div>
+</div>
 </section><section id="zweite-grafik-subgruppen-vergleich" class="level3" data-number="6.2.2"><h3 data-number="6.2.2" class="anchored" data-anchor-id="zweite-grafik-subgruppen-vergleich">
 <span class="header-section-number">6.2.2</span> Zweite Grafik: Subgruppen-Vergleich</h3>
 <p><strong>Frage:</strong> Wie unterscheidet sich Islamfeindlichkeit nach Bildungsniveau?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
@@ -358,7 +389,7 @@ Hinweis
 <span class="header-section-number">6.3.1</span> Plot-Objekt erstellen</h3>
 <p>Das Plot-Objekt entsteht mit <code>ggplot()</code>. Erstes Argument ist der Datensatz:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Allein ist <code>g</code> ein „leeres” Plot-Objekt — es weiß noch nichts über Achsen oder Inhalte.</p>
 </section><section id="aesthetic-mapping" class="level3" data-number="6.3.2"><h3 data-number="6.3.2" class="anchored" data-anchor-id="aesthetic-mapping">
@@ -409,8 +440,40 @@ Hinweis
 </tbody>
 </table>
 <p><strong>Wichtig:</strong> Wenn <code>aes()</code> <em>innerhalb</em> von <code>ggplot()</code> steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warnung
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Innerhalb oder außerhalb von <code>aes()</code>?</strong> Das ist <em>die</em> Anfänger:innen-Falle in ggplot2. Die Regel ist einfach, hat aber gegensätzliche Konsequenzen:</p>
+<ul>
+<li>
+<strong>Innerhalb <code>aes()</code></strong> → eine <em>Datenspalte</em> wird auf eine visuelle Eigenschaft gemappt. Die Farbe variiert dann mit den Werten der Variable, und ggplot2 vergibt automatisch eine Legende.</li>
+<li>
+<strong>Außerhalb <code>aes()</code></strong> → eine <em>konstante Eigenschaft</em> für alle Punkte/Balken. Keine Legende, alles in derselben Farbe.</li>
+</ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">allbus</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_bar</span><span class="op">(</span><span class="op">)</span>         <span class="co"># ein Balken pro sex-Stufe, eingefärbt</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">allbus</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_bar</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span>   <span class="co"># alle Balken einheitlich blau</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Wer eine Konstante (<code>"steelblue"</code>) versehentlich <em>in</em> <code>aes()</code> setzt, sieht braungrau eingefärbte Balken mit einer Legende, in der „steelblue” als einziger Eintrag steht — verlässliches Diagnose-Zeichen für diesen Tippfehler.</p>
+</div>
+</div>
+<p><strong><code>fill</code> vs.&nbsp;<code>color</code> — die Mini-Regel.</strong> ggplot2 unterscheidet zwei Farb-Aesthetics:</p>
+<ul>
+<li>
+<strong><code>fill</code></strong> ist die <em>Füllfarbe</em> — für <em>Flächen</em>: Balken, Boxen, Polygone, Dichten.</li>
+<li>
+<strong><code>color</code></strong> ist die <em>Strichfarbe</em> — für <em>Linien, Punkte, Outlines</em>.</li>
+</ul>
+<p>Wer einen Balken einfärben will und <code>color = sex</code> schreibt, sieht nur dünne Outlines und eine ansonsten leere Fläche. Bei Punkten und Linien ist <code>color</code> richtig, bei Balken <code>fill</code>. Bei manchen Geoms (z. B. <code>geom_boxplot()</code>) brauchst du beides — <code>fill</code> für die Box, <code>color</code> für den Rahmen.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">eastwest</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span>, fill <span class="op">=</span> <span class="va">eastwest</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -420,7 +483,7 @@ Hinweis
 <p>Layer kommen mit <code>+</code> dazu. Die Layer-Funktionen beginnen alle mit dem Präfix <code>geom_</code>.</p>
 <p><strong>Punktdiagramm / Jitter:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.08</span>, height <span class="op">=</span> <span class="fl">0.08</span>, alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -437,7 +500,7 @@ Hinweis
 <p><code>geom_jitter()</code> verteilt überlappende Punkte leicht — das ist bei zwei diskreten Achsen (Skalen mit wenigen Ausprägungen) unverzichtbar, sonst sehen alle Befragten wie <em>ein</em> Punkt aus.</p>
 <p><strong>Boxplot und Violinplot:</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -451,7 +514,7 @@ Hinweis
 </div>
 <p>Boxplots zeigen Median (Linie in der Box), die mittleren 50 % (Box) und Whisker (1.5 × IQR). Violinplots zeigen stattdessen die Dichte:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">+</span> <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">+</span> <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="06-Grafiken-Grundlagen_files/figure-html/violin-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
@@ -461,7 +524,7 @@ Hinweis
 </div>
 <p>Ein häufiger Trick: beide Schichten kombinieren — Violin als Hintergrund, dünnen Boxplot darüber:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_base</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_violin</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -523,7 +586,7 @@ Hinweis
 <span class="header-section-number">6.4.1</span> Eine kategoriale Variable</h3>
 <p>Klassischer Bar Chart mit <code>geom_bar()</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_bar</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -537,7 +600,7 @@ Hinweis
 </div>
 <p><strong>Relative Häufigkeiten.</strong> In modernem ggplot2 (ab Version 3.4) benutzt du <code>after_stat()</code> statt der alten <code>..count..</code>/<code>..prop..</code>-Syntax:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_bar</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="fu">after_stat</span><span class="op">(</span><span class="va">prop</span><span class="op">)</span>, group <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -552,7 +615,7 @@ Hinweis
 </div>
 <p>Mit <code>fill =</code> als zweiter Gruppierungsvariable bekommst du gestapelte Balken — und mit <code>position = "dodge"</code> nebeneinander:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, weight <span class="op">=</span> <span class="va">wghtpew</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_bar</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -568,7 +631,7 @@ Hinweis
 <span class="header-section-number">6.4.2</span> Eine kontinuierliche Variable</h3>
 <p>Histogramm mit <code>geom_histogram()</code>. Die wichtigste Stellschraube ist <code>binwidth</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -582,7 +645,7 @@ Hinweis
 </div>
 <p>Mit <code>geom_density()</code> bekommst du stattdessen eine geglättete Dichteschätzung:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
@@ -598,7 +661,7 @@ Hinweis
 <span class="header-section-number">6.4.3</span> Zwei kontinuierliche Variablen</h3>
 <p>Streudiagramm mit Regressionsgerade — der Klassiker:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, color <span class="op">=</span> <span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, width <span class="op">=</span> <span class="fl">0.05</span>, height <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
@@ -612,14 +675,14 @@ Hinweis
 </div>
 </div>
 </div>
-<p><code>geom_smooth(method = "lm")</code> zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du <code>method = "loess"</code>.</p>
+<p><code>geom_smooth(method = "lm")</code> zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du <code>method = "loess"</code>. <em>Was eine Regressionsgerade mathematisch ist, lernst du in <a href="09-Erklaerungsmodelle.html#sec-regression" class="quarto-xref"><span>Kapitel 9.4</span></a> — hier dient sie nur als visuelle Trend-Hilfe.</em></p>
 </section></section><section id="sec-facets" class="level2" data-number="6.5"><h2 data-number="6.5" class="anchored" data-anchor-id="sec-facets">
 <span class="header-section-number">6.5</span> Subgruppen aufteilen mit Facets</h2>
 <p>Stell dir vor, du willst den Zusammenhang von Populismus und Islamfeindlichkeit zeigen — aber getrennt nach Bildungsgruppen. Du könntest die drei Gruppen in einer einzigen Grafik mit drei verschiedenen Farben übereinanderlegen. Bei zwei Gruppen funktioniert das noch; bei drei oder mehr wird es chaotisch — Punkte überlappen, Trendlinien kreuzen sich, das Auge findet sich nicht mehr zurecht.</p>
 <p>Die Lösung sind <strong>Facets</strong>: ggplot2 macht aus <em>einer</em> Grafik mehrere, eine pro Subgruppe, nebeneinander angeordnet, mit identischen Achsen. So lassen sich die Subgruppen direkt vergleichen, ohne dass sie sich gegenseitig überlagern. Das ist eine der mächtigsten Funktionen in ggplot2 — und in der Sozialforschung extrem hilfreich, weil dort fast jede Frage gruppenspezifisch interessant ist.</p>
 <p>Es gibt zwei Varianten: <code>facet_wrap()</code> für <em>eine</em> Gruppierungsvariable, <code>facet_grid()</code> für <em>zwei</em>. Beide funktionieren gleich aufgebaut: Du gibst die Gruppierungsvariable als Formel mit <code>~</code> an.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -635,7 +698,7 @@ Hinweis
 </div>
 <p>Bei <em>zwei</em> Gruppierungsvariablen ist <code>facet_grid()</code> die richtige Wahl — Zeilen × Spalten:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span>,</span>
 <span>         <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -667,7 +730,7 @@ Hinweis
 <span class="header-section-number">6.6</span> Farben und Themes</h2>
 <p>Der Default-Farbverlauf von ggplot2 ist nicht barrierefrei. Eine kleine Sammlung Standard-Lösungen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Diskrete kategoriale Variablen — Brewer-Paletten</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Diskrete kategoriale Variablen — Brewer-Paletten</span></span>
 <span><span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span>     <span class="co"># für Linien/Punkte</span></span>
 <span><span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Blues"</span><span class="op">)</span>     <span class="co"># für Flächen</span></span>
 <span></span>
@@ -694,7 +757,7 @@ Hinweis
 </div>
 <p>Komplette Themes ersetzen mit einer Zeile das Standard-Aussehen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">educ_kat</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -710,6 +773,26 @@ Hinweis
 </div>
 </div>
 <p><code>theme_bw()</code>, <code>theme_classic()</code>, <code>theme_dark()</code>, <code>theme_void()</code> sind weitere Optionen.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: <code>theme_*()</code> vs.&nbsp;<code>theme()</code>.</strong> Die zwei Funktions-Familien klingen gleich, machen aber Verschiedenes:</p>
+<ul>
+<li>
+<strong><code>theme_minimal()</code>, <code>theme_bw()</code>, <code>theme_classic()</code> …</strong> — <em>komplette Themes</em>. Setzen den Gesamtstil (Hintergrund, Gitter, Schriftgrößen).</li>
+<li>
+<strong><code>theme(legend.position = "none", …)</code></strong> — <em>einzelne Elemente</em> gezielt anpassen. Diese Funktion akzeptiert dutzende Elemente (<code>axis.text</code>, <code>plot.title</code>, <code>panel.grid</code> …).</li>
+</ul>
+<p>In der Praxis kombinierst du beide: zuerst ein komplettes Theme als Basis, dann einzelne Anpassungen via <code>theme()</code>.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -740,7 +823,7 @@ Tipp
 <span class="header-section-number">6.7</span> Beschriftungen</h2>
 <p><code>labs()</code> setzt alle Texte einer Grafik in einem Funktionsaufruf:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, y <span class="op">=</span> <span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_jitter</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span>, width <span class="op">=</span> <span class="fl">0.05</span>, height <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
@@ -761,7 +844,7 @@ Tipp
 </div>
 <p><strong>Lesbare Achsen über <code>to_label()</code>.</strong> Bei <code>&lt;haven_labelled&gt;</code>-Variablen aus SPSS willst du im Plot meist die <em>Wertelabels</em> sehen, nicht die numerischen Codes. Im Setup-Chunk dieses Kapitels haben wir genau das gemacht — <code>to_label(eastwest, sex)</code> hat die beiden Variablen in Faktoren verwandelt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">eastwest</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -771,11 +854,19 @@ Tipp
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Achse zeigt jetzt 'Alte Bundeslaender' / 'Neue Bundeslaender'</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Achse zeigt jetzt 'ALTE BUNDESLAENDER' / 'NEUE BUNDESLAENDER'</span></span>
 <span><span class="co"># statt 1 / 2 — weil eastwest schon im Setup-Chunk to_label-konvertiert wurde.</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Wenn du eine zusätzliche labelled-Variable im Plot brauchst, wendest du <code>to_label()</code> einfach in der Pipeline an, bevor du <code>ggplot()</code> aufrufst.</p>
-</section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
+</section><section id="grafiken-speichern-und-kombinieren-ausblick" class="level2" data-number="6.8"><h2 data-number="6.8" class="anchored" data-anchor-id="grafiken-speichern-und-kombinieren-ausblick">
+<span class="header-section-number">6.8</span> Grafiken speichern und kombinieren — Ausblick</h2>
+<p>Zwei weitere Bausteine, die du in den nächsten Kapiteln brauchst:</p>
+<ul>
+<li>
+<strong>Speichern mit <code>ggsave()</code>.</strong> Eine Grafik in deine Hausarbeit oder Folien bringen geht über <code>ggsave("plot.png", width = 8, height = 5, dpi = 300)</code>. Vollständige Behandlung in <a href="09-Erklaerungsmodelle.html#sec-coefplot" class="quarto-xref"><span>Kapitel 9.9.1</span></a>.</li>
+<li>
+<strong>Mehrere Plots kombinieren mit <code>patchwork</code>.</strong> Wenn du zwei Grafiken nebeneinander oder untereinander brauchst, kombinierst du sie mit <code>p1 + p2</code> (nebeneinander) oder <code>p1 / p2</code> (untereinander). Vollständige Behandlung in <a href="09-Erklaerungsmodelle.html#sec-patchwork" class="quarto-xref"><span>Kapitel 9.9.2</span></a>.</li>
+</ul></section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
 <div class="callout callout-style-default callout-note callout-titled" title="Übung 1 · Eigene Verteilung · Reproduktion">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -790,7 +881,7 @@ Tipp
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -799,10 +890,10 @@ Tipp
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">populismus</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">populismus</span>, weight <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.25</span>, fill <span class="op">=</span> <span class="st">"#7c3aed"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -827,7 +918,7 @@ Tipp
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -836,10 +927,10 @@ Tipp
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">eastwest</span>, y <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -864,7 +955,7 @@ Tipp
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -873,10 +964,10 @@ Tipp
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">educ_kat</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">islamophobie</span>, fill <span class="op">=</span> <span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_density</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>

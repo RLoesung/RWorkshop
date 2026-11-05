@@ -2,13 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.8.25">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>4&nbsp; Datenimport und Inspektion – R Workshop – Sozialwissenschaften</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -68,14 +65,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./03-ProgrammierspracheR.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6499386a99bca6986a49a1d91551f074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -119,7 +117,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R Workshop – Sozialwissenschaften</a> 
         <div class="sidebar-tools-main">
@@ -137,7 +137,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Vorwort</span></a>
+ <span class="menu-text">0&nbsp; Vorwort</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -221,9 +221,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#f%C3%A4lle-sortieren-mit-arrange" id="toc-fälle-sortieren-mit-arrange" class="nav-link" data-scroll-target="#f%C3%A4lle-sortieren-mit-arrange"><span class="header-section-number">4.5.3</span> Fälle sortieren mit <code>arrange()</code></a></li>
   </ul>
 </li>
-  <li><a href="#datentypen-verstehen" id="toc-datentypen-verstehen" class="nav-link" data-scroll-target="#datentypen-verstehen"><span class="header-section-number">4.6</span> Datentypen verstehen</a></li>
+  <li><a href="#sec-datentypen-verstehen" id="toc-sec-datentypen-verstehen" class="nav-link" data-scroll-target="#sec-datentypen-verstehen"><span class="header-section-number">4.6</span> Datentypen verstehen</a></li>
   <li><a href="#variablen--und-wertelabels-lesen-und-setzen" id="toc-variablen--und-wertelabels-lesen-und-setzen" class="nav-link" data-scroll-target="#variablen--und-wertelabels-lesen-und-setzen"><span class="header-section-number">4.7</span> Variablen- und Wertelabels lesen und setzen</a></li>
   <li><a href="#fehlende-werte-deklarieren" id="toc-fehlende-werte-deklarieren" class="nav-link" data-scroll-target="#fehlende-werte-deklarieren"><span class="header-section-number">4.8</span> Fehlende Werte deklarieren</a></li>
+  <li><a href="#wenn-etwas-komisch-aussieht-diagnose-spickzettel" id="toc-wenn-etwas-komisch-aussieht-diagnose-spickzettel" class="nav-link" data-scroll-target="#wenn-etwas-komisch-aussieht-diagnose-spickzettel">Wenn etwas komisch aussieht — Diagnose-Spickzettel</a></li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
   <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
@@ -264,7 +265,7 @@ Hinweis
 </div>
 <section id="worum-es-geht" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="worum-es-geht">
 <span class="header-section-number">4.1</span> Worum es geht</h2>
-<p>Stell dir vor, du bekommst von einer Kollegin einen USB-Stick mit der Aufschrift <em>„ALLBUS 2023 — viel Spaß”</em>. Du steckst ihn ein und öffnest die Datei. Was du siehst, ist nicht das, was du dir erhofft hast: 579 Spalten mit Namen wie <code>mm01</code>, <code>pa29</code>, <code>pt06</code>, <code>wghtpew</code>. Vier verschiedene negative Zahlen tauchen als „Wert” auf — <code>-9</code>, <code>-11</code>, <code>-42</code>. Manche Variablen sind als Zahl gespeichert, obwohl sie eigentlich eine Kategorie sind (<code>sex = 1</code> heißt „Mann”). Und die wirklichen Beschriftungen — das, was tatsächlich gefragt wurde — liegen irgendwo versteckt, unsichtbar im Hintergrund.</p>
+<p>Stell dir vor, du bekommst von einer Kollegin einen USB-Stick mit der Aufschrift <em>„ALLBUS 2023 — viel Spaß”</em>. Du steckst ihn ein und öffnest die Datei. Was du siehst, ist nicht das, was du dir erhofft hast: 579 Spalten mit Namen wie <code>mm01</code>, <code>pa29</code>, <code>pt06</code>, <code>wghtpew</code>. Vier verschiedene negative Zahlen tauchen als „Wert” auf — <code>-8</code>, <code>-9</code>, <code>-11</code>, <code>-42</code>. Manche Variablen sind als Zahl gespeichert, obwohl sie eigentlich eine Kategorie sind (<code>sex = 1</code> heißt „Mann”). Und die wirklichen Beschriftungen — das, was tatsächlich gefragt wurde — liegen irgendwo versteckt, unsichtbar im Hintergrund.</p>
 <p>Genau dieser Zustand ist normal. Sekundärdatensätze aus der quantitativen Sozialforschung sehen <em>immer</em> so aus. Sie sind so gebaut, dass viele Menschen sie für viele unterschiedliche Fragen nutzen können — und das geht nur, wenn die Daten zunächst <em>roh</em> bleiben. Deine Aufgabe ist es, aus diesem Rohzustand einen Analyse-Datensatz zu machen, der zu <em>deiner</em> Forschungsfrage passt.</p>
 <p>Diese Schritte sind keine Vorarbeit, die man möglichst schnell hinter sich bringt. Sie sind der methodische Kern jeder ehrlichen Auswertung: Welche Fälle nimmst du raus? Wie behandelst du fehlende Werte? Wie übersetzt du <code>mm01 = 7</code> in „diese Person lehnt Muslime stark ab”? Jede dieser Entscheidungen beeinflusst, was am Ende rauskommt — und jede gehört in eine Pipeline, die du jederzeit reproduzieren kannst. <em>Das</em> ist offene Wissenschaft im konkreten Handwerk.</p>
 <p>Dieses Kapitel ist der <strong>Anker</strong> für alles, was folgt. Du legst hier den Analyse-Datensatz an, mit dem du in <a href="07-Uni-Bivariate-Analyse.html" class="quarto-xref"><span>Kapitel 7</span></a> Verteilungen beschreibst, in <a href="08-Latente-Strukturen.html" class="quarto-xref"><span>Kapitel 8</span></a> Strukturen prüfst und in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Kapitel 9</span></a> Hypothesen modellierst. Wenn dieser Anker hält, halten alle späteren Befunde.</p>
@@ -330,6 +331,81 @@ Tipp
 </div>
 </div>
 <p>Im Kopf siehst du <code>5,246 × 579</code> — der Datensatz hat 5.246 Fälle und 579 Variablen. Darunter eine Auswahl der ersten Spalten mit ihren Datentypen.</p>
+<p><strong>Was bedeuten die kleinen Typ-Marker unter jeder Spalte?</strong> Direkt unter dem Spaltennamen druckt das Tibble einen Typ-Tag in spitzen Klammern. Hier dein Mini-Glossar:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 42%">
+<col style="width: 41%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Tag</th>
+<th style="text-align: left;">Bedeutung</th>
+<th style="text-align: left;">Beispiel</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;int&gt;</code></td>
+<td style="text-align: left;">ganze Zahl (<em>integer</em>)</td>
+<td style="text-align: left;">Fall-ID, Anzahl</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;dbl&gt;</code></td>
+<td style="text-align: left;">Dezimalzahl (<em>double</em>)</td>
+<td style="text-align: left;">Alter, Skalenmittelwert</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;chr&gt;</code></td>
+<td style="text-align: left;">Text (<em>character</em>)</td>
+<td style="text-align: left;">Variable mit Wortlauten</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;fct&gt;</code></td>
+<td style="text-align: left;">Faktor (Kategorie mit Levels)</td>
+<td style="text-align: left;">rekodierte Bildungsstufen</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;dbl+lbl&gt;</code></td>
+<td style="text-align: left;">
+<strong>labelled-double</strong> aus SPSS</td>
+<td style="text-align: left;">typische ALLBUS-Variable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;lgl&gt;</code></td>
+<td style="text-align: left;">logisch (<code>TRUE</code>/<code>FALSE</code>)</td>
+<td style="text-align: left;">aus einer Bedingung</td>
+</tr>
+</tbody>
+</table>
+<p>Den letzten Typ — <code>&lt;dbl+lbl&gt;</code> — wirst du im ALLBUS <em>überall</em> sehen. Wie er funktioniert und warum er anders ist als ein normaler Faktor, erklärt der folgende Abschnitt.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Was ist <code>&lt;haven_labelled&gt;</code>?</strong> Wenn du Daten aus SPSS einliest, kommen die meisten Variablen als <code>&lt;haven_labelled&gt;</code>-Spalten an — gedruckt als <code>&lt;dbl+lbl&gt;</code>. Das ist <em>kein</em> Faktor, sondern eine <em>Zahl mit angeheftetem Bedeutungs-Schichten-Paket</em>: Die Werte bleiben numerisch (du kannst weiterrechnen), aber im Hintergrund tragen sie ihre SPSS-Wertelabels mit — <em>„1 = MANN, 2 = FRAU, …“</em>. Konkret:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co"># &lt;labelled&lt;double&gt;: [1] 1 2 1 2 1</span></span>
+<span><span class="co"># Labels: 1 = MANN, 2 = FRAU, 3 = DIVERS, ...</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Drei Operationen sind häufig:</p>
+<ul>
+<li>
+<strong>Mit der Variable rechnen</strong> (<code>mean(allbus$sex, na.rm = TRUE)</code>) → funktioniert direkt, gibt aber meist unsinnige Werte für kategoriale Variablen.</li>
+<li>
+<strong>Lesbar machen für Plots</strong> (<code>allbus |&gt; to_label(sex)</code>) → wandelt in einen Faktor mit den Labels als Levels.</li>
+<li>
+<strong>Reine Zahl behalten</strong> (<code>allbus |&gt; to_numeric(sex)</code>) → entfernt die Label-Schicht.</li>
+</ul>
+<p>Weiter unten in <a href="#sec-datentypen-verstehen" class="quarto-xref"><span>Kapitel 4.6</span></a> kommen die Details.</p>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -345,19 +421,19 @@ Hinweis
 </div>
 <p>Falls du Daten in anderen Formaten brauchst, gibt es passende Geschwister-Funktionen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_stata.html">read_stata</a></span><span class="op">(</span><span class="st">"datei.dta"</span><span class="op">)</span>     <span class="co"># Stata</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_stata.html">read_stata</a></span><span class="op">(</span><span class="st">"datei.dta"</span><span class="op">)</span>     <span class="co"># Stata</span></span>
 <span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_sas.html">read_sas</a></span><span class="op">(</span><span class="st">"datei.sas7bdat"</span><span class="op">)</span>  <span class="co"># SAS</span></span>
 <span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="st">"datei.xlsx"</span><span class="op">)</span>     <span class="co"># Excel</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Und wenn du einen bearbeiteten Datensatz zurück nach SPSS exportieren möchtest:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/write_spss.html">write_spss</a></span><span class="op">(</span><span class="va">allbus</span>, <span class="st">"allbus_bearbeitet.sav"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/write_spss.html">write_spss</a></span><span class="op">(</span><span class="va">allbus</span>, <span class="st">"allbus_bearbeitet.sav"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section><section id="erster-blick-auf-den-datensatz" class="level2" data-number="4.4"><h2 data-number="4.4" class="anchored" data-anchor-id="erster-blick-auf-den-datensatz">
 <span class="header-section-number">4.4</span> Erster Blick auf den Datensatz</h2>
 <p>Bei knapp 600 Variablen ist es unmöglich, sich alles in der Konsole anzeigen zu lassen. Drei Werkzeuge helfen dir bei der Orientierung:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>           <span class="co"># kompakte Strukturübersicht</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>           <span class="co"># kompakte Strukturübersicht</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># Anzahl Fälle</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># Anzahl Variablen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -366,7 +442,7 @@ Hinweis
 </h3>
 <p>Die Variablennamen im ALLBUS sind kryptisch (<code>mm01</code>, <code>pa29</code>, <code>wghtpew</code>). Was wirklich gemessen wird, steht im <strong>Variablenlabel</strong>. mariposas <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> durchsucht beide gleichzeitig — Name und Label — und liefert dir die Treffer als kleine Übersichtstabelle:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"muslim"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"muslim"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  col name                                    label
 1 194 mm03 ANWESENHEIT VON MUSLIMEN BRINGT KONFLIKT
@@ -374,9 +450,23 @@ Hinweis
 3 197 mm06 UNTER MUSLIMEN SIND VIELE REL. FANATIKER</code></pre>
 </div>
 </div>
-<p>Damit findest du die sechs <code>mm</code>-Items für unsere Islamfeindlichkeits-Skala. Standardmäßig wird in Namen <em>und</em> Labels gesucht; mit <code>search = "label"</code> schränkst du auf Labels ein, mit <code>search = "name"</code> auf Namen:</p>
+<p>Die Ergebnistabelle zeigt pro Treffer die Position der Variable im Datensatz (<code>col</code>), ihren Namen und das vollständige Label; Groß- und Kleinschreibung spielen bei der Suche keine Rolle. Drei Treffer — <code>mm03</code>, <code>mm05</code>, <code>mm06</code>. Die anderen drei Items unserer Skala sprechen vom „Islam” statt von „Muslimen”. Weil das Suchmuster ein <strong>regulärer Ausdruck</strong> ist, fragst du beide Begriffe auf einmal ab — <code>|</code> heißt „oder”:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"alter"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"islam|muslim"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  col name                                    label
+1 169 ma08 AN SCHULEN AUCH ISLAMUNTERRICHT ERLAUBEN
+2 192 mm01 ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN
+3 193 mm02 ISLAM PASST IN DIE DEUTSCHE GESELLSCHAFT
+4 194 mm03 ANWESENHEIT VON MUSLIMEN BRINGT KONFLIKT
+5 195 mm04   STAAT SOLLTE ISLAM. GRUPPEN BEOBACHTEN
+6 196 mm05   MUSLIMISCHER BUERGERMEISTER IN ORDNUNG
+7 197 mm06 UNTER MUSLIMEN SIND VIELE REL. FANATIKER</code></pre>
+</div>
+</div>
+<p>Jetzt sind alle sechs <code>mm</code>-Items für unsere Islamfeindlichkeits-Skala beisammen (plus <code>ma08</code>, ein Item zum Islamunterricht aus einem anderen Fragenblock). Suchst du dagegen buchstäblich nach Zeichen, die in regulären Ausdrücken eine Sonderbedeutung haben (etwa den Punkt in <code>ISLAM.</code>), setzt du <code>fixed = TRUE</code>. Standardmäßig wird in Namen <em>und</em> Labels gesucht; mit <code>search = "label"</code> schränkst du auf Labels ein, mit <code>search = "name"</code> auf Namen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"alter"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   col    name                                    label
 1   93     age                       ALTER: BEFRAGTE(R)
@@ -407,7 +497,7 @@ Hinweis
 26 507 kh10age              ALTER, 10.KIND, AUSSER HAUS
 27 573    xi03                   INTERVIEWER(IN): ALTER</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^mm"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span>     <span class="co"># regex: alle mm-Items</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^mm"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span>     <span class="co"># regex: alle mm-Items</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  col name                                    label
 1 170 mm07        FUER DEN BAU VON MOSCHEEN IN BRD?
@@ -437,9 +527,849 @@ Tipp
 </h3>
 <p>Für eine <em>bestimmte</em> Auswahl von Variablen liefert <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> aus mariposa eine schöne HTML-Übersicht mit Labels, Ausprägungen und Häufigkeiten. Das ist das R-Äquivalent zum SPSS-<code>DISPLAY DICTIONARY</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05</span>, <span class="va">mm06</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="mariposa-codebook">
+<style>.mariposa-codebook {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      margin: 24px;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+.mariposa-codebook .cb-title {
+      margin: 0 0 2px 0;
+      color: #1a1a1a;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+.mariposa-codebook .subtitle {
+      color: #888;
+      margin: 0 0 16px 0;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+    }
+.mariposa-codebook table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+    }
+.mariposa-codebook thead th {
+      background: #3b3f51;
+      color: #fff;
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+.mariposa-codebook tbody td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+      color: #1a1a1a;
+    }
+.mariposa-codebook tbody tr:nth-child(even) { background: #f9f9fb; }
+.mariposa-codebook tbody tr:hover { background: #f0f0f5; }
+.mariposa-codebook .var-name {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      font-size: 12.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      color: #1a1a1a;
+    }
+.mariposa-codebook .var-label { color: #666; }
+.mariposa-codebook .type-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+.mariposa-codebook .type-num, .mariposa-codebook .type-fct, .mariposa-codebook .type-chr, .mariposa-codebook .type-lbl, .mariposa-codebook .type-lgl, .mariposa-codebook .type-date, .mariposa-codebook .type-other {
+      background: #ededf0;
+      color: #555;
+    }
+.mariposa-codebook .values-cell {
+      font-size: 12px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      white-space: nowrap;
+      color: #444;
+    }
+.mariposa-codebook .labels-cell { font-size: 12px; color: #666; white-space: nowrap; }
+.mariposa-codebook .values-cell > div, .mariposa-codebook .labels-cell > div, .mariposa-codebook .freq-cell > div {
+      min-height: 1.2em;
+    }
+.mariposa-codebook .freq-cell {
+      font-size: 12px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      text-align: right;
+      color: #444;
+    }
+.mariposa-codebook .range-text { }
+.mariposa-codebook .num-col { text-align: right; color: #888; }
+.mariposa-codebook .truncated-note { color: #aaa; font-style: italic; font-size: 11px; }
+.mariposa-codebook .na-separator {
+      border-top: 1px solid #ddd;
+      margin-top: 3px;
+      padding-top: 3px;
+      height: 1px;
+    }
+.mariposa-codebook .na-value { color: #999; font-style: italic; }
+.mariposa-codebook .footer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #bbb;
+    }
+.mariposa-codebook { margin: 1em 0; overflow-x: auto; }
+.mariposa-codebook .cb-title { display: block; }</style>
+<div class="cb-title">Codebook: allbus</div>
+<p class="subtitle">5246 observations | 6 variables | 6 labelled | 6 with missing data</p>
+
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead><tr class="header">
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">Name</th>
+<th data-quarto-table-cell-role="th">Type</th>
+<th data-quarto-table-cell-role="th">Label</th>
+<th data-quarto-table-cell-role="th">Values</th>
+<th data-quarto-table-cell-role="th">Value Labels</th>
+<th data-quarto-table-cell-role="th">Freq.</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td class="num-col">192</td>
+<td class="var-name">mm01</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN</td>
+<td class="values-cell">
+<div>
+1
 </div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATENFEHLER: MFN
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+1022
+</div>
+<div>
+457
+</div>
+<div>
+295
+</div>
+<div>
+529
+</div>
+<div>
+319
+</div>
+<div>
+236
+</div>
+<div>
+543
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+73
+</div>
+<div class="na-value">
+123
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">193</td>
+<td class="var-name">mm02</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">ISLAM PASST IN DIE DEUTSCHE GESELLSCHAFT</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATENFEHLER: MFN
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+954
+</div>
+<div>
+515
+</div>
+<div>
+494
+</div>
+<div>
+629
+</div>
+<div>
+350
+</div>
+<div>
+235
+</div>
+<div>
+227
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+72
+</div>
+<div class="na-value">
+121
+</div>
+</td>
+</tr>
+<tr class="odd">
+<td class="num-col">194</td>
+<td class="var-name">mm03</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">ANWESENHEIT VON MUSLIMEN BRINGT KONFLIKT</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATENFEHLER: MFN
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+381
+</div>
+<div>
+434
+</div>
+<div>
+391
+</div>
+<div>
+700
+</div>
+<div>
+574
+</div>
+<div>
+411
+</div>
+<div>
+552
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+60
+</div>
+<div class="na-value">
+94
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">195</td>
+<td class="var-name">mm04</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">STAAT SOLLTE ISLAM. GRUPPEN BEOBACHTEN</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATENFEHLER: MFN
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+533
+</div>
+<div>
+473
+</div>
+<div>
+338
+</div>
+<div>
+596
+</div>
+<div>
+437
+</div>
+<div>
+397
+</div>
+<div>
+650
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+4
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+64
+</div>
+<div class="na-value">
+107
+</div>
+</td>
+</tr>
+<tr class="odd">
+<td class="num-col">196</td>
+<td class="var-name">mm05</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">MUSLIMISCHER BUERGERMEISTER IN ORDNUNG</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+819
+</div>
+<div>
+271
+</div>
+<div>
+221
+</div>
+<div>
+453
+</div>
+<div>
+334
+</div>
+<div>
+443
+</div>
+<div>
+868
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+72
+</div>
+<div class="na-value">
+118
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">197</td>
+<td class="var-name">mm06</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">UNTER MUSLIMEN SIND VIELE REL. FANATIKER</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+STIMME GAR NICHT ZU
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+STIMME VOLL+GANZ ZU
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+TNZ: SPLIT
+</div>
+<div class="na-value">
+KEINE ANGABE
+</div>
+<div class="na-value">
+WEISS NICHT
+</div>
+</td>
+<td class="freq-cell">
+<div>
+328
+</div>
+<div>
+509
+</div>
+<div>
+369
+</div>
+<div>
+561
+</div>
+<div>
+475
+</div>
+<div>
+381
+</div>
+<div>
+686
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+102
+</div>
+<div class="na-value">
+188
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="footer">Generated by mariposa 0.7.4 on 2026-11-04</p>
+</div>
+</div>
+</div>
+<p>In RStudio öffnet sich die Übersicht im Viewer-Reiter; in einem Quarto-Dokument wie diesem Buch bettet mariposa sie direkt in den Bericht ein. Willst du sie weitergeben, speicherst du sie mit <code>codebook(..., file = "codebook.html")</code> als eigene HTML-Datei oder mit <code>write_xlsx(codebook(...), "codebook.xlsx")</code> als Excel-Tabelle.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -473,7 +1403,7 @@ Hinweis
 <span class="header-section-number">4.5.1</span> Variablen auswählen mit <code>select()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5,246 × 3
@@ -494,7 +1424,7 @@ Hinweis
 </div>
 <p>Du kannst Bereiche mit <code>:</code> angeben und Variablen mit <code>-</code> ausschließen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5,246 × 10
@@ -516,6 +1446,54 @@ Hinweis
 </div>
 </div>
 <p>Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.</p>
+<p><strong>Tidyselect-Helfer.</strong> Bei großen Datensätzen wie ALLBUS willst du oft <em>alle Variablen, die ein Muster erfüllen</em> auswählen. Statt sie einzeln aufzuzählen, helfen dir die folgenden Funktionen:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 45%">
+<col style="width: 34%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Helfer</th>
+<th style="text-align: left;">Wirkung</th>
+<th style="text-align: left;">Beispiel auf ALLBUS</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>starts_with("pre")</code></td>
+<td style="text-align: left;">alle Variablen, deren Name mit <code>pre</code> beginnt</td>
+<td style="text-align: left;"><code>select(starts_with("mm0"))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ends_with("suffix")</code></td>
+<td style="text-align: left;">alle, deren Name auf <code>suffix</code> endet</td>
+<td style="text-align: left;">
+<code>select(ends_with("r"))</code> für umgepolte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>contains("teil")</code></td>
+<td style="text-align: left;">alle, deren Name <code>teil</code> enthält</td>
+<td style="text-align: left;"><code>select(contains("vertrau"))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>matches("regex")</code></td>
+<td style="text-align: left;">alle, die zum regulären Ausdruck passen</td>
+<td style="text-align: left;"><code>select(matches("^p[at]"))</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>where(is.numeric)</code></td>
+<td style="text-align: left;">alle, deren Inhalt eine Bedingung erfüllt</td>
+<td style="text-align: left;"><code>select(where(is.numeric))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code><a href="https://tidyselect.r-lib.org/reference/everything.html">everything()</a></code></td>
+<td style="text-align: left;">alle übrigen — typisch in <code><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate()</a></code>
+</td>
+<td style="text-align: left;"><code>relocate(id, .before = everything())</code></td>
+</tr>
+</tbody>
+</table>
+<p>Diese Helfer funktionieren genauso in <code>mutate(across(...))</code>, <code>summarise(across(...))</code> und in vielen mariposa-Aufrufen — ein tidyverse-weites Vokabular.</p>
 <p>Zwei nahe Verwandte von <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>:</p>
 <ul>
 <li>
@@ -526,7 +1504,7 @@ Hinweis
 <span class="header-section-number">4.5.2</span> Fälle filtern mit <code>filter()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -548,7 +1526,7 @@ Hinweis
 </div>
 <p>Die Vergleichs- und Logik-Operatoren aus <a href="03-ProgrammierspracheR.html#sec-operatoren" class="quarto-xref"><span>Kapitel 3.4</span></a> (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>|</code>, <code>%in%</code>) bilden hier dein Vokabular. Komplexere Filter kombinierst du frei:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">eastwest</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">30</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -566,14 +1544,20 @@ Warnung
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Vorsicht: Fehlende Werte.</strong> <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> schließt Fälle mit <code>NA</code> in der Bedingung automatisch aus. Das ist meist gewünscht, kann dich aber überraschen. Mit <code>filter(is.na(variable))</code> filterst du gezielt <em>fehlende</em> Werte heraus.</p>
+<p><strong>Vorsicht: Fehlende Werte.</strong> <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> schließt Fälle mit <code>NA</code> in der Bedingung automatisch aus. Das ist meist gewünscht, kann dich aber überraschen. Drei Varianten im Vergleich:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>        <span class="co"># nur Männer (NAs werden ausgeschlossen)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>      <span class="co"># nur Fälle, wo sex fehlt</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>     <span class="co"># alle Fälle, wo sex vorhanden ist</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Wenn du dich wunderst, warum deine Fallzahl plötzlich kleiner ist als erwartet — die <code>NA</code>-Filterung ist meist der Grund.</p>
 </div>
 </div>
 </section><section id="fälle-sortieren-mit-arrange" class="level3" data-number="4.5.3"><h3 data-number="4.5.3" class="anchored" data-anchor-id="fälle-sortieren-mit-arrange">
 <span class="header-section-number">4.5.3</span> Fälle sortieren mit <code>arrange()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -590,7 +1574,7 @@ Warnung
 </div>
 <p>Absteigend mit <code><a href="https://dplyr.tidyverse.org/reference/desc.html">desc()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -605,17 +1589,17 @@ Warnung
 5 94        4 [FACHHOCHSCHULREIFE]</code></pre>
 </div>
 </div>
-</section></section><section id="datentypen-verstehen" class="level2" data-number="4.6"><h2 data-number="4.6" class="anchored" data-anchor-id="datentypen-verstehen">
+</section></section><section id="sec-datentypen-verstehen" class="level2" data-number="4.6"><h2 data-number="4.6" class="anchored" data-anchor-id="sec-datentypen-verstehen">
 <span class="header-section-number">4.6</span> Datentypen verstehen</h2>
 <p>Wenn du in SPSS arbeitest, fragst du dich selten, <em>welcher Typ</em> eine Variable ist. SPSS macht das im Hintergrund: eine Variable ist „numerisch” oder „string”, und Wertelabels („1 = Mann, 2 = Frau”) sind nur eine Beschriftungs-Schicht obendrauf. In R ist das ein bisschen anders — und am Anfang verwirrend.</p>
 <p>R kennt eine ganze Reihe von Datentypen: reine Zahlen (<code>numeric</code>), Text (<code>character</code>), Logik (<code>logical</code>), Kategorien mit fester Reihenfolge (<code>factor</code>). Beim Einlesen eines SPSS-Datensatzes kommt noch ein vierter Typ hinzu, den mariposa von haven übernimmt: <code>&lt;haven_labelled&gt;</code>. Das ist eine Art <em>Hybrid</em>: Die Spalte verhält sich nach außen wie eine Zahl, aber im Hintergrund tragen die Werte ihre SPSS-Wertelabels mit. So bleibt die Information „1 bedeutet Mann” erhalten, ohne dass du sie aus dem Codebook nachschlagen musst.</p>
 <p>Mit <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> siehst du den Typ einer Variable:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
 </div>
@@ -647,7 +1631,7 @@ Warnung
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -699,21 +1683,25 @@ Hinweis
 <td>Variablenlabels auslesen</td>
 </tr>
 <tr class="even">
-<td><code>var_label(data) &lt;- list(var = "Neue Beschriftung")</code></td>
-<td>Variablenlabel setzen</td>
+<td><code>var_label(data$var) &lt;- "Neue Beschriftung"</code></td>
+<td>Variablenlabel einer Spalte setzen</td>
 </tr>
 <tr class="odd">
+<td><code>var_label(data) &lt;- list(var = "Neue Beschriftung")</code></td>
+<td>Variablenlabels mehrerer Spalten auf einmal setzen</td>
+</tr>
+<tr class="even">
 <td><code>val_labels(data)</code></td>
 <td>Wertelabels auslesen</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>drop_labels(data)</code></td>
 <td>Alle Wertelabels entfernen, deren Ausprägung in den Daten gar nicht vorkommt</td>
 </tr>
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -726,6 +1714,11 @@ Hinweis
 </div>
 </div>
 <p>Das Ergebnis ist ein <strong>benannter Character-Vektor</strong> — pro Variable das hinterlegte Label. So liest du, was eine kryptische Variable wie <code>mm01</code> eigentlich bedeutet, ohne ins Codebook zu schauen.</p>
+<p><strong>Label nachträglich setzen.</strong> Wenn du eine neue Variable erzeugst (z. B. eine Skala in <a href="05-Datentransformation.html" class="quarto-xref"><span>Kapitel 5</span></a>), kannst du ihr ein sprechendes Label verpassen — Zukunft-Du dankt:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Islamfeindlichkeits-Skala (6 Items, 1–7)"</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Dieses Label erscheint später automatisch in <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code>, in der Kopfzeile von <code><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency()</a></code> und in vielen <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-Ausgaben — überall, wo mariposa Beschriftungen sucht. Für mehrere Variablen auf einmal übergibst du eine Liste: <code>var_label(allbus) &lt;- list(islamophobie = "…", populismus = "…")</code>.</p>
 </section><section id="fehlende-werte-deklarieren" class="level2" data-number="4.8"><h2 data-number="4.8" class="anchored" data-anchor-id="fehlende-werte-deklarieren">
 <span class="header-section-number">4.8</span> Fehlende Werte deklarieren</h2>
 <p>Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage — manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.</p>
@@ -766,31 +1759,61 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Hintergrund: Split-Designs im ALLBUS.</strong> Manche Itembatterien werden nur einer Hälfte der Stichprobe gestellt (Code <code>-11</code> für die andere Hälfte). Das gilt insbesondere für die <code>mm</code>-Items unserer Islamfeindlichkeits-Skala. Die effektive N für solche Splits liegt deshalb bei rund 2.500 statt 5.246 — methodisch <em>kein</em> Fehler, sondern Stichproben­architektur. In der Methodenbeschreibung gehört dieser Punkt erwähnt.</p>
+<p><strong>Hintergrund: Split-Designs im ALLBUS.</strong> Manche Itembatterien werden nur einem Teil der Stichprobe gestellt; wer sie nicht vorgelegt bekommt, erhält den Code <code>-11</code> (TNZ: SPLIT). Das gilt insbesondere für die <code>mm</code>-Items unserer Islamfeindlichkeits-Skala: Rund 1.650 Befragte — knapp ein Drittel — haben sie nicht gesehen. Die gültige N pro Item liegt deshalb bei etwa 3.300–3.450 statt 5.246 — methodisch <em>kein</em> Fehler, sondern Stichproben­architektur. In der Methodenbeschreibung gehört dieser Punkt erwähnt.</p>
 </div>
 </div>
 <p>Wie viele Fälle pro Missing-Code in einer konkreten Variable stecken, zeigt dir <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   tag    n code            label
-1    b 1647  -11       TNZ: SPLIT
-2    d  123   -8      WEISS NICHT
-3    c   73   -9     KEINE ANGABE
-4    a    2  -42 DATENFEHLER: MFN
-5 &lt;NA&gt;    0 &lt;NA&gt; (System Missing)</code></pre>
+<pre><code>  code            label    n         prc tag
+1  -42 DATENFEHLER: MFN    2  0.03812429   a
+2  -11       TNZ: SPLIT 1647 31.39534884   b
+3   -9     KEINE ANGABE   73  1.39153641   c
+4   -8      WEISS NICHT  123  2.34464354   d</code></pre>
 </div>
 </div>
 <p>Du siehst die Aufschlüsselung: wie viele „weiß nicht”, wie viele „keine Angabe”, wie viele „trifft nicht zu” — alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.</p>
-<p>Wenn du eine Variable hast, in der bestimmte Werte <em>erst nachträglich</em> als fehlend gelten sollen — etwa Altersangaben über 100 als unplausibel —, deklarierst du sie mit <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code>:</p>
+<p>Wenn bestimmte <em>gültige</em> Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code>. Ein Beispiel: Beim Schulabschluss <code>educ</code> lassen sich „anderer Abschluss” (Code 6) und „noch Schüler:in” (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an — <code>variable = c(code1, code2)</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na</a></span><span class="op">(</span><span class="va">age</span>, na_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">9</span>, <span class="op">-</span><span class="fl">8</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency</a></span><span class="op">(</span><span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Frequency Analysis Results
+--------------------------
+
+educ (ALLGEMEINER SCHULABSCHLUSS)
+# total N=5246 valid N=5093 mean=3.64 sd=1.18 skewness=-0.14
+
++-------+--------------------+------+--------+---------+--------+
+| Value | Label              |    N |  Raw % | Valid % | Cum. % |
++-------+--------------------+------+--------+---------+--------+
+|     1 | OHNE ABSCHLUSS     |   77 |   1.47 |    1.51 |   1.51 |
+|     2 | VOLKS-,HAUPTSCHULE |  905 |  17.25 |   17.77 |  19.28 |
+|     3 | MITTLERE REIFE     | 1639 |  31.24 |   32.18 |  51.46 |
+|     4 | FACHHOCHSCHULREIFE |  625 |  11.91 |   12.27 |  63.73 |
+|     5 | HOCHSCHULREIFE     | 1847 |  35.21 |   36.27 | 100.00 |
++-------+--------------------+------+--------+---------+--------+
+| Total valid                | 5093 |  97.08 |  100.00 |        |
++-------+--------------------+------+--------+---------+--------+
+|   -41 | DATENFEHLER        |    1 |   0.02 |         |        |
+|   -33 | NICHT BESTIMMBAR   |   54 |   1.03 |         |        |
+|    -9 | KEINE ANGABE       |   54 |   1.03 |         |        |
+|     6 | ANDERER ABSCHLUSS  |   18 |   0.34 |         |        |
+|     7 | NOCH SCHUELER      |   26 |   0.50 |         |        |
++-------+--------------------+------+--------+---------+--------+
+| Total missing              |  153 |   2.92 |         |        |
++-------+--------------------+------+--------+---------+--------+
+| Total                      | 5246 | 100.00 |         |        |
++-------+--------------------+------+--------+---------+--------+</code></pre>
 </div>
-<p>Mit <code>verbose = TRUE</code> zeigt mariposa dir an, wie viele Fälle pro Wert zu <code>NA</code> wurden — kontrolliert und nachvollziehbar.</p>
+</div>
+<p>Mit <code>verbose = TRUE</code> zeigt mariposa dir an, wie viele Werte zu <code>NA</code> wurden — kontrolliert und nachvollziehbar. Die beiden Codes stehen anschließend mit ihrem Label im Missing-Block der Häufigkeitstabelle: Sie zählen nicht mehr als gültig, bleiben aber als eigener Missing-Typ unterscheidbar. Lässt du den Variablennamen weg (<code>set_na(-99)</code>), gilt der Code für <em>alle</em> numerischen Variablen.</p>
 <p>Mit <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> (aus tidyr) entfernst du Fälle mit <code>NA</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -824,6 +1847,54 @@ Hinweis
 <p><strong>Hintergrund: MCAR, MAR, MNAR.</strong> Die Methodenliteratur unterscheidet drei Missing-Mechanismen: <em>Missing Completely at Random</em> (Zufall, keine Verzerrung), <em>Missing at Random</em> (Zufall bedingt durch beobachtete Variablen, durch Modellierung korrigierbar) und <em>Missing Not at Random</em> (systematisch, schwer zu beheben). In Survey-Daten wie ALLBUS ist MAR der Regelfall; einfache Listwise Deletion (<code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code>) ist dann ein konservativer, aber transparenter Umgang. Imputationsverfahren (z. B. <code>mice</code>) sind die nächste Ausbaustufe — für ein Einsteigerbuch jedoch zu viel.</p>
 </div>
 </div>
+</section><section id="wenn-etwas-komisch-aussieht-diagnose-spickzettel" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="wenn-etwas-komisch-aussieht-diagnose-spickzettel">Wenn etwas komisch aussieht — Diagnose-Spickzettel</h2>
+<p>Die häufigsten Anfänger:innen-Probleme beim Datenimport haben drei Ursachen — und drei direkte Diagnosen:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 33%">
+<col style="width: 29%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Wahrscheinliche Ursache</th>
+<th style="text-align: left;">Diagnose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">
+<code>mean(allbus$age)</code> gibt komische Werte (z. B. negativ)</td>
+<td style="text-align: left;">Missing-Codes (-9, -42, …) als reguläre Zahlen drin</td>
+<td style="text-align: left;"><code>na_frequencies(allbus$age)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Plot-Achse zeigt Zahlen (<code>1</code>, <code>2</code>) statt Labels</td>
+<td style="text-align: left;">Variable noch <code>&lt;haven_labelled&gt;</code>, nicht Faktor</td>
+<td style="text-align: left;"><code>allbus |&gt; to_label(var)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fallzahl nach <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> viel kleiner als erwartet</td>
+<td style="text-align: left;">
+<code>NA</code>-Werte werden automatisch ausgeschlossen</td>
+<td style="text-align: left;">
+<code>sum(is.na(allbus$var))</code> zur Diagnose</td>
+</tr>
+</tbody>
+</table>
+<p>Wer diese drei kennt, hat 80 % aller „warum funktioniert das nicht”-Momente abgedeckt.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Forschungsjournal: Stand deiner Mini-Studie.</strong> Du hast den ALLBUS 2023 eingelesen und hast die Werkzeuge, um durch 579 Variablen gezielt zu navigieren. Du weißt, was hinter <code>mm01</code> bis <code>mm06</code> steckt (die sechs Islamfeindlichkeits-Items), du kennst die Missing-Codes der GESIS, und du kannst dein Analyse-Subset gezielt zusammenstellen. <strong>Was als Nächstes kommt:</strong> In <a href="05-Datentransformation.html" class="quarto-xref"><span>Kapitel 5</span></a> wandelst du die Rohitems in zwei Skalen um — Islamfeindlichkeit und Populismus.</p>
+</div>
+</div>
 </section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
 <div class="callout callout-style-default callout-note callout-titled" title="Übung 1 · Variablen finden · Reproduktion">
 <div class="callout-header d-flex align-content-center">
@@ -839,7 +1910,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -848,10 +1919,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"vertrau"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"vertrau"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^st"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -867,11 +1938,11 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Erstelle ein <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> für die Items <code>pt01</code> bis <code>pt08</code> (Vertrauen in verschiedene Institutionen). Schau dir Labels und Wertelabels an.</p>
+<p>Erstelle ein <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> für die Items <code>pt01</code> bis <code>pt08</code> (Vertrauen in verschiedene Institutionen). Schau dir Labels und Wertelabels an. <em>Tipp: Ein Item <code>pt05</code> gibt es im ALLBUS 2023 nicht — der Bereich <code>pt01:pt08</code> wählt einfach alle Spalten, die im Datensatz dazwischen stehen.</em></p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -880,11 +1951,11 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">pt01</span>, <span class="va">pt02</span>, <span class="va">pt03</span>, <span class="va">pt04</span>, <span class="va">pt05</span>, <span class="va">pt06</span>, <span class="va">pt07</span>, <span class="va">pt08</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">pt01</span><span class="op">:</span><span class="va">pt08</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -903,7 +1974,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -912,10 +1983,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">analyse</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">analyse</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, <span class="va">pa29</span><span class="op">:</span><span class="va">pa35</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span>, <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">analyse</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -935,19 +2006,6 @@ Hinweis
 <div class="callout-body-container callout-body">
 <p>Wähle ein Thema, das dich politik- oder sozialwissenschaftlich interessiert (Migration, Klima, Geschlechterrollen, …). Finde mit <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> zwei bis drei Variablen im ALLBUS 2023, die deine Frage beleuchten könnten. Erstelle ein <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> für deine Auswahl. Beschreibe in 2–3 Sätzen, was du untersuchen würdest und welche Variable als unabhängige bzw. abhängige Variable dienen könnte.</p>
 <p><em>Es gibt hier keine Musterlösung — die Übung trainiert das Auffinden und Verstehen von Variablen, nicht eine bestimmte Antwort.</em></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Hinweis
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Forschungsjournal: Stand deiner Mini-Studie.</strong> Du hast den ALLBUS 2023 eingelesen und hast die Werkzeuge, um durch 579 Variablen gezielt zu navigieren. Du weißt, was hinter <code>mm01</code> bis <code>mm06</code> steckt (die sechs Islamfeindlichkeits-Items), du kennst die Missing-Codes der GESIS, und du kannst dein Analyse-Subset gezielt zusammenstellen. <strong>Was als Nächstes kommt:</strong> In <a href="05-Datentransformation.html" class="quarto-xref"><span>Kapitel 5</span></a> wandelst du die Rohitems in zwei Skalen um — Islamfeindlichkeit und Populismus.</p>
 </div>
 </div>
 </section><section id="was-du-jetzt-weißt" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="was-du-jetzt-weißt">Was du jetzt weißt</h2>

@@ -207,9 +207,36 @@ zahlen[2:4]    # zweites bis viertes
 zahlen[-1]     # alle ausser dem ersten
 ```
 
+**Boolesche Indizierung — der Schlüssel zu allem, was später kommt.** Statt mit Position kannst du auch mit *Bedingungen* indizieren — du übergibst einen logischen Vektor (`TRUE`/`FALSE`) gleicher Länge, und R behält nur die `TRUE`-Positionen:
+
+```{r boolean-indexing}
+zahlen <- c(10, 20, 30, 40, 50)
+zahlen > 25                  # gibt TRUE/FALSE-Vektor zurück
+zahlen[zahlen > 25]          # behält nur Werte > 25
+zahlen[!is.na(zahlen)]       # behält nur Nicht-NA-Werte
+```
+
+Diese Logik ist *exakt* das, was tidyverse-Funktionen wie `filter()` (Kap. 4) intern machen. Wer hier sicher ist, versteht `filter(allbus, age > 30)` sofort.
+
+::: {.callout-note}
+**Konzept: Vektorisierung.** Wenn du in R `zahlen * 2` schreibst, wird die Operation auf *jedes Element* angewendet — du bekommst `c(20, 40, 60, 80, 100)` zurück. Das nennt sich **Vektorisierung** und ist eines der Power-Features von R. Du musst fast nie eine `for`-Schleife schreiben, um eine Operation auf vielen Werten auszuführen.
+
+**Recycling als Falle.** Wenn zwei Vektoren unterschiedlicher Länge kombiniert werden, *wiederholt* R den kürzeren stillschweigend:
+
+```{r recycling}
+c(1, 2, 3, 4) + c(10, 20)   # ergibt 11, 22, 13, 24 — nicht 11, 22!
+```
+
+Das ist absichtliches Verhalten — und genau die Anfänger:innen-Falle, die zu falschen Ergebnissen führt. Wenn du dir nicht sicher bist, prüfe mit `length()`, dass beide Vektoren gleich lang sind.
+:::
+
 ### Faktoren
 
-Ein **Faktor** ist ein Vektor mit definierten **Ausprägungen** (`levels`) — für kategoriale Variablen wie Geschlecht oder Bildung.
+Ein **Faktor** ist ein Vektor mit definierten **Ausprägungen** (`levels`) — für kategoriale Variablen wie Geschlecht oder Bildung. Warum nicht einfach ein Character-Vektor? Drei Gründe:
+
+1. **Feste Reihenfolge.** Bei einer Bildungs-Variable willst du, dass *„niedrig"* vor *„hoch"* steht — auch wenn alphabetisch das Gegenteil gilt. Faktoren erlauben dir, die Reihenfolge zu erzwingen.
+2. **Referenzkategorie für Modelle.** Regressionen brauchen eine *Vergleichs-Kategorie*; Faktoren liefern sie automatisch (= die erste Ausprägung).
+3. **Speichereffizienz.** Statt jeden Eintrag als Text zu speichern, hält R intern eine kleine Zahl pro Wert.
 
 ```{r factors}
 geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),
@@ -218,7 +245,7 @@ geschlecht
 levels(geschlecht)
 ```
 
-Faktoren sind wichtig für Regressionsmodelle — die erste Ausprägung wird automatisch zur **Referenzkategorie**. Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du die Reihenfolge.
+Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du die Reihenfolge nachträglich. `forcats` ist Teil des tidyverse und liefert ein ganzes Set an Faktor-Werkzeugen (`fct_recode()`, `fct_lump()`, `fct_reorder()`) — du brauchst sie spätestens bei Grafiken in Kap. 6.
 
 ::: {.callout-note}
 **Hintergrund: `haven_labelled` vs. Faktor.** Wenn du Daten aus SPSS einliest (Kap. 4), bekommst du Spalten vom Typ `<haven_labelled>`. Das ist *kein* Faktor — sondern ein numerischer Vektor mit Labels als Begleitinformation. Mit `to_label()` (mariposa) wandelst du sie bei Bedarf in einen klassischen Faktor.
@@ -243,6 +270,11 @@ befragte$alter
 befragte[["alter"]]
 befragte[1, "alter"]   # erste Zeile, Spalte "alter"
 ```
+
+**Faustregel `$` vs. `[[ ]]`.** Beide geben dieselbe Spalte zurück — der Unterschied ist die Bedienung:
+
+- **`$alter`** ist kompakter, ideal für interaktive Konsole und Skripte.
+- **`[["alter"]]`** akzeptiert den Spaltennamen als *String* — unverzichtbar, wenn der Spaltenname in einer Variable steckt (`spalte <- "alter"; befragte[[spalte]]`).
 
 In der Praxis liest du Datensätze fertig aus SPSS-, Stata- oder Excel-Dateien ein (siehe Kap. 4). Selbst-gebaute Tibbles brauchst du fast nur für kleine Demonstrationen.
 
@@ -284,6 +316,17 @@ Damit Funktionen wie `mean()`, `sd()` & Co. trotzdem rechnen, übergibst du `na.
 mean(x, na.rm = TRUE)
 sum(x, na.rm = TRUE)
 ```
+
+::: {.callout-warning}
+**Vorsicht: `NA` als Ergebnis ist kein Fehler.** Wenn `mean(daten$age)` plötzlich `NA` zurückgibt, hat R *keine* Fehlermeldung — es rechnet brav weiter und gibt `NA` aus. Das ist der häufigste „mein Output sieht komisch aus"-Fehler bei Anfänger:innen. Zwei Diagnosen helfen:
+
+```{r na-diagnose, eval=FALSE}
+sum(is.na(daten$age))   # wie viele NAs hat die Variable?
+summary(daten$age)      # zeigt unten "NA's: 47" wenn vorhanden
+```
+
+Heilmittel: `na.rm = TRUE` an die Berechnung, oder die fehlenden Fälle gezielt mit `filter(!is.na(age))` ausschließen.
+:::
 
 ::: {.callout-note}
 **Hintergrund: Mehrere Arten von Missing.** SPSS unterscheidet *system-missing* (leeres Feld) von *user-missing* (z. B. „keine Angabe" als Code `-9`). In R gibt es per Default nur ein generisches `NA` — beim SPSS-Import behält mariposa die *user-missing*-Codes aber als **tagged NA**, sodass du den Grund des Fehlens jederzeit nachschauen kannst. Mehr dazu in Kap. 4.
@@ -349,7 +392,7 @@ Beide funktionieren in tidyverse-Code, beide liefern dieselben Ergebnisse. Wir n
 
 ### Pipes in der Praxis
 
-Hier eine echte Pipeline aus Kap. 4, die zeigt, wofür Pipes wirklich nützlich sind:
+Hier ein Ausschnitt der echten Datenpräp-Pipeline aus Kap. 5 (@sec-pipeline), der zeigt, wofür Pipes wirklich nützlich sind:
 
 ```{r real-pipe, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>
@@ -362,6 +405,20 @@ allbus <- read_spss("ALLBUS2023.sav") |>
 ```
 
 Du liest: Datensatz einlesen → `mm02` umpolen → `mm05` umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.
+
+## Drei typische Anfänger:innen-Fehler {#sec-top-fehler}
+
+Bevor du die Übungen rechnest — drei Stolpersteine, die fast alle einmal treffen. Wenn du sie kennst, sparst du dir die ersten Stunden Frust:
+
+| Fehler                                          | Symptom                                              | Heilmittel                                             |
+| :---------------------------------------------- | :--------------------------------------------------- | :----------------------------------------------------- |
+| `var = 5` statt `var <- 5`                      | scheinbar funktioniert, aber kaputt in Funktionsargumenten | Konsequent `<-` für Zuweisung (Shortcut: `option`/`alt` + `-`) |
+| `T` / `F` statt `TRUE` / `FALSE`                | funktioniert — bis jemand `T <- 1` setzt              | Immer ausschreiben                                     |
+| `mean(x)` gibt `NA` zurück, scheinbar grundlos  | Variable hat fehlende Werte                          | `mean(x, na.rm = TRUE)` oder vorher `sum(is.na(x))` prüfen |
+
+::: {.callout-tip}
+**Anführungszeichen-Falle.** Wenn du Code aus Word oder Powerpoint kopierst, werden gerade Anführungszeichen (`"`) zu typografischen (`"`/`"`). R sieht das als Syntaxfehler. Bei der Fehlermeldung *„unexpected input"* oder *„unexpected string constant"* — Anführungszeichen prüfen.
+:::
 
 ## Übungen {-}
 

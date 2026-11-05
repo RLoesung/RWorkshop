@@ -48,6 +48,25 @@ Quarto ist der **Nachfolger von R Markdown**. R Markdown war R-zentriert; Quarto
 **Hintergrund: R Markdown, Quarto, knitr.** Unter der Haube nutzt Quarto weiterhin **knitr**, die R-Engine, die Code-Chunks ausführt und in Markdown einbettet. Was Quarto neu macht, ist die Schicht *darüber*: ein einheitliches YAML-Format, eine konsistente Output-Architektur und Unterstützung für Bücher (wie dieses hier), Webseiten, Folien und Dashboards. Die meisten Beispiele aus R-Markdown-Tutorials funktionieren in Quarto identisch.
 :::
 
+## Markdown — die Schreibebene
+
+Bevor du dein erstes `.qmd` baust, ein Mini-Spickzettel zu **Markdown** — der Auszeichnungssprache, in der du den *Lauftext* schreibst (also alles, was kein R-Code ist). Markdown ist absichtlich simpel: ein paar Sonderzeichen reichen für die meisten Formatierungen.
+
+| Markdown               | Ergebnis                              |
+| :--------------------- | :------------------------------------ |
+| `# Überschrift 1`      | größte Überschrift                    |
+| `## Überschrift 2`     | nächst-kleinere                       |
+| `**fett**`             | **fett**                              |
+| `*kursiv*`             | *kursiv*                              |
+| `` `inline-code` ``    | `inline-code` (Monospace)             |
+| `- erster Punkt`       | Aufzählungspunkt (mit `-`)            |
+| `1. erster Punkt`      | nummerierte Liste                     |
+| `[Text](https://…)`    | Link                                  |
+| `> Zitat`              | eingerücktes Zitat                    |
+| Leerzeile              | neuer Absatz                          |
+
+Mehr brauchst du für 90 % aller Hausarbeiten nicht. Für Tabellen, Fußnoten und Bilder gibt es eigene Markdown-Syntax — die [Quarto-Markdown-Referenz](https://quarto.org/docs/authoring/markdown-basics.html) ist der Spickzettel für später.
+
 ## Dein erstes `.qmd`
 
 In RStudio: **`File` → `New File` → `Quarto Document`**. Im Dialog gibst du Titel und Autor an, wählst HTML als Format und drückst *Create*. RStudio öffnet ein Beispiel-Dokument, das du mit dem **Render**-Knopf (oder `cmd`/`strg` + `shift` + `K`) sofort in HTML übersetzen kannst.
@@ -73,14 +92,50 @@ mean(c(1, 2, 3, 4, 5))
 Du erkennst:
 
 1. **YAML-Header** zwischen `---`-Linien — Metadaten und Format-Konfiguration.
-2. **Markdown-Lauftext** — Überschriften mit `#`, Fettdruck mit `**…**`, Listen mit `-`.
+2. **Markdown-Lauftext** — siehe Mini-Spickzettel oben.
 3. **Code-Chunks** in dreifachen Backticks mit `{r}` — werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.
 
 Das Ergebnis (gerendert) zeigt deinen Text, die Code-Zeile *und* deren Ausgabe (`3`) — alles in einer fertigen HTML-Datei. Genau dieser Workflow trägt dich von der Hausarbeit bis zur Dissertation.
 
 ## YAML-Header: das Steuerpult
 
-Der YAML-Header steuert das Verhalten deines Dokuments. Die wichtigsten Felder:
+Der YAML-Header steuert das Verhalten deines Dokuments. Statt sofort alle Felder zu sehen, baust du ihn dir in **drei Ausbaustufen** auf — von „minimal lauffähig" bis „komplette Hausarbeit".
+
+### Stufe 1: Minimal
+
+```yaml
+---
+title: "Mein erster Bericht"
+author: "Anna Schmidt"
+format: html
+---
+```
+
+Damit rendert das Dokument als HTML. Mehr brauchst du am Anfang nicht.
+
+### Stufe 2: Hausarbeit-Niveau
+
+```yaml
+---
+title: "Islamfeindlichkeit in Deutschland 2023"
+subtitle: "Eine ALLBUS-basierte Analyse"
+author: "Anna Schmidt"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+lang: de
+---
+```
+
+- **`toc: true`** schaltet das Inhaltsverzeichnis ein, **`toc-depth: 3`** nimmt drei Überschrift-Ebenen auf.
+- **`number-sections: true`** nummeriert Abschnitte automatisch (1, 1.1, 1.1.1).
+- **`lang: de`** sorgt für deutsche Beschriftungen (z. B. *„Inhalt"* statt *„Contents"*).
+- **`date: today`** setzt automatisch das Render-Datum.
+
+### Stufe 3: Voller Forschungsbericht
 
 ```yaml
 ---
@@ -95,9 +150,7 @@ date-format: "DD.MM.YYYY"
 format:
   html:
     toc: true
-    toc-depth: 3
     number-sections: true
-    code-tools: false
   pdf:
     documentclass: article
     geometry: margin=2.5cm
@@ -115,12 +168,12 @@ lang: de
 ---
 ```
 
-Was die Felder tun:
+Neu dazugekommen:
 
-- **`format`** legt die Ausgabe fest. Mehrere Formate gleichzeitig sind erlaubt — Quarto produziert dann alle in einem Render-Lauf.
-- **`toc`** schaltet das Inhaltsverzeichnis ein, **`number-sections`** nummeriert Abschnitte automatisch.
+- **Mehrere `author`-Einträge** als Liste (mit `-` eingerückt).
+- **Mehrere Output-Formate** parallel — Quarto rendert alle drei in einem Lauf.
 - **`bibliography`** verweist auf eine BibTeX-Datei (siehe @sec-literatur).
-- **`csl`** wählt den Zitationsstil — APA, Chicago, DGPs-konform usw.
+- **`csl`** wählt den Zitationsstil (APA, Chicago, …).
 - **`execute`** setzt Default-Optionen für alle Code-Chunks: `echo: true` zeigt den Code, `warning: false` / `message: false` blendet R-Meldungen aus.
 
 ::: {.callout-warning}
@@ -149,9 +202,19 @@ Die wichtigsten Optionen:
 | `fig-width`, `fig-height`| Größe der Grafik in Zoll                                         |
 | `fig-align`              | `"left"`, `"center"`, `"right"`                                  |
 
+::: {.callout-tip}
+**Welche Option brauche ich gerade?** In der Praxis stellt sich fast immer dieselbe Frage. Diese Mini-Entscheidung hilft:
+
+- *Code und Output zeigen.* → Default. Keine Option nötig.
+- *Nur Output zeigen, Code verstecken.* → `echo: false` (z. B. Grafiken in einem Bericht).
+- *Code zeigen, aber **nicht** ausführen.* → `eval: false` (z. B. ein Beispiel zur Illustration, das fremde Daten bräuchte).
+- *Code **und** Output verstecken, aber trotzdem ausführen.* → `include: false` (z. B. Setup-Chunk, der Pakete lädt).
+- *Code zeigen, Output zeigen, aber Warnungen unterdrücken.* → `warning: false, message: false`.
+:::
+
 **Chunk-Labels** (wie `mein-chunk` oben) müssen pro Dokument *eindeutig* sein. Sie dienen als Cache-Schlüssel und als Anker für Grafik-Referenzen.
 
-Seit Quarto setzt sich der **YAML-Stil** für Chunk-Optionen durch — eleganter als die Header-Notation:
+Seit Quarto setzt sich auch ein zweiter Schreibstil für Chunk-Optionen durch — der **`#|`-Stil**, innerhalb des Chunks statt im Header:
 
 ````markdown
 ```{{r mein-chunk}}
@@ -163,7 +226,7 @@ mean(mtcars$mpg)
 ```
 ````
 
-Beide Schreibweisen sind erlaubt. In diesem Buch nutzen wir aus Lesbarkeitsgründen weiterhin die Header-Notation; in modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen.
+Beide Schreibweisen sind erlaubt. **In diesem Buch nutzen wir die Header-Notation** (`{r mein-chunk, echo=TRUE}`), weil sie kompakter ist. In modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen — er ist bei langen Optionslisten lesbarer.
 
 ### Setup-Chunk
 
@@ -200,7 +263,7 @@ Inline-Code ist eines der wichtigsten Werkzeuge für **reproduzierbare Berichte*
 
 ## Tabellen und Grafiken
 
-### Tabellen mit `kable()` und `gt`
+### Tabellen mit `kable()`
 
 Eine einfache Tabelle erzeugst du mit `knitr::kable()`:
 
@@ -209,19 +272,7 @@ head(mtcars, 3) |>
   knitr::kable(caption = "Erste drei Zeilen des mtcars-Datensatzes")
 ```
 
-Für anspruchsvollere Formatierung (Spalten-Gruppen, bedingte Färbung, Stil-Themes) bietet das Paket **`gt`** einen tidyverse-nahen Tabellenbau:
-
-```{r table-gt, eval=FALSE}
-library(gt)
-
-mtcars |>
-  head(3) |>
-  gt() |>
-  tab_header(title = "mtcars (Auszug)") |>
-  fmt_number(columns = mpg, decimals = 1)
-```
-
-`kable()` reicht für die meisten Hausarbeiten; `gt` lohnt sich, wenn die Tabelle das Endprodukt ist.
+`kable()` ist Teil von `knitr` und kommt mit jeder R-Markdown- bzw. Quarto-Installation mit — du brauchst kein zusätzliches Paket. Für die meisten Hausarbeiten reicht das vollkommen. Wenn du später anspruchsvollere Tabellen brauchst (Spalten-Gruppen, bedingte Färbung, mehrzeilige Header), sind das Paket [`gt`](https://gt.rstudio.com/) oder [`flextable`](https://ardata-fr.github.io/flextabook/) die nächsten Schritte — beide nicht Teil des Buch-Stacks.
 
 ### Grafiken
 
@@ -340,21 +391,11 @@ Drei Regeln, die sich bewährt haben:
 - **Code, Daten und Dokument liegen zusammen.** Niemals absolute Pfade (`/Users/anna/...`) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
 - **Geteilte Logik kommt in `R/`.** Wenn drei `.qmd`-Dateien dieselben Daten vorbereiten, gehört der Code in `R/prep.R` und wird in jedem Dokument per `source("R/prep.R")` eingebunden.
 
-### Versionskontrolle mit Git
+### Versionskontrolle mit Git — Ausblick
 
-**Git** ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Jeder *Commit* ist ein Snapshot mit einer Begründung („Tabelle 1 korrigiert: Cronbachs α statt Pearson *r*"). RStudio bringt Git-Integration mit; im Reiter `Git` siehst du, was sich geändert hat, kannst Änderungen committen und auf einen Remote-Server (**GitHub**, **GitLab**) pushen.
+**Git** ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht — aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
 
-Drei Grundbefehle reichen für den Anfang:
-
-```bash
-git add .                              # alle Änderungen vormerken
-git commit -m "Datenpräp erweitert"    # snapshot mit Begründung
-git push                                # zum Remote schicken
-```
-
-::: {.callout-tip}
-**Tipp: GitHub Student Developer Pack.** Studierende bekommen über das [GitHub Student Developer Pack](https://education.github.com/pack) kostenlos Zugang zu privaten Repositories und vielen weiteren Tools. Für eine Hausarbeit, die du nicht öffentlich machen willst, ist das die natürliche Wahl.
-:::
+Dieses Buch behandelt Git **nicht im Detail** — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
 
 ## Publizieren: HTML, PDF, Word
 
@@ -367,6 +408,10 @@ Welches Output-Format das richtige ist, hängt vom Adressaten ab:
 install.packages("tinytex")
 tinytex::install_tinytex()
 ```
+
+::: {.callout-warning}
+**Vorsicht: Erster PDF-Render kann dauern.** `tinytex::install_tinytex()` lädt eine kleine LaTeX-Distribution herunter (ca. 5–10 Minuten je nach Internet). Beim *ersten* PDF-Render fehlende LaTeX-Pakete werden dann automatisch nachinstalliert — das kann den ersten Lauf nochmal ein paar Minuten verlängern. Wenn der Render mit einer kryptischen LaTeX-Fehlermeldung abbricht, lohnt es sich, ihn ein zweites Mal zu starten — oft fehlte nur ein Paket beim ersten Mal.
+:::
 
 - **Word** — für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.
 

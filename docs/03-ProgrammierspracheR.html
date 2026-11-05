@@ -2,13 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.8.25">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>3&nbsp; Programmiersprache R – R Workshop – Sozialwissenschaften</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -68,14 +65,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./02-Quarto.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6499386a99bca6986a49a1d91551f074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -119,7 +117,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R Workshop – Sozialwissenschaften</a> 
         <div class="sidebar-tools-main">
@@ -137,7 +137,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Vorwort</span></a>
+ <span class="menu-text">0&nbsp; Vorwort</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -236,6 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#pipes-in-der-praxis" id="toc-pipes-in-der-praxis" class="nav-link" data-scroll-target="#pipes-in-der-praxis"><span class="header-section-number">3.7.3</span> Pipes in der Praxis</a></li>
   </ul>
 </li>
+  <li><a href="#sec-top-fehler" id="toc-sec-top-fehler" class="nav-link" data-scroll-target="#sec-top-fehler"><span class="header-section-number">3.8</span> Drei typische Anfänger:innen-Fehler</a></li>
   <li><a href="#%C3%BCbungen" id="toc-übungen" class="nav-link" data-scroll-target="#%C3%BCbungen">Übungen</a></li>
   <li><a href="#was-du-jetzt-wei%C3%9Ft" id="toc-was-du-jetzt-weißt" class="nav-link" data-scroll-target="#was-du-jetzt-wei%C3%9Ft">Was du jetzt weißt</a></li>
   <li><a href="#weiterf%C3%BChrend" id="toc-weiterführend" class="nav-link" data-scroll-target="#weiterf%C3%BChrend">Weiterführend</a></li>
@@ -612,23 +613,69 @@ Warnung
 <pre><code>[1] 2 3 4 5</code></pre>
 </div>
 </div>
+<p><strong>Boolesche Indizierung — der Schlüssel zu allem, was später kommt.</strong> Statt mit Position kannst du auch mit <em>Bedingungen</em> indizieren — du übergibst einen logischen Vektor (<code>TRUE</code>/<code>FALSE</code>) gleicher Länge, und R behält nur die <code>TRUE</code>-Positionen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="va">zahlen</span> <span class="op">&gt;</span> <span class="fl">25</span>                  <span class="co"># gibt TRUE/FALSE-Vektor zurück</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE  TRUE  TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span><span class="op">[</span><span class="va">zahlen</span> <span class="op">&gt;</span> <span class="fl">25</span><span class="op">]</span>          <span class="co"># behält nur Werte &gt; 25</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30 40 50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">zahlen</span><span class="op">)</span><span class="op">]</span>       <span class="co"># behält nur Nicht-NA-Werte</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10 20 30 40 50</code></pre>
+</div>
+</div>
+<p>Diese Logik ist <em>exakt</em> das, was tidyverse-Funktionen wie <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> (Kap. 4) intern machen. Wer hier sicher ist, versteht <code>filter(allbus, age &gt; 30)</code> sofort.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hinweis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Konzept: Vektorisierung.</strong> Wenn du in R <code>zahlen * 2</code> schreibst, wird die Operation auf <em>jedes Element</em> angewendet — du bekommst <code>c(20, 40, 60, 80, 100)</code> zurück. Das nennt sich <strong>Vektorisierung</strong> und ist eines der Power-Features von R. Du musst fast nie eine <code>for</code>-Schleife schreiben, um eine Operation auf vielen Werten auszuführen.</p>
+<p><strong>Recycling als Falle.</strong> Wenn zwei Vektoren unterschiedlicher Länge kombiniert werden, <em>wiederholt</em> R den kürzeren stillschweigend:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>   <span class="co"># ergibt 11, 22, 13, 24 — nicht 11, 22!</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11 22 13 24</code></pre>
+</div>
+</div>
+<p>Das ist absichtliches Verhalten — und genau die Anfänger:innen-Falle, die zu falschen Ergebnissen führt. Wenn du dir nicht sicher bist, prüfe mit <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, dass beide Vektoren gleich lang sind.</p>
+</div>
+</div>
 </section><section id="faktoren" class="level3" data-number="3.5.2"><h3 data-number="3.5.2" class="anchored" data-anchor-id="faktoren">
 <span class="header-section-number">3.5.2</span> Faktoren</h3>
-<p>Ein <strong>Faktor</strong> ist ein Vektor mit definierten <strong>Ausprägungen</strong> (<code>levels</code>) — für kategoriale Variablen wie Geschlecht oder Bildung.</p>
+<p>Ein <strong>Faktor</strong> ist ein Vektor mit definierten <strong>Ausprägungen</strong> (<code>levels</code>) — für kategoriale Variablen wie Geschlecht oder Bildung. Warum nicht einfach ein Character-Vektor? Drei Gründe:</p>
+<ol type="1">
+<li>
+<strong>Feste Reihenfolge.</strong> Bei einer Bildungs-Variable willst du, dass <em>„niedrig”</em> vor <em>„hoch”</em> steht — auch wenn alphabetisch das Gegenteil gilt. Faktoren erlauben dir, die Reihenfolge zu erzwingen.</li>
+<li>
+<strong>Referenzkategorie für Modelle.</strong> Regressionen brauchen eine <em>Vergleichs-Kategorie</em>; Faktoren liefern sie automatisch (= die erste Ausprägung).</li>
+<li>
+<strong>Speichereffizienz.</strong> Statt jeden Eintrag als Text zu speichern, hält R intern eine kleine Zahl pro Wert.</li>
+</ol>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geschlecht</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mann"</span>, <span class="st">"Frau"</span>, <span class="st">"Mann"</span>, <span class="st">"Divers"</span><span class="op">)</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geschlecht</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mann"</span>, <span class="st">"Frau"</span>, <span class="st">"Mann"</span>, <span class="st">"Divers"</span><span class="op">)</span>,</span>
 <span>                     levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mann"</span>, <span class="st">"Frau"</span>, <span class="st">"Divers"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">geschlecht</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] Mann   Frau   Mann   Divers
 Levels: Mann Frau Divers</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">geschlecht</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">geschlecht</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Mann"   "Frau"   "Divers"</code></pre>
 </div>
 </div>
-<p>Faktoren sind wichtig für Regressionsmodelle — die erste Ausprägung wird automatisch zur <strong>Referenzkategorie</strong>. Mit <code><a href="https://rdrr.io/r/stats/relevel.html">relevel()</a></code> (Base R) oder <code><a href="https://forcats.tidyverse.org/reference/fct_relevel.html">forcats::fct_relevel()</a></code> (tidyverse) änderst du die Reihenfolge.</p>
+<p>Mit <code><a href="https://rdrr.io/r/stats/relevel.html">relevel()</a></code> (Base R) oder <code><a href="https://forcats.tidyverse.org/reference/fct_relevel.html">forcats::fct_relevel()</a></code> (tidyverse) änderst du die Reihenfolge nachträglich. <code>forcats</code> ist Teil des tidyverse und liefert ein ganzes Set an Faktor-Werkzeugen (<code>fct_recode()</code>, <code>fct_lump()</code>, <code>fct_reorder()</code>) — du brauchst sie spätestens bei Grafiken in Kap. 6.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -646,7 +693,7 @@ Hinweis
 <span class="header-section-number">3.5.3</span> Datensätze (Tibbles)</h3>
 <p>Ein <strong>Tibble</strong> ist die moderne Form des Data Frames im tidyverse — eine Tabelle mit Zeilen (Fälle) und Spalten (Variablen). Du baust es mit <code>tibble()</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  geschlecht <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mann"</span>, <span class="st">"Frau"</span>, <span class="st">"Mann"</span>, <span class="st">"Divers"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  alter      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">34</span>, <span class="fl">41</span>, <span class="fl">28</span>, <span class="fl">52</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -663,15 +710,15 @@ Hinweis
 </div>
 <p>Auf eine einzelne Spalte greifst du mit <code>$</code> oder <code>[[]]</code> zu:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">$</span><span class="va">alter</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">$</span><span class="va">alter</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 34 41 28 52</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">[[</span><span class="st">"alter"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">[[</span><span class="st">"alter"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 34 41 28 52</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"alter"</span><span class="op">]</span>   <span class="co"># erste Zeile, Spalte "alter"</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">befragte</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"alter"</span><span class="op">]</span>   <span class="co"># erste Zeile, Spalte "alter"</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 1
   alter
@@ -679,12 +726,19 @@ Hinweis
 1    34</code></pre>
 </div>
 </div>
+<p><strong>Faustregel <code>$</code> vs.&nbsp;<code>[[ ]]</code>.</strong> Beide geben dieselbe Spalte zurück — der Unterschied ist die Bedienung:</p>
+<ul>
+<li>
+<strong><code>$alter</code></strong> ist kompakter, ideal für interaktive Konsole und Skripte.</li>
+<li>
+<strong><code>[["alter"]]</code></strong> akzeptiert den Spaltennamen als <em>String</em> — unverzichtbar, wenn der Spaltenname in einer Variable steckt (<code>spalte &lt;- "alter"; befragte[[spalte]]</code>).</li>
+</ul>
 <p>In der Praxis liest du Datensätze fertig aus SPSS-, Stata- oder Excel-Dateien ein (siehe Kap. 4). Selbst-gebaute Tibbles brauchst du fast nur für kleine Demonstrationen.</p>
 </section><section id="listen" class="level3" data-number="3.5.4"><h3 data-number="3.5.4" class="anchored" data-anchor-id="listen">
 <span class="header-section-number">3.5.4</span> Listen</h3>
 <p>Eine <strong>Liste</strong> kann verschiedene Objekttypen unterschiedlicher Länge sammeln. Ergebnisse statistischer Analysen sind in R meistens Listen — ein Regressionsergebnis enthält Koeffizienten, Residuen, Modellgüte usw. Du musst sie selten selbst erstellen, aber regelmäßig lesen können:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ergebnis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ergebnis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>  koeffizient <span class="op">=</span> <span class="fl">0.42</span>,</span>
 <span>  p_wert      <span class="op">=</span> <span class="fl">0.001</span>,</span>
 <span>  konfidenz   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.31</span>, <span class="fl">0.53</span><span class="op">)</span>,</span>
@@ -694,7 +748,7 @@ Hinweis
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.42</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ergebnis</span><span class="op">$</span><span class="va">konfidenz</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ergebnis</span><span class="op">$</span><span class="va">konfidenz</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.31</code></pre>
 </div>
@@ -704,36 +758,54 @@ Hinweis
 </h2>
 <p>In echten Datensätzen fehlen oft einzelne Werte — eine Befragte hat eine Frage übersprungen, ein Messwert war ungültig, eine Auskunft wurde verweigert. R kodiert das mit einem speziellen Wert: <strong><code>NA</code></strong> (<em>Not Available</em>).</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">x</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  1  2 NA  4  5</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>              <span class="co"># welche Elemente sind NA?</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>              <span class="co"># welche Elemente sind NA?</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE FALSE  TRUE FALSE FALSE</code></pre>
 </div>
 </div>
 <p><strong>Rechnungen mit <code>NA</code> ergeben <code>NA</code>.</strong> Das ist Absicht: der Mittelwert von „1, 2, ?, 4, 5” ist eigentlich unbekannt.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="cn">NA</span> <span class="op">+</span> <span class="fl">1</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="cn">NA</span> <span class="op">+</span> <span class="fl">1</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
 </div>
 <p>Damit Funktionen wie <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>, <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code> &amp; Co.&nbsp;trotzdem rechnen, übergibst du <code>na.rm = TRUE</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 3</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 12</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warnung
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Vorsicht: <code>NA</code> als Ergebnis ist kein Fehler.</strong> Wenn <code>mean(daten$age)</code> plötzlich <code>NA</code> zurückgibt, hat R <em>keine</em> Fehlermeldung — es rechnet brav weiter und gibt <code>NA</code> aus. Das ist der häufigste „mein Output sieht komisch aus”-Fehler bei Anfänger:innen. Zwei Diagnosen helfen:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">daten</span><span class="op">$</span><span class="va">age</span><span class="op">)</span><span class="op">)</span>   <span class="co"># wie viele NAs hat die Variable?</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">daten</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>      <span class="co"># zeigt unten "NA's: 47" wenn vorhanden</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Heilmittel: <code>na.rm = TRUE</code> an die Berechnung, oder die fehlenden Fälle gezielt mit <code>filter(!is.na(age))</code> ausschließen.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -753,7 +825,7 @@ Hinweis
 <span class="header-section-number">3.7</span> Pipe-Operatoren</h2>
 <p>R erlaubt es, Funktionen ineinander zu verschachteln — der Output einer Funktion wird zum Input der nächsten:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Das funktioniert, aber je mehr Schritte du verschachtelst, desto schwerer wird der Code zu lesen — du musst ihn von <em>innen nach außen</em> lesen, was unserer natürlichen Leserichtung widerspricht. Für genau dieses Problem gibt es eine elegante Lösung: den <strong>Pipe-Operator</strong>. Ein Pipe verkettet Funktionsaufrufe linear, statt sie zu verschachteln. R kennt zwei Varianten — wir nutzen die <em>native</em> Pipe <code>|&gt;</code>.</p>
 <section id="native-pipe" class="level3" data-number="3.7.1"><h3 data-number="3.7.1" class="anchored" data-anchor-id="native-pipe">
@@ -761,7 +833,7 @@ Hinweis
 </h3>
 <p>Mit der nativen Pipe schreibst du dieselbe Pipeline linear — von links nach rechts statt von innen nach außen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">zahlen</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -784,7 +856,7 @@ Hinweis
 <div class="callout-body-container callout-body">
 <p><strong>Hintergrund: Wert nicht ans erste Argument?</strong> Standardmäßig übergibt <code>|&gt;</code> den Wert als <strong>erstes Argument</strong> der nächsten Funktion. Wenn er an eine <em>andere</em> Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter <code>_</code> — er muss als benanntes Argument stehen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">islamophobie</span> <span class="op">~</span> <span class="va">age</span>, data <span class="op">=</span> <span class="va">_</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Bei den meisten Tidyverse-Funktionen brauchst du das nicht — sie nehmen den Datensatz ohnehin als erstes Argument.</p>
@@ -794,7 +866,7 @@ Hinweis
 <span class="header-section-number">3.7.2</span> Das ältere <code>%&gt;%</code> aus magrittr</h3>
 <p>Du wirst in der R-Welt überall den Pipe <code>%&gt;%</code> (aus dem tidyverse-Paket <code>magrittr</code>) sehen — in Tutorials, in Stack-Overflow-Antworten, in vielen R-Paketen intern. <code>%&gt;%</code> und <code>|&gt;</code> sind funktional fast identisch:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span> <span class="op">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb74"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zahlen</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -827,9 +899,9 @@ Warnung
 </div>
 </section><section id="pipes-in-der-praxis" class="level3" data-number="3.7.3"><h3 data-number="3.7.3" class="anchored" data-anchor-id="pipes-in-der-praxis">
 <span class="header-section-number">3.7.3</span> Pipes in der Praxis</h3>
-<p>Hier eine echte Pipeline aus Kap. 4, die zeigt, wofür Pipes wirklich nützlich sind:</p>
+<p>Hier ein Ausschnitt der echten Datenpräp-Pipeline aus Kap. 5 (<a href="05-Datentransformation.html#sec-pipeline" class="quarto-xref"><span>Kapitel 5.9</span></a>), der zeigt, wofür Pipes wirklich nützlich sind:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu">read_spss</span><span class="op">(</span><span class="st">"ALLBUS2023.sav"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu">read_spss</span><span class="op">(</span><span class="st">"ALLBUS2023.sav"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rec</span><span class="op">(</span><span class="va">mm02</span>, rules <span class="op">=</span> <span class="st">"rev"</span>, suffix <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rec</span><span class="op">(</span><span class="va">mm05</span>, rules <span class="op">=</span> <span class="st">"rev"</span>, suffix <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
@@ -838,7 +910,58 @@ Warnung
 <span>  <span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Du liest: Datensatz einlesen → <code>mm02</code> umpolen → <code>mm05</code> umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.</p>
-</section></section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
+</section></section><section id="sec-top-fehler" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="sec-top-fehler">
+<span class="header-section-number">3.8</span> Drei typische Anfänger:innen-Fehler</h2>
+<p>Bevor du die Übungen rechnest — drei Stolpersteine, die fast alle einmal treffen. Wenn du sie kennst, sparst du dir die ersten Stunden Frust:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 33%">
+<col style="width: 35%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Fehler</th>
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Heilmittel</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">
+<code>var = 5</code> statt <code>var &lt;- 5</code>
+</td>
+<td style="text-align: left;">scheinbar funktioniert, aber kaputt in Funktionsargumenten</td>
+<td style="text-align: left;">Konsequent <code>&lt;-</code> für Zuweisung (Shortcut: <code>option</code>/<code>alt</code> + <code>-</code>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">
+<code>T</code> / <code>F</code> statt <code>TRUE</code> / <code>FALSE</code>
+</td>
+<td style="text-align: left;">funktioniert — bis jemand <code>T &lt;- 1</code> setzt</td>
+<td style="text-align: left;">Immer ausschreiben</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">
+<code>mean(x)</code> gibt <code>NA</code> zurück, scheinbar grundlos</td>
+<td style="text-align: left;">Variable hat fehlende Werte</td>
+<td style="text-align: left;">
+<code>mean(x, na.rm = TRUE)</code> oder vorher <code>sum(is.na(x))</code> prüfen</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tipp
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Anführungszeichen-Falle.</strong> Wenn du Code aus Word oder Powerpoint kopierst, werden gerade Anführungszeichen (<code>"</code>) zu typografischen (<code>"</code>/<code>"</code>). R sieht das als Syntaxfehler. Bei der Fehlermeldung <em>„unexpected input”</em> oder <em>„unexpected string constant”</em> — Anführungszeichen prüfen.</p>
+</div>
+</div>
+</section><section id="übungen" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="übungen">Übungen</h2>
 <div class="callout callout-style-default callout-note callout-titled" title="Übung 1 · Variablen und Vektoren · Reproduktion">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -853,7 +976,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -862,10 +985,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Verschachtelt</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Verschachtelt</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Mit Pipe</span></span>
@@ -890,7 +1013,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -899,10 +1022,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  id   <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  wert <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -926,7 +1049,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -935,10 +1058,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bildung</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hoch"</span>, <span class="st">"niedrig"</span>, <span class="st">"mittel"</span>, <span class="st">"mittel"</span>, <span class="st">"hoch"</span><span class="op">)</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb78"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bildung</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hoch"</span>, <span class="st">"niedrig"</span>, <span class="st">"mittel"</span>, <span class="st">"mittel"</span>, <span class="st">"hoch"</span><span class="op">)</span>,</span>
 <span>                  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mittel"</span>, <span class="st">"niedrig"</span>, <span class="st">"hoch"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">bildung</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -959,7 +1082,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -968,10 +1091,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vertrauen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vertrauen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">vertrauen</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>            <span class="co"># (a)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">vertrauen</span> <span class="op">&gt;</span> <span class="fl">5</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>         <span class="co"># (b) TRUE zählt als 1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">vertrauen</span><span class="op">)</span><span class="op">)</span>                    <span class="co"># (c)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -994,7 +1117,7 @@ Warnung
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1003,10 +1126,10 @@ Warnung
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vertrauen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">vertrauen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Verschachtelt</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">vertrauen</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">vertrauen</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">vertrauen</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>

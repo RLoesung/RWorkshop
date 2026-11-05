@@ -4,7 +4,7 @@
 
 R selbst ist nur ein Interpreter — eine Programmiersprache, die Befehle entgegennimmt und Antworten zurückgibt. Damit du komfortabel mit R arbeiten kannst, brauchst du eine **integrierte Entwicklungsumgebung (IDE)**: einen Editor, eine Konsole, einen Datei-Browser und einen Variablen-Inspektor — alles in einem Fenster. **RStudio** ist diese Umgebung. Während du in SPSS alles über Klick-Dialoge erreichst, schreibst du in RStudio dein Vorgehen als Skript — reproduzierbar, kommentierbar, versionierbar.
 
-Öffne jetzt RStudio und arbeite die folgenden Abschnitte parallel mit. Am Ende kannst du dich darin orientieren, Pakete nachinstallieren und ein erstes Projekt anlegen.
+Falls du R und RStudio noch nicht installiert hast, machst du das in den ersten zwei Abschnitten. Danach öffnest du RStudio und arbeitest die folgenden Abschnitte parallel mit. Am Ende kannst du dich darin orientieren, Pakete nachinstallieren und ein erstes Projekt anlegen.
 
 ::: {.callout-note}
 **Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Du startest gerade. In den nächsten drei Kapiteln (1–3) richtest du das Werkzeug ein. Ab @sec-datenimport lädst du den ALLBUS 2023, ab @sec-datentransformation baust du eine Skala zur Islamfeindlichkeit aus sechs Survey-Items, ab @sec-univbivar prüfst du Hypothesen — und ab @sec-erklaerung modellierst du, *welche* sozialen und politischen Merkmale Islamfeindlichkeit am besten erklären. Das hier ist die erste Etappe: die Werkstatt einrichten.
@@ -12,12 +12,40 @@ R selbst ist nur ein Interpreter — eine Programmiersprache, die Befehle entgeg
 
 ## Was du nach diesem Kapitel kannst {-}
 
+- R und RStudio in der richtigen Reihenfolge installieren.
 - Die Benutzeroberfläche von RStudio sicher bedienen.
 - Ein Projekt anlegen und in ihm sauber arbeiten.
 - Den Unterschied zwischen Konsole und R-Skript erklären.
+- Den Begriff *Working Directory* einordnen und mit `getwd()` prüfen.
 - Pakete installieren, aktivieren und aktuell halten — insbesondere tidyverse und mariposa.
 - Hilfe-Seiten und Paket-Vignetten gezielt aufrufen.
 - Die wichtigsten Tastenkürzel anwenden.
+
+## R installieren
+
+R selbst ist das Rechenwerk im Hintergrund — die Sprache, die deine Befehle ausführt. RStudio ist nur die *Oberfläche*. Du musst beide installieren, **R zuerst**, dann RStudio. Wer es umdreht, bekommt beim ersten Start eine Fehlermeldung „No R installation found".
+
+**R herunterladen.** Gehe zu [cran.r-project.org](https://cran.r-project.org/) und wähle dein Betriebssystem:
+
+- **macOS** → lade die `.pkg`-Datei für deine Architektur (Apple Silicon = M1/M2/M3/M4, oder Intel) und installiere sie per Doppelklick.
+- **Windows** → klicke auf *base*, dann auf den Download-Link, führe die `.exe`-Datei aus.
+- **Linux** → folge den distro-spezifischen Anweisungen auf der CRAN-Seite.
+
+Empfohlen ist **R 4.5 oder höher**. Wenn du schon eine ältere Version hast, ist das kein Problem — du installierst die neue parallel.
+
+::: {.callout-tip}
+**macOS-Hinweis.** Auf Macs mit Apple Silicon (M1–M4) lädst du die *arm64*-Version. Auf älteren Intel-Macs die *x86_64*-Version. Wenn du nicht weißt, was du hast: Apfel-Menü → *Über diesen Mac* → *Chip*. Für Paket-Compilations brauchst du außerdem die *Xcode Command Line Tools* — sie werden bei Bedarf automatisch installiert, oder vorab per Terminal mit `xcode-select --install`.
+:::
+
+## RStudio installieren
+
+Erst nachdem R installiert ist, holst du dir RStudio von [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/). Die Seite erkennt dein Betriebssystem automatisch und schlägt die richtige Version vor. Installiere wie jedes andere Programm.
+
+Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](https://posit.cloud/) im Browser nutzen — kostenloser Account, RStudio läuft komplett online.
+
+::: {.callout-note}
+**Hintergrund: RStudio und Posit.** Die IDE heißt weiterhin **RStudio**, die Firma dahinter wurde 2022 in **Posit** umbenannt. Wenn du im Web Verweise auf „RStudio Cloud" findest, sind sie heute unter [posit.cloud](https://posit.cloud/) zu finden.
+:::
 
 ## Benutzeroberfläche
 
@@ -27,9 +55,16 @@ Du solltest ungefähr diese Benutzeroberfläche (Graphical User Interface, kurz 
 knitr::include_graphics("Bilder/GUI.png")
 ```
 
-::: {.callout-note}
-**Hintergrund: RStudio und Posit.** RStudio ist die *integrierte Entwicklungsumgebung* für R. Die IDE heißt weiterhin **RStudio**, die Firma dahinter wurde 2022 in **Posit** umbenannt. Wenn du im Web Verweise auf „RStudio Cloud" findest, sind sie heute unter [posit.cloud](https://posit.cloud/) zu finden.
-:::
+Vier Quadranten — bevor du in die Details gehst, lohnt sich die Landkarte:
+
+| Quadrant         | Inhalt                                          | Wofür du es brauchst                        |
+| :--------------- | :---------------------------------------------- | :------------------------------------------ |
+| **Oben links**   | R-Skript / `.qmd`-Editor                        | Code schreiben, speichern, ausführen        |
+| **Unten links**  | Konsole                                         | Code direkt ausprobieren, Output ansehen    |
+| **Oben rechts**  | Environment, History, Connections, Tutorial     | Objekte sehen, Befehlsverlauf, Datenbanken  |
+| **Unten rechts** | Files, Plots, Packages, Help, Viewer            | Datei-Browser, Grafiken, Hilfe, Pakete      |
+
+Die folgenden Abschnitte gehen jeden Quadranten der Reihe nach durch.
 
 ### Optionen für reproduzierbares Arbeiten
 
@@ -76,11 +111,22 @@ Unter `History` siehst du alle Befehle, die du bisher ausgeführt hast. Per Dopp
 
 ### Files
 
-Unter `Files` siehst du den Datei-Browser deines Arbeitsverzeichnisses. Das Arbeitsverzeichnis (*working directory*) brauchst du in der Praxis fast nie selbst zu setzen, sobald du mit einem **Project** arbeitest — siehe @sec-projects.
+Unter `Files` siehst du den Datei-Browser deines **Arbeitsverzeichnisses** (*working directory*). Das ist der Ordner, in dem R standardmäßig sucht, wenn du eine Datei einliest oder speicherst — schreibst du `read_spss("ALLBUS2023.sav")`, dann sucht R die Datei genau dort. Welcher Ordner das gerade ist, sagt dir `getwd()` in der Konsole:
+
+```{r getwd-demo, eval=FALSE}
+getwd()
+# [1] "/Users/anna/Documents/R-Workshop"
+```
+
+Manuell setzen kannst du das Arbeitsverzeichnis mit `setwd("…")` — in der Praxis brauchst du das *fast nie*, wenn du mit einem **Project** arbeitest (siehe @sec-projects). Bei jedem Project-Start ist das Arbeitsverzeichnis automatisch der Projektordner. Das ist die Grundlage für portable Skripte: nirgendwo absolute Pfade, jede Datei wird relativ zum Projekt angesprochen.
 
 ```{r, echo=FALSE, fig.align='center', out.width="75%"}
 knitr::include_graphics("Bilder/Files.png")
 ```
+
+::: {.callout-warning}
+**Vorsicht: Absolute Pfade.** Schreibe niemals `read_spss("/Users/anna/Documents/...")` in dein Skript. Sobald du es teilst oder auf einen anderen Rechner ziehst, ist der Pfad kaputt. Mit Projects reicht der relative Pfad — der Dateiname genügt, wenn die Datei im Projektordner liegt.
+:::
 
 ## Mit RStudio arbeiten
 
@@ -181,6 +227,15 @@ Diese Tastenkombinationen sparen dir auf Dauer viel Zeit:
 
 R bringt von Haus aus — als *base R* — schon eine ganze Reihe nützlicher Funktionen mit. Für viele Analyseschritte sind sie aber zu abstrakt: Wir greifen deshalb auf zusätzliche **Pakete** zurück, die unsere Funktionsbibliothek erweitern. In diesem Buch arbeiten wir bewusst mit nur zwei Ökosystemen: dem **tidyverse** für Datenmanipulation und Visualisierung und **mariposa** für die statistische Analyse.
 
+::: {.callout-note}
+**Konzept: Installieren vs. Aktivieren.** Mit einem Paket arbeitest du in zwei Schritten — und es lohnt sich, die Trennung von Anfang an klar zu haben:
+
+- **Installieren** mit `install.packages("name")` — *einmalig* pro Rechner. Stell dir vor, du holst dir ein Werkzeug aus dem Baumarkt und legst es in dein Werkzeugregal.
+- **Aktivieren** mit `library(name)` — *einmal pro R-Sitzung*. Du nimmst das Werkzeug aus dem Regal und legst es auf die Werkbank.
+
+Ein Paket nur zu installieren, ohne `library()` aufzurufen, ist wie ein Werkzeug, das ungenutzt im Regal steht. Umgekehrt: Wenn du `library(forcats)` aufrufst, ohne das Paket installiert zu haben, kommt ein Fehler.
+:::
+
 ### Installation
 
 Das tidyverse ist auf CRAN, dem zentralen R-Paket-Archiv, verfügbar und lässt sich direkt installieren:
@@ -191,18 +246,26 @@ install.packages("tidyverse")
 
 Damit hast du in einem Schritt die Pakete `dplyr`, `tidyr`, `ggplot2`, `readr`, `purrr`, `tibble`, `stringr`, `forcats` und `lubridate` installiert.
 
-mariposa wird derzeit über GitHub vertrieben. Du brauchst dafür einmalig das Paket `remotes`:
+mariposa liegt ebenfalls auf CRAN und wird genauso installiert:
 
 ```{r, eval=FALSE}
-install.packages("remotes")
-remotes::install_github("YannickDiehl/mariposa")
+install.packages("mariposa")
 ```
 
-Für die Grafik-Kombinationen in Kap. 7 brauchst du außerdem noch `patchwork`:
+Für die Grafik-Kombinationen in Kap. 9 brauchst du außerdem noch `patchwork`:
 
 ```{r, eval=FALSE}
 install.packages("patchwork")
 ```
+
+::: {.callout-note}
+**Hintergrund: CRAN und GitHub — was ist der Unterschied?** Pakete leben in R an zwei verschiedenen Orten:
+
+- **CRAN** (*Comprehensive R Archive Network*) ist das offizielle Paket-Archiv — vergleichbar mit einem App Store. Jedes Paket wird vor der Aufnahme automatisch geprüft (baut auf allen Plattformen? Dokumentation vollständig? Tests laufen?). Updates sind stabil, aber zeitversetzt.
+- **GitHub** ist die Entwickler:innen-Plattform. Hier liegt der *aktuelle Entwicklungsstand* — neueste Funktionen, frischeste Bugfixes, aber auch weniger Prüfung. Viele Pakete erscheinen dort früher als auf CRAN.
+
+In diesem Buch installierst du beide Pakete von CRAN — das ist die stabile Variante. Die Entwicklungsversion von mariposa holst du bei Bedarf mit dem Hilfspaket `remotes` von GitHub (`remotes::install_github("YannickDiehl/mariposa")`); für das Buch brauchst du sie nicht.
+:::
 
 ### Aktivierung
 
@@ -225,12 +288,16 @@ knitr::include_graphics("Bilder/Packages.png")
 Updates lassen sich über den Reiter `Packages` oder per Code anstoßen:
 
 ```{r, eval=FALSE}
-update.packages(ask = FALSE)                       # alle CRAN-Pakete aktualisieren
-remotes::install_github("YannickDiehl/mariposa")   # mariposa nachziehen
+update.packages(ask = FALSE)     # alle CRAN-Pakete aktualisieren — mariposa inklusive
+packageVersion("mariposa")       # welche Version ist installiert?
 ```
 
 ::: {.callout-warning}
-**Vorsicht.** Wenn du in der Mitte eines Projekts ein Paket aktualisierst, ändert sich potenziell das Verhalten deiner Funktionen. Pflege Pakete *zwischen* Projekten oder dokumentiere die genutzten Versionen mit `sessionInfo()`.
+**Vorsicht.** Wenn du in der Mitte eines Projekts ein Paket aktualisierst, ändert sich potenziell das Verhalten deiner Funktionen. Pflege Pakete *zwischen* Projekten oder dokumentiere die genutzten Versionen mit `sessionInfo()`. Dieses Buch ist mit mariposa `r packageVersion("mariposa")` gerendert; bei älteren Versionen weichen manche Ausgaben ab.
+:::
+
+::: {.callout-tip}
+**Tipp: Pakete zitieren.** Wer in einer Hausarbeit mit mariposa rechnet, zitiert das Paket. `citation("mariposa")` gibt dir die fertige Literaturangabe inklusive DOI — mit `toBibtex(citation("mariposa"))` direkt im BibTeX-Format für dein Literaturverzeichnis (siehe @sec-literatur).
 :::
 
 ## Hilfe finden
@@ -241,11 +308,13 @@ Auch wer täglich mit R arbeitet, kann sich nicht alle Funktionen merken. R biet
 knitr::include_graphics("Bilder/Help.png")
 ```
 
-Wenn du eine Funktion im Kopf hast, geht es am schnellsten über die Konsole — ein Fragezeichen vor den Funktionsnamen reicht. Hier zum Beispiel für den gewichteten Mittelwert aus mariposa:
+Wenn du eine Funktion im Kopf hast, geht es am schnellsten über die Konsole — ein Fragezeichen vor den Funktionsnamen reicht. Hier zum Beispiel für die Mittelwert-Funktion aus base R:
 
 ```{r, eval=FALSE}
-?w_mean
+?mean
 ```
+
+Die Hilfe öffnet sich unten rechts im `Help`-Reiter und zeigt: Funktionsbeschreibung, Argumente, Default-Werte, am Ende immer Anwendungs-Beispiele. Letztere kannst du direkt in deine Konsole kopieren.
 
 Um alle Funktionen eines Pakets aufzulisten, öffnest du den Reiter `Packages`, suchst das Paket und klickst es an. Du landest in der Paketreferenz.
 
@@ -259,6 +328,18 @@ Viele Entwickler:innen pflegen zusätzlich eigene Webseiten für ihre Pakete —
 :::
 
 Wenn du im Web nach Hilfe suchst, ist [Stack Overflow](https://stackoverflow.com/questions/tagged/r) die zentrale Anlaufstelle. Ergänze deine Suchanfrage mit dem Schlagwort *Stack Overflow* — fast jedes typische R-Problem wurde dort schon einmal beantwortet.
+
+## Erste fünf Schritte nach der Installation {-}
+
+Wenn du dieses Kapitel mit einem frischen Rechner gestartet hast, ist hier die Checkliste, bevor du in Kap. 2 weitergehst:
+
+1. **R installiert** (von [cran.r-project.org](https://cran.r-project.org/)) und **RStudio installiert** (von [posit.co](https://posit.co/download/rstudio-desktop/)). Reihenfolge: R zuerst, dann RStudio.
+2. **Global Options gesetzt**: *Restore .RData* aus, *Save workspace on exit* auf *Never*.
+3. **Project angelegt** für diesen Workshop (`R-Workshop` o. ä.).
+4. **Pakete installiert**: `install.packages("tidyverse")`, `install.packages("mariposa")`, `install.packages("patchwork")`.
+5. **Erstes Skript gespeichert** im Projektordner — etwa `01-erste_schritte.R` mit `library(tidyverse)` und `library(mariposa)` in den ersten zwei Zeilen.
+
+Wenn alle fünf Punkte abgehakt sind, kannst du dich entspannt durch den Rest des Buchs arbeiten.
 
 ## Übungen {-}
 
@@ -285,8 +366,7 @@ Installiere (falls noch nicht geschehen) `tidyverse` und `mariposa`, aktiviere s
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex3-loesung, eval=FALSE}
 install.packages("tidyverse")
-install.packages("remotes")
-remotes::install_github("YannickDiehl/mariposa")
+install.packages("mariposa")
 library(tidyverse)
 library(mariposa)
 mariposa::   # <- nach den :: TAB drücken

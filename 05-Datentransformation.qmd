@@ -17,7 +17,7 @@ In @sec-datenimport hast du den Datensatz gelesen, Variablen gefunden und fehlen
 
 ## Worum es geht
 
-Frag jemanden direkt: *„Sind Sie islamfeindlich?"* — und du wirst fast immer ein Nein bekommen. Selbst von Menschen, die in Wahlumfragen rechtspopulistisch wählen und in Diskussionen klar abgrenzende Aussagen treffen. Das hat zwei Gründe. Erstens: Niemand will sich öffentlich als „islamfeindlich" bezeichnen — das ist ein Begriff, der negativ konnotiert ist. Zweitens: Einstellungen sind nicht so klar umrissen wie ein Ja-oder-Nein. Jemand kann findet *manche* Aspekte einer Religion problematisch, andere nicht — und ist deshalb *ein bisschen* islamskeptisch, ohne die ganze Etikette anzunehmen.
+Frag jemanden direkt: *„Sind Sie islamfeindlich?"* — und du wirst fast immer ein Nein bekommen. Selbst von Menschen, die in Wahlumfragen rechtspopulistisch wählen und in Diskussionen klar abgrenzende Aussagen treffen. Das hat zwei Gründe. Erstens: Niemand will sich öffentlich als „islamfeindlich" bezeichnen — das ist ein Begriff, der negativ konnotiert ist. Zweitens: Einstellungen sind nicht so klar umrissen wie ein Ja-oder-Nein. Jemand kann *manche* Aspekte einer Religion problematisch, andere nicht — und ist deshalb *ein bisschen* islamskeptisch, ohne die ganze Etikette anzunehmen.
 
 Die Sozialforschung löst dieses Problem mit einem alten Trick: Sie fragt **nicht direkt nach dem Konstrukt**, sondern nach mehreren konkreten Aussagen, die das Konstrukt indirekt erfassen. Statt „Sind Sie islamfeindlich?" fragt sie:
 
@@ -48,11 +48,13 @@ Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlic
 ## Was du nach diesem Kapitel kannst {-}
 
 - Neue Variablen mit `mutate()` erzeugen.
-- Mit `case_when()`, `case_match()` und `if_else()` Bedingungslogik schreiben.
+- Mit `case_when()`, `recode_values()` und `if_else()` Bedingungslogik schreiben.
 - Subgruppen-Aggregate mit `summarise(.by = ...)` rechnen.
 - Variablen mit `rec()` rekodieren — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum **Umpolen** (Reverse Coding).
 - Dummy-Variablen für Regressionen mit `to_dummy()` erzeugen.
 - Variablen standardisieren (`std()`) und zentrieren (`center()`).
+- Zwei Datensätze mit `left_join()` zusammenführen — etwa Individualdaten und Kontextdaten.
+- Datensätze zwischen **Wide-** und **Long-Format** umformen mit `pivot_longer()` und `pivot_wider()`.
 - Aus mehreren Items eine **gewichtete Mittelwert-Skala** mit `row_means()` und kontrolliertem `min_valid` bilden.
 - Skalen unterschiedlicher Bandbreite mit `pomps()` auf eine gemeinsame 0–100-Skala bringen.
 - Die vollständige Datenpräp-Pipeline der Mini-Studie nachvollziehen und auf eigene Konstrukte übertragen.
@@ -64,7 +66,7 @@ Vier Verben aus `dplyr` decken den Großteil aller Datentransformationen ab:
 | Funktion                       | Wirkung                                                |
 | ------------------------------ | ------------------------------------------------------ |
 | `mutate()`                     | Variablen neu erzeugen oder ändern (SPSS: `COMPUTE`)   |
-| `case_when()` / `case_match()` | Vektorisierte Bedingungslogik (SPSS: `IF`)             |
+| `case_when()` / `recode_values()` | Vektorisierte Bedingungslogik (SPSS: `IF`)          |
 | `if_else()`                    | Knappe Form für zwei-stufige Bedingungen               |
 | `summarise()`                  | Zusammenfassungen pro Gruppe (SPSS: `AGGREGATE`)       |
 | `group_by()`                   | Gruppierung für nachfolgende Operationen               |
@@ -72,6 +74,8 @@ Vier Verben aus `dplyr` decken den Großteil aller Datentransformationen ab:
 | `rename()`                     | Variablen umbenennen                                   |
 
 ### Neue Variablen mit `mutate()`
+
+`mutate()` ist das R-Pendant zu SPSS' `COMPUTE`. Du übergibst dem Tibble eine oder mehrere Zuweisungen *„neuer Spaltenname = Ausdruck"*, und mariposa/dplyr hängt die neue(n) Spalte(n) ans Tibble an. Wichtig: `mutate()` liefert das *gesamte* Tibble zurück — das Ergebnis musst du also der Variable zuweisen (`allbus <- allbus |> mutate(...)`), wenn die neue Spalte erhalten bleiben soll. Ohne Zuweisung wird die Änderung nur einmal ausgegeben und verschwindet wieder.
 
 ```{r mutate}
 allbus |>
@@ -97,13 +101,35 @@ allbus |>
   mutate(
     bildung = case_when(
       educ %in% 1:2 ~ "niedrig",
-      educ %in% c(3, 7) ~ "mittel",
+      educ == 3 ~ "mittel",
       educ %in% 4:5 ~ "hoch",
       .default = NA
     )
   ) |>
   count(bildung)
 ```
+
+::: {.callout-warning}
+**Vorsicht: Reihenfolge zählt.** `case_when()` prüft die Bedingungen *von oben nach unten* und nimmt die erste, die zutrifft — alle späteren werden für diesen Fall ignoriert. Wer eine allgemeine Bedingung *vor* eine spezifische schreibt, schattet sich selbst aus:
+
+```{r case-when-falle, eval=FALSE}
+# FALSCH: erste Zeile fängt alle ab 18 ab, "senior" wird nie erreicht
+case_when(
+  age >= 18 ~ "erwachsen",
+  age >= 65 ~ "senior",
+  .default = "unter 18"
+)
+
+# RICHTIG: spezifischer zuerst
+case_when(
+  age >= 65 ~ "senior",
+  age >= 18 ~ "erwachsen",
+  .default = "unter 18"
+)
+```
+
+Beim Debuggen einer komischen Rekodierung: zuerst die Reihenfolge der Bedingungen prüfen.
+:::
 
 Bei nur **zwei** Ausprägungen ist `if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)` knapper:
 
@@ -113,14 +139,18 @@ allbus |>
   count(jung)
 ```
 
-Seit dplyr 1.1 gibt es zusätzlich `case_match()` — knapper als `case_when()`, wenn du nur Werte mappst (ohne Vergleichsoperatoren):
+Wenn du nur einzelne Werte auf neue Werte abbildest (ohne Vergleichsoperatoren), ist `recode_values()` knapper als `case_when()` — links der alte Wert, rechts der neue:
 
 ```{r case-match}
 allbus |>
   select(eastwest) |>
-  mutate(region = case_match(eastwest, 1 ~ "West", 2 ~ "Ost")) |>
+  mutate(region = recode_values(eastwest, 1 ~ "West", 2 ~ "Ost")) |>
   count(region)
 ```
+
+::: {.callout-note}
+**Hintergrund: `recode_values()` statt `case_match()`.** In älteren Tutorials findest du für dieselbe Aufgabe `case_match()`. Seit dplyr 1.2 ist sie veraltet (*deprecated*) und meldet eine Warnung; `recode_values()` ist ihr Nachfolger mit identischer Schreibweise. Für das Umkodieren *ganzer Skalen* bleibt mariposas `rec()` (nächster Abschnitt) das bequemere Werkzeug.
+:::
 
 ### Aggregation mit `group_by()` und `summarise()`
 
@@ -172,7 +202,7 @@ Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Überset
 
 ## Rekodierung mit `rec()` {#sec-rekodierung}
 
-Stell dir vor, du hast die Bildungsangaben von 5.246 Personen in der Variable `educ`. Werte 1 bis 7 stehen für sieben verschiedene Schulabschlüsse — vom Volksschulabschluss bis zum Abitur, plus „anderer Abschluss" als 7. Für eine Regression willst du das aber nicht als sieben Kategorien haben, sondern gröber: niedrig / mittel / hoch. Du *rekodierst* die Variable.
+Stell dir vor, du hast die Bildungsangaben von 5.246 Personen in der Variable `educ`. Die Werte 1 bis 5 stehen für die Schulabschlüsse — von „ohne Abschluss" über Volks-/Hauptschule, mittlere Reife und Fachhochschulreife bis zur Hochschulreife; dazu kommen 6 („anderer Abschluss") und 7 („noch Schüler:in"). Für eine Regression willst du das aber nicht als sieben Kategorien haben, sondern gröber: niedrig / mittel / hoch. Du *rekodierst* die Variable.
 
 Das ist die häufigste Datenoperation in der Sozialforschung — und gleichzeitig eine der fehleranfälligsten. Ein vertauschter Wert, eine vergessene Kategorie, und deine ganze Analyse läuft auf einem falschen Maßstab. SPSS hat dafür den `RECODE`-Befehl mit einer eigenen kleinen Syntax. mariposas `rec()`-Funktion macht dasselbe, ist aber für tidyverse-Workflows gebaut: pipe-freundlich, behält Labels, und versteht eine kompakte **Regel-Syntax**, in der du eine ganze Umkodierung in einer einzigen Zeichenkette ausdrückst.
 
@@ -189,30 +219,32 @@ Die Regel-Syntax im Überblick:
 | ------------------- | --------------------------------------- | --------------------------------------- |
 | `alt=neu`           | Einzelwert wird umkodiert               | `"1=10; 2=20"`                          |
 | `lo:hi=neu`         | Wertebereich umkodieren                 | `"1:3=1"`                               |
+| `a,b=neu`           | Liste von Werten/Bereichen umkodieren   | `"1,2=1; 3,4:5=2"`                      |
 | `min:x=neu`, `x:max=neu` | Dynamische Grenzen                 | `"min:5=1; 6:max=2"`                    |
 | `[Label]`           | Inline-Wertelabel vergeben              | `"1:2=1 [niedrig]; 3:5=2 [hoch]"`       |
 | `else=copy`         | Alle nicht erwähnten Werte unverändert  | `"1:3=1; else=copy"`                    |
 | `else=NA`           | Alle nicht erwähnten Werte werden NA    | `"1=1; else=NA"`                        |
 | `NA=neu`            | NA durch einen Wert ersetzen            | `"NA=0; else=copy"`                     |
 | `val=NA`            | Bestimmte Werte zu NA machen            | `"-9=NA; -8=NA; else=copy"`             |
-| `"rev"`             | Skala umpolen (`max + min - x`)         | `rules = "rev"`                         |
+| `"rev"`             | Skala umpolen (`hi + lo - x`, Grenzen aus den Wertelabels) | `rules = "rev"`      |
+| `"rev(lo, hi)"`     | Skala mit explizit angegebenen Grenzen umpolen | `rules = "rev(1, 5)"`            |
 | `"dicho"`           | Dichotomisieren am Median (0/1)         | `rules = "dicho"`                       |
-| `"dicho(x)"`        | Dichotomisieren am festen Cut-Punkt     | `rules = "dicho(3)"`                    |
+| `"dicho(x)"`        | Dichotomisieren am festen Cut-Punkt (≤ x → 0, > x → 1) | `rules = "dicho(3)"`     |
 | `"mean"`            | Dichotomisieren am Mittelwert           | `rules = "mean"`                        |
 | `"quart"`           | In vier Quartilgruppen aufteilen        | `rules = "quart"`                       |
 
-Regeln werden in Reihenfolge geprüft, die erste passende gewinnt.
+Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die *keine* Regel passt, werden `NA` — mariposa warnt dich dann und nennt die betroffenen Werte. Mit `else=copy` behältst du sie, mit `else=NA` bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ.
 
 ### Beispiel: Bildung kategorisieren
 
 ```{r rec-bildung}
 allbus |>
   rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
-      as.factor = TRUE) |>
+      as_factor = TRUE) |>
   count(educ)
 ```
 
-Mit `as.factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.
+Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.
 
 ### Spezial-Modi: Dichotomisieren und Quartile
 
@@ -224,7 +256,7 @@ allbus |>
   count(age_d)
 ```
 
-Hier wird `age_d` zu 0 für unter 50, zu 1 für 50+. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
+Hier wird `age_d` zu 0 für alle bis einschließlich 50 Jahre und zu 1 für alle über 50 — der Cut-Punkt selbst gehört also zur unteren Gruppe. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
 
 ```{r rec-quart}
 allbus |>
@@ -262,7 +294,17 @@ allbus <- allbus |>
   rec(mm05, rules = "rev", suffix = "r")
 ```
 
-`"rev"` rechnet intern `max(x) + min(x) - x` — bei einer 7-stufigen Skala also `8 - x`, was genau das gewünschte Umpolen ist. Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen.
+`"rev"` rechnet intern `hi + lo - x`. Die Skalengrenzen `lo` und `hi` nimmt mariposa aus den **Wertelabels** der gültigen Codes — bei den `mm`-Items also 1 („stimme gar nicht zu") und 7 („stimme voll und ganz zu"). Daraus wird `8 - x`, genau das gewünschte Umpolen. Die Wertelabels werden mitgespiegelt: In `mm02r` trägt jetzt die 7 das Label „stimme gar nicht zu". Fehlende Werte (`-9`, `-11`, …) bleiben fehlend und behalten ihren Missing-Typ.
+
+Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen. Die Gegenprobe ist eine Kreuztabelle aus Original und umgepolter Version — jede 1 muss zur 7 geworden sein, jede 2 zur 6 und so weiter:
+
+```{r reverse-check}
+allbus |> count(mm02, mm02r)
+```
+
+::: {.callout-warning}
+**Vorsicht: Skalengrenzen aus Labels, nicht aus Daten.** Dass `"rev"` die Grenzen aus den Wertelabels liest, schützt dich vor einer subtilen Falle: Hätte niemand bei einem Item den Extremwert 7 angekreuzt, würde ein Umpolen anhand des *beobachteten* Maximums (6) die Skala verschieben (`7 - x` statt `8 - x`). Hat eine Variable *keine* Wertelabels (etwa nach einem Import aus Excel), greift mariposa auf das beobachtete Minimum und Maximum zurück und sagt dir das in einer Meldung. Dann gibst du die theoretischen Grenzen besser selbst an: `rules = "rev(1, 7)"`.
+:::
 
 ::: {.callout-note}
 **Hintergrund: Warum positiv formulierte Items?** In der Survey-Methodologie ist die Mischung aus zustimmend und ablehnend formulierten Items eine Standard-Technik gegen **Akquieszenz** — die Tendenz, allen Aussagen zuzustimmen. Wer die Akquieszenz-Falle herausrechnen will, muss umpolen. Vergisst du diesen Schritt, korrelieren die umgepolten Items *negativ* mit den anderen — und Cronbachs α (siehe @sec-reliabilitaet) bricht ein. Das ist das klassische Warnsignal einer vergessenen Umpolung.
@@ -293,7 +335,10 @@ Die neuen Spalten werden automatisch angehängt; mit `ref =` legst du fest, welc
 
 ## Standardisieren und zentrieren
 
-Vor manchen Analysen ist es sinnvoll, eine Variable auf einen einheitlichen Maßstab zu bringen.
+Vor manchen Analysen ist es sinnvoll, eine Variable auf einen einheitlichen Maßstab zu bringen. Zwei verwandte Operationen:
+
+- **`std()` (Standardisierung)** macht aus jeder Variable eine *z-standardisierte* (Mittelwert 0, SD 1). Brauchst du, wenn du Variablen *unterschiedlicher Maßstäbe* vergleichbar machen willst — etwa wenn ein standardisierter Beta-Koeffizient in einer Regression interpretierbar bleiben soll (Kap. 9).
+- **`center()` (Mittelwert-Zentrierung)** subtrahiert nur den Mittelwert, ohne durch die SD zu teilen. Hauptanwendungsfall: vor *Interaktionstermen* in Regressionen, weil zentrierte Variablen die Multikollinearität zwischen Haupteffekten und Interaktionen reduzieren.
 
 ```{r std-center}
 allbus |>
@@ -311,6 +356,151 @@ allbus |>
 
 Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein `weights =`-Argument, falls du die Standardisierung gewichtet machen willst.
 
+## Datensätze verbinden mit Joins {#sec-joins}
+
+In der Forschungspraxis kommt deine Information selten aus *einer* Datei. Du hast Individualdaten (ALLBUS-Befragte), willst aber Kontextinformationen dazumischen — Bundesländer-Wahlergebnisse, Wirtschaftsdaten, regionale Migrationsanteile. Beide Tabellen werden über eine **Schlüssel-Variable** verknüpft, die in beiden vorkommt.
+
+Das Werkzeug dafür heißt `left_join()` aus dplyr. Der Name beschreibt das Verhalten: die *linke* Tabelle bleibt vollständig erhalten, die *rechte* wird zeilenweise angedockt, wo der Schlüssel passt. Wo kein Match existiert, bleiben die neuen Spalten `NA`.
+
+**Frage:** Wir wollen jedem ALLBUS-Befragten eine Kontextinformation hinzufügen — etwa einen geschätzten Anteil der muslimischen Bevölkerung und das BIP pro Kopf, getrennt nach Region. Erst die kleine Kontext-Tabelle:
+
+```{r join-kontext}
+kontext_bl <- tibble(
+  eastwest      = c(1, 2),
+  muslim_anteil = c(7.2, 1.4),     # Anteil in Prozent (synthetisch)
+  bip_pro_kopf  = c(45000, 32000)  # Euro (synthetisch, gerundet)
+)
+kontext_bl
+```
+
+Diese Tabelle hat zwei Zeilen. Jetzt der Join: links ALLBUS (5.246 Fälle), rechts `kontext_bl` (2 Zeilen), Schlüssel `eastwest`:
+
+```{r join-demo}
+allbus_mit_kontext <- allbus |>
+  left_join(kontext_bl, by = "eastwest")
+
+allbus_mit_kontext |>
+  select(eastwest, age, muslim_anteil, bip_pro_kopf) |>
+  head(6)
+```
+
+**Lesart.** Vergleiche die Tabelle vor und nach dem Join: vorher hatte die Kontext-Tabelle nur zwei Zeilen, jetzt sind die Kontext-Werte *pro Fall* angedockt — Westdeutsche bekommen `muslim_anteil = 7.2` und `bip_pro_kopf = 45000`, Ostdeutsche entsprechend andere Werte. Die ursprünglichen 5.246 ALLBUS-Zeilen bleiben unverändert; nur zwei neue Spalten sind hinzugekommen.
+
+::: {.callout-note}
+**Konzept: Die Join-Familie.** dplyr kennt vier Join-Verben — sie unterscheiden sich nur, *welche Zeilen* am Ende bleiben:
+
+| Funktion          | Welche Zeilen bleiben?                                    | Wann sinnvoll                                 |
+| :---------------- | :-------------------------------------------------------- | :-------------------------------------------- |
+| `left_join(x, y)` | alle Zeilen aus `x`, passende aus `y`                     | **Standard.** Kontextdaten zu Individualdaten |
+| `inner_join(x, y)` | nur Zeilen, die in beiden vorkommen                      | Schnittmenge — nur Fälle mit kompletter Info  |
+| `right_join(x, y)` | alle aus `y`, passende aus `x`                            | selten — meist als `left_join(y, x)` lesbarer |
+| `full_join(x, y)` | alle Zeilen aus beiden                                    | Vereinigung — typisch für Daten-Konsolidierung |
+
+In 90 % der Sozialforschung brauchst du `left_join()` — Individualdaten links, Kontextdaten rechts.
+:::
+
+::: {.callout-warning}
+**Vorsicht: Schlüssel müssen *eindeutig* in der rechten Tabelle sein.** Wenn die rechte Tabelle pro Schlüssel mehrere Zeilen hat, wird *jede* Übereinstimmung dupliziert — aus 5.246 Fällen werden plötzlich 10.000. Vor jedem Join: `kontext_bl |> count(eastwest)` prüfen — jeder Schlüsselwert sollte nur einmal vorkommen.
+:::
+
+::: {.callout-tip}
+**SPSS → R: Datensätze zusammenführen.** In SPSS heißt das `MATCH FILES /TABLE = ... /BY = eastwest.`. In R ist das genau `left_join()`. Konzept und Argumente sind direkt übertragbar — nur die Syntax ist kompakter.
+:::
+
+## Datensätze umformen: Wide und Long mit `pivot_*()` {#sec-pivot}
+
+Daten können in zwei grundsätzlich verschiedenen Formaten vorliegen — und die Wahl ist nicht egal: manche Operationen funktionieren nur im einen, manche nur im anderen Format.
+
+- **Wide-Format**: eine Zeile pro Befragte:r, eine Spalte pro Variable. So liegt der ALLBUS standardmäßig vor — `mm01` bis `mm06` sind sechs Spalten nebeneinander.
+- **Long-Format**: eine Zeile pro *Beobachtung* — also pro Befragte:r × Item. Statt sechs Spalten gibt es zwei: eine *„welches Item?"* und eine *„welcher Wert?"*. Aus 5.246 Zeilen mit 6 Item-Spalten werden 5.246 × 6 = 31.476 Zeilen mit 2 Spalten.
+
+Warum das überhaupt eine Frage ist: ggplot2 erwartet meist Long-Format (eine Aesthetic = eine Spalte), während statistische Funktionen oft Wide-Format brauchen (eine Variable = eine Spalte). Die Umformung übernehmen zwei Funktionen aus `tidyr`:
+
+### `pivot_longer()`: wide → long
+
+**Frage:** Wir wollen alle sechs `mm`-Items zusammen in einem ggplot2 darstellen — etwa als Boxplot pro Item. Dafür brauchen wir Long-Format.
+
+Erst der Blick auf das **Wide-Format**, so wie ALLBUS standardmäßig vorliegt — eine Spalte pro Item, eine Zeile pro Person:
+
+```{r pivot-wide-show}
+allbus |>
+  select(mm01, mm02r, mm03, mm04, mm05r, mm06) |>
+  head(4)
+```
+
+Jetzt dieselben Daten ins **Long-Format** drehen — eine Zeile pro Person × Item, also pro Person sechs Zeilen statt einer:
+
+```{r pivot-longer-demo}
+allbus_long <- allbus |>
+  select(mm01, mm02r, mm03, mm04, mm05r, mm06) |>
+  unlabel() |>                      # Wertelabels ablegen (siehe Hinweis unten)
+  pivot_longer(
+    cols      = everything(),       # welche Spalten umformen?
+    names_to  = "item",             # neue Spalte für die alten Spaltennamen
+    values_to = "antwort"           # neue Spalte für die Werte
+  )
+
+allbus_long |> head(8)
+```
+
+**Lesart.** Vorher: 6 Spalten × 5.246 Zeilen = breite Tabelle. Nachher: 2 Spalten × 31.476 Zeilen — die *Spaltennamen* (`mm01`, `mm02r`, …) sind in die neue Spalte `item` gewandert, die ursprünglichen *Werte* in die Spalte `antwort`. Die ersten sechs Zeilen oben gehören zur ersten Person, die nächsten sechs zur zweiten Person.
+
+::: {.callout-warning}
+**Vorsicht: Labelled-Spalten stapeln.** `pivot_longer()` schreibt alle Items in *eine* Spalte `antwort` — und die kann nur *einen* Satz Wertelabels tragen. Die Items haben aber unterschiedliche Labels: In den umgepolten `mm02r` und `mm05r` steht „stimme gar nicht zu" bei der 7, in den übrigen bei der 1, und auch die Missing-Labels unterscheiden sich von Item zu Item. Ohne `unlabel()` meldet R deshalb Warnungen wie *„`mm01` and `mm02r` have conflicting value labels"* und übernimmt kommentarlos die Labels des ersten Items — für `mm02r` wären sie dann falsch. Mit `unlabel()` (siehe @sec-datentypen-verstehen) stapelst du die reinen Zahlen; fehlende Werte bleiben `NA`.
+:::
+
+Genau das brauchst du, um alle sechs Items *in einem ggplot* zu visualisieren — `aes(x = item, y = antwort)`:
+
+```{r pivot-plot-demo, fig.height=3.5}
+allbus_long |>
+  filter(!is.na(antwort)) |>
+  ggplot(aes(x = item, y = antwort, fill = item)) +
+  geom_boxplot() +
+  labs(x = NULL, y = "Antwort (1–7)") +
+  theme(legend.position = "none")
+```
+
+### `pivot_wider()`: long → wide
+
+Die Umkehrung brauchst du, wenn aggregierte Daten aus einem `summarise()` (das typisch im Long-Format ankommt) als breite Vergleichstabelle in einen Bericht sollen.
+
+Erst der Long-Zwischenstand: Mittelwerte pro Region × Item:
+
+```{r pivot-mw-long}
+mittelwerte_long <- allbus |>
+  filter(!is.na(eastwest)) |>
+  select(eastwest, mm01, mm03, mm06) |>
+  to_label(eastwest) |>                     # Region mit Labels statt 1/2
+  unlabel(mm01, mm03, mm06) |>              # Items als reine Zahlen stapeln
+  pivot_longer(c(mm01, mm03, mm06),
+               names_to = "item", values_to = "antwort") |>
+  summarise(mw = round(mean(antwort, na.rm = TRUE), 2),
+            .by = c(eastwest, item))
+
+mittelwerte_long
+```
+
+Sechs Zeilen — drei Items × zwei Regionen. Lesbar, aber für einen direkten Ost-West-Vergleich unpraktisch. `pivot_wider()` dreht es zur Vergleichs-Tabelle:
+
+```{r pivot-wider-demo}
+mittelwerte_long |>
+  pivot_wider(names_from = eastwest, values_from = mw)
+```
+
+Jetzt steht jedes Item in einer Zeile, Region in zwei Spalten — Ost und West direkt nebeneinander. Genau das Format, das in einer Hausarbeit gut aussieht.
+
+**Faustregel:** `pivot_wider()` für Endtabellen im Bericht, `pivot_longer()` als Arbeitsformat für jede ggplot2-Visualisierung mehrerer Items.
+
+::: {.callout-tip}
+**Faustregel: Welches Format brauche ich?**
+
+- *Plotten?* → meist long. ggplot2 mappt Aesthetics auf Spalten — eine Item-Variable als x-Achse.
+- *Statistik rechnen?* → meist wide. `pearson_cor(mm01, mm02)` braucht zwei Spalten.
+- *Tabelle für Bericht?* → meist wide. Lesbarer für Menschen.
+
+Wenn du eine Pipeline schreibst, in der genau ein Schritt das andere Format braucht, ist *zwischendurch* per `pivot_*()` umformen, dann das nächste Verb anwenden, dann ggf. zurück — völlig normal.
+:::
+
 ## Skalen bilden {#sec-skalen}
 
 Jetzt kommt der Moment, auf den dieses Kapitel zugelaufen ist: aus sechs umgepolten Items wird **eine** Skala. Das ist methodisch einfach — und konzeptionell der wichtigste Schritt zum Verstehen, was die Sozialforschung eigentlich macht.
@@ -325,7 +515,9 @@ In SPSS würde das eine kurze `COMPUTE`-Anweisung sein. In R nutzt du `row_means
 | `row_sums(data, ..., min_valid = N)`    | Summe pro Fall                                       |
 | `row_count(data, ..., count = wert)`    | Wie oft ein bestimmter Wert in der Zeile vorkommt    |
 
-Das Argument `min_valid` gibt vor, *wie viele gültige Antworten* mindestens da sein müssen, damit der Mittelwert berechnet wird. Andernfalls bleibt der Skalenwert `NA`. Faustregel: mindestens 80 % der Items.
+Das Argument `min_valid` gibt vor, *wie viele gültige Antworten* mindestens da sein müssen, damit der Mittelwert berechnet wird. Andernfalls bleibt der Skalenwert `NA`. Faustregel: mindestens 80 % der Items — bei 6 Items also `min_valid = 5`, bei 7 Items `min_valid = 6`.
+
+Warum diese Schwelle? Wer auf 3 von 6 Items geantwortet hat, lieferte einen Skalenwert, der zur Hälfte auf Annahme und zur Hälfte auf Wegfall basiert — das verschiebt den Mittelwert systematisch. Mit `min_valid = 5` verlierst du nur die Fälle mit *vielen* fehlenden Antworten und gewinnst dafür ein robusteres Maß. Der Trade-off ist immer der gleiche: zu strenges `min_valid` → wenige Fälle, zu lockeres → unzuverlässige Werte. 80 % ist der Methoden-Konsens.
 
 Wichtig: `row_means()` (und ihre Geschwister) geben einen **numerischen Vektor** zurück — sie wollen also in einem `mutate()`-Aufruf eingebettet werden, mit `pick()` zur Variablenauswahl. Das ist tidyverse-idiomatisch und macht klar, dass eine neue Spalte entsteht.
 
@@ -350,7 +542,7 @@ allbus |> describe(islamophobie)
 :::
 
 ::: {.callout-note}
-**Forschungshintergrund: Wer hat das gemessen?** Die sechs `mm`-Items sind etabliert in der deutschsprachigen Forschung zu gruppenbezogener Menschenfeindlichkeit (Decker & Brähler; Pickel/Pickel). Sie messen einen kohärenten Konstruktbereich — wir prüfen das in @sec-efa noch faktorenanalytisch und in @sec-reliabilitaet mit Cronbachs α. Die Mini-Studie nutzt die Skala unter dem Namen `islamophobie` (kürzer, international anschlussfähig) — der inhaltliche Gegenstand bleibt jedoch Islam- bzw. Muslimfeindlichkeit als spezifische Facette gruppenbezogener Menschenfeindlichkeit.
+**Forschungshintergrund: Wer hat das gemessen?** Die sechs `mm`-Items sind etabliert in der deutschsprachigen Forschung zu gruppenbezogener Menschenfeindlichkeit (Decker & Brähler; Pickel/Pickel). Sie messen einen kohärenten Konstruktbereich — wir prüfen das in @sec-efa-1 noch faktorenanalytisch und in @sec-reliabilitaet mit Cronbachs α. Die Mini-Studie nutzt die Skala unter dem Namen `islamophobie` (kürzer, international anschlussfähig) — der inhaltliche Gegenstand bleibt jedoch Islam- bzw. Muslimfeindlichkeit als spezifische Facette gruppenbezogener Menschenfeindlichkeit.
 :::
 
 ### Antwortstil prüfen mit `row_count()`
@@ -364,7 +556,7 @@ allbus |>
   count(n_extrem)
 ```
 
-Die meisten Befragten zeigen *kein* solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. `row_count()` ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht", wie viele Extremantworten, wie viele Mittelantworten?
+Die meisten Befragten zeigen *kein* solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. Lies die Zeile `0` dabei mit Vorsicht: Darin stecken auch die rund 1.650 Befragten, denen die Items wegen des Split-Designs gar nicht vorgelegt wurden — fehlende Werte zählen nie als Treffer. `row_count()` ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht", wie viele Extremantworten, wie viele Mittelantworten? Mehrere Werte zählst du auf einmal mit `count = c(1, 7)` — dann landen *beide* Extreme in der Summe.
 
 ### Populismus-Skala
 
@@ -376,7 +568,7 @@ val_labels(allbus$pa29)
 
 Das `pa`-Modul nutzt eine **5-stufige Skala**, bei der **1 = „stimme voll zu" und 5 = „lehne ganz ab"** steht. Das ist die *umgekehrte* Logik zu den `mm`-Items, wo `1` Ablehnung und `7` Zustimmung bedeutete. Folglich heißt für `pa29` „Abgeordnete nur dem Volk verpflichtet" ein **niedriger** Wert = populistisch.
 
-Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben `pa`-Items um — sie sind alle gleich (invers) kodiert, die Umpolung läuft also für alle in einer Schleife identisch:
+Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von der gemessenen Einstellung), polen wir alle sieben `pa`-Items um — sie sind alle gleich (invers) kodiert, die Umpolung ist also für alle identisch (`6 - x`, die Grenzen 1 und 5 kommen wieder aus den Wertelabels):
 
 ```{r scale-pop}
 allbus <- allbus |>
@@ -394,6 +586,14 @@ allbus <- allbus |>
 
 allbus |> describe(populismus)
 ```
+
+::: {.callout-important}
+**mariposa-Tipp: Mehrere Variablen in einem `rec()`-Aufruf.** Wir schreiben die sieben Umpolungen hier bewusst einzeln untereinander — so ist jeder Schritt der Pipeline sichtbar. `rec()` nimmt aber beliebig viele Variablen auf einmal, auch mit tidyselect-Helfern. Diese eine Zeile ist gleichwertig zu den sieben `rec()`-Zeilen oben und erzeugt ebenfalls `pa29r` bis `pa35r`:
+
+```{r rec-multi, eval=FALSE}
+allbus |> rec(pa29:pa35, rules = "rev", suffix = "r")
+```
+:::
 
 ::: {.callout-note}
 **Forschungshintergrund: Populismus messen.** Die sieben `pa`-Items basieren auf einer Skala von Schulz et al. (2017) und decken drei klassische Populismus-Dimensionen ab: Anti-Elitismus, Volkszentrismus, Manichäismus (Volk vs. korrupte Elite). Hohe Werte bedeuten populistische Einstellungsmuster — das ist *nicht* gleichzusetzen mit Wahlpräferenz für populistische Parteien, sondern eine *Einstellung*, die quer durchs Parteienspektrum vorkommen kann.
@@ -437,8 +637,8 @@ allbus |>
 
 Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in *relativer Intensität* stärker islamophob als populistisch — oder umgekehrt.
 
-::: {.callout-important}
-**mariposa-Tipp: `scale_min` und `scale_max` immer angeben.** Ohne diese Argumente nutzt `pomps()` den *beobachteten* Wertebereich (`min(x)`, `max(x)`) — bei einer 1–7-Skala, in der niemand 1 angekreuzt hat, würde 2 zur „neuen Null", was die Skala verzerrt. Gib bei Likert-Items immer den **theoretischen** Wertebereich an.
+::: {.callout-warning}
+**Vorsicht: `scale_min` und `scale_max` immer angeben.** Ohne diese Argumente nutzt `pomps()` den *beobachteten* Wertebereich (`min(x)`, `max(x)`) — bei einer 1–7-Skala, in der niemand den Wert 1 angekreuzt hat, würde der Wert 2 zur „neuen Null", was die Skala verzerrt und Ergebnisse zwischen Stichproben unvergleichbar macht. Gib bei Likert-Items **immer** den theoretischen Wertebereich an.
 :::
 
 ::: {.callout-note}
@@ -447,7 +647,9 @@ Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindl
 
 ## Die komplette Datenpräp-Pipeline {#sec-pipeline}
 
-Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer einzigen sauberen Pipeline zusammenfassen. Diese Pipeline ist der **Anker für Kap. 6–9** — du wirst sie als Setup-Block am Anfang jedes weiteren Kapitels wiederfinden (technisch eingebunden über `source("R/prep.R")`):
+Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer einzigen sauberen Pipeline zusammenfassen. Diese Pipeline ist der **Anker für Kap. 6–9** — du wirst sie als Setup-Block am Anfang jedes weiteren Kapitels wiederfinden, technisch eingebunden über `source("R/prep.R")`.
+
+**Wo liegt `R/prep.R`?** Im Projektordner gibt es einen Unterordner `R/` mit zwei Skripten: `_common.R` (Theme-Setup) und `prep.R` (die Pipeline unten). Beide werden in jedem Methodenkapitel im Setup-Chunk per `source()` eingelesen. Wenn du das Buch in dein eigenes Projekt übernimmst, kopierst du den `R/`-Ordner mit — und die Setup-Chunks funktionieren unverändert.
 
 ```{r full-pipeline, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
@@ -512,7 +714,7 @@ Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isce
 ```{r ex2-kap5-loesung, eval=FALSE}
 allbus |>
   rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
-      as.factor = TRUE) |>
+      as_factor = TRUE) |>
   count(isced97)
 ```
 :::
@@ -543,11 +745,13 @@ Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (D
 
 ## Was du jetzt weißt {-}
 
-- Du transformierst Variablen mit `mutate()`, `case_when()`, `case_match()` und `if_else()`.
+- Du transformierst Variablen mit `mutate()`, `case_when()`, `recode_values()` und `if_else()`.
 - Du aggregierst Subgruppen mit `summarise(.by = ...)` und nutzt `n()`/`n_distinct()`.
 - Du rekodierst Variablen mit `rec()` — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum sauberen Umpolen.
 - Du erzeugst Dummy-Variablen mit `to_dummy()`.
 - Du standardisierst und zentrierst Variablen mit `std()` und `center()`.
+- Du verbindest Datensätze per Schlüssel mit `left_join()` (und kennst die Join-Familie).
+- Du formst Daten zwischen Wide- und Long-Format mit `pivot_longer()` und `pivot_wider()` um.
 - Du baust gewichtete Mittelwert-Skalen mit `row_means()` und kontrolliertem `min_valid`.
 - Du prüfst Antwort-Stile und Datenqualität mit `row_count()`.
 - Du machst Skalen unterschiedlicher Bandbreite mit `pomps()` direkt vergleichbar.
@@ -557,7 +761,7 @@ Im nächsten Kapitel (@sec-grafiken-basics) lernst du das ggplot2-Grafiksystem k
 
 ## Weiterführend {-}
 
-- mariposa-Vignetten [„Data Transformation"](https://yannickdiehl.github.io/mariposa/articles/data-transformation.html) und [„Scale Building"](https://yannickdiehl.github.io/mariposa/articles/scale-building.html).
+- mariposa-Vignetten [„Data Transformation"](https://yannickdiehl.github.io/mariposa/articles/data-transformation.html) und [„Scale Analysis"](https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html) (Abschnitt „Creating Scale Scores").
 - Hadley Wickham & Garrett Grolemund, [R for Data Science (2e), Kapitel „Data Transformation"](https://r4ds.hadley.nz/data-transform.html).
 - Cohen, P., Cohen, J., Aiken, L. S., & West, S. G. (1999). *The Problem of Units and the Circumstance for POMP.* Multivariate Behavioral Research, 34(3), 315–346 — die theoretische Basis von POMPS.
 - Schulz, A., Müller, P., Schemer, C., Wirz, D. S., Wettstein, M., & Wirth, W. (2017). *Measuring populist attitudes on three dimensions.* International Journal of Public Opinion Research, 30(2), 316–326 — Quelle der Populismus-Skala.

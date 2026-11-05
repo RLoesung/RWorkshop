@@ -10,7 +10,7 @@ source("R/prep.R")
 # labelled-zu-Faktor-Konvertierung fuer lesbare Achsen.
 allbus <- allbus |>
   rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
-      as.factor = TRUE, suffix = "_kat") |>
+      as_factor = TRUE, suffix = "_kat") |>
   to_label(eastwest, sex)
 ```
 
@@ -62,6 +62,22 @@ Die `aes()`-Funktion (kurz für *aesthetics*) macht die Übersetzung: „nimm di
 
 Auffällig: Die Schichten werden mit `+` verbunden, nicht mit der tidyverse-Pipe `|>`. Das hat historische Gründe — ggplot2 ist älter als die native Pipe und hat seinen eigenen Operator behalten. Du kannst dir merken: alles vor `ggplot(...)` mit `|>`, alles nach `ggplot(...)` mit `+`.
 
+::: {.callout-warning}
+**Vorsicht: `+` vs. `|>`.** Wenn du versehentlich `|>` zwischen `ggplot(...)` und einem `geom_*()`-Layer setzt, bekommst du eine kryptische Fehlermeldung wie:
+
+```
+Error in geom_bar(): could not find function "geom_bar"
+```
+
+oder
+
+```
+Error: `mapping` must be created by `aes()`
+```
+
+Heilmittel: ein `+` statt `|>` zwischen den ggplot2-Schichten — sonst bleibt alles wie gewohnt.
+:::
+
 ::: {.callout-note}
 **Hintergrund: Wer hat die Grammatik erfunden?** Leland Wilkinson formulierte 2005 in *The Grammar of Graphics* die Idee, jede statistische Grafik aus einer kleinen Zahl orthogonaler Komponenten zusammenzubauen. Hadley Wickham implementierte das 2007 als `ggplot` (später `ggplot2`) in R. Heute ist die Grammar Standard auch in Python (plotnine), JavaScript (Observable Plot) und vielen kommerziellen Tools — wer einmal in einem System gelernt hat, in welchen Schichten eine Grafik denkt, kann sie in allen lesen.
 :::
@@ -82,6 +98,10 @@ allbus |>
 ```
 
 **Lesart.** Die Skala läuft von 1 („stimme gar nicht zu") bis 7 („stimme voll und ganz zu"). Die Verteilung zeigt, in welche Richtung die Befragten tendieren.
+
+::: {.callout-note}
+**`weight =` (ggplot2) vs. `weights =` (mariposa).** Beide gewichten — gleiches Konzept, andere Schreibung. ggplot2 nutzt `weight` (Singular, ohne s) als *Aesthetic* innerhalb von `aes()`; mariposa-Funktionen wie `frequency()` oder `t_test()` nutzen `weights` (Plural, mit s) als Funktionsargument. Wer beides im selben Skript schreibt, vertippt sich gelegentlich — und ungewichtete Outputs sind keine Fehlermeldung, sondern stillschweigend falsch.
+:::
 
 ### Zweite Grafik: Subgruppen-Vergleich
 
@@ -128,6 +148,27 @@ Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften
 | `group =`          | unsichtbare Gruppierung               |
 
 **Wichtig:** Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
+
+::: {.callout-warning}
+**Konzept: Innerhalb oder außerhalb von `aes()`?** Das ist *die* Anfänger:innen-Falle in ggplot2. Die Regel ist einfach, hat aber gegensätzliche Konsequenzen:
+
+- **Innerhalb `aes()`** → eine *Datenspalte* wird auf eine visuelle Eigenschaft gemappt. Die Farbe variiert dann mit den Werten der Variable, und ggplot2 vergibt automatisch eine Legende.
+- **Außerhalb `aes()`** → eine *konstante Eigenschaft* für alle Punkte/Balken. Keine Legende, alles in derselben Farbe.
+
+```{r aes-vs-konstant, eval=FALSE}
+ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()         # ein Balken pro sex-Stufe, eingefärbt
+ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")   # alle Balken einheitlich blau
+```
+
+Wer eine Konstante (`"steelblue"`) versehentlich *in* `aes()` setzt, sieht braungrau eingefärbte Balken mit einer Legende, in der „steelblue" als einziger Eintrag steht — verlässliches Diagnose-Zeichen für diesen Tippfehler.
+:::
+
+**`fill` vs. `color` — die Mini-Regel.** ggplot2 unterscheidet zwei Farb-Aesthetics:
+
+- **`fill`** ist die *Füllfarbe* — für *Flächen*: Balken, Boxen, Polygone, Dichten.
+- **`color`** ist die *Strichfarbe* — für *Linien, Punkte, Outlines*.
+
+Wer einen Balken einfärben will und `color = sex` schreibt, sieht nur dünne Outlines und eine ansonsten leere Fläche. Bei Punkten und Linien ist `color` richtig, bei Balken `fill`. Bei manchen Geoms (z. B. `geom_boxplot()`) brauchst du beides — `fill` für die Box, `color` für den Rahmen.
 
 ```{r mapping, eval=FALSE}
 g <- allbus |>
@@ -262,7 +303,7 @@ allbus |>
        color = "Geschlecht", caption = "ALLBUS 2023")
 ```
 
-`geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`.
+`geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`. *Was eine Regressionsgerade mathematisch ist, lernst du in @sec-regression — hier dient sie nur als visuelle Trend-Hilfe.*
 
 ## Subgruppen aufteilen mit Facets {#sec-facets}
 
@@ -336,6 +377,15 @@ p + theme_minimal()
 
 `theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen.
 
+::: {.callout-note}
+**Konzept: `theme_*()` vs. `theme()`.** Die zwei Funktions-Familien klingen gleich, machen aber Verschiedenes:
+
+- **`theme_minimal()`, `theme_bw()`, `theme_classic()` …** — *komplette Themes*. Setzen den Gesamtstil (Hintergrund, Gitter, Schriftgrößen).
+- **`theme(legend.position = "none", …)`** — *einzelne Elemente* gezielt anpassen. Diese Funktion akzeptiert dutzende Elemente (`axis.text`, `plot.title`, `panel.grid` …).
+
+In der Praxis kombinierst du beide: zuerst ein komplettes Theme als Basis, dann einzelne Anpassungen via `theme()`.
+:::
+
 ::: {.callout-important}
 **mariposa-Tipp / `theme_rworkshop()`.** Alle Grafiken in diesem Buch nutzen automatisch das Theme `theme_rworkshop()`, das in `R/_common.R` definiert und per `theme_set()` global gesetzt ist. So sehen alle Plots im Quarto-Projekt einheitlich aus, ohne dass du das Theme in jedem Chunk explizit angeben musst. Für dein eigenes Projekt definierst du dir ein passendes Theme einmal und referenzierst es per `source("R/_common.R")` aus jedem Kapitel-Setup-Chunk.
 :::
@@ -370,11 +420,18 @@ allbus |>
   filter(!is.na(islamophobie)) |>
   ggplot(aes(x = eastwest, y = islamophobie, fill = eastwest)) +
   geom_boxplot()
-# Achse zeigt jetzt 'Alte Bundeslaender' / 'Neue Bundeslaender'
+# Achse zeigt jetzt 'ALTE BUNDESLAENDER' / 'NEUE BUNDESLAENDER'
 # statt 1 / 2 — weil eastwest schon im Setup-Chunk to_label-konvertiert wurde.
 ```
 
 Wenn du eine zusätzliche labelled-Variable im Plot brauchst, wendest du `to_label()` einfach in der Pipeline an, bevor du `ggplot()` aufrufst.
+
+## Grafiken speichern und kombinieren — Ausblick
+
+Zwei weitere Bausteine, die du in den nächsten Kapiteln brauchst:
+
+- **Speichern mit `ggsave()`.** Eine Grafik in deine Hausarbeit oder Folien bringen geht über `ggsave("plot.png", width = 8, height = 5, dpi = 300)`. Vollständige Behandlung in @sec-coefplot.
+- **Mehrere Plots kombinieren mit `patchwork`.** Wenn du zwei Grafiken nebeneinander oder untereinander brauchst, kombinierst du sie mit `p1 + p2` (nebeneinander) oder `p1 / p2` (untereinander). Vollständige Behandlung in @sec-patchwork.
 
 ## Übungen {-}
 

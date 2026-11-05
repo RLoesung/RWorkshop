@@ -11,7 +11,7 @@ source("R/prep.R")
 # labelled-zu-Faktor-Konvertierung fuer lesbare Tabellen.
 allbus <- allbus |>
   rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
-      as.factor = TRUE, suffix = "_kat") |>
+      as_factor = TRUE, suffix = "_kat") |>
   to_label(eastwest, sex)
 ```
 
@@ -45,10 +45,10 @@ Am Ende kommunizieren wir die Befunde grafisch: **Coefficient-Plots** machen Mod
 - Eine **einfache lineare Regression** mit einem Prädiktor rechnen, die Regressionsgerade aus den Modell-Koeffizienten **händisch** in ein Streudiagramm zeichnen (`geom_abline()`) und die OLS-Logik („kleinste Quadrate") nachvollziehen.
 - Eine **multiple lineare Regression** rechnen, gewichten und interpretieren — Koeffizienten, Beta, R², Modell-F.
 - Zwei Regressionsmodelle mit `anova()` formal vergleichen.
-- Multikollinearität über **VIF** und **Tolerance** prüfen.
+- Multikollinearität über **VIF** und **Tolerance** prüfen — händisch nachgerechnet und direkt aus `summary()`.
 - Die **vier Standard-Residuenplots** (Residuals vs Fitted, Normal-QQ, Scale-Location, Residuals vs Leverage) **händisch mit ggplot2** aus `broom::augment()` bauen und per `patchwork` zu einer Diagnose-Komposition kombinieren.
 - **Mehrfaktorielle ANOVA** mit Interaktion (`factorial_anova()`) und **ANCOVA** mit kontinuierlicher Kovariate (`ancova()`) rechnen.
-- Eine **logistische Regression** rechnen, die einem dichotomen Outcome folgt — inkl. Odds Ratios.
+- Eine **logistische Regression** rechnen, die einem dichotomen Outcome folgt — inkl. Odds Ratios und **durchschnittlicher marginaler Effekte** in Prozentpunkten (`marginal_effects()`).
 - Regressionsergebnisse als **Coefficient-Plot** mit `broom::tidy()` visualisieren.
 - Mehrere Plots mit **patchwork** zu einer Komposition kombinieren.
 - Grafiken mit `ggsave()` in publikationsfähiger Auflösung exportieren.
@@ -255,6 +255,11 @@ summary(modell)
 - **Std. Error** und **t-Wert** — Präzision der Schätzung.
 - **Beta** — standardisierte Koeffizienten. Skalenunabhängig und damit direkt vergleichbar zwischen Prädiktoren — die wichtigste Hilfe, um zu sagen, *welcher* Prädiktor relativ am stärksten wirkt.
 - **Sig.** — *p*-Werte.
+- **95% CI Lower / Upper** — das Konfidenzintervall für B (SPSS: `/STATISTICS CI`). Schließt es die 0 aus, ist der Koeffizient auf dem 5 %-Niveau signifikant.
+
+Darunter folgt die Tabelle *Collinearity Statistics* mit Tolerance und VIF für jeden Prädiktor — dazu mehr in @sec-vif. Und oben im Kopf steht ein Hinweis zu `age`: Weil die Variable aus SPSS noch Wertelabels trägt, geht sie — wie in SPSS `REGRESSION` — mit ihren Zahlenwerten als metrischer Prädiktor ein. Genau das wollen wir beim Alter; nur wer eine labelled-Variable als *Kategorien* modellieren will, wandelt sie vorher mit `to_label()` in einen Faktor.
+
+Achte auch auf **N = 1.881**: In das Modell gehen nur Fälle ein, die bei *allen* Variablen gültige Werte haben (*listwise deletion*). Weil `islamophobie` und `populismus` aus verschiedenen Split-Modulen stammen (siehe @sec-univbivar), bleibt gut ein Drittel der Stichprobe übrig.
 
 In unserem Modell ist `populismus` mit einem Beta von **0.32** der stärkste Prädiktor — wer populistischer eingestellt ist, ist auch islamfeindlicher.
 
@@ -262,7 +267,7 @@ Beim **Bildungseffekt** zeigt die Dummy-Codierung jetzt etwas Spannendes, das di
 
 Die anderen kategorialen Prädiktoren sind ähnlich zu lesen:
 
-- `eastwestNEUE BUNDESLÄNDER` (Beta = 0.09, *p* < .001) — Befragte aus den neuen Bundesländern haben höhere Islamfeindlichkeit als Befragte aus den alten (= Referenz).
+- `eastwestNEUE BUNDESLAENDER` (Beta = 0.09, *p* < .001) — Befragte aus den neuen Bundesländern haben höhere Islamfeindlichkeit als Befragte aus den alten (= Referenz).
 - `sexFRAU` (Beta = 0.04, *p* = .03) — schwacher positiver Effekt für Frauen vs. Männer (= Referenz).
 - `sexDIVERS` (Beta = −0.02, *p* = .43) — nicht signifikant; aber Vorsicht, das ist eine *sehr* kleine Gruppe im ALLBUS, die Schätzung ist instabil.
 
@@ -305,7 +310,7 @@ Faustregel: für die *substantielle* Interpretation B, für den *Rangvergleich* 
 :::
 
 ::: {.callout-note}
-**Reviewer-Hinweis.** Eine vollständige Regressions-Tabelle enthält: B, SE, β, 95 %-KI, *p*-Wert, R², adjustiertes R², F des Modells, df, *N*. Wenn ein Reviewer fragt, „und was ist mit Multikollinearität?", solltest du VIF/Tolerance zur Hand haben — das gehört in den Methodenteil oder den Anhang.
+**Reviewer-Hinweis.** Eine vollständige Regressions-Tabelle enthält: B, SE, β, 95 %-KI, *p*-Wert, R², adjustiertes R², F des Modells, df, *N*. Wenn ein Reviewer fragt, „und was ist mit Multikollinearität?", solltest du VIF/Tolerance zur Hand haben — `summary(modell)` liefert beides in der Tabelle *Collinearity Statistics* gleich mit. Das gehört in den Methodenteil oder den Anhang.
 :::
 
 ### Modelle vergleichen
@@ -363,13 +368,13 @@ Die **Tolerance** ist der Kehrwert: $\text{Tolerance} = 1/\text{VIF} = 1 - R^2_i
 
 ### VIF händisch berechnen — in drei Schritten
 
-Wir rechnen den VIF *genau nach der Formel oben* selbst — und zwar zuerst für **einen** Prädiktor, in drei sichtbaren Schritten. Beispiel: VIF für `populismus`.
+mariposa liefert dir VIF und Tolerance fertig in `summary(modell)`. Damit die Zahl dort keine Black Box bleibt, rechnen wir den VIF einmal *genau nach der Formel oben* selbst — für **einen** Prädiktor, in drei sichtbaren Schritten. Beispiel: VIF für `populismus`.
 
-**Schritt 1 — Hilfsregression.** Wir machen `populismus` zur *abhängigen* Variable und lassen alle anderen Prädiktoren des Hauptmodells sie vorhersagen:
+**Schritt 1 — Hilfsregression.** Wir machen `populismus` zur *abhängigen* Variable und lassen alle anderen Prädiktoren des Hauptmodells sie vorhersagen. Wichtig: auf *demselben Fall-Set* wie das Hauptmodell — dafür nehmen wir `allbus_modell` aus dem Modellvergleich oben. Mit dem vollen `allbus` gingen auch die Befragten ein, die gar keinen Wert für Islamfeindlichkeit haben, und der VIF bezöge sich auf eine andere Stichprobe als das Modell.
 
 ```{r vif-step1}
 hilfsmodell <- lm(populismus ~ educ_kat + age + eastwest + sex,
-                  data = allbus, weights = wghtpew)
+                  data = allbus_modell, weights = wghtpew)
 ```
 
 **Schritt 2 — R² der Hilfsregression ablesen.** Wie gut lassen die anderen Variablen sich Populismus vorhersagen?
@@ -379,7 +384,7 @@ r2 <- summary(hilfsmodell)$r.squared
 r2
 ```
 
-Etwa 18 % der Varianz von Populismus lassen sich aus den anderen Prädiktoren erklären.
+Etwa 17 % der Varianz von Populismus lassen sich aus den anderen Prädiktoren erklären.
 
 **Schritt 3 — VIF-Formel anwenden.**
 
@@ -388,12 +393,16 @@ vif_populismus <- 1 / (1 - r2)
 vif_populismus
 ```
 
-Resultat: VIF ≈ 1.22 — weit unter der Warngrenze 5. Populismus hat also kein Multikollinearitäts-Problem mit den anderen Prädiktoren.
+Resultat: VIF ≈ 1.21 — weit unter der Warngrenze 5. Populismus hat also kein Multikollinearitäts-Problem mit den anderen Prädiktoren. **Gegenprobe:** Schau in die Tabelle *Collinearity Statistics* von `summary(modell)` oben — dort steht für `populismus` exakt derselbe Wert (VIF = 1.205, Tolerance = 0.830). Die händische Rechnung und mariposa kommen auf dieselbe Zahl, weil beide dieselbe Definition auf dasselbe Fall-Set anwenden.
+
+::: {.callout-important}
+**mariposa-Tipp: Kollinearität ohne Zusatzpaket.** `summary()` eines `linear_regression()`-Modells enthält VIF und Tolerance für jeden Prädiktor — das SPSS-Pendant zu `/STATISTICS COLLIN`. Brauchst du die Tabelle nicht, blendest du sie mit `summary(modell, collinearity = FALSE)` aus. Als Tibble stehen die Werte in den Spalten `Tolerance` und `VIF` von `modell$coef_table`.
+:::
 
 **Für die anderen Prädiktoren** wiederholst du dieselben drei Schritte mit jeweils einer angepassten Hilfsformel — `age ~ populismus + educ_kat + eastwest + sex` für den VIF von Alter, `eastwest ~ populismus + educ_kat + age + sex` für Region, und so weiter. In Übung 2 am Kapitelende rechnest du das für einen weiteren Prädiktor durch.
 
 ::: {.callout-note}
-**Hintergrund: Kategoriale Prädiktoren und VIF.** Bei einem Faktor wie `educ_kat` (drei Stufen → zwei Dummy-Variablen, siehe @sec-dummy) bekommt jede Dummy-Variable streng genommen einen eigenen VIF. Spezialisierte Funktionen wie `car::vif()` (aus dem Paket `car`) rechnen für Faktoren stattdessen den **generalisierten VIF** (GVIF) — eine einzelne Kennzahl pro Original-Variable, deren Spalte `GVIF^(1/(2·Df))` direkt mit den VIF-Faustregeln vergleichbar ist. Für Modelle wie unseres (alle VIFs deutlich unter 2.5) ist der Unterschied praktisch unbedeutend — bei Modellen nahe an der Warngrenze lohnt es sich, GVIF gezielt nachzulesen.
+**Hintergrund: Kategoriale Prädiktoren und VIF.** Bei einem Faktor wie `educ_kat` (drei Stufen → zwei Dummy-Variablen, siehe @sec-dummy) bekommt jede Dummy-Variable einen eigenen VIF — so weist es auch `summary(modell)` aus (`educ_katmittel` 1.79, `educ_kathoch` 2.12). Dass die beiden Bildungs-Dummies untereinander etwas höhere Werte haben, ist normal: Wer nicht „mittel" ist, ist mit hoher Wahrscheinlichkeit „hoch". Spezialisierte Funktionen wie `car::vif()` (aus dem Paket `car`) rechnen für Faktoren stattdessen den **generalisierten VIF** (GVIF) — eine einzelne Kennzahl pro Original-Variable, deren Spalte `GVIF^(1/(2·Df))` direkt mit den VIF-Faustregeln vergleichbar ist. Für Modelle wie unseres (alle VIFs deutlich unter 2.5) ist der Unterschied praktisch unbedeutend — bei Modellen nahe an der Warngrenze lohnt es sich, GVIF gezielt nachzulesen.
 :::
 
 ## Residuen-Diagnostik händisch {#sec-residuen}
@@ -472,7 +481,7 @@ p_rl <- diagnose_df |>
 (p_rf + p_qq) / (p_sl + p_rl)
 ```
 
-**Lesart.** Bei N ≈ 3000 (wie hier) sind sichtbare Abweichungen eher die Ausnahme — die LOESS-Linien sollten weitgehend flach um 0 (bzw. horizontal bei Scale-Location) verlaufen. Wenn der QQ-Plot an den Enden deutlich von der Diagonale abweicht, ist die Annahme der Normalverteilung der Residuen verletzt — bei großen Stichproben dank des **Zentralen Grenzwertsatzes** meist unproblematisch. Auffällige Einzelpunkte mit hoher Leverage prüfst du gezielt mit `diagnose_df |> filter(.cooksd > 4/n())` — Cook's-Distance-Werte über 1 sind echte Verdachtsfälle.
+**Lesart.** Bei N ≈ 1.900 (wie hier) sind sichtbare Abweichungen eher die Ausnahme — die LOESS-Linien sollten weitgehend flach um 0 (bzw. horizontal bei Scale-Location) verlaufen. Wenn der QQ-Plot an den Enden deutlich von der Diagonale abweicht, ist die Annahme der Normalverteilung der Residuen verletzt — bei großen Stichproben dank des **Zentralen Grenzwertsatzes** meist unproblematisch. Auffällige Einzelpunkte mit hoher Leverage prüfst du gezielt mit `diagnose_df |> filter(.cooksd > 4/n())` — Cook's-Distance-Werte über 1 sind echte Verdachtsfälle.
 
 ::: {.callout-important}
 **mariposa-Tipp: Was funktioniert direkt mit `modell`?** mariposa-Modelle verhalten sich wie normale `lm`-Objekte — alle Standard-Werkzeuge dispatchen direkt:
@@ -480,15 +489,15 @@ p_rl <- diagnose_df |>
 - **base R**: `anova(modell)`, `predict(modell)`, `coef(modell)`, `confint(modell)`, `residuals(modell)`, `plot(modell)`
 - **broom**: `tidy(modell, conf.int = TRUE)` (Koeffizienten-Tabelle mit KI), `glance(modell)` (Modell-Kennzahlen: R², F, AIC, BIC …), `augment(modell)` (Daten + Residuen + Leverage)
 
-Drei SPSS-Style-Tabellen sind *zusätzlich* als Slots am Modell verfügbar — direkt verwendbar als Tibbles für `kable()`, `gt()` oder eigene ggplot2-Bauten:
+Drei SPSS-Style-Tabellen sind *zusätzlich* als Slots am Modell verfügbar — direkt verwendbar für `kable()`, `gt()` oder eigene ggplot2-Bauten:
 
 ```{r mariposa-slots}
-modell$model_summary    # R, R², adj. R², Std. Error des Modells
-modell$coef_table       # SPSS-Style Koeffizienten als Tibble
-modell$anova_table      # SPSS-Style ANOVA des Modells als Tibble
+modell$model_summary    # Liste: R, R², adj. R², Std. Error des Modells
+modell$coef_table       # Tibble: B, SE, Beta, t, p, KI, Tolerance, VIF
+modell$anova_table      # Tibble: SPSS-Style ANOVA des Modells
 ```
 
-Die Slots sind dasselbe, was `summary(modell)` *druckt* — nur als programmatisch nutzbare Tibbles. Mit `knitr::kable(modell$coef_table)` baust du dir die Regressions-Tabelle für die Hausarbeit ohne händisches Abtippen.
+Die Slots enthalten dasselbe, was `summary(modell)` *druckt* — nur programmatisch nutzbar. Mit `knitr::kable(modell$coef_table)` baust du dir die Regressions-Tabelle für die Hausarbeit ohne händisches Abtippen. Lieber Excel? `write_xlsx(modell, "regression.xlsx")` schreibt die Ergebnistabellen des Modells in eine Excel-Datei — das funktioniert seit mariposa 0.7.4 für jedes Analyse-Ergebnis, Kreuztabellen landen dabei im SPSS-Layout.
 :::
 
 ## ANOVA mit mehreren Faktoren {#sec-anova-mult}
@@ -506,7 +515,9 @@ allbus |>
                   weights = wghtpew)
 ```
 
-**Lesart.** Du bekommst drei F-Tests: für jeden **Haupteffekt** einen (Bildung, Region) und einen für die **Interaktion** (Bildung × Region). Eine signifikante Interaktion bedeutet: der Bildungseffekt auf Islamfeindlichkeit fällt in Ost und West unterschiedlich aus. Ist die Interaktion nicht signifikant, sind beide Effekte additiv — beide wirken in beiden Regionen ähnlich.
+**Lesart.** Du bekommst drei F-Tests: für jeden **Haupteffekt** einen (Bildung, Region) und einen für die **Interaktion** (Bildung × Region), jeweils mit dem **partiellen η²** (`eta2p`) — dem Varianzanteil, den der Effekt erklärt, wenn die anderen Effekte herausgerechnet sind. Eine signifikante Interaktion bedeutet: der Bildungseffekt auf Islamfeindlichkeit fällt in Ost und West unterschiedlich aus. Ist die Interaktion nicht signifikant, sind beide Effekte additiv — beide wirken in beiden Regionen ähnlich.
+
+Hier sind beide Haupteffekte hochsignifikant — Bildung mit einem partiellen η² von .077, Region mit .022. Die Interaktion dagegen ist mit *F*(2, 3268) = 1.69, *p* = .19 und einem partiellen η² von .001 **nicht signifikant**: Der Bildungseffekt fällt in Ost und West ähnlich aus. Die vollständige SPSS-Tabelle *Tests of Between-Subjects Effects* mit Quadratsummen, gewichteten Zellmittelwerten und Levene-Test liefert `summary()`.
 
 ::: {.callout-note}
 **Konzept: Interaktion visualisiert.** Eine Interaktion wird am leichtesten *visuell* verständlich. Stell dir zwei Liniengrafiken vor — x-Achse Bildung, y-Achse Islamfeindlichkeit, eine Linie pro Region:
@@ -539,9 +550,9 @@ allbus |>
        caption = "ALLBUS 2023, gewichtet mit wghtpew (95 %-KI)")
 ```
 
-**Lesart.** Die Linien für Ost und West verlaufen *nicht ganz parallel* — der Bildungseffekt (Gefälle von links nach rechts) fällt in Ost etwas steiler aus als in West. Genau diese visuelle Nicht-Parallelität ist die *grafische Übersetzung* eines signifikanten Interaktionsterms im ANOVA-Output. Sind die Linien (näherungsweise) parallel, sind beide Effekte additiv — Region und Bildung wirken unabhängig voneinander.
+**Lesart.** Die Linien für Ost und West verlaufen *nahezu parallel*. Der Osten liegt auf allen drei Bildungsstufen höher (Haupteffekt Region), und in beiden Regionen fällt die Islamfeindlichkeit vor allem von mittlerer zu hoher Bildung deutlich ab (Haupteffekt Bildung). Zwischen „mittel" und „hoch" fällt die Ost-Linie etwas steiler — aber diese leichte Abweichung von der Parallelität liegt im Rahmen des Zufalls: Der Interaktionsterm der ANOVA oben ist nicht signifikant (*p* = .19). Region und Bildung wirken also **additiv**.
 
-Mit *exakt* parallelen Linien hättest du in der ANOVA keinen signifikanten Interaktionsterm; je deutlicher die Linien voneinander abweichen, desto eindeutiger das Interaktions-Signal.
+Ganz exakt parallel verlaufen Linien aus Stichprobendaten nie. Erst wenn die Abweichung größer ist, als der Zufall plausibel erklären kann, wird der Interaktionsterm signifikant — und genau diese Abwägung nimmt dir der *F*-Test ab. Grafik und Test gehören deshalb zusammen: Die Grafik zeigt dir, *wie* ein möglicher Unterschied aussieht, der Test, *ob* er belastbar ist.
 
 ::: {.callout-note}
 **Forschungshintergrund: Interaktionen lesen.** Eine Interaktion ist ein der wichtigsten Befundklassen empirischer Politikforschung. „Effekt von X auf Y *hängt davon ab*, in welcher Subgruppe gemessen wird" — das ist methodisch eine *moderierende* Beziehung. In der Diskussion ist das oft der inhaltlich interessanteste Befund: nicht *dass* etwas wirkt, sondern *wo* und *für wen* es wirkt.
@@ -560,7 +571,23 @@ allbus |>
          weights = wghtpew)
 ```
 
-**Lesart.** Der Gruppeneffekt von Bildung wird *bereinigt* um den Alterseffekt ausgegeben. ANCOVA ist nützlich, wenn ein bekannter Störfaktor zwischen den Gruppen variiert und du seinen Einfluss isolieren willst — sie ist die Brücke zwischen reiner ANOVA (kategoriale Prädiktoren) und Regression (kontinuierliche Prädiktoren).
+**Lesart.** Der Gruppeneffekt von Bildung wird *bereinigt* um den Alterseffekt ausgegeben: Beide sind hochsignifikant, und beide erklären für sich einen ähnlich großen Varianzanteil (partielles η² je knapp .08). ANCOVA ist nützlich, wenn ein bekannter Störfaktor zwischen den Gruppen variiert und du seinen Einfluss isolieren willst — sie ist die Brücke zwischen reiner ANOVA (kategoriale Prädiktoren) und Regression (kontinuierliche Prädiktoren).
+
+Wie stark die Bereinigung das Bild verändert, siehst du in den **geschätzten Randmitteln** (*Estimated Marginal Means*) von `summary()` — den Gruppenmittelwerten, die sich ergäben, wenn alle Gruppen das gleiche Durchschnittsalter hätten:
+
+```{r ancova-summary}
+allbus |>
+  ancova(islamophobie,
+         between = educ_kat, covariate = age,
+         weights = wghtpew) |>
+  summary()
+```
+
+**Lesart.** In der einfachen ANOVA (@sec-univbivar) lag die Gruppe mit niedriger Bildung noch gut 0.2 Skalenpunkte über der mittleren (4.68 zu 4.45). Bei gleichem Alter verschwindet dieser Unterschied fast völlig (4.41 zu 4.43); nur die hohe Bildung bleibt mit 3.60 klar darunter. Ein Teil des scheinbaren Bildungseffekts war also ein **Alterseffekt**: Befragte mit niedrigem Schulabschluss sind im Schnitt älter, und Ältere sind islamfeindlicher. Das deckt sich mit dem `educ_katmittel`-Koeffizienten der multiplen Regression oben.
+
+::: {.callout-warning}
+**Vorsicht: Andere Referenzkategorie als in der Regression.** In der Tabelle *Parameter Estimates* setzt `ancova()` — wie SPSS `UNIANOVA` — die **letzte** Kategorie als Referenz (hier „hoch", mit „0 (a)" markiert). `linear_regression()` nimmt dagegen wie `lm()` die **erste** Kategorie („niedrig"). Die Koeffizienten beider Funktionen lassen sich deshalb nicht direkt nebeneinanderlegen; die Randmittel sind von der Referenzwahl unabhängig.
+:::
 
 ## Logistische Regression {#sec-logistic}
 
@@ -638,7 +665,7 @@ tibble(
        caption = "Wahrscheinlichkeits-Zuwachs = 15 Prozentpunkte (= 60 % relativ) — nicht 100 %.")
 ```
 
-**Lesart.** Der rote Anteil ist die *Wahrscheinlichkeit* — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein *Wahrscheinlichkeits-Zuwachs von 60 %*, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozent" sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus (`predict(modell, type = "response")`) als OR zu paraphrasieren.
+**Lesart.** Der rote Anteil ist die *Wahrscheinlichkeit* — und sie steigt von 25 % bei Männern auf 40 % bei Frauen. Das ist ein *Wahrscheinlichkeits-Zuwachs von 60 %*, obwohl die Odds sich verdoppeln. Wenn du in deiner Diskussion vom „Faktor X erhöht die Wahrscheinlichkeit um Y Prozentpunkte" sprechen willst, rechne lieber konkrete Wahrscheinlichkeiten aus, als OR zu paraphrasieren — mit `predict(modell, type = "response")` oder, für den mittleren Effekt jedes Prädiktors, mit `marginal_effects()` (siehe unten).
 :::
 
 Wir konstruieren für unsere Mini-Studie eine Dummy-Variable: „hohe Islamfeindlichkeit" (Skalenwert ≥ 4).
@@ -664,6 +691,7 @@ modell_log
 
 **Lesart.** Die Kurzfassung zeigt:
 
+- **`[P(islam_hoch = 1)]`** im Titel — *welche* Wahrscheinlichkeit modelliert wird: die für den Wert 1, also hohe Islamfeindlichkeit.
 - **Nagelkerke R²** — Pseudo-R², grob mit dem R² einer linearen Regression vergleichbar.
 - **χ² des Modells** — Likelihood-Ratio-Test gegen das Null-Modell.
 - **Accuracy** — Anteil korrekt klassifizierter Fälle.
@@ -674,7 +702,7 @@ Die volle Tabelle mit Koeffizienten, **Odds Ratios** und Konfidenzintervallen wi
 summary(modell_log)
 ```
 
-Odds Ratios > 1 erhöhen, < 1 verringern die Wahrscheinlichkeit des Outcomes.
+**Lesart.** Die Tabelle *Variables in the Equation* ist das Herzstück; die Odds Ratios stehen in der Spalte `Exp(B)`. Odds Ratios > 1 erhöhen, < 1 verringern die Chance auf das Outcome. Hohe Bildung drittelt die Chance auf hohe Islamfeindlichkeit gegenüber niedriger Bildung (OR = 0.34), Befragte aus den neuen Bundesländern haben eine fast doppelt so hohe Chance (OR = 1.89), und jedes Lebensjahr erhöht die Chance um knapp 3 % (OR = 1.028). Mittlere und niedrige Bildung unterscheiden sich wie in der linearen Regression nicht (*p* = .86). Ganz oben dokumentiert *Dependent Variable Encoding*, wie die abhängige Variable intern codiert ist — wichtig, wenn dein Outcome nicht als 0/1 vorliegt: `logistic_regression()` akzeptiert jede Variable mit genau zwei Werten (etwa 1/2-Codes, labelled, Faktor oder logisch) und modelliert — wie SPSS — die Wahrscheinlichkeit des höheren Werts (bei Faktoren: der zweiten Stufe, bei logischen Variablen: `TRUE`).
 
 ::: {.callout-note}
 **Hintergrund: Accuracy ist nur eine Klassifikationskennzahl.** Accuracy = (richtig positiv + richtig negativ) / Gesamt — beantwortet aber nicht, *wo* das Modell scheitert. Bei unausgewogenen Klassen (z. B. 90 % „niedrig", 10 % „hoch") kann ein Modell, das alles als „niedrig" vorhersagt, schon eine Accuracy von 90 % erreichen, ohne einen einzigen „hoch"-Fall zu erkennen. Zwei ergänzende Maße sind:
@@ -682,8 +710,24 @@ Odds Ratios > 1 erhöhen, < 1 verringern die Wahrscheinlichkeit des Outcomes.
 - **Sensitivity** (Recall) — Anteil der wirklichen „hoch"-Fälle, die korrekt erkannt wurden.
 - **Specificity** — Anteil der wirklichen „niedrig"-Fälle, die korrekt erkannt wurden.
 
-Aus den Vorhersagen `predict(modell_log, type = "response")` baust du sie dir bei Bedarf manuell oder mit dem Paket `caret`.
+Beide stehen schon in der *Classification Table* von `summary()`: Die Spalte `% Correct` der Zeile `1` ist die Sensitivity (hier 67.4 %), die der Zeile `0` die Specificity (69.3 %). Unser Modell erkennt beide Gruppen also etwa gleich gut.
 :::
+
+### Odds Ratios in Wahrscheinlichkeiten übersetzen: `marginal_effects()`
+
+Odds Ratios sind schwer zu kommunizieren (siehe die Vorsicht-Box oben). Wer sagen will, *um wie viele Prozentpunkte* sich die Wahrscheinlichkeit ändert, braucht **durchschnittliche marginale Effekte** (*average marginal effects*, AME). Ein AME ist die mittlere Veränderung der vorhergesagten Wahrscheinlichkeit — bei einem Faktor gegenüber der Referenzkategorie, bei einer metrischen Variable pro Einheit. In Stata heißt das `margins, dydx(*)`; mariposa rechnet es mit `marginal_effects()` direkt aus dem Modell:
+
+```{r logreg-ame}
+modell_log |> marginal_effects()
+```
+
+**Lesart.** Jetzt sprechen die Zahlen die Sprache der Wahrscheinlichkeit:
+
+- **Hohe vs. niedrige Bildung:** −0.25 — hohe Bildung senkt die Wahrscheinlichkeit hoher Islamfeindlichkeit im Mittel um 25 Prozentpunkte.
+- **Neue vs. alte Bundesländer:** +0.13 — im Osten liegt sie um 13 Prozentpunkte höher.
+- **Alter:** +0.006 pro Jahr — zehn Lebensjahre bringen also rund 6 Prozentpunkte.
+
+Genau diese Sätze lassen sich in einer Hausarbeit ohne Fehlinterpretation schreiben — anders als Aussagen über Odds („hohe Bildung drittelt die Chance"), die viele Leser:innen unwillkürlich als Wahrscheinlichkeiten lesen. Standardfehler, *z*-Werte und Konfidenzintervalle der AMEs (per Delta-Methode) zeigt `summary()`. Für ein *lineares* Modell brauchst du `marginal_effects()` nicht: Dort *ist* der Koeffizient B schon der marginale Effekt.
 
 ### Die Sigmoid-Kurve mit echten Daten
 
@@ -810,23 +854,25 @@ allbus |>
 :::
 
 ::: {.callout-note title="Übung 2 · Multikollinearität prüfen · Reproduktion"}
-Rechne den VIF für den Prädiktor **`age`** händisch nach dem 3-Schritt-Muster aus @sec-vif (Hilfsregression → R² → 1 / (1 − R²)). Liegt der VIF unter der Warngrenze 5? Und: wie sähe die Hilfsformel aus, um den VIF von `eastwest` zu rechnen — du musst sie nicht durchrechnen, nur hinschreiben?
+Rechne den VIF für den Prädiktor **`age`** händisch nach dem 3-Schritt-Muster aus @sec-vif (Hilfsregression → R² → 1 / (1 − R²)). Liegt der VIF unter der Warngrenze 5, und stimmt er mit dem Wert in `summary(modell)` überein? Und: wie sähe die Hilfsformel aus, um den VIF von `eastwest` zu rechnen — du musst sie nicht durchrechnen, nur hinschreiben?
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex2-kap9-loesung, eval=FALSE}
 # Schritt 1: Hilfsregression — age durch alle anderen Praediktoren erklaeren
+# (auf demselben Fall-Set wie das Hauptmodell: allbus_modell)
 hilfs_age <- lm(age ~ populismus + educ_kat + eastwest + sex,
-                data = allbus, weights = wghtpew)
+                data = allbus_modell, weights = wghtpew)
 
 # Schritt 2: R² ablesen
 r2_age <- summary(hilfs_age)$r.squared
 
-# Schritt 3: VIF-Formel
+# Schritt 3: VIF-Formel — ergibt ca. 1.14, wie in summary(modell)
 1 / (1 - r2_age)
 
 # Hilfsformel fuer den VIF von eastwest (nicht ausgerechnet):
 # eastwest ~ populismus + educ_kat + age + sex
+# (zum Rechnen eastwest als 0/1-Dummy einsetzen, weil lm() keinen Faktor als AV nimmt)
 ```
 :::
 
@@ -853,7 +899,7 @@ Wähle eine eigene abhängige Variable (z. B. Demokratiezufriedenheit, Lebenszuf
 :::
 
 ::: {.callout-note}
-**Forschungsjournal: Stand deiner Mini-Studie — abgeschlossen.** Du hast den vollen Bogen geschafft: Datenimport (@sec-datenimport) → Skalenbildung (@sec-datentransformation) → Visualisierung (@sec-grafiken-basics) → bivariate Tests (@sec-univbivar) → Strukturvalidierung (@sec-latente) → multivariate Modellierung (hier). Du weißt jetzt, dass Populismus mit Beta ≈ 0.33 der stärkste Prädiktor von Islamfeindlichkeit ist, dass Bildung negativ wirkt und dass Ost-West-Unterschiede selbst nach Kontrolle sozialstruktureller Variablen bestehen bleiben.
+**Forschungsjournal: Stand deiner Mini-Studie — abgeschlossen.** Du hast den vollen Bogen geschafft: Datenimport (@sec-datenimport) → Skalenbildung (@sec-datentransformation) → Visualisierung (@sec-grafiken-basics) → bivariate Tests (@sec-univbivar) → Strukturvalidierung (@sec-latente) → multivariate Modellierung (hier). Du weißt jetzt, dass Populismus mit Beta ≈ 0.32 der stärkste Prädiktor von Islamfeindlichkeit ist, dass vor allem *hohe* Bildung negativ wirkt, dass der Bildungseffekt in Ost und West ähnlich ausfällt und dass Ost-West-Unterschiede selbst nach Kontrolle sozialstruktureller Variablen bestehen bleiben.
 
 Was als Nächstes kommt: Übertrage den Ansatz auf eine eigene Frage. Wenn du die Mini-Forschungsfrage-Übungen in den vorigen Kapiteln in einer eigenen Spur verfolgt hast, hast du nun ein komplettes Mini-Projekt zur Hand — vom Codebook über die Skala bis zur Coefficient-Plot-Grafik.
 :::
@@ -864,10 +910,10 @@ Was als Nächstes kommt: Übertrage den Ansatz auf eine eigene Frage. Wenn du di
 - Du verstehst die **OLS-Logik** („kleinste Quadrate") als Gummizug-Bild und kennst die Formel für $\hat{\beta}$ als standardisierte Kovarianz.
 - Du rechnest eine **multiple lineare Regression** mit `linear_regression()` und interpretierst Beta-Koeffizienten, R², adjustiertes R² und Modell-F.
 - Du vergleichst Modelle mit `anova()` — mariposa-Modelle erben seit 0.6.3 direkt von `lm`, alle Standard-R-Funktionen dispatchen ohne `$model`-Extraktion.
-- Du prüfst **Multikollinearität** mit VIF und Tolerance, kennst die Formel $\text{VIF}_i = 1 / (1 - R^2_i)$ und die Faustregel VIF > 10.
+- Du prüfst **Multikollinearität** mit VIF und Tolerance, kennst die Formel $\text{VIF}_i = 1 / (1 - R^2_i)$ und die Faustregel VIF > 10 — und findest beide Werte in der Tabelle *Collinearity Statistics* von `summary()`.
 - Du baust die **vier Residuen-Standardplots** händisch mit `broom::augment()` + ggplot2 + patchwork und ersetzt damit das schmucklose `plot(modell)`.
-- Du rechnest mehrfaktorielle **ANOVA** (`factorial_anova()`) und **ANCOVA** (`ancova()`) und visualisierst Interaktionen mit eigenen Linienplots.
-- Du rechnest eine **logistische Regression** mit `logistic_regression()`, liest Odds Ratios und kennst Accuracy, Sensitivity und Specificity als ergänzende Klassifikationsmaße.
+- Du rechnest mehrfaktorielle **ANOVA** (`factorial_anova()`) und **ANCOVA** (`ancova()`), liest geschätzte Randmittel und visualisierst Interaktionen mit eigenen Linienplots.
+- Du rechnest eine **logistische Regression** mit `logistic_regression()`, liest Odds Ratios, übersetzt sie mit `marginal_effects()` in Prozentpunkte und kennst Accuracy, Sensitivity und Specificity als ergänzende Klassifikationsmaße.
 - Du visualisierst Regressionsergebnisse als **Coefficient-Plot** mit `broom::tidy()` + `geom_pointrange()`.
 - Du fasst mehrere Plots mit `patchwork` zu Kompositionen zusammen und exportierst mit `ggsave()`.
 
@@ -893,6 +939,8 @@ Damit hast du den gesamten Werkzeugkasten dieses Buchs zusammen: SPSS-Daten → 
 | **Cook's Distance**   | Gesamteinfluss eines einzelnen Falls auf das Modell; Werte > 1 sind echte Verdachtsfälle |
 | **Interaktion**       | Effekt einer Variable hängt vom Wert einer anderen ab                                    |
 | **Odds Ratio (OR)**   | $\exp(\text{Logit-Koeffizient})$ — Faktor, um den sich die Chance ändert                 |
+| **AME**               | *Average Marginal Effect* — mittlere Änderung der vorhergesagten Wahrscheinlichkeit (in Prozentpunkten) |
+| **Randmittel**        | Gruppenmittelwert, bereinigt um Kovariaten (*Estimated Marginal Means* der ANCOVA)       |
 | **Pseudo-R² (Nagelkerke)** | R²-Analog für logistische Regression; nicht direkt mit linearem R² vergleichbar     |
 | **Accuracy**          | Anteil korrekt klassifizierter Fälle; bei unausgewogenen Klassen irreführend             |
 
