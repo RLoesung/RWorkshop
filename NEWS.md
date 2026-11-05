@@ -49,6 +49,7 @@ Das Buch ist auf **mariposa 0.7.4** umgestellt, die erste Version auf CRAN. Alle
 
 ### Projekt
 
+- Der ALLBUS-Datensatz liegt nicht mehr im Repository. Wer das Buch selbst rendert, lädt `ALLBUS2023.sav` bei GESIS herunter (ZA8901). `.gitignore` schließt `.sav`- und `.dta`-Dateien künftig aus.
 - `README.md` neu geschrieben, `NEWS.md` angelegt.
 - `STUDIE.md` auf die 9-Kapitel-Fassung und die tatsächlichen Befunde gebracht. `STYLE.md` und `MIGRATION.md` beschreiben den aktuellen Stand.
 - Aufgeräumt:

@@ -39,7 +39,7 @@ Jedes Kapitel folgt dem Dreischritt **Frage → Code → Lesart** und endet mit 
   ```
 
   Das Buch ist auf **mariposa ≥ 0.7.4** abgestimmt. Ältere Versionen liefern an einigen Stellen andere Ausgaben oder brechen ab.
-- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Bezug über den [GESIS-Datenbestandskatalog, Studiennummer ZA8901](https://search.gesis.org/research_data/ZA8901). Dafür brauchst du einen kostenlosen GESIS-Account.
+- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Er liegt **nicht** im Repository, denn wir geben die Daten nicht weiter. Du lädst sie selbst aus dem [GESIS-Datenbestandskatalog, Studiennummer ZA8901](https://search.gesis.org/research_data/ZA8901) herunter. Dafür brauchst du einen kostenlosen GESIS-Account. `.gitignore` schließt `.sav`- und `.dta`-Dateien aus, damit sie nicht versehentlich committet werden.
 
 **Rendern**
 
@@ -63,6 +63,7 @@ Die Online-Fassung liefert GitHub Pages direkt aus `docs/` auf `main` aus. Nach 
 ├── Bilder/                   Screenshots für Kap. 1
 ├── _quarto.yml               Buch-Konfiguration
 ├── theme.scss                Theme-Anpassungen (auf Basis von cosmo)
+├── ALLBUS2023.sav            Datensatz — nicht im Repo, selbst bei GESIS laden
 ├── _freeze/                  eingefrorene Rechenergebnisse (versioniert)
 ├── docs/                     gerendertes Buch für GitHub Pages (versioniert)
 ├── STYLE.md                  Stil- und Didaktik-Leitfaden
