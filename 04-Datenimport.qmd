@@ -303,7 +303,8 @@ Wenn du nur Labels *abstreifen* willst (z. B. weil eine Funktion mit labelled-Ve
 | `var_label(data) <- list(var = "Neue Beschriftung")`| Variablenlabels mehrerer Spalten auf einmal setzen                   |
 | `val_labels(data)`                                  | Wertelabels auslesen                                                 |
 | `data <- val_labels(data, var = c("value label 1" = 1, "value label 2" = 2))` | Wertelabel setzen |
-| `drop_labels(data)`                                 | Alle Wertelabels entfernen, deren Ausprägung in den Daten gar nicht vorkommt |
+| `data <- val_labels(data, var = c("value label 1" = 1), .add = TRUE)` | Einzelne Wertelabels ändern oder ergänzen, die übrigen behalten |
+| `drop_labels(data)`                                | Alle Wertelabels entfernen, deren Ausprägung in den Daten gar nicht vorkommt |
 
 ```{r labels-read}
 allbus |>
@@ -320,6 +321,22 @@ var_label(allbus$islamophobie) <- "Islamfeindlichkeits-Skala (6 Items, 1–7)"
 ```
 
 Dieses Label erscheint später automatisch in `codebook()`, in der Kopfzeile von `frequency()` und in vielen `summary()`-Ausgaben — überall, wo mariposa Beschriftungen sucht. Für mehrere Variablen auf einmal übergibst du eine Liste: `var_label(allbus) <- list(islamophobie = "…", populismus = "…")`.
+
+**Wertelabels setzen.** Für Wertelabels gibt es keinen Zuweisungspfeil auf die Spalte. `val_labels()` bekommt Paare aus Variable und benanntem Vektor (`"Label" = Code`) und gibt den geänderten Datensatz zurück, den du wieder abspeicherst. Typischer Fall: Ein selbst gebauter 0/1-Dummy wie `islam_hoch` in @sec-erklaerung soll in `frequency()` und `crosstab()` lesbare Ausprägungen zeigen statt nackter Nullen und Einsen:
+
+```{r val-labels-set, eval=FALSE}
+allbus <- val_labels(allbus, islam_hoch = c("niedrig" = 0, "hoch" = 1))
+```
+
+::: {.callout-warning}
+**Vorsicht: `val_labels()` ersetzt.** Standardmäßig wirft `val_labels()` *alle* bisherigen Wertelabels der Variable weg. Bei einer frisch gebauten Variable ist das egal. Bei einer ALLBUS-Variable verschwinden damit aber auch die Labels der Missing-Codes: Nach `val_labels(allbus, mm01 = c("stimme gar nicht zu" = 1, "stimme voll zu" = 7))` steht in `frequency(mm01)` vor `-11` kein `TNZ: SPLIT` mehr. Willst du nur einzelne Labels ändern oder ergänzen, setzt du `.add = TRUE`. Dann bleiben alle übrigen Labels erhalten:
+
+```{r val-labels-add, eval=FALSE}
+allbus <- val_labels(allbus, mm01 = c("stimme gar nicht zu" = 1, "stimme voll zu" = 7), .add = TRUE)
+```
+
+Mit `val_labels(allbus, mm01 = NULL)` entfernst du die Wertelabels einer Variable komplett.
+:::
 
 ## Fehlende Werte deklarieren
 

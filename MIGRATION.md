@@ -42,6 +42,7 @@ allbus <- read_spss("ALLBUS2023.sav")
 | `sjlabelled::get_label(x)` | `var_label(data)` |
 | `sjlabelled::set_label(x) <- "…"` | `var_label(data$var) <- "…"` bzw. `var_label(data) <- list(var = "…")` (Setter seit 0.7.4) |
 | `sjlabelled::get_labels(x)` | `val_labels(data)` |
+| `sjlabelled::set_labels(x, labels = c("…" = 1))` | `data <- val_labels(data, var = c("…" = 1))` (ersetzt alle Wertelabels inkl. Missing-Labels; `.add = TRUE` ergänzt nur) |
 | `sjlabelled::set_na(x, na = c(-9, -42))` | `set_na(data, var = c(-9, -42))` (benannte Paare; unbenannte Werte gelten für alle numerischen Spalten) |
 | `sjlabelled::drop_labels(x)` | `drop_labels(data)` |
 | `sjlabelled::copy_labels(x, y)` | `copy_labels(data, source)` |
