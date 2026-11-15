@@ -2,6 +2,24 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 15. November 2026 — Texte an die Ausgabe angeglichen
+
+Beim Abgleich mit R 4.5.3 und mariposa 0.7.4 sind Stellen aufgefallen, an denen der Text nicht mehr zur Ausgabe passte.
+
+### Behoben
+
+- **Kap. 4:**
+  - `allbus$sex |> head(5)` wird jetzt ausgeführt statt mit einer veralteten Ausgabe im Kommentar gezeigt.
+  - Der ALLBUS 2023 hat nicht vier, sondern 17 Missing-Codes. Die Tabelle zeigt jetzt die vier Codes der `mm`-Items, weitere Codes werden genannt.
+  - Die `relocate()`-Beispiele laufen jetzt in Kap. 4: Die Skalen gibt es dort noch nicht, und die ID-Variable heißt `respid`.
+- **Kap. 5:**
+  - `rec()`: Tagged NAs behalten ihren Missing-Typ nur, wenn keine `else=`- oder `NA=`-Regel sie erfasst. Mit `else=NA` werden sie zu einfachen `NA`.
+  - `row_means()` bildet eine ungewichtete Mittelwert-Skala; „gewichtet" ist aus Lernziel und Rückblick gestrichen.
+  - „Vier Verben" passte nicht zur Tabelle mit sieben Funktionen.
+- **Kap. 7:**
+  - Die Subgruppen-Tabelle (und Lösung 2) zählt mit `n = sum(!is.na(islamophobie))` nur Befragte mit Skalenwert, nicht mehr alle Befragten der Gruppe.
+  - Die Chunks der Übungslösungen heißen jetzt `ex*-kap7-loesung`.
+
 ## November 2026 — mariposa 0.7.4
 
 Das Buch ist auf **mariposa 0.7.4** umgestellt, die erste Version auf CRAN. Alle Kapitel wurden gegen 0.7.4 neu gerechnet, und jede Zahl in den Lesart-Texten wurde gegen die echte Ausgabe geprüft.

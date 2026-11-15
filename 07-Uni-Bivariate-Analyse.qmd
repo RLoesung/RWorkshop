@@ -315,13 +315,15 @@ Direkt auf den Datensatz angewendet, druckt `w_mean()` eine kleine Tabelle mit M
 allbus |>
   filter(!is.na(eastwest)) |>
   summarise(
-    n          = n(),
+    n          = sum(!is.na(islamophobie)),
     mittelwert = w_mean(islamophobie, weights = wghtpew),
     sd         = w_sd(islamophobie, weights = wghtpew),
     se         = w_se(islamophobie, weights = wghtpew),
     .by        = eastwest
   )
 ```
+
+`n` zählt hier nur die Befragten, die einen Skalenwert haben und deshalb in den Mittelwert eingehen. Ein schlichtes `n()` würde alle Befragten der Region zählen (3.567 im Westen, 1.679 im Osten), auch die vielen ohne Skalenwert, etwa wegen des Split-Moduls. Beachte außerdem: `n` ist eine ungewichtete Fallzahl. `t_test()` und `describe()` berichten mit `weights =` die Summe der Gewichte, die wegen der Ost-Überrepräsentation anders ausfällt.
 
 Das ist die R-Variante zum SPSS-`AGGREGATE` mit `WEIGHT BY` — alles in *einem* Block, in einem Pipe-Fluss.
 
@@ -746,7 +748,7 @@ Erzeuge eine Häufigkeitstabelle für `ps03` („Zufrieden mit Demokratie in Deu
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
-```{r ex1-kap5-loesung, eval=FALSE}
+```{r ex1-kap7-loesung, eval=FALSE}
 allbus |> frequency(ps03, weights = wghtpew)
 allbus |> describe(ps03, weights = wghtpew,
                    show = c("mean", "median", "sd", "skew", "kurtosis"))
@@ -761,11 +763,11 @@ Berechne den gewichteten Mittelwert der Islamfeindlichkeit getrennt für Männer
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
-```{r ex2-kap5-loesung, eval=FALSE}
+```{r ex2-kap7-loesung, eval=FALSE}
 allbus |>
   filter(!is.na(sex)) |>
   summarise(
-    n  = n(),
+    n  = sum(!is.na(islamophobie)),
     mw = w_mean(islamophobie, weights = wghtpew),
     sd = w_sd(islamophobie, weights = wghtpew),
     se = w_se(islamophobie, weights = wghtpew),
@@ -779,7 +781,7 @@ Berechne die gewichtete Korrelation zwischen Islamfeindlichkeit und (a) Lebenszu
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
-```{r ex3-kap5-loesung, eval=FALSE}
+```{r ex3-kap7-loesung, eval=FALSE}
 allbus |> pearson_cor(islamophobie, ls01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, st01, weights = wghtpew)
 allbus |> pearson_cor(islamophobie, ps03, weights = wghtpew)
@@ -791,7 +793,7 @@ Rechne die ANOVA zu Islamfeindlichkeit × Bildungsgruppe noch einmal und führe 
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
-```{r ex4-kap5-loesung, eval=FALSE}
+```{r ex4-kap7-loesung, eval=FALSE}
 allbus |>
   oneway_anova(islamophobie, group = educ_kat, weights = wghtpew) |>
   tukey_test() |>

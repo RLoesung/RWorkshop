@@ -55,13 +55,13 @@ Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlic
 - Variablen standardisieren (`std()`) und zentrieren (`center()`).
 - Zwei Datensätze mit `left_join()` zusammenführen — etwa Individualdaten und Kontextdaten.
 - Datensätze zwischen **Wide-** und **Long-Format** umformen mit `pivot_longer()` und `pivot_wider()`.
-- Aus mehreren Items eine **gewichtete Mittelwert-Skala** mit `row_means()` und kontrolliertem `min_valid` bilden.
+- Aus mehreren Items eine **Mittelwert-Skala** mit `row_means()` und kontrolliertem `min_valid` bilden.
 - Skalen unterschiedlicher Bandbreite mit `pomps()` auf eine gemeinsame 0–100-Skala bringen.
 - Die vollständige Datenpräp-Pipeline der Mini-Studie nachvollziehen und auf eigene Konstrukte übertragen.
 
 ## Daten transformieren
 
-Vier Verben aus `dplyr` decken den Großteil aller Datentransformationen ab:
+Eine Handvoll Funktionen aus `dplyr` deckt den Großteil aller Datentransformationen ab:
 
 | Funktion                       | Wirkung                                                |
 | ------------------------------ | ------------------------------------------------------ |
@@ -233,7 +233,7 @@ Die Regel-Syntax im Überblick:
 | `"mean"`            | Dichotomisieren am Mittelwert           | `rules = "mean"`                        |
 | `"quart"`           | In vier Quartilgruppen aufteilen        | `rules = "quart"`                       |
 
-Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die *keine* Regel passt, werden `NA` — mariposa warnt dich dann und nennt die betroffenen Werte. Mit `else=copy` behältst du sie, mit `else=NA` bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ.
+Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die *keine* Regel passt, werden `NA` — mariposa warnt dich dann und nennt die betroffenen Werte. Mit `else=copy` behältst du sie, mit `else=NA` bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ — außer eine `NA=`- oder `else=`-Regel erfasst sie. `else=NA` macht deshalb auch aus „keine Angabe" oder „nicht bestimmbar" ein einfaches `NA`, und die Unterscheidung der Missing-Typen ist weg. Willst du sie behalten, nennst du die zu verwerfenden Codes ausdrücklich (etwa `6:7=NA`) und lässt die `else`-Regel weg oder schreibst `else=copy`.
 
 ### Beispiel: Bildung kategorisieren
 
@@ -244,7 +244,7 @@ allbus |>
   count(educ)
 ```
 
-Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.
+Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch. Die 153 `NA` setzen sich aus den 44 Befragten mit Code 6 oder 7 und den 109 Missings aus dem Import zusammen (DATENFEHLER, NICHT BESTIMMBAR, KEINE ANGABE) — im Ergebnis sind alle 153 einfache `NA`.
 
 ### Spezial-Modi: Dichotomisieren und Quartile
 
@@ -752,7 +752,7 @@ Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (D
 - Du standardisierst und zentrierst Variablen mit `std()` und `center()`.
 - Du verbindest Datensätze per Schlüssel mit `left_join()` (und kennst die Join-Familie).
 - Du formst Daten zwischen Wide- und Long-Format mit `pivot_longer()` und `pivot_wider()` um.
-- Du baust gewichtete Mittelwert-Skalen mit `row_means()` und kontrolliertem `min_valid`.
+- Du baust Mittelwert-Skalen mit `row_means()` und kontrolliertem `min_valid`.
 - Du prüfst Antwort-Stile und Datenqualität mit `row_count()`.
 - Du machst Skalen unterschiedlicher Bandbreite mit `pomps()` direkt vergleichbar.
 - Du kennst die vollständige Datenpräp-Pipeline für die Mini-Studie — sie ist in `R/prep.R` gekapselt und wird in den folgenden Kapiteln per `source()` eingebunden.

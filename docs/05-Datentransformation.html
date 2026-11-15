@@ -362,14 +362,14 @@ Hinweis
 <li>Variablen standardisieren (<code>std()</code>) und zentrieren (<code>center()</code>).</li>
 <li>Zwei Datensätze mit <code>left_join()</code> zusammenführen — etwa Individualdaten und Kontextdaten.</li>
 <li>Datensätze zwischen <strong>Wide-</strong> und <strong>Long-Format</strong> umformen mit <code>pivot_longer()</code> und <code>pivot_wider()</code>.</li>
-<li>Aus mehreren Items eine <strong>gewichtete Mittelwert-Skala</strong> mit <code>row_means()</code> und kontrolliertem <code>min_valid</code> bilden.</li>
+<li>Aus mehreren Items eine <strong>Mittelwert-Skala</strong> mit <code>row_means()</code> und kontrolliertem <code>min_valid</code> bilden.</li>
 <li>Skalen unterschiedlicher Bandbreite mit <code>pomps()</code> auf eine gemeinsame 0–100-Skala bringen.</li>
 <li>Die vollständige Datenpräp-Pipeline der Mini-Studie nachvollziehen und auf eigene Konstrukte übertragen.</li>
 </ul>
 </section>
 <section id="daten-transformieren" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="daten-transformieren"><span class="header-section-number">5.2</span> Daten transformieren</h2>
-<p>Vier Verben aus <code>dplyr</code> decken den Großteil aller Datentransformationen ab:</p>
+<p>Eine Handvoll Funktionen aus <code>dplyr</code> deckt den Großteil aller Datentransformationen ab:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 35%">
@@ -710,7 +710,7 @@ Tipp
 </tr>
 </tbody>
 </table>
-<p>Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die <em>keine</em> Regel passt, werden <code>NA</code> — mariposa warnt dich dann und nennt die betroffenen Werte. Mit <code>else=copy</code> behältst du sie, mit <code>else=NA</code> bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ.</p>
+<p>Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die <em>keine</em> Regel passt, werden <code>NA</code> — mariposa warnt dich dann und nennt die betroffenen Werte. Mit <code>else=copy</code> behältst du sie, mit <code>else=NA</code> bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ — außer eine <code>NA=</code>- oder <code>else=</code>-Regel erfasst sie. <code>else=NA</code> macht deshalb auch aus „keine Angabe” oder „nicht bestimmbar” ein einfaches <code>NA</code>, und die Unterscheidung der Missing-Typen ist weg. Willst du sie behalten, nennst du die zu verwerfenden Codes ausdrücklich (etwa <code>6:7=NA</code>) und lässt die <code>else</code>-Regel weg oder schreibst <code>else=copy</code>.</p>
 <section id="beispiel-bildung-kategorisieren" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="beispiel-bildung-kategorisieren"><span class="header-section-number">5.3.1</span> Beispiel: Bildung kategorisieren</h3>
 <div class="cell" data-layout-align="center">
@@ -728,7 +728,7 @@ Tipp
 4 &lt;NA&gt;      153</code></pre>
 </div>
 </div>
-<p>Mit <code>as_factor = TRUE</code> wird die rekodierte Variable direkt ein Faktor; die <code>[…]</code>-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch.</p>
+<p>Mit <code>as_factor = TRUE</code> wird die rekodierte Variable direkt ein Faktor; die <code>[…]</code>-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch. Die 153 <code>NA</code> setzen sich aus den 44 Befragten mit Code 6 oder 7 und den 109 Missings aus dem Import zusammen (DATENFEHLER, NICHT BESTIMMBAR, KEINE ANGABE) — im Ergebnis sind alle 153 einfache <code>NA</code>.</p>
 </section>
 <section id="spezial-modi-dichotomisieren-und-quartile" class="level3" data-number="5.3.2">
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="spezial-modi-dichotomisieren-und-quartile"><span class="header-section-number">5.3.2</span> Spezial-Modi: Dichotomisieren und Quartile</h3>
@@ -1679,7 +1679,7 @@ Hinweis
 <li>Du standardisierst und zentrierst Variablen mit <code>std()</code> und <code>center()</code>.</li>
 <li>Du verbindest Datensätze per Schlüssel mit <code>left_join()</code> (und kennst die Join-Familie).</li>
 <li>Du formst Daten zwischen Wide- und Long-Format mit <code>pivot_longer()</code> und <code>pivot_wider()</code> um.</li>
-<li>Du baust gewichtete Mittelwert-Skalen mit <code>row_means()</code> und kontrolliertem <code>min_valid</code>.</li>
+<li>Du baust Mittelwert-Skalen mit <code>row_means()</code> und kontrolliertem <code>min_valid</code>.</li>
 <li>Du prüfst Antwort-Stile und Datenqualität mit <code>row_count()</code>.</li>
 <li>Du machst Skalen unterschiedlicher Bandbreite mit <code>pomps()</code> direkt vergleichbar.</li>
 <li>Du kennst die vollständige Datenpräp-Pipeline für die Mini-Studie — sie ist in <code>R/prep.R</code> gekapselt und wird in den folgenden Kapiteln per <code>source()</code> eingebunden.</li>

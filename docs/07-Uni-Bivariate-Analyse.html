@@ -909,7 +909,7 @@ Weights: wghtpew
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">eastwest</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
-<span>    n          <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    n          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    mittelwert <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
 <span>    sd         <span class="op">=</span> <span class="fu">w_sd</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
 <span>    se         <span class="op">=</span> <span class="fu">w_se</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
@@ -919,10 +919,11 @@ Weights: wghtpew
 <pre><code># A tibble: 2 × 5
   eastwest               n mittelwert    sd     se
   &lt;fct&gt;              &lt;int&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1 ALTE BUNDESLAENDER  3567       3.90  1.47 0.0279
-2 NEUE BUNDESLAENDER  1679       4.55  1.61 0.0680</code></pre>
+1 ALTE BUNDESLAENDER  2256       3.90  1.47 0.0279
+2 NEUE BUNDESLAENDER  1089       4.55  1.61 0.0680</code></pre>
 </div>
 </div>
+<p><code>n</code> zählt hier nur die Befragten, die einen Skalenwert haben und deshalb in den Mittelwert eingehen. Ein schlichtes <code>n()</code> würde alle Befragten der Region zählen (3.567 im Westen, 1.679 im Osten), auch die vielen ohne Skalenwert, etwa wegen des Split-Moduls. Beachte außerdem: <code>n</code> ist eine ungewichtete Fallzahl. <code>t_test()</code> und <code>describe()</code> berichten mit <code>weights =</code> die Summe der Gewichte, die wegen der Ost-Überrepräsentation anders ausfällt.</p>
 <p>Das ist die R-Variante zum SPSS-<code>AGGREGATE</code> mit <code>WEIGHT BY</code> — alles in <em>einem</em> Block, in einem Pipe-Fluss.</p>
 </section><section id="häufigkeits-tests-mit-binomial_test-und-chisq_gof" class="level3" data-number="7.4.4"><h3 data-number="7.4.4" class="anchored" data-anchor-id="häufigkeits-tests-mit-binomial_test-und-chisq_gof">
 <span class="header-section-number">7.4.4</span> Häufigkeits-Tests mit <code>binomial_test()</code> und <code>chisq_gof()</code>
@@ -1891,7 +1892,7 @@ Warnung
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">summarise</span><span class="op">(</span></span>
-<span>    n  <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    n  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">islamophobie</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    mw <span class="op">=</span> <span class="fu">w_mean</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
 <span>    sd <span class="op">=</span> <span class="fu">w_sd</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
 <span>    se <span class="op">=</span> <span class="fu">w_se</span><span class="op">(</span><span class="va">islamophobie</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span>,</span>
