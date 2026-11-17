@@ -72,6 +72,9 @@ Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`.
 **mariposa-Tipp** (`.callout-important` oder eigener Style)
 > Wo mariposa eine besonders elegante Abkürzung bietet. Z. B. dass `pearson_cor()` Korrelations**matrix**, KIs und Sterne in einem Aufruf liefert. Erkennbarkeit schaffen, nicht Marketing.
 
+**Kurz überlegen** (Absatz plus eingeklappter `.callout-tip`)
+> Eine Denkpause an einer Stelle, an der Lernende das Ergebnis selbst vorhersagen können. Ein Absatz beginnt mit **Kurz überlegen.** und stellt eine Frage zu einem *neuen* Fall, den die Abbildung daneben nicht zeigt. Direkt darunter folgt die Auflösung als `::: {.callout-tip title="Auflösung" collapse="true"}` mit Text und Code, ohne Bild. Höchstens eine pro Abschnitt, im ganzen Buch etwa zehn.
+
 **Verbot.** Keine weiteren Callout-Typen ohne Eintrag hier. Wildwuchs vermeiden.
 
 ---
@@ -166,3 +169,9 @@ Statt: *„wie oben/unten/in Kapitel 3.4 …"*.
 ## 11 — Mini-Studie als roter Faden
 
 Der gesamte Daten- und Methodenteil (Kap. 4–9) wird durch **eine** Forschungsfrage aus ALLBUS 2023 getragen. Variablenauswahl, Forschungsfrage und Methoden-Mapping siehe `STUDIE.md`. Andere Beispiele dürfen ergänzend kommen, aber die Mini-Studie ist der Anker, an dem jede Methode mindestens einmal demonstriert wird.
+
+---
+
+## 12 — Abbildungen
+
+Erklärgrafiken in der Bausteine-Bildsprache (Stein = Wert, Turm = Vektor, Bauplatte = Datensatz, Aufkleber = Label) regelt `BILDER.md`: Werkzeug, Aussehen, Einbindung und Liste. Kurz: Die Bilder entstehen mit `python3 figuren/build.py` als SVG in `Bilder/figuren/`, zeigen die Werte des Chunks, neben dem sie stehen, und werden mit `{#fig-… .lightbox fig-alt="…"}` eingebunden und im Text mit `@fig-…` angesprochen.
