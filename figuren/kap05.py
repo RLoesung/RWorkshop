@@ -366,10 +366,11 @@ def pomps_fig():
     text(s, 0.15, yb - 0.14, 1.75, 0.28, mono("populismus", size=10.5, color=pb, align="start"))
     lineal(s, x0, yb, 4 * u, 1, 5)
     marke(s, x0 + (3.4 - 1) * u, yb, "3.4", pb)
+    # Hilfslinien von den Enden beider Lineale zu 0 und 100: 1 → 0 senkrecht, 7 → 100 senkrecht, 5 → 100 schräg
     for xa, y0_, y1_ in [(x0, ya + 0.38, yb - 0.12), (x0, yb + 0.38, yc - 0.12), (x0 + 6 * u, ya + 0.38, yc - 0.12)]:
         connector(s, xa, y0_, xa, y1_, color=CARDLINE, width=1.0, dash=True)
-    connector(s, x0 + 4 * u, yb + 0.38, x0 + 6 * u - 0.05, yc - 0.45, color=CARDLINE, width=1.0, dash=True)
-    label_box(s, 0.15, yb + 0.42, 0.95, 0.3, "pomps()", GREEN, size=10.5)
+    connector(s, x0 + 4 * u, yb + 0.38, x0 + 6 * u, yc - 0.12, color=CARDLINE, width=1.0, dash=True)
+    label_box(s, 0.15, yb + 0.32, 0.95, 0.3, "pomps()", GREEN, size=10.5)
     text(s, 0.15, yc - 0.36, 1.85, 0.28, mono("islamophobie_p", size=10.5, color=ia, align="start"))
     text(s, 0.15, yc - 0.12, 1.85, 0.28, mono("populismus_p", size=10.5, color=pb, align="start"))
     lineal(s, x0, yc, 6 * u, 0, 100, step=25)
