@@ -300,19 +300,21 @@ def missing_codes():
         lstein(s, sx, y, sw, 0.4, "na", "", label, lsize=10)
         text(s, 2.95, y, 0.6, 0.4, mono(n, size=11, align=RT), anchor="middle")
         text(s, 3.75, y, 0.8, 0.4, mono(tag, size=11, color=GRAY, align="start"), anchor="middle")
-    outline(s, 0.05, 0.9 + 0.56 - 0.12, 4.55, 0.58, color=ORANGE, lw=1.75)
+    outline(s, 0.15, 0.9 + 0.56 - 0.12, 4.3, 0.58, color=ORANGE, lw=1.75)
     # rechts: Split-Design, schematisch
     eyebrow(s, 4.95, 0.12, 2.8, "SPLIT-DESIGN", size=10.5)
-    gx, gw, gp, top, h = 4.98, 0.38, 0.45, 0.98, 0.3
+    gx, gw, gp, top, h, gap = 4.98, 0.38, 0.45, 0.98, 0.3, 0.16    # Abstand lässt Platz für den Rahmen
     for j in range(6):
         text(s, gx + j * gp - 0.08, 0.55, gw + 0.16, 0.25, mono(f"mm0{j + 1}", size=10))
-        unten = saeule(s, gx + j * gp, top, gw, h, ["num", "num", "na"], ["", "", ""])
-    platte(s, gx - 0.08, unten + 0.07, 5 * gp + gw + 0.16)
-    outline(s, gx - 0.06, top + 2 * (h + 0.07) - 0.11, 5 * gp + gw + 0.12, h + 0.16, color=ORANGE, lw=1.75)
-    text(s, 4.7, unten + 0.2, 3.05, 0.5, [P(R("zwei Drittel: Fragen gestellt", size=10.5, italic=True, color=GRAY),
-                                           align=C),
-                                         P(R("knapp ein Drittel: TNZ: SPLIT", size=10.5, italic=True,
-                                             color=DARKORANGE), align=C, sb=2)])
+        unten = saeule(s, gx + j * gp, top, gw, h, ["num", "num", "na"], ["", "", ""], gap=gap)
+    platte(s, gx - 0.08, unten + gap, 5 * gp + gw + 0.16)
+    leer = top + 2 * (h + gap)                   # Oberkante der leeren Reihe; Rahmen mittig in den Lücken
+    outline(s, gx - 0.06, leer - 0.11, 5 * gp + gw + 0.12, h + 0.19, color=ORANGE, lw=1.75)
+    unter = unten + gap + 0.13                   # Text unter der Platte
+    text(s, 4.7, unter, 3.05, 0.5, [P(R("zwei Drittel: Fragen gestellt", size=10.5, italic=True, color=GRAY),
+                                     align=C),
+                                   P(R("knapp ein Drittel: TNZ: SPLIT", size=10.5, italic=True,
+                                       color=DARKORANGE), align=C, sb=2)])
     return s
 
 

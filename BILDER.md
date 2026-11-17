@@ -2,6 +2,8 @@
 
 **Zweck.** Dieses Dokument regelt, wie die Erklärgrafiken aus dem Workshop „Reading Week“ (Tag 1 „R-Einstieg“, Tag 2 „Daten und Analyse“, November 2026) ins Buch kommen. Es ist zugleich der Vertrag für alle späteren Abbildungen in dieser Bildsprache, so wie `STYLE.md` den Text und `MIGRATION.md` den Code regelt.
 
+**Status.** Umgesetzt am 17.11.2026: 37 Abbildungen in Kap. 1, 2, 3, 4, 5 und 7. Die Abschnitte 5 und 6 beschreiben den gebauten Stand.
+
 ---
 
 ## 1 — Worum es geht
@@ -69,6 +71,17 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | gelber Aufkleber am Stein | Wertelabel |
 | Code-Bausteine dunkel / grün / orange | Objekt / Funktion / Argument |
 | grüner Kasten mit gestricheltem Feld | Funktion mit ihrem ersten Argument |
+| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`) |
+| leerer Stein mit Aufkleber | fehlender Wert mit Missing-Code und Label |
+| Name und grauer Typ über einem Turm | Spaltenkopf wie in der Ausgabe eines Tibbles, etwa `<dbl+lbl>` |
+| graue Auslassungspunkte | weitere Türme oder Reihen, die nicht gezeigt sind |
+| oranger Rahmen / grüner Rahmen | eine Reihe (ein Fall) / ein Turm (eine Variable, auch ein neuer Turm) |
+| eckige Klammer neben Steinen | eine Gruppe von Werten (`rec()`, `dicho()`, Gewichtung) |
+| orange gestrichelte Linie | Schnittpunkt bei `dicho()` |
+| Lineal mit Pfeilmarken | Wertebereich einer Skala, der Pfeil zeigt einen Mittelwert (`pomps()`) |
+| Zeitleiste mit grünen Nummernpunkten | Schritte einer Auswertung in ihrer Reihenfolge (Pipeline in 5.9) |
+| Breite eines Steins | Gewicht eines Falls (7.2) |
+| grüner Kasten / dunkel umrandeter Kasten / grün gestrichelter Rahmen | Funktion / Paket / Ökosystem (1.6) |
 
 ### 5.3 Werkzeug
 
@@ -78,20 +91,21 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
   - `figuren/build.py` — erzeugt alle SVG-Dateien neu: `python3 figuren/build.py`.
 - Ausgabe: `Bilder/figuren/<kapitel>-<name>.svg`, z. B. `Bilder/figuren/k03-pipe.svg`. Die SVG-Dateien werden committet; zum Rendern des Buchs braucht man Python nicht.
 - Die Bibliothek ist eine eigenständige Kopie im Repository und importiert nichts aus dem Methoden-Ib-Ordner.
+- Prüfen: `python3 -m unittest discover figuren` (Werte und Grenzen jeder Abbildung), `python3 figuren/check_qmd.py` (Einbindung in den Kapiteln) und `python3 figuren/check_sections.py` (keine verschobenen Abschnittsnummern).
 
 ### 5.4 Aussehen
 
 - Farben exakt wie auf den Folien (Palette aus `_build_folien.py` und `_build_folien_s4.py`, in `lego.py` übernommen).
 - Schrift: Das Buch nutzt die Webschrift Source Sans Pro; ein als Bild eingebundenes SVG kann sie nicht nachladen. Beschriftungen bekommen deshalb die Schriftliste `'Source Sans Pro', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif`, Code `Menlo, Consolas, 'DejaVu Sans Mono', monospace`. Keine eingebetteten Schriften. Text bleibt Text, damit er scharf zoomt. *(Entscheidung des Umsetzers)*
 - Größe: Folien sind 13,33 Zoll breit; im Buch wäre so ein Bild winzig. Jede Abbildung wird deshalb für die Textspalte neu angeordnet: höchstens 8 Zoll breit, kleinste Schrift 10 pt. Die Bausteine und ihre Zeichenbefehle bleiben, die Anordnung ändert sich.
-- Handy: Keine zweite Fassung. Jede Abbildung bekommt die Klasse `.lightbox`, damit sie sich per Antippen vergrößert; so ist sie auch bei 375 px Breite lesbar. *(Entscheidung des Umsetzers)*
+- Handy: Keine zweite Fassung, die Breite bleibt bei höchstens 8 Zoll (Entscheidung von Yannick, 17.11.2026). Im Hochformat (375 px) ist eine Abbildung etwa 324 px breit; gut lesbar ist sie dann erst mit Zwei-Finger-Zoom oder im Querformat. Jede Abbildung hat die Klasse `.lightbox` und öffnet sich per Antippen größer.
 - Klickfolgen werden zu nummerierten Schritten nebeneinander oder untereinander (grüne Nummernpunkte wie auf den Folien).
 - Im Bild steht nur, was zum Bild gehört: Namen, Werte, Code, kurze Beschriftungen. Erklärsätze stehen in der Bildunterschrift oder im Text.
 
 ### 5.5 Einbindung ins Buch
 
 - Markdown-Syntax mit Querverweis und Alternativtext:
-  `![Bildunterschrift.](Bilder/figuren/k03-pipe.svg){#fig-pipe fig-alt="…"}`
+  `![Bildunterschrift.](Bilder/figuren/k03-pipe.svg){#fig-pipe .lightbox fig-alt="…"}`
 - Jede Abbildung wird im Fließtext mit `@fig-…` angesprochen und in ein bis zwei Sätzen eingeordnet. Sie begleitet Frage → Code → Lesart (`STYLE.md` §1) und ersetzt keinen Code.
 - Bildunterschriften: ein bis zwei sachliche Sätze im Du-Stil des Buchs.
 - Höchstens eine Abbildung pro Unterabschnitt, außer wenn ein Abschnitt zwei getrennte Konzepte erklärt.
@@ -106,51 +120,52 @@ Die Abbildung bleibt immer sichtbar, sie ist die Erklärung. Die Frage greift de
 ### 5.7 Text im Buch
 
 - Die Bildsprache wird in Kap. 3 einmal eingeführt, als `.callout-note` („Hintergrund“) am Anfang von 3.5 „Objekte und Datentypen“, mit einer kleinen Legende als Abbildung. Keine neue Überschrift.
+- Die ersten Bausteine-Bilder stehen schon in 3.2 und 3.3. Ein Satz in 3.2 sagt, dass ein Wert ein Stein und ein Name ein dunkles Schild ist, und verweist auf 3.5.
 - Danach nutzen Bildunterschriften und Text die Begriffe Stein, Turm, Bauplatte und Aufkleber, ohne sie neu zu erklären.
 - Fachbegriffe in den Bildern folgen dem Buch, nicht den Folien: „Paket“ statt „Package“, „Skript“ wo das Buch Skript sagt.
 
 ## 6 — Abbildungsliste
 
-Quelle: T1 = `ReadingWeek_Folien.pptx` (Tag 1), T2 = `Tag2_Folien.pptx` (Tag 2), jeweils Foliennummer. Abschnitt = Ziel im Buch. Die Spalte „Inhalt“ beschreibt die Bildidee der Folie; Namen und Werte im fertigen Bild kommen aus dem Buch (5.1).
+Quelle: T1 = `ReadingWeek_Folien.pptx` (Tag 1), T2 = `Tag2_Folien.pptx` (Tag 2), jeweils Foliennummer. Abschnitt = Ort im Buch. Die Spalte „Inhalt“ beschreibt das fertige Bild; Bildidee und Bausteine kommen von der Folie, Namen und Werte aus dem Buch (5.1).
 
 | Nr | Datei | Abschnitt | Quelle | Inhalt | Kurz überlegen |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| 1 | `k01-oekosystem` | 1.6 | T1 9 | Funktion → Package → Ökosystem (tidyverse, mariposa) | |
+| 1 | `k01-oekosystem` | 1.6 | T1 9 | Funktion → Paket → Ökosystem; das Ökosystem tidyverse und das Paket mariposa | |
 | 2 | `k01-regal-werkbank` | 1.6.2 | T1 11 | `install.packages()` stellt ins Regal, `library()` holt auf die Werkbank | |
-| 3 | `k02-qmd-schichten` | 2.4 | T1 21 | YAML-Kopf, Text, Chunk, Inline-Code in einem `.qmd` | |
-| 4 | `k03-legende` | 3.5 | T1 40, 41, 44 | Legende der Bildsprache (Stein, Farben, NA, Turm, Platte, Schild, Aufkleber) | |
+| 3 | `k02-qmd-schichten` | 2.4 | T1 21 | YAML-Kopf, Text und Chunk eines `.qmd` und was beim Rendern daraus wird | |
+| 4 | `k03-legende` | 3.5 | T1 40, 41, 44 | Legende der Bildsprache (Stein, Farben, NA, Turm, Platte, Schild, Aufkleber, Code-Farben) | |
 | 5 | `k03-name-inhalt` | 3.2 | T1 27 | Pfeil legt den Stein unter einem Namensschild ab; Environment | |
 | 6 | `k03-reihenfolge` | 3.2 | T1 29 | `x <- 5; y <- x + 2; x <- 10` → `y` bleibt 7 | ja |
-| 7 | `k03-funktion` | 3.3 | T1 37 | Werte rein → `mean()` → Ergebnis raus; Code-Farben | |
-| 8 | `k03-argumente` | 3.3 | T1 38 | `round(x, digits = 0)` als Formular mit Pflichtfeld und vorausgefülltem Feld | ja |
+| 7 | `k03-funktion` | 3.3 | T1 37 | Werte rein → `seq()` → Ergebnis raus; Code-Farben (Chunk `fn-basics`) | |
+| 8 | `k03-argumente` | 3.3.1 | T1 38 | `round()` als Formular: Pflichtfeld `x`, `digits` mit 0 vorausgefüllt und mit 1 überschrieben | ja |
 | 9 | `k03-turm` | 3.5.1 | T1 40 | `c()` stapelt Steine zu einem Turm; ein Turm hat eine Farbe | |
 | 10 | `k03-rangfolge` | 3.5.1 | T1 41 | logical < numeric < character beim Mischen | ja |
 | 11 | `k03-tibble` | 3.5.3 | T1 44 | Türme nebeneinander = Tibble; Reihe = Fall, Turm = Variable | |
 | 12 | `k04-dollar-select` | 4.5.1 | T1 45 | `$` gibt einen Turm, `select()` eine Platte mit Turm (dort, wo `select()` eingeführt wird) | ja |
 | 13 | `k03-na` | 3.6 | T1 43, 52 | leerer Stein; `mean()` gibt `NA`, mit `na.rm = TRUE` den Wert | |
-| 14 | `k03-pipe` | 3.7.1 | T1 46 | Ergebnis wandert ins erste Feld von `mean()`, dann `round()`; vier Schritte | ja |
+| 14 | `k03-pipe` | 3.7.1 | T1 46 | Ergebnis wandert ins erste Feld von `round()`, dann `head()`; zwei Schritte (Chunk `pipe-native`) | ja |
 | 15 | `k03-analyseplan` | 3.7.3 | T1 48 | Plan in Worten ↔ Pipe-Zeilen | |
 | 16 | `k04-einlesen` | 4.3 | T1 51 | `.sav`-Datei → `read_spss()` → Objekt `allbus` als Bauplatte | |
-| 17 | `k04-platte` | 4.4 | T1 52 | 5.246 Reihen × 579 Türme; obs. = Reihe, variable = Turm, leerer Stein | |
+| 17 | `k04-platte` | 4.4 | T1 52 | Ausschnitt aus `allbus` (`respid`, `age`, `mm01`); 5.246 Reihen, 579 Türme; Reihe = Fall, Turm = Variable, leerer Stein | |
 | 18 | `k04-select` | 4.5.1 | T2 7 | nur die gewählten Türme bleiben auf der Platte | |
 | 19 | `k04-filter` | 4.5.2 | T2 8 | nur die Reihen, die die Bedingung erfüllen, bleiben | |
 | 20 | `k04-dbl-lbl` | 4.6 | T2 11 | Zahl mit Aufkleber: `<dbl+lbl>` | |
 | 21 | `k04-to-label` | 4.6.1 | T2 12 | `to_label()`: Aufkleber wird Wert; `to_numeric()`: Aufkleber ab | |
-| 22 | `k04-labels` | 4.7 | T1 53 | Variablenname, Variablenlabel, Wertelabels am Beispiel `pt03` | |
+| 22 | `k04-labels` | 4.7 | T1 53 | Variablenname, Variablenlabel, Wertelabels am Beispiel `mm01` (Chunk `labels-read`) | |
 | 23 | `k04-missing-codes` | 4.8 | T2 15, 16 | vier Gründe für eine Lücke; Split-Design | ja |
 | 24 | `k04-set-na` | 4.8 | T2 17 | gültige Codes werden zu Lücken; valid N sinkt | |
 | 25 | `k05-mutate` | 5.2.1 | T2 19 | neuer Turm aus vorhandenem, Reihe für Reihe | |
 | 26 | `k05-zuweisung` | 5.2.1 | T2 20 | ohne `<-` nur angezeigt, mit `<-` gespeichert | ja |
-| 27 | `k05-case-when` | 5.2.2 | T2 21 | Bedingungen von oben nach unten, die erste zutreffende gilt | |
+| 27 | `k05-case-when` | 5.2.2 | T2 21 | Bedingungen von oben nach unten, die erste zutreffende gilt; beim Warnkasten „Reihenfolge zählt“ | |
 | 28 | `k05-summarise` | 5.2.3 | T2 22 | viele Steine je Gruppe → ein Stein je Gruppe | |
-| 29 | `k05-rec` | 5.3.1 | T2 23 | Regel-Zeichenkette ordnet 1–7 drei Kategorien zu | |
-| 30 | `k05-dicho` | 5.3.2 | T2 24 | Schnittpunkt 50, zwei Gruppen mit Labels | |
+| 29 | `k05-rec` | 5.3.1 | T2 23 | Regel-Zeichenkette ordnet die Codes von `educ` drei Stufen zu, `else=NA` den Rest | |
+| 30 | `k05-dicho` | 5.3.2 | T2 24 | Schnittpunkt 50, zwei Gruppen 0 und 1, ohne Wertelabels | |
 | 31 | `k05-umpolen` | 5.3.3 | T2 25, 26 | Turm auf dem Kopf, `8 − x`; Gegenprobe alt gegen neu | ja |
-| 32 | `k05-skala` | 5.7 | T2 1, 30 | sechs Türme → ein Skalenturm; `min_valid` bei fehlenden Steinen | ja |
+| 32 | `k05-skala` | 5.7.1 | T2 1, 30 | sechs Türme → `row_means()` → ein Skalenturm; `min_valid` bei fehlenden Steinen | ja |
 | 33 | `k05-polung` | 5.7.3 | T2 32 | falsch gepolte Skala misst das Gegenteil | |
 | 34 | `k05-pomps` | 5.8 | T2 33 | zwei Skalen auf 0–100 umgerechnet | |
-| 35 | `k05-pipeline` | 5.9 | T2 34, 27 | vom Arbeitsheft zum Setup-Chunk; Schritte einer Auswertung | |
-| 36 | `k07-gewichtung` | 7.2 | T2 36 | Gewicht als Größe des Steins; Ost etwa 0,5, West etwa 1,2 | |
+| 35 | `k05-pipeline` | 5.9 | T2 34, 27 | sechs Schritte der Pipeline mit ihren Abschnitten; `R/prep.R` und der Setup-Chunk von Kap. 6 bis 9 | |
+| 36 | `k07-gewichtung` | 7.2 | T2 36 | Gewicht als Breite des Steins, ungewichtet und gewichtet; Ost etwa 0,5, West etwa 1,2 | |
 | 37 | `k07-zeilenprozente` | 7.5.1 | T2 41 | jede Zeile ein 100-%-Balken | |
 
 Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), RStudio-Bereiche (T1 14, Kap. 1 hat Screenshots), Testwahl (T2 40, Text statt Bild), t-Test-Glocken und Korrelationswolken (T2 42, 43, Kap. 7 hat Simulationen), Ratespiele ohne Grafik.
@@ -166,7 +181,7 @@ Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), RStudio-Bereiche (T1 1
 ## 8 — Prüfung
 
 - Buch rendert ohne neue Warnungen; Abschnittsnummern vor und nach dem Rendern verglichen, keine verschoben.
-- Jede Abbildung im Browser angesehen, in voller Breite und bei Handybreite (375 px); auf dem Desktop ist die kleinste Schrift ohne Zoom lesbar, auf dem Handy nach Antippen.
+- Jede Abbildung im Browser angesehen, in voller Breite und bei Handybreite (375 px); auf dem Desktop ist die kleinste Schrift ohne Zoom lesbar, auf dem Handy mit Zwei-Finger-Zoom oder im Querformat (5.4).
 - Jede Abbildung hat Bildunterschrift, `fig-alt` und einen Verweis im Text.
 - Jede Zahl im Bild gegen die Ausgabe in R 4.5.3 und mariposa 0.7.4 geprüft.
 - Bildunterschriften und neue Absätze auf Slogans und Folienton gelesen.

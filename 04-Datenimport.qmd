@@ -128,7 +128,7 @@ nrow(allbus)              # Anzahl Fälle
 ncol(allbus)              # Anzahl Variablen
 ```
 
-`nrow()` gibt 5246 zurück, `ncol()` 579. In der Bildsprache ist `allbus` eine Bauplatte mit 5.246 Reihen und 579 Türmen (@fig-platte): Jede Reihe ist eine befragte Person, jeder Turm eine Variable. Ein leerer Stein heißt, dass für diese Person bei dieser Variable kein gültiger Wert vorliegt.
+`nrow()` gibt 5246 zurück, `ncol()` 579. `allbus` ist also eine Bauplatte mit 5.246 Reihen und 579 Türmen (@fig-platte): Jede Reihe ist eine befragte Person, jeder Turm eine Variable. Ein leerer Stein heißt, dass für diese Person bei dieser Variable kein gültiger Wert vorliegt.
 
 ![Ein Ausschnitt von `allbus`: die ersten fünf Reihen der Variablen `respid`, `age` und `mm01`. Bei `mm01` fehlt in drei Reihen der Wert.](Bilder/figuren/k04-platte.svg){#fig-platte .lightbox fig-alt="Bauplatte mit dem Namensschild allbus und drei Türmen respid, age und mm01, daneben Auslassungspunkte für weitere Türme. respid zeigt 1 bis 5, age 50, 51, 69, 72 und 18, mm01 die Werte 5, drei leere gestrichelte Steine und 2. Die erste Reihe ist orange umrandet, der Turm age grün. Rechts drei Kästen: Eine Reihe ist ein Fall, nrow(allbus) ergibt [1] 5246. Ein Turm ist eine Variable, ncol(allbus) ergibt [1] 579. Ein leerer Stein ist ein fehlender Wert."}
 
@@ -212,7 +212,7 @@ allbus$age |> head(5)
 allbus |> select(age) |> head(5)
 ```
 
-`allbus$age` gibt einen Vektor zurück: die fünf Zahlen hinter `[1]`, darunter die Label-Tabelle. `allbus |> select(age)` gibt ein Tibble mit einer Spalte zurück. Im Bild ist das eine ein Turm allein, das andere eine Bauplatte mit einem Turm (@fig-dollar-select). Welche Form du brauchst, hängt von der nächsten Funktion ab: Rechenfunktionen wie `mean()` erwarten einen Vektor, dplyr-Funktionen wie `filter()` einen Datensatz.
+`allbus$age` gibt einen Vektor zurück: die fünf Zahlen hinter `[1]`, darunter die Label-Tabelle. `allbus |> select(age)` gibt ein Tibble mit einer Spalte zurück. Links zeigt @fig-dollar-select einen einzelnen Turm, rechts eine Bauplatte mit einem Turm. Welche Form du brauchst, hängt von der nächsten Funktion ab: Rechenfunktionen wie `mean()` erwarten einen Vektor, dplyr-Funktionen wie `filter()` einen Datensatz.
 
 ![Links gibt `$` die Werte von `age` als Vektor zurück, rechts gibt `select()` ein Tibble mit der Spalte `age` zurück. Beide enthalten dieselben fünf Werte.](Bilder/figuren/k04-dollar-select.svg){#fig-dollar-select .lightbox fig-alt="Zwei Hälften. Links der Code allbus$age |> head(5), darunter ein Turm aus fünf blauen Steinen 50, 51, 69, 72 und 18 auf einem kurzen Sockel, beschriftet Vektor, daneben die Ausgabe [1] 50 51 69 72 18. Rechts der Code allbus |> select(age) |> head(5), darunter derselbe Turm mit dem Spaltenkopf age und dem Typ dbl+lbl auf einer breiten Bauplatte, beschriftet Tibble, daneben die Ausgabe # A tibble: 5 × 1."}
 
@@ -314,7 +314,7 @@ class(allbus$sex)
 class(allbus$age)
 ```
 
-Beide Variablen sind `double`, also Zahlen, und zugleich `haven_labelled`. In der Bildsprache ist ein Wert von `sex` ein Stein mit Aufkleber, etwa die Zahl 1 mit dem Wertelabel MANN (@fig-dbl-lbl). Im Tibble steht dafür der Typ-Tag `<dbl+lbl>`. Bei `age` trägt nur der Missing-Code ein Label; auch das reicht, damit die Variable labelled ist.
+Beide Variablen sind `double`, also Zahlen, und zugleich `haven_labelled`. Ein Wert von `sex` ist damit ein Stein mit Aufkleber, etwa die Zahl 1 mit dem Wertelabel MANN (@fig-dbl-lbl). Im Tibble steht dafür der Typ-Tag `<dbl+lbl>`. Bei `age` trägt nur der Missing-Code ein Label; auch das reicht, damit die Variable labelled ist.
 
 ![Ein Wert von `sex`: die Zahl 1 mit dem Aufkleber MANN. `dbl` steht für die Zahl (`double`), `lbl` für das Wertelabel (`haven_labelled`).](Bilder/figuren/k04-dbl-lbl.svg){#fig-dbl-lbl .lightbox fig-alt="Oben sex und der Typ-Tag dbl+lbl in spitzen Klammern, dbl dunkelblau, lbl orange. Darunter ein großer blauer Stein mit der Zahl 1 und einem gelben Aufkleber MANN. Unter der Zahl steht Zahl und double, unter dem Aufkleber Wertelabel und haven_labelled. Rechts der Code class(allbus$sex) mit der Ausgabe [1] „haven_labelled“ „vctrs_vctr“ „double“."}
 
@@ -445,6 +445,7 @@ sum(is.na(allbus$mm01))
 Wenn bestimmte *gültige* Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit `set_na()`. Ein Beispiel: Beim Schulabschluss `educ` lassen sich „anderer Abschluss" (Code 6) und „noch Schüler:in" (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an — `variable = c(code1, code2)`:
 
 ```{r set-na-demo}
+#| message: true
 allbus |>
   set_na(educ = c(6, 7), verbose = TRUE) |>
   frequency(educ)

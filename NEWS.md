@@ -2,6 +2,13 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — Abbildungen mit Bausteinen
+
+- 37 neue Abbildungen erklären Grundbegriffe von R mit Bausteinen: Ein Wert ist ein Stein, seine Farbe der Datentyp, ein Vektor ein Turm, ein Datensatz eine Bauplatte mit Türmen, ein Wertelabel ein Aufkleber. Die Bildsprache stammt aus dem Workshop „Reading Week“ vom November 2026 und wird am Anfang von Abschnitt 3.5 erklärt. Die Abbildungen stehen in Kap. 3 (11), Kap. 4 (10), Kap. 5 (11), Kap. 1 (2), Kap. 2 (1) und Kap. 7 (2).
+- Neues Format „Kurz überlegen“: An neun Stellen stellt das Buch eine Frage zu einem neuen Fall, die Auflösung steht eingeklappt darunter. Das Format ist in `STYLE.md` §4 beschrieben.
+- Die Abbildungen liegen als SVG-Dateien in `Bilder/figuren/`. Gebaut werden sie mit den Skripten im Ordner `figuren/`; `python3 figuren/build.py` erzeugt alle neu. Zum Rendern des Buchs braucht man Python nicht. Was in die Bilder gehört und wie sie aussehen, regelt `BILDER.md`.
+- Außerdem nennt der Text mariposa jetzt ein Paket und das tidyverse ein Ökosystem, `set_na(verbose = TRUE)` zeigt in Kap. 4 seine Meldung, und einige Sätze in Kap. 3, 4 und 7 sind klarer formuliert.
+
 ## 17. November 2026 — Tastenkürzel im Vorwort, Funktionsnamen in den Überschriften
 
 - Das Vorwort endet mit einer Tabelle der wichtigsten Tastenkürzel, getrennt nach macOS und Windows und abgestimmt auf die Arbeit mit Quarto-Dokumenten (Chunk einfügen, Chunk ausführen, Rendern). Sie verlinkt auf den Abschnitt „Nützliche Tastenbefehle" in Kap. 1.
