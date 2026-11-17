@@ -27,8 +27,13 @@ BILDER = {
     "help": (819, 4, 0, None),
     "optionen": (759, None, 76, (266, 352, 742, 478)),   # Abschnitt Workspace; Knöpfe sind bei 200 % abgeschnitten
     "projekt": (612, None, 0, None),
+    # Tab Completion im Editor (Bildschirm-Ausschnitte, Breite auf Fenster-Einheiten umgerechnet: mal 1469/1456)
+    "vorschlaege": (807, 1, 0, None),
+    "argumente": (878, 1, 0, None),
+    "paketliste": (1065, 1, 0, None),
 }
 QUELLE = {"optionen": "options", "projekt": "project"}
+OHNE_REITERLEISTE = {"vorschlaege", "argumente", "paketliste"}   # Ausschnitte ohne Reiterleiste: nichts übermalen
 
 
 def breite_im_buch(einheiten):
@@ -36,7 +41,7 @@ def breite_im_buch(einheiten):
     return round(einheiten * PX_JE_EINHEIT)
 
 
-def aufbereiten(roh, einheiten, nummer=None, unten=0, markierung=None):
+def aufbereiten(roh, einheiten, nummer=None, unten=0, markierung=None, reiterleiste=True):
     """Gibt das fertige Bild zurück: skaliert auf doppelte Dichte, mit Rahmen und Nummer."""
     if unten:
         roh = roh.crop((0, 0, roh.width, roh.height - unten))
@@ -50,8 +55,9 @@ def aufbereiten(roh, einheiten, nummer=None, unten=0, markierung=None):
     d.rectangle((0, 0, w - 1, h - 1), outline=CARDLINE, width=2)
     if nummer is not None:
         # die Knöpfe zum Verkleinern und Vergrößern rechts in der Reiterleiste mit deren Grundfarbe übermalen
-        grund = bild.getpixel((w - 150, 6))
-        d.rectangle((w - 120, 2, w - 3, 40), fill=grund)
+        if reiterleiste:
+            grund = bild.getpixel((w - 150, 6))
+            d.rectangle((w - 120, 2, w - 3, 40), fill=grund)
         r = 22
         cx, cy = w - 14 - r, 8 + r
         d.ellipse((cx - r - 3, cy - r - 3, cx + r + 3, cy + r + 3), fill=WHITE)
@@ -65,7 +71,7 @@ def main(ordner):
     os.makedirs(ZIEL, exist_ok=True)
     for name, (einheiten, nummer, unten, markierung) in BILDER.items():
         roh = Image.open(os.path.join(ordner, QUELLE.get(name, name) + ".jpg"))
-        bild = aufbereiten(roh, einheiten, nummer, unten, markierung)
+        bild = aufbereiten(roh, einheiten, nummer, unten, markierung, name not in OHNE_REITERLEISTE)
         pfad = os.path.join(ZIEL, name + ".png")
         bild.save(pfad, optimize=True)
         print(f"{name}.png {bild.size[0]}x{bild.size[1]}, im Buch {breite_im_buch(einheiten)} px breit")

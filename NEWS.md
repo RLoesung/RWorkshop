@@ -6,7 +6,7 @@ Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.gith
 
 - Kap. 1 arbeitet von Anfang an mit einem Quarto-Dokument statt mit einem R-Skript, so wie der Workshop. Der Abschnitt „Quarto-Dokument“ ersetzt den Abschnitt „R-Skript“: Das erste Beispiel steht in einem Chunk in `01-erste_schritte.qmd`, ein Absatz sagt, was in die Konsole und was ins Dokument gehört, und ein Satz erklärt, was ein R-Skript ist. Lernziel, Tastenkürzel, Checkliste, Übung 2 und Zusammenfassung sind angepasst, ebenso der Abschnitt „Dein erstes `.qmd`“ in Kap. 2 und zwei Sätze im Vorwort.
 - Am Anfang von 1.4 zeigt eine neue Abbildung die vier Bereiche von RStudio mit grünen Nummern. Sie ersetzt das alte Bildschirmfoto der ganzen Oberfläche.
-- Acht neue Bildschirmfotos aus RStudio 2026.01 mit R 4.6.2 im hellen Theme ersetzen die alten dunklen: Optionen, Konsole, Environment, Files, Projekt, Editor mit Chunk, Packages und Help. Alle haben denselben Maßstab, einen dünnen Rahmen und oben rechts die Nummer des Bereichs. Die drei Bilder zur Tab Completion sind noch die alten.
+- Elf neue Bildschirmfotos aus RStudio 2026.01 mit R 4.6.2 im hellen Theme ersetzen die alten dunklen: Optionen, Konsole, Environment, Files, Projekt, Editor mit Chunk, drei Bilder zur Tab Completion, Packages und Help. Alle haben denselben Maßstab, einen dünnen Rahmen und oben rechts die Nummer des Bereichs. Die Tab Completion zeigt jetzt die mariposa-Funktionen von heute (`w_mean()` statt `weighted_mean()`).
 
 ## 17. November 2026 — Beispiele für Tidyselect-Helfer in Kap. 4
 
