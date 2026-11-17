@@ -2,6 +2,10 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — Beispiele für Tidyselect-Helfer in Kap. 4
+
+- In der Tabelle der Tidyselect-Helfer in Kap. 4 fand `select(contains("vertrau"))` keine Spalte, und `select(ends_with("r"))` fand nur `za_nr`, weil die umgepolten Items erst in Kap. 5 entstehen. Die Tabelle zeigt jetzt `select(ends_with("educ"))` (Schulabschluss von Befragten, Partner:in und Eltern) und `select(contains("wght"))` (die vier Gewichtungsvariablen).
+
 ## 17. November 2026 — `rec()` innerhalb von `mutate()`
 
 - `rec()` steht im ganzen Buch jetzt innerhalb von `mutate()`, etwa `mutate(mm02r = rec(mm02, rules = "rev"))`. Der neue Name links vom `=` ersetzt das Argument `suffix`; mehrere Variablen stehen in einem `mutate()` mit einer Zeile je Variable. Das betrifft Kap. 3, 5, 6, 7 und 9, `R/prep.R` und fünf Abbildungen; die Ergebnisse im Buch bleiben gleich.
@@ -33,7 +37,7 @@ Beim Abgleich mit R 4.5.3 und mariposa 0.7.4 sind Stellen aufgefallen, an denen 
 
 - **Kap. 4:**
   - `allbus$sex |> head(5)` wird jetzt ausgeführt statt mit einer veralteten Ausgabe im Kommentar gezeigt.
-  - Der ALLBUS 2023 hat nicht vier, sondern 17 Missing-Codes. Die Tabelle zeigt jetzt die vier Codes der `mm`-Items, weitere Codes werden genannt.
+  - Der ALLBUS 2023 hat 17 Missing-Codes, das Buch sprach von vier. Die Tabelle zeigt jetzt die vier Codes der `mm`-Items, weitere Codes werden genannt.
   - Die `relocate()`-Beispiele laufen jetzt in Kap. 4: Die Skalen gibt es dort noch nicht, und die ID-Variable heißt `respid`.
 - **Kap. 5:**
   - `rec()`: Tagged NAs behalten ihren Missing-Typ nur, wenn keine `else=`- oder `NA=`-Regel sie erfasst. Mit `else=NA` werden sie zu einfachen `NA`.

@@ -263,7 +263,7 @@ Die Regel-Syntax im Überblick:
 | `"mean"`            | Dichotomisieren am Mittelwert           | `rules = "mean"`                        |
 | `"quart"`           | In vier Quartilgruppen aufteilen        | `rules = "quart"`                       |
 
-Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die *keine* Regel passt, werden `NA` — mariposa warnt dich dann und nennt die betroffenen Werte. Mit `else=copy` behältst du sie, mit `else=NA` bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ — außer eine `NA=`- oder `else=`-Regel erfasst sie. `else=NA` macht deshalb auch aus „keine Angabe" oder „nicht bestimmbar" ein einfaches `NA`, und die Unterscheidung der Missing-Typen ist weg. Willst du sie behalten, nennst du die zu verwerfenden Codes ausdrücklich (etwa `6:7=NA`) und lässt die `else`-Regel weg oder schreibst `else=copy`.
+Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Werte, auf die *keine* Regel passt, werden `NA` — mariposa warnt dich dann und nennt die betroffenen Werte. Mit `else=copy` behältst du sie, mit `else=NA` bestätigst du das Verwerfen ausdrücklich. Fehlende Werte aus dem SPSS-Import (die tagged NAs) behalten beim Rekodieren ihren Missing-Typ, außer eine `NA=`- oder `else=`-Regel erfasst sie. `else=NA` macht deshalb auch aus „keine Angabe" oder „nicht bestimmbar" ein einfaches `NA`, und die Unterscheidung der Missing-Typen ist weg. Willst du sie behalten, nennst du die zu verwerfenden Codes ausdrücklich (etwa `6:7=NA`) und lässt die `else`-Regel weg oder schreibst `else=copy`.
 
 ### Beispiel: Bildung kategorisieren
 
@@ -276,7 +276,7 @@ allbus |>
   count(educ)
 ```
 
-Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch. Die 153 `NA` setzen sich aus den 44 Befragten mit Code 6 oder 7 und den 109 Missings aus dem Import zusammen (DATENFEHLER, NICHT BESTIMMBAR, KEINE ANGABE) — im Ergebnis sind alle 153 einfache `NA`.
+Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch. Die 153 `NA` setzen sich aus den 44 Befragten mit Code 6 oder 7 und den 109 Missings aus dem Import zusammen (DATENFEHLER, NICHT BESTIMMBAR, KEINE ANGABE). Im Ergebnis sind alle 153 einfache `NA`.
 
 @fig-rec zerlegt die Regel in ihre Teile. Jeder Teil nimmt die Codes, die er nennt: `1:2=1 [niedrig]` fasst 1 und 2 zur Stufe niedrig zusammen, `else=NA` nimmt alles Übrige, auch die fehlenden Werte aus dem Import.
 

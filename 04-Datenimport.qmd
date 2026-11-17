@@ -87,7 +87,7 @@ Den letzten Typ — `<dbl+lbl>` — wirst du im ALLBUS *überall* sehen. Wie er 
 allbus$sex |> head(5)
 ```
 
-Oben stehen das Variablenlabel und die ersten fünf Werte, darunter die Label-Tabelle. Die Zeilen `NA(a)` und `NA(b)` sind die Missing-Codes der Variable — was es damit auf sich hat, erklärt @sec-fehlende-werte.
+Oben stehen das Variablenlabel und die ersten fünf Werte, darunter die Label-Tabelle. Die Zeilen `NA(a)` und `NA(b)` sind die Missing-Codes der Variable. Mehr dazu in @sec-fehlende-werte.
 
 Drei Operationen sind häufig:
 
@@ -235,8 +235,8 @@ Bei großen Datensätzen wie ALLBUS willst du oft *alle Variablen, die ein Muste
 | Helfer                  | Wirkung                                              | Beispiel auf ALLBUS                     |
 | :---------------------- | :--------------------------------------------------- | :-------------------------------------- |
 | `starts_with("pre")`    | alle Variablen, deren Name mit `pre` beginnt         | `select(starts_with("mm0"))`            |
-| `ends_with("suffix")`   | alle, deren Name auf `suffix` endet                  | `select(ends_with("r"))` für umgepolte  |
-| `contains("teil")`      | alle, deren Name `teil` enthält                      | `select(contains("vertrau"))`           |
+| `ends_with("suffix")`   | alle, deren Name auf `suffix` endet                  | `select(ends_with("educ"))`: Schulabschluss von Befragten, Partner:in und Eltern |
+| `contains("teil")`      | alle, deren Name `teil` enthält                      | `select(contains("wght"))`: die vier Gewichtungsvariablen |
 | `matches("regex")`      | alle, die zum regulären Ausdruck passen              | `select(matches("^p[at]"))`             |
 | `where(is.numeric)`     | alle, deren Inhalt eine Bedingung erfüllt            | `select(where(is.numeric))`             |
 | `everything()`          | alle übrigen — typisch in `relocate()`               | `relocate(respid, .before = everything())` |
@@ -415,7 +415,7 @@ Mit `val_labels(allbus, mm01 = NULL)` entfernst du die Wertelabels einer Variabl
 
 Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage — manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.
 
-Die GESIS unterscheidet in ALLBUS deshalb viele Arten von fehlenden Werten und kodiert sie mit klar unterscheidbaren negativen Zahlen — im ALLBUS 2023 sind es 17 verschiedene Codes. Bei den sechs Items unserer Islamfeindlichkeits-Skala (`mm01` bis `mm06`) kommen vier davon vor:
+Die GESIS unterscheidet in ALLBUS deshalb viele Arten von fehlenden Werten und kodiert sie mit klar unterscheidbaren negativen Zahlen. Im ALLBUS 2023 sind es 17 verschiedene Codes. Bei den sechs Items unserer Islamfeindlichkeits-Skala (`mm01` bis `mm06`) kommen vier davon vor:
 
 | Code  | Bedeutung                                         |
 | ----: | ------------------------------------------------- |
