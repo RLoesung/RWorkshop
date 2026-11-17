@@ -71,7 +71,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | gelber Aufkleber am Stein | Wertelabel |
 | Code-Bausteine dunkel / grün / orange | Objekt / Funktion / Argument |
 | grüner Kasten mit gestricheltem Feld | Funktion mit ihrem ersten Argument |
-| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`, `drop_na()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`); bei `row_count()` ein Wert, der nicht mitgezählt wird (5.7.2) |
+| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`, `drop_na()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`); bei `row_count()` ein Wert, der nicht mitgezählt wird (5.7.2); bei `augment()` eine Spalte, die im Ergebnis steht, in der gezeigten Rechnung aber keine Rolle spielt (9.6.3) |
 | leerer Stein mit Aufkleber | fehlender Wert mit Missing-Code und Label |
 | Name und grauer Typ über einem Turm | Spaltenkopf wie in der Ausgabe eines Tibbles, etwa `<dbl+lbl>` |
 | graue Auslassungspunkte | weitere Türme oder Reihen, die nicht gezeigt sind |
@@ -93,6 +93,8 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | graue Zahlen links neben einer Reihe | Reihennummer wie in der Ausgabe eines Tibbles; Lücken in der Zählung stehen für Reihen, die nicht gezeigt sind (4.5.2, 4.8) |
 | leerer Stein mit blassem Aufkleber | fehlender Wert in einer Reihe, die im Ergebnis wegfällt (4.5.2; `kap04.lstein(…, blass=True)`) |
 | Lineale untereinander mit gestrichelten Hilfslinien | dieselben Fälle auf verschiedenen Skalen: Die blauen Pfeile (einzelne Werte) bleiben an ihrer Stelle, Nullpunkt und Einheit ändern sich (`center()`, `std()`, 5.4); der orange Pfeil zeigt den Mittelwert |
+| zwei Lineale mit derselben Skala, gestrichelte Linien von Pfeil zu Pfeil | derselbe Mittelwert je Gruppe ohne und mit Kontrolle einer Kovariate; die Linie zeigt, wohin sich eine Gruppe verschiebt (9.7.3). Liegen zwei Mittelwerte fast gleich, trennt eine weiße Kante die beiden orangen Pfeile (`kap09.mittel_marke()`) |
+| Rechenzeile mit grauen Namen unter den Werten | wie R einen Wert einer Reihe ausrechnet; unter jeder Zahl steht, aus welcher Spalte oder welchem Koeffizienten sie kommt (`.fitted` und `.resid` in 9.6.3; `kap09.rechnung()`) |
 | dunkles Namensschild über einem Turm | Spaltenname, der beim Umformen zum Wert wird oder aus Werten entsteht (`pivot_longer()`, `pivot_wider()`, 5.6) |
 | oranger Rahmen um mehrere Reihen | ein Fall, der im Long-Format über mehrere Reihen verteilt ist (5.6.1) |
 | grüner Funktionsname über einer Platte | die Platte ist das Ergebnis dieser Funktion (Join-Familie in 5.5, 5.6.2) |
@@ -218,11 +220,11 @@ Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes
 | 61 | `k08-latenter-faktor` | 8.1 | neu | sechs gemessene Item-Türme und ein nicht gemessener Faktor als gestrichelte Ellipse, die auf alle zeigt; ersetzt das Text-Diagramm im Konzept-Kasten | A | |
 | 62 | `k08-ergebnisobjekt` | 8.3.3 | T2 42 | `efa_vor` als Kiste mit Fächern (`$loadings`, `$eigenvalues`, `$kmo`, `$bartlett`, dahinter weitere); `$kmo` und `$bartlett` sind Kisten in der Kiste, `efa_vor$kmo$per_item` nimmt in zwei Schritten ein Fach heraus (Chunks `efa-vor`, `efa-bartlett`, `efa-msa`, `efa-1`) | A | |
 | 63 | `k08-item-total` | 8.7.4 | neu | korrigierte Item-Total-Korrelation: Summe der anderen fünf Items gegen `mm05r` (Chunk `reliability-summary`) | B | |
-| 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz | B | ja |
-| 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig (Chunk `model-compare`) | A | |
-| 66 | `k09-augment` | 9.6.3 | neu | `augment()` stellt `.fitted` und `.resid` neben die Daten; Rechnung für Reihe 1 aus der Koeffiziententabelle (Chunk `augment-setup`) | A | |
-| 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` gegen `ancova()`) | B | |
-| 68 | `k09-ame` | 9.8.1 | neu | vorhergesagte Wahrscheinlichkeit je Person bei niedriger und hoher Bildung, Differenz je Reihe, Mittelwert = AME (Chunk `logreg-ame`) | B | |
+| 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` (Reihen 1, 2, 8) wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz (Stufenleiste mit Schild wie in `k03-faktor`) | B | ja |
+| 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig; die ersten acht Reihen, nur 1 und 6 bleiben; Reihe 5 orange, weil ohne gemeinsames `drop_na()` nur `m_basis` mit ihr rechnen würde (Chunk `model-compare`) | A | |
+| 66 | `k09-augment` | 9.6.3 | neu | `augment()` stellt `.fitted` und `.resid` neben die Daten; Rechnung für Reihe 1 aus der Koeffiziententabelle; `(weights)` und `.hat` grau, `eastwest`/`sex` und die übrigen Diagnosespalten als Auslassungspunkte (8 Zoll reichen nicht für alle Türme); die Reihen sind respid 1 und 6 aus `k09-fallset` (Chunks `augment-setup`, `lm-summary`) | A | |
+| 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` aus 7.6.2 gegen die Randmittel aus Chunk `ancova-summary`) | B | |
+| 68 | `k09-ame` | 9.8.1 | neu | vorhergesagte Wahrscheinlichkeit je Person (respid 1, 5, 6) bei niedriger und hoher Bildung, Differenz je Reihe, gewichteter Mittelwert = AME (Chunk `logreg-ame`, Vorhersagen mit `predict()` geprüft) | B | |
 
 Nach der Durchsicht verworfen: Inline-Code in 2.7 (Quelle und Ergebnis stehen schon untereinander), Geom-Wahl in 6.4 (die Tabelle zeigt es, und Steinfarbe ist nicht dasselbe wie kategorial/kontinuierlich), Facets in 6.5 (die Panels zeigen die Aufteilung selbst), Gruppenvergleich in 7.6.1 (zeigt `k05-summarise`), Korrelationsmatrix in 8.2.2 (Heatmap in 8.2.4), Vorhersage in 9.2.2 (geht in `k09-augment` auf), VIF in 9.5.3 (drei Chunks zeigen die Schritte).
 

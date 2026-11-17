@@ -169,12 +169,26 @@ Für `educ_kat` mit drei Stufen sieht die interne Codierung so aus:
 | mittel             |        1         |       0        |
 | hoch               |        0         |       1        |
 
+@fig-dummy zeigt das an den Reihen 1, 2 und 8 von `allbus`: Aus dem Turm `educ_kat` werden zwei 0/1-Türme, für `niedrig` gibt es keinen.
+
+![Aus dem Faktor `educ_kat` bildet R intern je einen 0/1-Turm für `mittel` und für `hoch`. Die erste Stufe, `niedrig`, ist die Referenz und bekommt keinen eigenen Turm.](Bilder/figuren/k09-dummy.svg){#fig-dummy .lightbox fig-alt="Links ein lila Turm educ_kat mit den Reihen 1, 2 und 8: mittel, hoch und niedrig, dazwischen graue Auslassungspunkte. Graue Pfeile führen in jeder Reihe zu zwei blauen, grün umrandeten Türmen, über denen intern steht: educ_katmittel mit 1, 0 und 0, educ_kathoch mit 0, 1 und 0. Rechts ein Kasten levels(allbus$educ_kat) mit den Stufen niedrig, mittel und hoch untereinander; neben niedrig ein Schild Referenz. Darunter die Ausgabe [1] „niedrig“ „mittel“ „hoch“."}
+
 Jeder Befragte bekommt ein Paar 0/1-Werte. „Niedrige Bildung" heißt: beide Dummies sind 0 — die Person *ist* die Referenz. Das Modell schätzt dann *zwei* Koeffizienten:
 
 - `educ_katmittel` = *„Unterschied von mittel- zu niedrig-Bildung"*
 - `educ_kathoch` = *„Unterschied von hoch- zu niedrig-Bildung"*
 
 Die Referenz selbst hat keinen Koeffizienten — er wäre per Definition 0. Das ist wichtig für die Lesart: jede dummy-Zeile im Output bedeutet *„Differenz zur Referenzgruppe"*, nicht *„absoluter Wert"*.
+
+**Kurz überlegen.** Welche Dummies bildet R für `sex` mit den Stufen `MANN`, `FRAU` und `DIVERS`?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r dummy-sex-loesung}
+levels(allbus$sex)
+```
+
+`MANN` ist die erste Stufe und damit die Referenz. R bildet zwei Dummies, `sexFRAU` und `sexDIVERS`; genau diese beiden Zeilen stehen in der Koeffiziententabelle in @sec-regression.
+:::
 
 ### Wer wird Referenz? Umstellen mit `fct_relevel()`
 
@@ -334,6 +348,10 @@ m_voll <- allbus_modell |>
 anova(m_basis, m_voll)   # F-Test auf inkrementelle Varianzaufklaerung
 ```
 
+Welche Reihen `drop_na()` dabei streicht, zeigt @fig-fallset an den ersten acht Reihen von `allbus`. Übrig bleiben 1.881 Reihen, das N des Modells oben.
+
+![Die ersten acht Reihen von `allbus`: Grau sind die Reihen, in denen mindestens eine der sechs Modellvariablen fehlt; sie fallen weg. In Reihe 5 fehlt nur `populismus`: Ohne das gemeinsame `drop_na()` würde `m_basis` mit ihr rechnen, `m_voll` nicht.](Bilder/figuren/k09-fallset.svg){#fig-fallset .lightbox fig-alt="Oben das Namensschild allbus mit 5,246 × 593, ein grüner Pfeil drop_na() und das Namensschild allbus_modell mit 1,881 × 593. Darunter eine Bauplatte mit den Türmen islamophobie, educ_kat, age, eastwest, sex und populismus für die Reihen 1 bis 8. Nur die Reihen 1 und 6 sind farbig: 3.33, mittel, 50, ALTE BUNDESLAENDER, MANN, 2.29 und 3.83, hoch, 45, ALTE BUNDESLAENDER, FRAU, 3.71. Die übrigen Reihen sind grau; in den Reihen 2, 3, 4, 7 und 8 ist der Stein von islamophobie leer, in den Reihen 5 und 7 der von populismus. Reihe 5 ist orange umrandet, daneben steht ohne drop_na() nur in m_basis. Unten der Code allbus_modell <- allbus |> drop_na(islamophobie, educ_kat, age, eastwest, sex, populismus)."}
+
 ::: {.callout-tip}
 **SPSS → R: Hierarchische Regression.** In SPSS klickst du in `Linear Regression` mehrere `Block`-Stufen und bekommst die Modellvergleichsstatistik gratis. In R rechnest du jedes Modell einzeln und vergleichst sie explizit — das ist mehr Code, aber sichtbarer.
 :::
@@ -439,6 +457,10 @@ Das Tibble enthält pro Beobachtung u. a.:
 - `.std.resid` — standardisierte Residuen
 - `.hat` — Leverage (Hebelwirkung im Prädiktor-Raum)
 - `.cooksd` — Cook's Distance (Gesamteinfluss eines Falls)
+
+@fig-augment zeigt die ersten beiden Reihen von `diagnose_df`; es sind die Befragten aus den Reihen 1 und 6 von @fig-fallset. `augment()` stellt die neuen Spalten neben die Daten des Modells: `.fitted` ist die Rechnung mit den Koeffizienten B aus `summary(modell)`, `.resid` der beobachtete Wert minus diese Vorhersage.
+
+![Die ersten beiden Reihen von `diagnose_df`, auf drei Stellen gerundet; `eastwest` und `sex` sowie `.sigma`, `.cooksd` und `.std.resid` sind nicht gezeigt. In Reihe 1 sind die Dummies von `eastwest` und `sex` alle 0: Der Befragte ist ein Mann aus den alten Bundesländern, beides Referenzstufen.](Bilder/figuren/k09-augment.svg){#fig-augment .lightbox fig-alt="Oben der Code diagnose_df <- modell |> augment(). Darunter eine Bauplatte mit zwei Reihen und den Türmen islamophobie (3.333, 3.833), educ_kat (mittel, hoch), age (50, 45), dann graue Auslassungspunkte, populismus (2.286, 3.714), grau (weights) (1.252, 1.252), grün umrandet .fitted (3.400, 3.829) und .resid (-0.067, 0.004), grau .hat (0.005, 0.003) und wieder Auslassungspunkte. Reihe 1 ist orange umrandet. Darunter zwei Rechenzeilen: .fitted = 0.808 + 0.012 · 1 + 0.024 · 50 + 0.603 · 2.286 ≈ 3.40, unter den Werten grau (Intercept), educ_katmittel, age und populismus; .resid = 3.333 - 3.400 = -0.067, darunter islamophobie und .fitted."}
 
 ### Die vier Plots bauen
 
@@ -585,6 +607,10 @@ allbus |>
 
 **Lesart.** In der einfachen ANOVA (@sec-univbivar) lag die Gruppe mit niedriger Bildung noch gut 0.2 Skalenpunkte über der mittleren (4.68 zu 4.45). Bei gleichem Alter verschwindet dieser Unterschied fast völlig (4.41 zu 4.43); nur die hohe Bildung bleibt mit 3.60 klar darunter. Ein Teil des scheinbaren Bildungseffekts war also ein **Alterseffekt**: Befragte mit niedrigem Schulabschluss sind im Schnitt älter, und Ältere sind islamfeindlicher. Das deckt sich mit dem `educ_katmittel`-Koeffizienten der multiplen Regression oben.
 
+@fig-randmittel legt beide Sätze von Mittelwerten auf dieselbe Skala: `niedrig` rückt von 4.68 auf 4.41 und liegt damit fast gleichauf mit `mittel`, `hoch` steigt von 3.48 auf 3.60.
+
+![Mittelwerte von `islamophobie` je Bildungsgruppe, oben aus `oneway_anova()` (@sec-univbivar), unten die Randmittel aus `ancova()` bei gleichem Alter. Die gestrichelten Linien verbinden dieselbe Gruppe.](Bilder/figuren/k09-randmittel.svg){#fig-randmittel .lightbox fig-alt="Zwei Lineale untereinander, beide von 3 bis 5. Oben, beschriftet mit oneway_anova() und Mittelwerte, drei orange Pfeile: hoch 3.48, mittel 4.45, niedrig 4.68. Unten, beschriftet mit ancova(), covariate = age und Randmittel: hoch 3.60, niedrig 4.41 und mittel 4.43, die beiden letzten Pfeile fast an derselben Stelle. Gestrichelte Linien verbinden jede Gruppe von oben nach unten; die Linie von niedrig kreuzt die von mittel."}
+
 ::: {.callout-warning}
 **Vorsicht: Andere Referenzkategorie als in der Regression.** In der Tabelle *Parameter Estimates* setzt `ancova()` — wie SPSS `UNIANOVA` — die **letzte** Kategorie als Referenz (hier „hoch", mit „0 (a)" markiert). `linear_regression()` nimmt dagegen wie `lm()` die **erste** Kategorie („niedrig"). Die Koeffizienten beider Funktionen lassen sich deshalb nicht direkt nebeneinanderlegen; die Randmittel sind von der Referenzwahl unabhängig.
 :::
@@ -726,6 +752,10 @@ modell_log |> marginal_effects()
 - **Hohe vs. niedrige Bildung:** −0.25 — hohe Bildung senkt die Wahrscheinlichkeit hoher Islamfeindlichkeit im Mittel um 25 Prozentpunkte.
 - **Neue vs. alte Bundesländer:** +0.13 — im Osten liegt sie um 13 Prozentpunkte höher.
 - **Alter:** +0.006 pro Jahr — zehn Lebensjahre bringen also rund 6 Prozentpunkte.
+
+Wie `marginal_effects()` auf −0.252 kommt, zeigt @fig-ame: Für jede Person im Modell sagt R die Wahrscheinlichkeit zweimal vorher, einmal mit niedriger und einmal mit hoher Bildung; Alter, Region und Geschlecht bleiben, wie sie sind. Der gewichtete Mittelwert dieser Differenzen ist der AME.
+
+![Die ersten drei Personen im Modell: `educ_kat` wird für jede einmal auf `niedrig` und einmal auf `hoch` gesetzt, die Wahrscheinlichkeiten rechnet `predict()` mit `type = "response"`. Der Mittelwert der Differenzen läuft über alle Personen im Modell, gewichtet mit `wghtpew`.](Bilder/figuren/k09-ame.svg){#fig-ame .lightbox fig-alt="Eine Bauplatte mit den respid 1, 5 und 6 und darunter Auslassungspunkten. Ein lila Turm educ_kat mit mittel, hoch und hoch. Unter der Überschrift P(islam_hoch = 1) bei educ_kat = zwei blaue Türme: niedrig mit 0.584, 0.394 und 0.581, hoch mit 0.316, 0.177 und 0.314. Graue Pfeile führen in jeder Reihe zu einem grün umrandeten Turm hoch - niedrig mit -0.27, -0.22 und -0.27. Eine Klammer fasst ihn zusammen, ein grüner Pfeil mit der Beschriftung gewichteter Mittelwert führt zu einem Stein -0.252 mit der Beschriftung AME. Unten der Code modell_log |> marginal_effects() und die Ausgabe educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***."}
 
 Genau diese Sätze lassen sich in einer Hausarbeit ohne Fehlinterpretation schreiben — anders als Aussagen über Odds („hohe Bildung drittelt die Chance"), die viele Leser:innen unwillkürlich als Wahrscheinlichkeiten lesen. Standardfehler, *z*-Werte und Konfidenzintervalle der AMEs (per Delta-Methode) zeigt `summary()`. Für ein *lineares* Modell brauchst du `marginal_effects()` nicht: Dort *ist* der Koeffizient B schon der marginale Effekt.
 
