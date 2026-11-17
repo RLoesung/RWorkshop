@@ -272,7 +272,8 @@ def stein(s, x, y, w, h, kind, t, tag=None, size=13):
         rect(s, x + (i + 0.5) * w / n - 0.09, y - 0.06, 0.18, 0.07, fill, ink if kind == "na" else None, 0.5)
     rect(s, x, y, w, h, fill, ink, 0.75, dash=(kind == "na"))
     if t != "":
-        text(s, x + 0.04, y, w - 0.08, h, [P(R(t, font=MONO, size=size, bold=True, color=ink), align=C)], anchor="middle")
+        tw = w - 0.08 - (0.6 if tag else 0)          # mit Aufkleber: Wert links davon
+        text(s, x + 0.04, y, tw, h, [P(R(t, font=MONO, size=size, bold=True, color=ink), align=C)], anchor="middle")
     if tag:
         label_box(s, x + w - 0.57, y + h - 0.23, 0.55, 0.21, tag, STICKER, color=INK, size=10, rounded=False, margin=0.02)
 

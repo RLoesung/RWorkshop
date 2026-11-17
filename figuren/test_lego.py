@@ -63,6 +63,16 @@ class TestBausteine(unittest.TestCase):
         L.stein(s, 0.2, 0.3, 1, 0.4, "na", "")
         self.assertIn("stroke-dasharray", s.svg())
 
+    def test_stein_tag_laesst_wert_frei(self):
+        s = L.Canvas(2, 1)
+        L.stein(s, 0.2, 0.3, 1.2, 0.4, "num", "1", tag="MANN")
+        els = alle_elemente(s.svg())
+        wert = [e for e in els if e.tag == NS + "text" and "".join(e.itertext()).strip() == "1"][0]
+        sticker = [e for e in els if e.tag == NS + "rect" and e.get("fill") == L.STICKER][0]
+        mitte = float(wert.get("x")) / L.DPI
+        rechts = mitte + L.text_width("1", L.MONO, 13, True) / 2
+        self.assertLessEqual(rechts, float(sticker.get("x")) / L.DPI)
+
     def test_turm_order(self):
         s = L.Canvas(2, 2.2)
         L.turm(s, 0, 2, 1, 0.3, "num", ["a", "b"])
@@ -111,6 +121,34 @@ class TestText(unittest.TestCase):
                     geprueft += 1
         if not geprueft:
             self.skipTest("keine Vergleichsschriften gefunden")
+
+
+def alle_texte(svg):
+    return "\n".join("".join(e.itertext()) for e in ET.fromstring(svg).iter(NS + "text"))
+
+
+ERWARTET_KAP03 = {
+    "k03-legende": ["numeric", "character", "logical", "NA", "Objekt", "Funktion", "Argument"],
+    "k03-turm": ["zahlen", "namen", "flags", '"Anna"', '"Boris"', '"Carla"', "TRUE", "FALSE", "NA", "5"],
+    "k03-rangfolge": ["c(1, TRUE, FALSE)", 'c(1, "Anna", TRUE)', "[1] 1 1 0", '[1] "1" "Anna" "TRUE"',
+                      "logical", "numeric", "character"],
+    "k03-tibble": ["befragte", "geschlecht", "alter", "<fct>", "<dbl>", "Divers", "52", "[1] 34 41 28 52"],
+    "k03-pipe": ["zahlen", "1.11", "1.55", "round(", "digits = 1)", "head(", "n = 3)", "1.6", "1.3"],
+}
+
+
+class TestKap03(unittest.TestCase):
+    def test_kap03_constraints(self):
+        import kap03
+        self.assertEqual(set(kap03.FIGUREN), set(ERWARTET_KAP03))
+        for name, fn in kap03.FIGUREN.items():
+            svg = fn().svg()
+            root = ET.fromstring(svg)
+            breite = float(root.get("viewBox").split()[2])
+            self.assertLessEqual(breite, 768, name)
+            texte = alle_texte(svg)
+            for wert in ERWARTET_KAP03[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":
