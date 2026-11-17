@@ -2,7 +2,7 @@
 
 ## Worum es geht
 
-R selbst ist nur ein Interpreter — eine Programmiersprache, die Befehle entgegennimmt und Antworten zurückgibt. Damit du komfortabel mit R arbeiten kannst, brauchst du eine **integrierte Entwicklungsumgebung (IDE)**: einen Editor, eine Konsole, einen Datei-Browser und einen Variablen-Inspektor — alles in einem Fenster. **RStudio** ist diese Umgebung. Während du in SPSS alles über Klick-Dialoge erreichst, schreibst du in RStudio dein Vorgehen als Skript — reproduzierbar, kommentierbar, versionierbar.
+R selbst ist nur ein Interpreter — eine Programmiersprache, die Befehle entgegennimmt und Antworten zurückgibt. Damit du komfortabel mit R arbeiten kannst, brauchst du eine **integrierte Entwicklungsumgebung (IDE)**: einen Editor, eine Konsole, einen Datei-Browser und einen Variablen-Inspektor — alles in einem Fenster. **RStudio** ist diese Umgebung. Während du in SPSS alles über Klick-Dialoge erreichst, schreibst du in RStudio dein Vorgehen als Code in ein Quarto-Dokument — reproduzierbar, kommentierbar, versionierbar.
 
 Falls du R und RStudio noch nicht installiert hast, machst du das in den ersten zwei Abschnitten. Danach öffnest du RStudio und arbeitest die folgenden Abschnitte parallel mit. Am Ende kannst du dich darin orientieren, Pakete nachinstallieren und ein erstes Projekt anlegen.
 
@@ -15,7 +15,7 @@ Falls du R und RStudio noch nicht installiert hast, machst du das in den ersten 
 - R und RStudio in der richtigen Reihenfolge installieren.
 - Die Benutzeroberfläche von RStudio sicher bedienen.
 - Ein Projekt anlegen und in ihm sauber arbeiten.
-- Den Unterschied zwischen Konsole und R-Skript erklären.
+- Den Unterschied zwischen Konsole und Quarto-Dokument erklären.
 - Den Begriff *Working Directory* einordnen und mit `getwd()` prüfen.
 - Pakete installieren, aktivieren und aktuell halten — insbesondere tidyverse und mariposa.
 - Hilfe-Seiten und Paket-Vignetten gezielt aufrufen.
@@ -49,22 +49,18 @@ Wenn du lokal nichts installieren möchtest, kannst du alternativ [Posit Cloud](
 
 ## Benutzeroberfläche
 
-Du solltest ungefähr diese Benutzeroberfläche (Graphical User Interface, kurz GUI) vor dir sehen (standardmäßig im hellen Theme):
+Die Benutzeroberfläche von RStudio (Graphical User Interface, kurz GUI) ist in vier Bereiche geteilt (@fig-oberflaeche). Solange kein Dokument geöffnet ist, nimmt die Konsole die ganze linke Hälfte ein. Der Editor oben links erscheint, sobald du ein Dokument öffnest (@sec-quarto-dokument).
 
-```{r, echo=FALSE}
-knitr::include_graphics("Bilder/GUI.png")
-```
+![Die vier Bereiche von RStudio. Der Chunk im Quarto-Dokument `01-erste_schritte.qmd` legt `var1` an. Das Ergebnis steht unter dem Chunk und in der Konsole, das neue Objekt im Environment.](Bilder/figuren/k01-oberflaeche.svg){#fig-oberflaeche .lightbox fig-alt="Schema eines RStudio-Fensters mit dem Projekt R-Workshop, in vier nummerierte Bereiche geteilt. 1 oben links, Code schreiben und speichern: der Reiter 01-erste_schritte.qmd mit einem Run-Knopf, darin ein grau hinterlegter Chunk mit den Zeilen var1 <- 2 + 3 und var1 und darunter in Grün das Ergebnis [1] 5. 2 unten links, Code ausprobieren, Output ansehen: die Reiter Console, Terminal und Background Jobs, darin > var1 <- 2 + 3, > var1 und in Grün [1] 5. 3 oben rechts, Objekte und Befehlsverlauf: die Reiter Environment, History, Connections und Tutorial, unter Global Environment und Values steht var1 mit dem Wert 5. 4 unten rechts, Dateien, Grafiken, Pakete, Hilfe: die Reiter Files, Plots, Packages, Help und Viewer, darin der Ordner Home > Documents > R-Workshop mit den Dateien 01-erste_schritte.qmd, ALLBUS2023.sav und R-Workshop.Rproj."}
 
-Vier Quadranten — bevor du in die Details gehst, lohnt sich die Landkarte:
+| Bereich              | Inhalt                                          | Wofür du es brauchst                        |
+| :------------------- | :---------------------------------------------- | :------------------------------------------ |
+| **1** oben links     | Editor für Quarto-Dokumente (`.qmd`)            | Code schreiben, speichern, ausführen        |
+| **2** unten links    | Konsole                                         | Code direkt ausprobieren, Output ansehen    |
+| **3** oben rechts    | Environment, History, Connections, Tutorial     | Objekte sehen, Befehlsverlauf, Datenbanken  |
+| **4** unten rechts   | Files, Plots, Packages, Help, Viewer            | Datei-Browser, Grafiken, Hilfe, Pakete      |
 
-| Quadrant         | Inhalt                                          | Wofür du es brauchst                        |
-| :--------------- | :---------------------------------------------- | :------------------------------------------ |
-| **Oben links**   | R-Skript / `.qmd`-Editor                        | Code schreiben, speichern, ausführen        |
-| **Unten links**  | Konsole                                         | Code direkt ausprobieren, Output ansehen    |
-| **Oben rechts**  | Environment, History, Connections, Tutorial     | Objekte sehen, Befehlsverlauf, Datenbanken  |
-| **Unten rechts** | Files, Plots, Packages, Help, Viewer            | Datei-Browser, Grafiken, Hilfe, Pakete      |
-
-Die folgenden Abschnitte gehen jeden Quadranten der Reihe nach durch.
+Die folgenden Abschnitte gehen die Bereiche der Reihe nach durch. Die grüne Zahl oben rechts in den Bildschirmfotos zeigt, aus welchem Bereich ein Bild stammt.
 
 ### Optionen für reproduzierbares Arbeiten
 
@@ -73,10 +69,10 @@ Bevor du intensiv mit RStudio arbeitest, deaktiviere unter `Tools` → `Global O
 1. *Restore .RData into workspace at startup* — deaktivieren.
 2. *Save workspace to .RData on exit* — auf *Never* stellen.
 
-Damit musst du bei jedem Neustart Daten und Variablen neu laden — der Vorteil ist ein wirklich frischer Workspace ohne unsichtbare Altlasten aus früheren Sitzungen. Das ist die Grundlage für *reproduzierbares Arbeiten*: deine Analyse darf nur von dem abhängen, was im Skript steht.
+Damit musst du bei jedem Neustart Daten und Variablen neu laden — der Vorteil ist ein wirklich frischer Workspace ohne unsichtbare Altlasten aus früheren Sitzungen. Das ist die Grundlage für *reproduzierbares Arbeiten*: deine Analyse darf nur von dem abhängen, was im Dokument steht.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Menu.png")
+```{r, echo=FALSE, fig.align='center', out.width="661px", fig.alt="Der Dialog Options von RStudio, Bereich General, Reiter Basic. Im orange umrandeten Abschnitt Workspace ist Restore .RData into workspace at startup nicht angehakt, und Save workspace to .RData on exit steht auf Never."}
+knitr::include_graphics("Bilder/rstudio/optionen.png")
 ```
 
 Wer es lieber dunkel mag: Unter `Appearance` findest du Farbschemata für Editor und Konsole.
@@ -89,18 +85,18 @@ Die Konsole ist dein **erstes Übungsfeld**: Hier kannst du Eingaben direkt ausp
 2 + 3
 ```
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Konsole.png")
+```{r, echo=FALSE, fig.align='center', out.width="687px", fig.alt="Die Konsole von RStudio mit R 4.6.2 im Ordner ~/Documents/R-Workshop/. Eingegeben ist 2 + 3, darunter steht [1] 5 und eine neue Eingabeaufforderung. Oben rechts die grüne Zahl 2."}
+knitr::include_graphics("Bilder/rstudio/konsole.png")
 ```
 
-Was du in der Konsole tippst, ist allerdings nirgends dauerhaft gespeichert. Sobald du eine Analyse *behalten* willst, gehört sie in ein **R-Skript** (siehe @sec-r-skript).
+Was du in der Konsole tippst, ist allerdings nirgends dauerhaft gespeichert. Sobald du eine Analyse *behalten* willst, gehört sie in ein **Quarto-Dokument** (siehe @sec-quarto-dokument).
 
 ### Environment und History
 
 Im Reiter `Environment` findest du das **Global Environment** (Dropdown). Hier werden alle Objekte (Variablen, Datensätze, Funktionen), die du angelegt hast, gespeichert.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Environment.png")
+```{r, echo=FALSE, fig.align='center', out.width="575px", fig.alt="Der Reiter Environment mit dem Global Environment. Unter Values steht var1 mit dem Wert 5. Oben rechts die grüne Zahl 3."}
+knitr::include_graphics("Bilder/rstudio/environment.png")
 ```
 
 Unter `History` siehst du alle Befehle, die du bisher ausgeführt hast. Per Doppelklick werden sie zurück in die Konsole kopiert und können dort modifiziert oder erneut ausgeführt werden.
@@ -118,30 +114,30 @@ getwd()
 # [1] "/Users/anna/Documents/R-Workshop"
 ```
 
-Manuell setzen kannst du das Arbeitsverzeichnis mit `setwd("…")` — in der Praxis brauchst du das *fast nie*, wenn du mit einem **Project** arbeitest (siehe @sec-projects). Bei jedem Project-Start ist das Arbeitsverzeichnis automatisch der Projektordner. Das ist die Grundlage für portable Skripte: nirgendwo absolute Pfade, jede Datei wird relativ zum Projekt angesprochen.
+Manuell setzen kannst du das Arbeitsverzeichnis mit `setwd("…")` — in der Praxis brauchst du das *fast nie*, wenn du mit einem **Project** arbeitest (siehe @sec-projects). Bei jedem Project-Start ist das Arbeitsverzeichnis automatisch der Projektordner. Das ist die Grundlage für portable Dokumente: nirgendwo absolute Pfade, jede Datei wird relativ zum Projekt angesprochen.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Files.png")
+```{r, echo=FALSE, fig.align='center', out.width="575px", fig.alt="Der Reiter Files im Ordner Home, Documents, R-Workshop mit den Dateien 01-erste_schritte.qmd, ALLBUS2023.sav und R-Workshop.Rproj. Oben rechts die grüne Zahl 4."}
+knitr::include_graphics("Bilder/rstudio/files.png")
 ```
 
 ::: {.callout-warning}
-**Vorsicht: Absolute Pfade.** Schreibe niemals `read_spss("/Users/anna/Documents/...")` in dein Skript. Sobald du es teilst oder auf einen anderen Rechner ziehst, ist der Pfad kaputt. Mit Projects reicht der relative Pfad — der Dateiname genügt, wenn die Datei im Projektordner liegt.
+**Vorsicht: Absolute Pfade.** Schreibe niemals `read_spss("/Users/anna/Documents/...")` in dein Dokument. Sobald du es teilst oder auf einen anderen Rechner ziehst, ist der Pfad kaputt. Mit Projects reicht der relative Pfad — der Dateiname genügt, wenn die Datei im Projektordner liegt.
 :::
 
 Der Dateiname allein reicht, weil R ihn im Arbeitsverzeichnis sucht, und das ist bei einem Project auf jedem Rechner der Projektordner. Der absolute Pfad zeigt dagegen auf einen Ordner, den es nur auf Annas Rechner gibt (@fig-arbeitsverzeichnis).
 
-![Das Projekt `R-Workshop` auf zwei Rechnern. Mit dem Dateinamen findet `read_spss()` die Datei auf beiden, mit dem absoluten Pfad nur auf dem Rechner von Anna.](Bilder/figuren/k01-arbeitsverzeichnis.svg){#fig-arbeitsverzeichnis .lightbox fig-alt="Oben zwei nummerierte Code-Zeilen: 1 read_spss(„ALLBUS2023.sav“), 2 read_spss(„/Users/anna/Documents/R-Workshop/ALLBUS2023.sav“). Darunter zwei Kästen. Links RECHNER VON ANNA: getwd() gibt [1] „/Users/anna/Documents/R-Workshop“ aus, darunter ein Ordner R-Workshop mit den Dateien R-Workshop.Rproj, 01-erste_schritte.R und ALLBUS2023.sav, daneben 1 gefunden und 2 gefunden in Grün. Rechts RECHNER VON BORIS: getwd() gibt [1] „C:/Users/boris/Documents/R-Workshop“ aus, darunter derselbe Ordner mit denselben Dateien, daneben 1 gefunden in Grün und 2 nicht gefunden in Orange."}
+![Das Projekt `R-Workshop` auf zwei Rechnern. Mit dem Dateinamen findet `read_spss()` die Datei auf beiden, mit dem absoluten Pfad nur auf dem Rechner von Anna.](Bilder/figuren/k01-arbeitsverzeichnis.svg){#fig-arbeitsverzeichnis .lightbox fig-alt="Oben zwei nummerierte Code-Zeilen: 1 read_spss(„ALLBUS2023.sav“), 2 read_spss(„/Users/anna/Documents/R-Workshop/ALLBUS2023.sav“). Darunter zwei Kästen. Links RECHNER VON ANNA: getwd() gibt [1] „/Users/anna/Documents/R-Workshop“ aus, darunter ein Ordner R-Workshop mit den Dateien R-Workshop.Rproj, 01-erste_schritte.qmd und ALLBUS2023.sav, daneben 1 gefunden und 2 gefunden in Grün. Rechts RECHNER VON BORIS: getwd() gibt [1] „C:/Users/boris/Documents/R-Workshop“ aus, darunter derselbe Ordner mit denselben Dateien, daneben 1 gefunden in Grün und 2 nicht gefunden in Orange."}
 
 ## Mit RStudio arbeiten
 
-Jetzt geht es an die praktische Arbeit. Drei Konzepte sind zentral: das **Projekt** als Container, das **R-Skript** als Arbeitsmedium und die **Tastenkürzel** als Beschleuniger.
+Jetzt geht es an die praktische Arbeit. Drei Konzepte sind zentral: das **Projekt** als Container, das **Quarto-Dokument** als Arbeitsmedium und die **Tastenkürzel** als Beschleuniger.
 
 ### Projekt anlegen {#sec-projects}
 
 Bevor du mit Daten arbeitest, lohnt es sich, ein **Project** anzulegen. Über `File` → `New Project` → `New Directory` → `New Project` öffnest du die entsprechende Maske, vergibst einen Namen und einen Speicherort.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Project.png")
+```{r, echo=FALSE, fig.align='center', out.width="533px", fig.alt="Der Schritt Create New Project im New Project Wizard. Als Directory name steht R-Workshop, als Ordner darüber die Tilde für den persönlichen Ordner. Unten die Knöpfe Create Project und Cancel."}
+knitr::include_graphics("Bilder/rstudio/projekt.png")
 ```
 
 Was du davon hast:
@@ -152,28 +148,36 @@ Was du davon hast:
 
 Schiebe deine Datensätze (etwa `ALLBUS2023.sav`, sobald du ihn hast) in den Projektordner, und du kannst sie direkt mit `read_spss("ALLBUS2023.sav")` einlesen.
 
-### R-Skript: dein zentrales Arbeitsobjekt {#sec-r-skript}
+### Quarto-Dokument: dein zentrales Arbeitsobjekt {#sec-quarto-dokument}
 
-Ein **R-Skript** ist eine Textdatei mit der Endung `.R`, in der du deinen Code untereinander schreibst und kommentierst. Es ist das Pendant zur SPSS-Syntax-Datei — nur mächtiger, weil R selbst eine vollständige Programmiersprache ist.
+Ein **Quarto-Dokument** ist eine Textdatei mit der Endung `.qmd`. Darin steht Text, und dazwischen stehen **Code-Chunks** mit R-Code. Führst du einen Chunk aus, erscheint das Ergebnis direkt darunter. Wie ein Quarto-Dokument aufgebaut ist und wie daraus ein fertiger Bericht wird, lernst du in @sec-quarto.
 
-Ein neues Skript öffnest du über das Symbol mit dem weißen Blatt und grünem Kreuz (oben links) — oder per Tastenkürzel `cmd`/`strg` + `shift` + `N`.
+Ein neues Dokument legst du über `File` → `New File` → `Quarto Document…` an. Im Dialog gibst du einen Titel ein, lässt HTML als Format stehen und entfernst den Haken bei *Use visual markdown editor*. Dann siehst du den Quelltext so wie in diesem Buch. Lösche den Beispieltext unter dem Kopf (alles nach der zweiten `---`-Zeile) und speichere das Dokument mit `cmd`/`strg` + `S` im Projektordner, etwa als `01-erste_schritte.qmd`.
 
 ::: {.callout-tip}
-**SPSS → R.** Das R-Skript ist das Pendant zur SPSS-Syntax-Datei. Du arbeitest weiterhin *in der Syntax* — nur in einer anderen Sprache. Die meisten SPSS-Workflows lassen sich Schritt für Schritt übertragen, oft sogar in weniger Zeilen.
+**SPSS → R.** Das Quarto-Dokument übernimmt die Rolle der SPSS-Syntax-Datei. Du arbeitest weiterhin *in der Syntax*, nur in einer anderen Sprache, und Text und Ergebnisse stehen gleich daneben. Die meisten SPSS-Workflows lassen sich Schritt für Schritt übertragen, oft sogar in weniger Zeilen.
 :::
 
-Ein erstes Beispiel — schreibe in dein Skript:
+Ein erstes Beispiel: Füge mit `cmd`/`strg` + `option`/`alt` + `I` einen Chunk ein und schreibe zwei Zeilen hinein. Im Dokument sieht das so aus:
 
-```{r, results='hide'}
+````markdown
+```{{r}}
+var1 <- 2 + 3
+var1
+```
+````
+
+Setze den Cursor in die erste Zeile und führe sie mit `Run` (oder `cmd`/`strg` + `Enter`) aus, dann die zweite. Das Ergebnis erscheint unter dem Chunk und in der Konsole:
+
+```{r}
 var1 <- 2 + 3
 var1
 ```
 
-Mit `Run` (oder `cmd`/`strg` + `Enter`) führst du die aktuelle Zeile aus. Der Output erscheint in der Konsole:
+In RStudio steht das Ergebnis in einem Kasten direkt unter dem Chunk:
 
-```{r, echo=FALSE}
-var1 <- 2 + 3
-var1
+```{r, echo=FALSE, fig.align='center', out.width="687px", fig.alt="Das Quarto-Dokument 01-erste_schritte.qmd im Editor von RStudio. Oben der Kopf mit title: Erste Schritte und format: html, darunter ein grau hinterlegter Chunk mit den Zeilen var1 <- 2 + 3 und var1. Direkt unter dem Chunk steht in einem Kasten das Ergebnis [1] 5. Oben rechts die grüne Zahl 1."}
+knitr::include_graphics("Bilder/rstudio/editor.png")
 ```
 
 `var1` ist jetzt im `Environment` sichtbar — mit dem Wert `5`. Was eine Variable genau ist, wie Funktionen aufgerufen werden und welche Datentypen R kennt, lernst du in Kap. 3.
@@ -181,6 +185,10 @@ var1
 ::: {.callout-warning}
 **Vorsicht: Zuweisungsoperator.** Für Zuweisungen verwendest du `<-`, nicht `=`. Das `=` funktioniert zwar in vielen Fällen auch — es führt aber in komplexeren Kontexten (Funktionsargumenten) zu subtilen Bugs. Mach dir die Konvention `<-` zur Gewohnheit.
 :::
+
+**Konsole oder Dokument?** Alles, was du behalten willst, schreibst du in das Quarto-Dokument. Die Konsole nutzt du zum Ausprobieren, etwa für eine schnelle Rechnung oder um zu sehen, was eine Fehlermeldung bedeutet. Auch `install.packages()` tippst du in die Konsole, weil du ein Paket nur einmal pro Rechner installierst. `library()` gehört dagegen in den ersten Chunk des Dokuments, denn jede neue R-Sitzung braucht es wieder (@sec-library).
+
+In anderen Büchern und Tutorials begegnest du oft **R-Skripten**. Ein R-Skript ist eine Textdatei mit der Endung `.R`, die nur Code enthält, ohne Text und ohne Ergebnisse dazwischen. Du führst die Zeilen genauso mit `cmd`/`strg` + `Enter` aus; das Ergebnis steht dann nur in der Konsole.
 
 ### Tab Completion und Paket-Präfix `::`
 
@@ -208,10 +216,10 @@ Diese Tastenkombinationen sparen dir auf Dauer viel Zeit:
 
 | Befehl                            | Wirkung                          | Wann nützlich                          |
 | :-------------------------------- | :------------------------------- | :------------------------------------- |
-| `cmd`/`strg` + `Enter`            | Aktuelle Zeile ausführen         | Im Skript                              |
-| `cmd`/`strg` + `S`                | Skript-Datei speichern           | Nach jeder Änderung                    |
-| `cmd`/`strg` + `shift` + `N`      | Neues Skript erstellen           | Neue Analyse                           |
-| `cmd`/`strg` + `shift` + `Enter`  | Gesamtes Skript ausführen        | Vollständiger Re-Run                   |
+| `cmd`/`strg` + `Enter`            | Aktuelle Zeile ausführen         | Im Chunk                               |
+| `cmd`/`strg` + `S`                | Dokument speichern               | Nach jeder Änderung                    |
+| `cmd`/`strg` + `option`/`alt` + `I` | Neuen Chunk einfügen           | Im Quarto-Dokument                     |
+| `cmd`/`strg` + `shift` + `Enter`  | Ganzen Chunk ausführen           | Nach Änderungen im Chunk               |
 | `cmd`/`strg` + `↑`                | Vorherige Befehle anzeigen       | In der Konsole                         |
 | `control`/`strg` + `L`            | Konsole leeren                   | Wenn es unübersichtlich wird           |
 | `cmd`/`strg` + `shift` + `C`      | Zeile als Kommentar setzen       | Code kurz deaktivieren                 |
@@ -275,7 +283,7 @@ install.packages("patchwork")
 In diesem Buch installierst du beide Pakete von CRAN — das ist die stabile Variante. Die Entwicklungsversion von mariposa holst du bei Bedarf mit dem Hilfspaket `remotes` von GitHub (`remotes::install_github("YannickDiehl/mariposa")`); für das Buch brauchst du sie nicht.
 :::
 
-### Aktivierung mit `library()`
+### Aktivierung mit `library()` {#sec-library}
 
 Installierte Pakete musst du in jeder R-Sitzung mit `library()` aktivieren:
 
@@ -289,10 +297,10 @@ Nach diesen drei Zeilen liegen alle drei Pakete auf der Werkbank (@fig-regal-wer
 
 ![`install.packages()` stellt ein Paket einmal pro Rechner ins Regal, `library()` legt es in jeder R-Sitzung auf die Werkbank.](Bilder/figuren/k01-regal-werkbank.svg){#fig-regal-werkbank .lightbox fig-alt="Links unter REGAL: INSTALLIERT ein Regal mit zwei Brettern; oben stehen die Kacheln tidyverse und mariposa, unten patchwork. Darunter einmal pro Rechner und der Code install.packages(„tidyverse“), install.packages(„mariposa“) und install.packages(„patchwork“). Ein oranger Pfeil führt nach rechts unter WERKBANK: AKTIV zu einem Tisch, auf dem tidyverse, mariposa und patchwork liegen. Darunter einmal pro R-Sitzung und der Code library(tidyverse), library(mariposa) und library(patchwork)."}
 
-Alternativ kannst du Pakete auch über den Reiter `Packages` (rechts unten in RStudio) installieren und aktivieren — das ist gut für einen schnellen Überblick, aber für reproduzierbares Arbeiten ist der Code-Weg besser.
+Alternativ kannst du Pakete auch über den Reiter `Packages` (rechts unten in RStudio) installieren und aktivieren — das ist gut für einen schnellen Überblick, aber für reproduzierbares Arbeiten ist der Code-Weg besser. Ein Haken vor dem Namen zeigt, dass das Paket mit `library()` aktiviert ist.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Packages.png")
+```{r, echo=FALSE, fig.align='center', out.width="714px", fig.alt="Der Reiter Packages mit einem Ausschnitt der installierten Pakete, jeweils mit Beschreibung, Quelle und Version. lubridate und mariposa in Version 0.7.4 sind angehakt, magrittr, MASS, Matrix, MatrixModels und memoise nicht. Oben rechts die grüne Zahl 4."}
+knitr::include_graphics("Bilder/rstudio/packages.png")
 ```
 
 ### Pakete aktuell halten mit `update.packages()` und `packageVersion()`
@@ -318,8 +326,8 @@ packageVersion("mariposa")       # welche Version ist installiert?
 
 Auch wer täglich mit R arbeitet, kann sich nicht alle Funktionen merken. R bietet dir deshalb über den Reiter `Help` eine vollständige Funktionsreferenz. Manche Einträge wirken am Anfang sperrig, sind nach einiger Übung aber die zuverlässigste Quelle.
 
-```{r, echo=FALSE, fig.align='center', out.width="75%"}
-knitr::include_graphics("Bilder/Help.png")
+```{r, echo=FALSE, fig.align='center', out.width="714px", fig.alt="Die Startseite des Reiters Help mit den Abschnitten R Resources, RStudio, Manuals und Reference. Unter Reference stehen die Links Packages und Search Engine & Keywords. Oben rechts die grüne Zahl 4."}
+knitr::include_graphics("Bilder/rstudio/help.png")
 ```
 
 Wenn du eine Funktion im Kopf hast, geht es am schnellsten über die Konsole — ein Fragezeichen vor den Funktionsnamen reicht. Hier zum Beispiel für die Mittelwert-Funktion aus base R:
@@ -355,7 +363,7 @@ Wenn du dieses Kapitel mit einem frischen Rechner gestartet hast, ist hier die C
 2. **Global Options gesetzt**: *Restore .RData* aus, *Save workspace on exit* auf *Never*.
 3. **Project angelegt** für diesen Workshop (`R-Workshop` o. ä.).
 4. **Pakete installiert**: `install.packages("tidyverse")`, `install.packages("mariposa")`, `install.packages("patchwork")`.
-5. **Erstes Skript gespeichert** im Projektordner — etwa `01-erste_schritte.R` mit `library(tidyverse)` und `library(mariposa)` in den ersten zwei Zeilen.
+5. **Erstes Quarto-Dokument gespeichert** im Projektordner — etwa `01-erste_schritte.qmd` mit einem ersten Chunk, in dem `library(tidyverse)` und `library(mariposa)` stehen.
 
 Wenn alle fünf Punkte abgehakt sind, kannst du dich entspannt durch den Rest des Buchs arbeiten.
 
@@ -365,8 +373,8 @@ Wenn alle fünf Punkte abgehakt sind, kannst du dich entspannt durch den Rest de
 Lege ein neues Project mit dem Namen `R-Workshop` an. Falls du den ALLBUS schon hast, schiebe `ALLBUS2023.sav` in den Projektordner. Schließe RStudio, doppelklicke die `.Rproj`-Datei und prüfe, ob alles wieder da ist.
 :::
 
-::: {.callout-note title="Übung 2 · Erstes Skript · Reproduktion"}
-Erstelle ein neues R-Skript (`cmd`/`strg` + `shift` + `N`), schreibe drei Zeilen — eine Rechnung, eine Zuweisung, einen Aufruf der zugewiesenen Variable — und führe sie nacheinander mit `cmd`/`strg` + `Enter` aus.
+::: {.callout-note title="Übung 2 · Erstes Quarto-Dokument · Reproduktion"}
+Lege ein neues Quarto-Dokument an (`File` → `New File` → `Quarto Document…`), füge einen Chunk ein und schreibe drei Zeilen hinein — eine Rechnung, eine Zuweisung, einen Aufruf der zugewiesenen Variable. Führe sie nacheinander mit `cmd`/`strg` + `Enter` aus.
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
@@ -393,7 +401,7 @@ mariposa::   # <- nach den :: TAB drücken
 
 ::: {.callout-note title="Übung 4 · Setup für eigene Forschung · Mini-Forschungsfrage"}
 Stell dir vor, du willst eine kleine empirische Untersuchung beginnen — etwa zu Wahlverhalten, Klimaeinstellungen oder politischem Vertrauen in Deutschland. Welche Schritte würdest du *jetzt* in RStudio tun, um sauber loszulegen?
-Formuliere für dich in 4–5 Stichpunkten den idealen Startablauf — Project anlegen, Pakete laden, Skript-Konvention, Daten ablegen, README erstellen. Wende ihn auf deinen eigenen Workshop-Ordner an.
+Formuliere für dich in 4–5 Stichpunkten den idealen Startablauf — Project anlegen, Pakete laden, Namen für die Dokumente, Daten ablegen, README erstellen. Wende ihn auf deinen eigenen Workshop-Ordner an.
 
 *Keine Musterlösung — der Sinn ist, von Anfang an mit den eigenen Forschungs­interessen zu rechnen.*
 :::
@@ -402,12 +410,12 @@ Formuliere für dich in 4–5 Stichpunkten den idealen Startablauf — Project a
 
 - Du kennst die wichtigsten Bereiche der RStudio-Oberfläche und hast sie auf reproduzierbares Arbeiten eingestellt.
 - Du legst Projekte an und nutzt das automatische Arbeitsverzeichnis.
-- Du arbeitest in R-Skripten — der reproduzierbaren Form, statt nur in der Konsole zu tippen.
+- Du schreibst deinen Code in Quarto-Dokumente und nutzt die Konsole zum Ausprobieren.
 - Du installierst, aktivierst und aktualisierst Pakete — insbesondere tidyverse und mariposa.
 - Du findest Hilfe über `?funktion`, Paket-Webseiten und Vignetten.
 - Du nutzt die wichtigsten Tastenkürzel routiniert.
 
-Im nächsten Kapitel lernst du **Quarto** kennen — das genau diese RStudio-Skripte mit reproduzierbaren Berichten verbindet. Aus deinem Code und deinem Fließtext entsteht ein Dokument, das du als HTML, PDF oder Word veröffentlichen kannst.
+Im nächsten Kapitel lernst du **Quarto** genauer kennen: wie ein Quarto-Dokument aufgebaut ist und wie aus deinem Code und deinem Text ein Bericht als HTML, PDF oder Word wird.
 
 ## Weiterführend {-}
 

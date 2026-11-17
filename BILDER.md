@@ -229,10 +229,13 @@ Umgesetzt am 17.11.2026; die Spalte „Inhalt“ beschreibt die gebauten Bilder.
 | 66 | `k09-augment` | 9.6.3 | neu | `augment()` stellt `.fitted` und `.resid` neben die Daten; Rechnung für Reihe 1 aus der Koeffiziententabelle; `(weights)` und `.hat` grau, `eastwest`/`sex` und die übrigen Diagnosespalten als Auslassungspunkte (8 Zoll reichen nicht für alle Türme); die Reihen sind respid 1 und 6 aus `k09-fallset` (Chunks `augment-setup`, `lm-summary`) | A | |
 | 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` aus 7.6.2 gegen die Randmittel aus Chunk `ancova-summary`); unten zeigt `niedrig` (4.41) von oben, `mittel` (4.43) von unten auf das Lineal | B | |
 | 68 | `k09-ame` | 9.8.1 | neu | vorhergesagte Wahrscheinlichkeit je Person (respid 1, 5, 6) bei niedriger und hoher Bildung, Differenz je Reihe, gewichteter Mittelwert = AME (Chunk `logreg-ame`, Vorhersagen mit `predict()` geprüft) | B | |
+| 69 | `k01-oberflaeche` | 1.4 | T1 14 | die vier Bereiche von RStudio als Schema mit grünen Nummern: ein Chunk mit `var1` im Quarto-Dokument `01-erste_schritte.qmd`, sein Ergebnis unter dem Chunk und in der Konsole, `var1` im Environment, der Projektordner in Files; ersetzt das Bildschirmfoto der ganzen Oberfläche (nachgetragen am 17.11.2026, als Kap. 1 auf Quarto-Dokumente umgestellt wurde) | A | |
+
+**Bildschirmfotos in Kap. 1.** Die übrigen Bilder aus RStudio sind echte Bildschirmfotos (RStudio 2026.01, R 4.6.2, helles Theme, Projekt `R-Workshop` mit `01-erste_schritte.qmd`). Sie liegen in `Bilder/rstudio/`; `figuren/screenshots.py` bringt sie auf einen Maßstab, zieht einen dünnen Rahmen und setzt oben rechts die grüne Nummer des Bereichs aus `k01-oberflaeche`. Dialoge bekommen keine Nummer.
 
 Nach der Durchsicht verworfen: Inline-Code in 2.7 (Quelle und Ergebnis stehen schon untereinander), Geom-Wahl in 6.4 (die Tabelle zeigt es, und Steinfarbe ist nicht dasselbe wie kategorial/kontinuierlich), Facets in 6.5 (die Panels zeigen die Aufteilung selbst), Gruppenvergleich in 7.6.1 (zeigt `k05-summarise`), Korrelationsmatrix in 8.2.2 (Heatmap in 8.2.4), Vorhersage in 9.2.2 (geht in `k09-augment` auf), VIF in 9.5.3 (drei Chunks zeigen die Schritte).
 
-Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), RStudio-Bereiche (T1 14, Kap. 1 hat Screenshots), Testwahl (T2 40, Text statt Bild), t-Test-Glocken und Korrelationswolken (T2 42, 43, Kap. 7 hat Simulationen), Ratespiele ohne Grafik.
+Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), Testwahl (T2 40, Text statt Bild), t-Test-Glocken und Korrelationswolken (T2 42, 43, Kap. 7 hat Simulationen), Ratespiele ohne Grafik.
 
 ## 7 — Reihenfolge
 

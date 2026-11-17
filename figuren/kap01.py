@@ -4,15 +4,18 @@ Gezeigt werden nur Pakete und Funktionen, die Kap. 1 selbst nennt: die Pakete au
 tidyr, ggplot2, readr, purrr, tibble, stringr, forcats und lubridate; mariposa; patchwork) und die
 mariposa-Funktionen read_spss() (1.4.4, 1.5.1) und w_mean() (1.5.3).
 
-1.4.4: Annas Pfad aus dem Chunk getwd-demo, das Projekt R-Workshop aus Übung 1, das Skript 01-erste_schritte.R aus
+1.4.4: Annas Pfad aus dem Chunk getwd-demo, das Projekt R-Workshop aus Übung 1, das Dokument 01-erste_schritte.qmd aus
 der Checkliste nach 1.7, der absolute Pfad aus dem Vorsicht-Kasten (getwd-demo + Dateiname). Der zweite Rechner
 (Boris, Windows) ist ein Beispiel; Boris Müller ist der Co-Autor aus 2.5. Geprüft in R 4.5.3: read_spss() mit dem
 absoluten Pfad bricht auf einem Rechner ohne diesen Ordner ab („File '…' does not exist.“).
+1.4: Die vier Bereiche von RStudio 2026.01 mit dem Chunk aus 1.5.2 im Quarto-Dokument 01-erste_schritte.qmd; Reiter
+wie in RStudio, die Zwecke nach der Tabelle in 1.4.
 1.7: Die Hilfeseite zu ?mean in R 4.5.3 (Kopf, Titel, Überschriften, Usage und Examples wörtlich, Fließtext als
 graue Balken).
 """
 from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, arrow, codebox, connector, numdot, kachel,
-                  werkbank, INK, GRAY, GREEN, ORANGE, CARD, CARDLINE, DARKORANGE, WHITE, PALE, MONO_EM, C, L, RT)
+                  werkbank, kreis, text_width, INK, GRAY, GREEN, ORANGE, CARD, CARDLINE, DARKORANGE, WHITE, PALE,
+                  MONO_EM, SANS, C, L, RT)
 from kap03 import mono, notiz
 
 
@@ -96,7 +99,7 @@ def regal_werkbank():
 
 # 1.4.4 Arbeitsverzeichnis auf zwei Rechnern (Chunk getwd-demo, Vorsicht-Kasten) ------------------
 ABSOLUT = "/Users/anna/Documents/R-Workshop/ALLBUS2023.sav"
-DATEIEN = ["R-Workshop.Rproj", "01-erste_schritte.R", "ALLBUS2023.sav"]
+DATEIEN = ["R-Workshop.Rproj", "01-erste_schritte.qmd", "ALLBUS2023.sav"]
 
 
 def ordner(s, x, y, name, dateien, w=1.92, size=10, fh=0.27, gap=0.06):
@@ -205,7 +208,97 @@ def hilfeseite():
     return s
 
 
+# 1.4 Die vier Bereiche (Tabelle in 1.4, Beispiel aus 1.5.2) ------------------------------------
+# Nummer: (x, y, Breite, Höhe, Zweck, Reiter, aktiver Reiter)
+BEREICHE = {
+    1: (0.2, 0.5, 3.5, 2.1, "Code schreiben und speichern", ["01-erste_schritte.qmd"], 0),
+    2: (0.2, 2.7, 3.5, 1.85, "Code ausprobieren, Output ansehen", ["Console", "Terminal", "Background Jobs"], 0),
+    3: (3.8, 0.5, 3.6, 2.1, "Objekte und Befehlsverlauf", ["Environment", "History", "Connections", "Tutorial"], 0),
+    4: (3.8, 2.7, 3.6, 1.85, "Dateien, Grafiken, Pakete, Hilfe", ["Files", "Plots", "Packages", "Help", "Viewer"], 0),
+}
+REITER_PT, REITER_PAD = 10.5, 0.16
+
+
+def reiterzeilen():
+    """Je Bereich: (x, Breite, rechtes Ende der Reiterzeile) in Zoll."""
+    out = {}
+    for n, (x, y, w, h, zweck, reiter, aktiv) in BEREICHE.items():
+        ende = x + 0.1 + sum(text_width(r, SANS, REITER_PT, k == aktiv) + REITER_PAD for k, r in enumerate(reiter))
+        if n == 1:
+            ende += 0.1 + 0.62                                  # Run-Knopf rechts in der Zeile
+        out[n] = (x, w, ende)
+    return out
+
+
+def bereich(s, n):
+    """Ein Bereich: Nummer und Zweck, darunter die Reiter wie in RStudio, darunter ein weißes Inhaltsfeld.
+    Gibt (x, y) der ersten Inhaltszeile und die Breite des Feldes zurück."""
+    x, y, w, h, zweck, reiter, aktiv = BEREICHE[n]
+    rect(s, x, y, w, h, CARD, CARDLINE, 0.75)
+    numdot(s, x + 0.1, y + 0.1, n, fill=GREEN, d=0.28, size=10)
+    text(s, x + 0.46, y + 0.08, w - 0.56, 0.32, [P(R(zweck, size=11.5, bold=True))], anchor="middle")
+    rx = x + 0.1
+    for k, r in enumerate(reiter):
+        rw = text_width(r, SANS, REITER_PT, k == aktiv) + REITER_PAD
+        if k == aktiv:
+            rect(s, rx, y + 0.46, rw, 0.27, WHITE, CARDLINE, 0.75)
+        text(s, rx, y + 0.46, rw, 0.27, [P(R(r, size=REITER_PT, bold=k == aktiv, color=INK if k == aktiv else GRAY),
+                                          align=C)], anchor="middle")
+        rx += rw
+    rect(s, x + 0.1, y + 0.73, w - 0.2, h - 0.83, WHITE, CARDLINE, 0.75)
+    return x + 0.2, y + 0.8, w - 0.4
+
+
+def zeile(s, x, y, w, t, color=INK, font="mono", bold=False, size=10):
+    """Eine Zeile im Inhaltsfeld, linksbündig."""
+    if font == "mono":
+        text(s, x, y, w, 0.21, mono(t, size=size, color=color, bold=bold, align="start"), anchor="middle")
+    else:
+        text(s, x, y, w, 0.21, [P(R(t, size=size, bold=bold, color=color))], anchor="middle")
+
+
+def oberflaeche():
+    s = Canvas(7.6, 4.75)
+    wx, wy, ww, wh = 0.1, 0.1, 7.4, 4.55
+    rect(s, wx, wy, ww, wh, WHITE, INK, 1.5)
+    rect(s, wx, wy, ww, 0.3, INK)
+    for k, farbe in enumerate(["#E06C5A", ORANGE, GREEN]):
+        kreis(s, wx + 0.19 + k * 0.2, wy + 0.15, 0.06, farbe)
+    text(s, wx, wy, ww, 0.3, [P(R("RStudio", size=10.5, bold=True, color=WHITE), align=C)], anchor="middle")
+    text(s, wx, wy, ww - 0.15, 0.3, [P(R("R-Workshop", size=10, color=WHITE), align=RT)], anchor="middle")
+    lh = 0.21
+    # 1 Editor: der Chunk aus 1.5.2 mit seinem Ergebnis darunter, rechts der Run-Knopf
+    x, y, w = bereich(s, 1)
+    bx, by = BEREICHE[1][0] + BEREICHE[1][2] - 0.72, BEREICHE[1][1] + 0.47
+    rect(s, bx, by, 0.62, 0.25, WHITE, CARDLINE, 0.75)
+    text(s, bx, by, 0.62, 0.25, [P(R("→ ", size=10, bold=True, color=GREEN), R("Run", size=10, bold=True),
+                                   align=C)], anchor="middle")
+    rect(s, x - 0.06, y - 0.02, w + 0.12, 4 * lh + 0.04, CARD)            # Chunk: grau hinterlegt wie in RStudio
+    for k, (z, farbe) in enumerate([("```{r}", GRAY), ("var1 <- 2 + 3", INK), ("var1", INK), ("```", GRAY)]):
+        zeile(s, x, y + k * lh, w, z, color=farbe)
+    oy = y + 4 * lh + 0.06
+    rect(s, x - 0.06, oy, w + 0.12, lh + 0.06, WHITE, CARDLINE, 0.75)     # Ergebnis unter dem Chunk
+    zeile(s, x, oy + 0.03, w, "[1] 5", color=GREEN)
+    # 2 Konsole: dieselben Zeilen, ausgeführt
+    x, y, w = bereich(s, 2)
+    for k, (z, farbe) in enumerate([("> var1 <- 2 + 3", INK), ("> var1", INK), ("[1] 5", GREEN), (">", INK)]):
+        zeile(s, x, y + k * lh, w, z, color=farbe)
+    # 3 Environment: var1 mit dem Wert 5
+    x, y, w = bereich(s, 3)
+    zeile(s, x, y, w, "Global Environment", color=GRAY, font="sans")
+    zeile(s, x, y + lh, w, "Values", color=GRAY, font="sans", bold=True)
+    zeile(s, x, y + 2 * lh, 1.2, "var1")
+    zeile(s, x + 1.4, y + 2 * lh, 1.0, "5")
+    # 4 Files: der Projektordner aus 1.4.4
+    x, y, w = bereich(s, 4)
+    zeile(s, x, y, w, "Home > Documents > R-Workshop", color=GRAY, font="sans")
+    for k, d in enumerate(["01-erste_schritte.qmd", "ALLBUS2023.sav", "R-Workshop.Rproj"]):
+        zeile(s, x, y + (k + 1) * lh, w, d)
+    return s
+
+
 FIGUREN = {
+    "k01-oberflaeche": oberflaeche,
     "k01-oekosystem": oekosystem,
     "k01-regal-werkbank": regal_werkbank,
     "k01-arbeitsverzeichnis": arbeitsverzeichnis,

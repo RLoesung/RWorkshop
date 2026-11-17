@@ -27,7 +27,7 @@ ERWARTET_KAP01 = {
                                'read_spss("/Users/anna/Documents/R-Workshop/ALLBUS2023.sav")',
                                "RECHNER VON ANNA", "RECHNER VON BORIS", "getwd()",
                                '[1] "/Users/anna/Documents/R-Workshop"', '[1] "C:/Users/boris/Documents/R-Workshop"',
-                               "R-Workshop", "R-Workshop.Rproj", "01-erste_schritte.R", "ALLBUS2023.sav",
+                               "R-Workshop", "R-Workshop.Rproj", "01-erste_schritte.qmd", "ALLBUS2023.sav",
                                "gefunden", "nicht gefunden"],
     # 1.7: ?mean in R 4.5.3 (Kopf, Überschriften, Usage und Examples wörtlich); Begriffe aus dem Satz in 1.7
     "k01-hilfeseite": ["mean {base}", "R Documentation", "Arithmetic Mean", "Description",
@@ -36,6 +36,14 @@ ERWARTET_KAP01 = {
                        "Value, References, See Also", "Examples", "x <- c(0:10, 50)", "xm <- mean(x)",
                        "c(xm, mean(x, trim = 0.10))", "Funktionsbeschreibung", "Default-Werte", "Argumente",
                        "Beispiele"],
+    # 1.4: die vier Bereiche mit dem Beispiel aus 1.5.2 (Chunk mit var1 im Quarto-Dokument 01-erste_schritte.qmd aus
+    # der Checkliste nach 1.7); Reiternamen wie in RStudio 2026.01, Zwecke wie in der Tabelle in 1.4
+    "k01-oberflaeche": ["RStudio", "R-Workshop", "Code schreiben und speichern", "Code ausprobieren, Output ansehen",
+                        "Objekte und Befehlsverlauf", "Dateien, Grafiken, Pakete, Hilfe", "01-erste_schritte.qmd", "Run", "```{r}", "```",
+                        "var1 <- 2 + 3", "Console", "Terminal", "Background Jobs", "> var1 <- 2 + 3", "> var1",
+                        "[1] 5", "Environment", "History", "Connections", "Tutorial", "Global Environment", "Values",
+                        "Files", "Plots", "Packages", "Help", "Viewer", "Home > Documents > R-Workshop",
+                        "ALLBUS2023.sav", "R-Workshop.Rproj"],
 }
 
 
@@ -58,6 +66,8 @@ class TestKap01(unittest.TestCase):
             texte = alle_texte(svg)
             for wert in ERWARTET_KAP01[name]:
                 self.assertIn(wert, texte, f"{name}: {wert}")
+            if name == "k01-oberflaeche":                                  # Reitername in RStudio, wie im Text
+                texte = texte.replace("\nPackages\n", "\n")
             self.assertNotIn("Package", texte, f"{name}: Fachbegriff im Buch ist „Paket“")
 
     def test_arbeitsverzeichnis_ergebnisse(self):
@@ -87,6 +97,48 @@ class TestKap01(unittest.TestCase):
         for abschnitt, wort in [("Description", "Funktionsbeschreibung"), ("Usage", "Default-Werte"),
                                 ("Arguments", "Argumente"), ("Examples", "Beispiele")]:
             self.assertLess(abs(y[abschnitt] - y[wort]), 0.1, wort)
+
+    def test_oberflaeche_quadranten(self):
+        """Editor oben links, Konsole unten links, Environment oben rechts, Files unten rechts (wie in 1.4)."""
+        import kap01
+        s = kap01.oberflaeche()
+        els = text_elemente(s.svg())
+        pos = {t: (x, y) for t, x, y in els}
+        mx, my = s.w / 2, s.h / 2
+        self.assertLess(pos["Code schreiben und speichern"][0], mx)
+        self.assertLess(pos["Code schreiben und speichern"][1], my)
+        self.assertLess(pos["Code ausprobieren, Output ansehen"][0], mx)
+        self.assertGreater(pos["Code ausprobieren, Output ansehen"][1], my)
+        self.assertGreater(pos["Objekte und Befehlsverlauf"][0], mx)
+        self.assertLess(pos["Objekte und Befehlsverlauf"][1], my)
+        self.assertGreater(pos["Dateien, Grafiken, Pakete, Hilfe"][0], mx)
+        self.assertGreater(pos["Dateien, Grafiken, Pakete, Hilfe"][1], my)
+        # jede Nummer steht links neben ihrer Überschrift, auf derselben Höhe
+        for n, titel in enumerate(["Code schreiben und speichern", "Code ausprobieren, Output ansehen",
+                                   "Objekte und Befehlsverlauf", "Dateien, Grafiken, Pakete, Hilfe"], start=1):
+            nah = [(x, y) for t, x, y in els if t == str(n)
+                   and 0 < pos[titel][0] - x < 0.5 and abs(pos[titel][1] - y) < 0.1]
+            self.assertEqual(len(nah), 1, titel)
+
+    def test_oberflaeche_ergebnis_zweimal(self):
+        """[1] 5 steht im Editor unter dem Chunk (oben links) und in der Konsole (unten links)."""
+        import kap01
+        s = kap01.oberflaeche()
+        els = text_elemente(s.svg())
+        treffer = sorted((y, x) for t, x, y in els if t == "[1] 5")
+        self.assertEqual(len(treffer), 2)
+        self.assertTrue(all(x < s.w / 2 for y, x in treffer))
+        grenze = kap01.BEREICHE[1][1] + kap01.BEREICHE[1][3]              # Unterkante des Editors
+        self.assertLess(treffer[0][0], grenze)
+        self.assertGreater(treffer[1][0], grenze)
+        ende = [y for t, x, y in els if t == "```" and x < s.w / 2]
+        self.assertTrue(ende and treffer[0][0] > max(ende), "Ergebnis unter dem Chunk")
+
+    def test_oberflaeche_reiter_im_bereich(self):
+        """Die Reiter jedes Bereichs passen in seine Breite."""
+        import kap01
+        for n, (x, w, reiter) in kap01.reiterzeilen().items():
+            self.assertLessEqual(reiter, x + w - 0.08, f"Bereich {n}")
 
 
 if __name__ == "__main__":
