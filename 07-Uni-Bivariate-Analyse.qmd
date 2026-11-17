@@ -64,6 +64,17 @@ In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsenti
 
 In mariposa heißt das Argument durchgängig `weights = wghtpew` — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.
 
+**Frage:** Wie stark ist der Osten in der Stichprobe vertreten, und wie stark nach der Gewichtung?
+
+```{r gewichtung-eastwest}
+allbus |> frequency(eastwest)
+allbus |> frequency(eastwest, weights = wghtpew)
+```
+
+**Lesart.** Ungewichtet wohnen 32.01 % der Befragten in den neuen Bundesländern, gewichtet sind es 16.84 %. `wghtpew` gibt jeder Person ein Gewicht: im Westen zwischen 1.20 und 1.25, im Osten zwischen 0.50 und 0.55. Das gewichtete N einer Gruppe ist die Summe dieser Gewichte, im Osten 883 statt 1.679 (@fig-gewichtung).
+
+![Jeder Stein steht für eine befragte Person, seine Breite für ihr Gewicht. Gezeigt sind die ersten sechs Befragten aus dem Westen und die ersten drei aus dem Osten; Prozente und N stammen aus `frequency()`.](Bilder/figuren/k07-gewichtung.svg){#fig-gewichtung .lightbox fig-alt="Links die Gruppen ALTE BUNDESLAENDER und NEUE BUNDESLAENDER. Unter UNGEWICHTET und dem Code frequency(eastwest) ein Turm aus neun gleich breiten blauen Steinen mit der 1, sechs für den Westen und drei für den Osten; Klammern zeigen 67.99 % mit N = 3567 und 32.01 % mit N = 1679. Unter GEWICHTET und dem Code frequency(eastwest, weights = wghtpew) derselbe Turm, die Steine so breit wie ihr Gewicht: im Westen 1.25, 1.20, 1.20, 1.21, 1.25 und 1.20, im Osten deutlich schmaler 0.545, 0.501 und 0.541. Klammern zeigen 83.16 % mit N = 4363 und 16.84 % mit N = 883."}
+
 ## Inferenz verstehen — was hinter jedem Test steckt {#sec-inferenz}
 
 Bevor du den ersten Test rechnest, drei Begriffe, die in *jedem* Test-Output auftauchen — und die meisten Studis aus SPSS-Kursen *mechanisch* benutzen, ohne sie wirklich verstanden zu haben: **p-Wert**, **Standardfehler**, **Konfidenzintervall**. Wer diese drei richtig liest, kann jeden Test-Output sinnvoll interpretieren — wer sie missversteht, produziert Aussagen, die in einem Methoden-Seminar zerpflückt werden.
@@ -392,6 +403,10 @@ allbus |>
 ```
 
 **Lesart.** Im Westen hat gut die Hälfte (50.3 %) eine hohe Bildung, im Osten 44.9 %. Der deutlichste Unterschied liegt aber in der Mitte: 41.8 % der Ostdeutschen haben die mittlere Reife, aber nur 27.6 % der Westdeutschen — dafür ist niedrige Bildung im Osten seltener (13.3 % gegenüber 22.2 %). Die Zellhäufigkeiten sind gewichtet; mariposa rundet sie wie SPSS (`/COUNT ROUND CELL`) auf ganze Zahlen, bevor Ränder und Prozente berechnet werden.
+
+Jede Zeile ergibt zusammen 100 % (@fig-zeilenprozente). Deshalb vergleichst du die Anteile einer Bildungsstufe zwischen den Zeilen, etwa die mittlere Reife im Westen und im Osten.
+
+![Die Zeilenprozente aus `crosstab()`: Jede Zeile der Tabelle ist ein Balken, der zusammen 100 % ergibt.](Bilder/figuren/k07-zeilenprozente.svg){#fig-zeilenprozente .lightbox fig-alt="Oben der Code allbus |> crosstab(eastwest, educ_kat, weights = wghtpew) und eine Legende niedrig, mittel und hoch in drei Orangetönen. Darunter drei waagerechte Balken, jeder in drei Abschnitte geteilt und rechts mit 100.0% beschriftet: ALTE BUNDESLAENDER 22.2%, 27.6% und 50.3%; NEUE BUNDESLAENDER 13.3%, 41.8% und 44.9%; nach einer Trennlinie Total 20.6%, 30.0% und 49.4%."}
 
 **Vier Prozentuierungs-Richtungen** — sie beantworten *verschiedene* Fragen. Du wählst sie mit dem Argument `percentages`:
 
