@@ -24,7 +24,7 @@ Im Buch werden genau diese Begriffe bisher nur mit Text und Code erklärt: Kap. 
 
 - Keine Übernahme der Aktivitätsformate (ZURUF, HANDZEICHEN, Daumen hoch), keine Zeitangaben, keine Animationen.
 - Keine Anekdoten ohne Lehrwert (etwa die Alltagsereignisse aus der Zeitleiste), siehe `STYLE.md` §10.
-- Keine Bausteine-Grafik dort, wo das Buch schon eine bessere Abbildung hat (Inferenz-Simulationen in Kap. 7, alle Kapitel ab Kap. 6, die mit echten ggplot-Grafiken arbeiten).
+- Keine Bausteine-Grafik dort, wo das Buch schon eine bessere Abbildung hat (Inferenz-Simulationen in Kap. 7, ggplot-Ergebnisse in Kap. 6–9). Seit der Erweiterung vom 17.11.2026 (Abschnitt 6, Nr. 38–50) bekommen auch Kap. 6, 8 und 9 Bausteine-Bilder, aber nur für Konzepte, die dort bisher ohne Bild erklärt werden.
 - Keine Änderung an den Folien.
 
 **Was es nicht werden darf**
@@ -167,6 +167,46 @@ Quelle: T1 = `ReadingWeek_Folien.pptx` (Tag 1), T2 = `Tag2_Folien.pptx` (Tag 2),
 | 35 | `k05-pipeline` | 5.9 | T2 34, 27 | sechs Schritte der Pipeline mit ihren Abschnitten; `R/prep.R` und der Setup-Chunk von Kap. 6 bis 9 | |
 | 36 | `k07-gewichtung` | 7.2 | T2 36 | Gewicht als Breite des Steins, ungewichtet und gewichtet; Ost etwa 0.5, West etwa 1.2 | |
 | 37 | `k07-zeilenprozente` | 7.5.1 | T2 41 | jede Zeile ein 100-%-Balken | |
+
+### Erweiterung: alle Kapitel (17.11.2026)
+
+Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes Kapitel Abschnitt für Abschnitt auf Bildpotenzial geprüft. Die meisten Bilder haben keine Folienvorlage („neu“). Prio A = deutlicher Gewinn, B = hilfreich. Die Notizen der Durchsicht mit allen geprüften Werten liegen beim Bau als Arbeitsgrundlage vor; im fertigen Bild gelten die Regeln aus 5.1.
+
+| Nr | Datei | Abschnitt | Quelle | Inhalt | Prio | Kurz überlegen |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| 38 | `k01-arbeitsverzeichnis` | 1.4.4 | neu | Projektordner als Arbeitsverzeichnis auf zwei Rechnern; `read_spss("ALLBUS2023.sav")` findet die Datei auf beiden, der absolute Pfad aus dem Vorsicht-Kasten nur auf einem | A | |
+| 39 | `k01-hilfeseite` | 1.7 | T1 39 | Hilfeseite zu `?mean` als Schema: Usage mit Standardwerten, `na.rm` unter Arguments, Examples | B | |
+| 40 | `k02-chunk-optionen` | 2.6 | neu | derselbe Chunk viermal: ohne Option, `echo=FALSE`, `eval=FALSE`, `include=FALSE` — was im Bericht steht und ob er ausgeführt wird | B | |
+| 41 | `k02-render-sitzung` | 2.6.1 | neu | Rendern startet eine neue, leere R-Sitzung; erst der Setup-Chunk legt Pakete auf die Werkbank und `allbus` ins Environment | A | ja |
+| 42 | `k02-zitieren` | 2.9 | neu | Schlüssel aus der `.bib`-Datei und `@Goodman2016` im Text → nach dem Rendern Zitat und Literaturliste | B | |
+| 43 | `k03-vergleich` | 3.4.3 | neu | Turm `alter`, die Bedingungen `alter >= 18` und `alter <= 65` als Wahrheitstürme, `&` verknüpft sie Stein für Stein (Chunk `operators-demo`) | B | |
+| 44 | `k03-index` | 3.5.1 | neu | `zahlen > 25` ergibt einen Wahrheitsturm, der als Schablone die Steine auswählt: `30 40 50` (Chunk `boolean-indexing`) | A | |
+| 45 | `k03-recycling` | 3.5.1 | neu | `zahlen * 2` und `c(1, 2, 3, 4) + c(10, 20)`: R wiederholt den kürzeren Vektor (blasse Steine) | B | |
+| 46 | `k03-faktor` | 3.5.2 | neu | Faktor `geschlecht` mit Stufenleiste (Reihenfolge), internen Codes und erster Stufe als Referenz (Chunk `factors`) | A | ja |
+| 47 | `k03-liste` | 3.5.4 | neu | Liste `ergebnis` als Kiste mit Fächern unterschiedlicher Größe; `ergebnis$konfidenz[1]` in zwei Schritten (Chunk `list`) | A | |
+| 48 | `k04-filter-na` | 4.5.2 | T2 14 | `sex == 1` ergibt bei leeren Steinen wieder leere Steine; `filter()` behält nur TRUE (Chunk `filter-na-trio`) | A | ja |
+| 49 | `k04-drop-na` | 4.8 | neu | `drop_na()` auf `mm01`–`mm03`: Eine Lücke kostet die ganze Reihe (Chunk `drop-na`) | B | |
+| 50 | `k05-std` | 5.4 | neu | `age` auf dem Lineal: `center()` zieht den Mittelwert ab, `std()` teilt durch die SD (Chunk `std-center`) | B | |
+| 51 | `k05-join` | 5.5 | neu | `left_join()` über den Schlüssel `eastwest`: Kontextwerte werden zu neuen Türmen, alle Reihen bleiben (Chunks `join-kontext`, `join-demo`) | A | |
+| 52 | `k05-join-familie` | 5.5 | neu | Schema: zwei kleine Platten mit teils fehlenden Schlüsseln → `left_join()`, `inner_join()`, `full_join()` | B | |
+| 53 | `k05-pivot-longer` | 5.6.1 | neu | aus sechs Item-Türmen werden ein Turm `item` und ein Turm `antwort`; Namensschilder werden Steine (Chunks `pivot-wide-show`, `pivot-longer-demo`) | A | |
+| 54 | `k05-pivot-wider` | 5.6.2 | neu | `names_from` liefert die Namensschilder, `values_from` die Steine (Chunks `pivot-mw-long`, `pivot-wider-demo`) | B | |
+| 55 | `k05-row-count` | 5.7.2 | neu | `row_count(count = 7)` zählt pro Reihe; Lücken ergeben 0, nicht NA (Chunk `row-count-demo`) | B | |
+| 56 | `k06-grammatik` | 6.2 | neu | `aes()` ordnet Türme der x-Achse, der y-Achse und der Farbe zu; jede Reihe wird ein Punkt | A | |
+| 57 | `k06-aes-konstante` | 6.3.2 | neu | in `aes()` ein Turm (Farbe je Stufe, Legende), außerhalb ein einzelner Wert (alle gleich, keine Legende) (Chunk `aes-vs-konstant`) | A | ja |
+| 58 | `k06-ebenen` | 6.3.3 | neu | bis `ggplot()` läuft die Bauplatte durch `\|>`, danach legt `+` Ebenen übereinander (Chunks `boxviolin`, `combo`) | B | |
+| 59 | `k06-bar-zaehlt` | 6.4.1 | neu | `geom_bar()` zählt erst (gewichtet) je Stufe, `after_stat(prop)` zeichnet die Anteile (Chunk `bar-prop`) | A | |
+| 60 | `k07-haeufigkeit` | 7.4.1 | neu | Turm `mm01`: N, Raw % und Valid %; leere Steine zählen bei den gültigen Prozent nicht mit (Chunk `freq-mm`) | A | |
+| 61 | `k08-latenter-faktor` | 8.1 | neu | sechs gemessene Item-Türme und ein nicht gemessener Faktor als gestrichelter Umriss, der auf alle zeigt; ersetzt das Text-Diagramm im Konzept-Kasten | A | |
+| 62 | `k08-ergebnisobjekt` | 8.3.3 | T2 42 | `efa_vor` als Kiste mit Schubladen (`$kmo`, `$bartlett`, `$eigenvalues`, `$loadings`); jedes `$` öffnet eine Schublade | A | |
+| 63 | `k08-item-total` | 8.7.4 | neu | korrigierte Item-Total-Korrelation: Summe der anderen fünf Items gegen `mm05r` (Chunk `reliability-summary`) | B | |
+| 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz | B | ja |
+| 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig (Chunk `model-compare`) | A | |
+| 66 | `k09-augment` | 9.6.3 | neu | `augment()` stellt `.fitted` und `.resid` neben die Daten; Rechnung für Reihe 1 aus der Koeffiziententabelle (Chunk `augment-setup`) | A | |
+| 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` gegen `ancova()`) | B | |
+| 68 | `k09-ame` | 9.8.1 | neu | vorhergesagte Wahrscheinlichkeit je Person bei niedriger und hoher Bildung, Differenz je Reihe, Mittelwert = AME (Chunk `logreg-ame`) | B | |
+
+Nach der Durchsicht verworfen: Inline-Code in 2.7 (Quelle und Ergebnis stehen schon untereinander), Geom-Wahl in 6.4 (die Tabelle zeigt es, und Steinfarbe ist nicht dasselbe wie kategorial/kontinuierlich), Facets in 6.5 (die Panels zeigen die Aufteilung selbst), Gruppenvergleich in 7.6.1 (zeigt `k05-summarise`), Korrelationsmatrix in 8.2.2 (Heatmap in 8.2.4), Vorhersage in 9.2.2 (geht in `k09-augment` auf), VIF in 9.5.3 (drei Chunks zeigen die Schritte).
 
 Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), RStudio-Bereiche (T1 14, Kap. 1 hat Screenshots), Testwahl (T2 40, Text statt Bild), t-Test-Glocken und Korrelationswolken (T2 42, 43, Kap. 7 hat Simulationen), Ratespiele ohne Grafik.
 
