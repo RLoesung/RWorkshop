@@ -2,6 +2,10 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — Tastenkürzel im Vorwort
+
+- Das Vorwort endet mit einer Tabelle der wichtigsten Tastenkürzel, getrennt nach macOS und Windows und abgestimmt auf die Arbeit mit Quarto-Dokumenten (Chunk einfügen, Chunk ausführen, Rendern). Sie verlinkt auf den Abschnitt „Nützliche Tastenbefehle" in Kap. 1.
+
 ## 15. November 2026 — Texte an die Ausgabe angeglichen
 
 Beim Abgleich mit R 4.5.3 und mariposa 0.7.4 sind Stellen aufgefallen, an denen der Text nicht mehr zur Ausgabe passte.
