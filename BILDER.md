@@ -2,7 +2,7 @@
 
 **Zweck.** Dieses Dokument regelt, wie die Erklärgrafiken aus dem Workshop „Reading Week“ (Tag 1 „R-Einstieg“, Tag 2 „Daten und Analyse“, November 2026) ins Buch kommen. Es ist zugleich der Vertrag für alle späteren Abbildungen in dieser Bildsprache, so wie `STYLE.md` den Text und `MIGRATION.md` den Code regelt.
 
-**Status.** Umgesetzt am 17.11.2026: 37 Abbildungen in Kap. 1, 2, 3, 4, 5 und 7. Die Abschnitte 5 und 6 beschreiben den gebauten Stand.
+**Status.** Umgesetzt am 17.11.2026: 37 Abbildungen in Kap. 1, 2, 3, 4, 5 und 7. Erweiterung umgesetzt am 17.11.2026: 31 weitere Abbildungen in Kap. 1 bis 9, zusammen 68. Die Abschnitte 5 und 6 beschreiben den gebauten Stand.
 
 ---
 
@@ -24,7 +24,7 @@ Im Buch werden genau diese Begriffe bisher nur mit Text und Code erklärt: Kap. 
 
 - Keine Übernahme der Aktivitätsformate (ZURUF, HANDZEICHEN, Daumen hoch), keine Zeitangaben, keine Animationen.
 - Keine Anekdoten ohne Lehrwert (etwa die Alltagsereignisse aus der Zeitleiste), siehe `STYLE.md` §10.
-- Keine Bausteine-Grafik dort, wo das Buch schon eine bessere Abbildung hat (Inferenz-Simulationen in Kap. 7, ggplot-Ergebnisse in Kap. 6–9). Seit der Erweiterung vom 17.11.2026 (Abschnitt 6, Nr. 38–50) bekommen auch Kap. 6, 8 und 9 Bausteine-Bilder, aber nur für Konzepte, die dort bisher ohne Bild erklärt werden.
+- Keine Bausteine-Grafik dort, wo das Buch schon eine bessere Abbildung hat (Inferenz-Simulationen in Kap. 7, ggplot-Ergebnisse in Kap. 6–9). Seit der Erweiterung vom 17.11.2026 (Abschnitt 6, Nr. 38–68) bekommen auch Kap. 6, 8 und 9 Bausteine-Bilder, aber nur für Konzepte, die dort bisher ohne Bild erklärt werden.
 - Keine Änderung an den Folien.
 
 **Was es nicht werden darf**
@@ -71,12 +71,12 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | gelber Aufkleber am Stein | Wertelabel |
 | Code-Bausteine dunkel / grün / orange | Objekt / Funktion / Argument |
 | grüner Kasten mit gestricheltem Feld | Funktion mit ihrem ersten Argument |
-| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`, `drop_na()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`); bei `row_count()` ein Wert, der nicht mitgezählt wird (5.7.2); bei `augment()` eine Spalte, die im Ergebnis steht, in der gezeigten Rechnung aber keine Rolle spielt (9.6.3) |
+| grauer Stein | spielt für diesen Schritt keine Rolle. Beispiele: fällt im Ergebnis weg (`select()`, `filter()`, `drop_na()`; `[ ]` in 3.5.1); wird nur angezeigt, nicht gespeichert (ohne `<-`, 5.2.1); wird nicht mitgezählt (`row_count()`, 5.7.2); steht nicht in der Summe (Item-Total-Korrelation, 8.7.4); steht im Ergebnis, geht in die gezeigte Rechnung aber nicht ein (`augment()`, 9.6.3) |
 | leerer Stein mit Aufkleber | fehlender Wert mit Missing-Code und Label |
 | Name und grauer Typ über einem Turm | Spaltenkopf wie in der Ausgabe eines Tibbles, etwa `<dbl+lbl>` |
 | graue Auslassungspunkte | weitere Türme oder Reihen, die nicht gezeigt sind |
 | oranger Rahmen / grüner Rahmen | eine Reihe (ein Fall) / ein Turm (eine Variable, auch ein neuer Turm) |
-| eckige Klammer neben Steinen | eine Gruppe von Werten (`rec()`, `dicho()`, Gewichtung) |
+| eckige Klammer neben Steinen | eine Gruppe von Werten, die zusammen ausgewertet wird (`rec()`, `dicho()`, Gewichtung; die Summen in 7.4.1, die Korrelation in 8.7.4, der Mittelwert in 9.8.1) |
 | orange gestrichelte Linie | Schnittpunkt bei `dicho()` |
 | Lineal mit Pfeilmarken | Wertebereich einer Skala, der Pfeil zeigt einen Mittelwert (`pomps()`) |
 | Zeitleiste mit grünen Nummernpunkten | Schritte einer Auswertung in ihrer Reihenfolge (Pipeline in 5.9) |
@@ -85,15 +85,19 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | Regal / Werkbank mit Paket-Kacheln | Paket installiert / mit `library()` geladen (1.6.2, 2.6.1) |
 | Ordner mit Reiter und Datei-Kacheln | Projektordner, Arbeitsverzeichnis (1.4.4) |
 | graue Balken auf einer Seite | Fließtext, der nicht wiedergegeben ist (1.7) |
+| hellorange hinterlegter Code | die Stelle, um die es im Text geht (Standardwerte und `na.rm` auf der Hilfeseite, 1.7) |
 | Operator zwischen den Steinen jeder Reihe | R rechnet oder vergleicht Stein für Stein (3.4.3, 3.5.1) |
+| kleine graue Pfeile, einer je Reihe | R rechnet für jede Reihe einzeln, rechts steht das Ergebnis dieser Reihe (3.4.3, 3.5.1, 9.3.1, 9.8.1) |
 | rosa Turm neben einem Turm | Wahrheitsturm als Schablone für `[ ]`: Steine neben `FALSE` werden grau und fallen weg (3.5.1) |
 | blasser Stein (Farbe des Datentyps, heller, Kante in der vollen Farbe) | ein Wert, den R wiederholt (Recycling, 3.5.1); anders als ein grauer Stein geht er in die Rechnung ein (`lego.stein(…, blass=True)`) |
-| weißes Schild „Referenz“ mit Spitze zum Stein | Referenzkategorie eines Faktors, die erste Stufe (3.5.2; `lego.referenz()`) |
+| weißes Schild „Referenz“ mit Spitze zum Stein | Referenzkategorie eines Faktors, die erste Stufe (3.5.2, 9.3.1; `lego.referenz()`) |
+| Kasten `levels(…)` mit den Stufen als lila Steinen untereinander | die Stufen eines Faktors in ihrer festen Reihenfolge; in 3.5.2 steht neben jeder Stufe ihr interner Code (3.5.2, 9.3.1) |
+| graue Notiz „intern“ über einem Turm | was R im Hintergrund speichert oder bildet und nicht ausgibt: die Codes eines Faktors (3.5.2), die Dummies im Modell (9.3.1) |
 | Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`). Ein letztes Fach mit grauen Auslassungspunkten: Die Liste hat weitere Elemente (`kiste(…, mehr=…)`); eine Kiste in einem Fach ist eine Liste in der Liste (8.3.3) |
 | graue Zahlen links neben einer Reihe | Reihennummer wie in der Ausgabe eines Tibbles; Lücken in der Zählung stehen für Reihen, die nicht gezeigt sind (4.5.2, 4.8) |
 | leerer Stein mit blassem Aufkleber | fehlender Wert in einer Reihe, die im Ergebnis wegfällt (4.5.2; `kap04.lstein(…, blass=True)`) |
-| Lineale untereinander mit gestrichelten Hilfslinien | dieselben Fälle auf verschiedenen Skalen: Die blauen Pfeile (einzelne Werte) bleiben an ihrer Stelle, Nullpunkt und Einheit ändern sich (`center()`, `std()`, 5.4); der orange Pfeil zeigt den Mittelwert |
-| zwei Lineale mit derselben Skala, gestrichelte Linien von Pfeil zu Pfeil | derselbe Mittelwert je Gruppe ohne und mit Kontrolle einer Kovariate; die Linie zeigt, wohin sich eine Gruppe verschiebt (9.7.3). Liegen zwei Mittelwerte fast gleich, trennt eine weiße Kante die beiden orangen Pfeile (`kap09.mittel_marke()`) |
+| Lineale untereinander mit gestrichelten Hilfslinien | dieselben Fälle auf verschiedenen Skalen: Die blauen Pfeile (einzelne Werte) bleiben an ihrer Stelle, Nullpunkt und Einheit ändern sich (`center()`, `std()`, 5.4); der orange Pfeil zeigt den Mittelwert, eine waagerechte Klammer die Standardabweichung |
+| zwei Lineale mit derselben Skala, gestrichelte graue Linien von Pfeil zu Pfeil | derselbe Mittelwert je Gruppe ohne und mit Kontrolle einer Kovariate; die Linie zeigt, wohin sich eine Gruppe verschiebt (9.7.3). Liegen zwei Mittelwerte fast gleich, zeigt einer von oben und einer von unten auf das Lineal; die Linie zum unteren Pfeil endet am Lineal (`kap09.mittel_marke(…, unten=True)`). Zahlen stehen nur an den ganzen Strichen |
 | Rechenzeile mit grauen Namen unter den Werten | wie R einen Wert einer Reihe ausrechnet; unter jeder Zahl steht, aus welcher Spalte oder welchem Koeffizienten sie kommt (`.fitted` und `.resid` in 9.6.3; `kap09.rechnung()`) |
 | dunkles Namensschild über einem Turm | Spaltenname, der beim Umformen zum Wert wird oder aus Werten entsteht (`pivot_longer()`, `pivot_wider()`, 5.6) |
 | oranger Rahmen um mehrere Reihen | ein Fall, der im Long-Format über mehrere Reihen verteilt ist (5.6.1) |
@@ -107,7 +111,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 
 - Neuer Ordner `figuren/` im Repository:
   - `figuren/lego.py` — Zeichenbibliothek. Gleiche Funktionsnamen und Argumente wie die Folien-Helfer (`R`, `P`, `text`, `rect`, `card`, `label_box`, `tok`, `tokens`, `stein`, `schild`, `turm`, `arrow`, `connector`, `vline`, `outline`, `chip`, `numdot`, `eyebrow`, `codebox` …), aber mit SVG statt PowerPoint als Ausgabe. Koordinaten in Zoll wie auf den Folien. Nur Python-Standardbibliothek, damit niemand etwas installieren muss.
-  - `figuren/kap01.py` … `figuren/kap07.py` — je Kapitel die Abbildungen als Funktionen.
+  - `figuren/kap01.py` … `figuren/kap09.py` — je Kapitel die Abbildungen als Funktionen.
   - `figuren/build.py` — erzeugt alle SVG-Dateien neu: `python3 figuren/build.py`.
 - Ausgabe: `Bilder/figuren/<kapitel>-<name>.svg`, z. B. `Bilder/figuren/k03-pipe.svg`. Die SVG-Dateien werden committet; zum Rendern des Buchs braucht man Python nicht.
 - Die Bibliothek ist eine eigenständige Kopie im Repository und importiert nichts aus dem Methoden-Ib-Ordner.
@@ -133,7 +137,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 
 ### 5.6 Format „Kurz überlegen“
 
-Wo eine Folie eine starke Vorhersagefrage hatte (etwa „Was ist y?“ oder „Welcher Datentyp setzt sich durch?“), bekommt das Buch eine kurze Denkpause: ein Absatz mit **Kurz überlegen.** und der Frage, direkt darunter die Auflösung als eingeklappter `.callout-tip` mit `title="Auflösung" collapse="true"`. Sparsam: höchstens eine pro Abschnitt, im ganzen Buch etwa zehn. Das Format wird vor der ersten Verwendung in `STYLE.md` §4 eingetragen.
+Wo eine Folie eine starke Vorhersagefrage hatte (etwa „Was ist y?“ oder „Welcher Datentyp setzt sich durch?“), bekommt das Buch eine kurze Denkpause: ein Absatz mit **Kurz überlegen.** und der Frage, direkt darunter die Auflösung als eingeklappter `.callout-tip` mit `title="Auflösung" collapse="true"`. Sparsam, höchstens eine pro Abschnitt (derzeit 14). Das Format wird vor der ersten Verwendung in `STYLE.md` §4 eingetragen.
 
 Die Abbildung bleibt immer sichtbar, sie ist die Erklärung. Die Frage greift deshalb einen neuen Fall auf, den das Bild nicht zeigt, meist die Zusatzaufgabe oder das Puzzle der Folie (bei der Pipe etwa: „Wie schreibst du `sqrt(sum(c(9, 16)))` als Pipe?“). Die Auflösung im eingeklappten Callout ist Text und Code, ohne eigenes Bild. *(Entscheidung des Umsetzers)*
 
@@ -190,7 +194,7 @@ Quelle: T1 = `ReadingWeek_Folien.pptx` (Tag 1), T2 = `Tag2_Folien.pptx` (Tag 2),
 
 ### Erweiterung: alle Kapitel (17.11.2026)
 
-Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes Kapitel Abschnitt für Abschnitt auf Bildpotenzial geprüft. Die meisten Bilder haben keine Folienvorlage („neu“). Prio A = deutlicher Gewinn, B = hilfreich. Die Notizen der Durchsicht mit allen geprüften Werten liegen beim Bau als Arbeitsgrundlage vor; im fertigen Bild gelten die Regeln aus 5.1.
+Umgesetzt am 17.11.2026; die Spalte „Inhalt“ beschreibt die gebauten Bilder. Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes Kapitel Abschnitt für Abschnitt auf Bildpotenzial geprüft. Die meisten Bilder haben keine Folienvorlage („neu“). Prio A = deutlicher Gewinn, B = hilfreich. Die Notizen der Durchsicht mit allen geprüften Werten liegen beim Bau als Arbeitsgrundlage vor; im fertigen Bild gelten die Regeln aus 5.1.
 
 | Nr | Datei | Abschnitt | Quelle | Inhalt | Prio | Kurz überlegen |
 | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
@@ -198,15 +202,15 @@ Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes
 | 39 | `k01-hilfeseite` | 1.7 | T1 39 | Hilfeseite zu `?mean` als Schema: Usage mit Standardwerten, `na.rm` unter Arguments, Examples | B | |
 | 40 | `k02-chunk-optionen` | 2.6 | neu | derselbe Chunk viermal: ohne Option, `echo=FALSE`, `eval=FALSE`, `include=FALSE` — was im Bericht steht und ob er ausgeführt wird | B | |
 | 41 | `k02-render-sitzung` | 2.6.1 | neu | Rendern startet eine neue, leere R-Sitzung; erst der Setup-Chunk legt Pakete auf die Werkbank und `allbus` ins Environment | A | ja |
-| 42 | `k02-zitieren` | 2.9 | neu | Schlüssel aus der `.bib`-Datei und `@Goodman2016` im Text → nach dem Rendern Zitat und Literaturliste | B | |
+| 42 | `k02-zitieren` | 2.9 | neu | Schlüssel `Goodman2016` und `Wickham2023` aus der `.bib`-Datei, `@Goodman2016` und `[@Wickham2023]` im Text → nach dem Rendern Zitate und Literaturliste (Standardstil, `lang: de`) | B | |
 | 43 | `k03-vergleich` | 3.4.3 | neu | Turm `alter`, die Bedingungen `alter >= 18` und `alter <= 65` als Wahrheitstürme, `&` verknüpft sie Stein für Stein (Chunk `operators-demo`) | B | |
 | 44 | `k03-index` | 3.5.1 | neu | `zahlen > 25` ergibt einen Wahrheitsturm, der als Schablone die Steine auswählt: `30 40 50` (Chunk `boolean-indexing`) | A | |
 | 45 | `k03-recycling` | 3.5.1 | neu | `zahlen * 2` und `c(1, 2, 3, 4) + c(10, 20)`: R wiederholt den kürzeren Vektor (blasse Steine) | B | |
-| 46 | `k03-faktor` | 3.5.2 | neu | Faktor `geschlecht` mit Stufenleiste (Reihenfolge), internen Codes und erster Stufe als Referenz (Chunk `factors`) | A | ja |
+| 46 | `k03-faktor` | 3.5.2 | neu | Faktor `geschlecht` mit dem Turm der internen Codes und dem Kasten `levels(geschlecht)` (Reihenfolge der Stufen); die erste Stufe ist die Referenz (Chunk `factors`) | A | ja |
 | 47 | `k03-liste` | 3.5.4 | neu | Liste `ergebnis` als Kiste mit Fächern unterschiedlicher Größe; `ergebnis$konfidenz[1]` in zwei Schritten (Chunk `list`) | A | |
 | 48 | `k04-filter-na` | 4.5.2 | T2 14 | `sex == 1` ergibt bei leeren Steinen wieder leere Steine; `filter()` behält nur TRUE (Chunk `filter-na-trio`) | A | ja |
 | 49 | `k04-drop-na` | 4.8 | neu | `drop_na()` auf `mm01`–`mm03`: Eine Lücke kostet die ganze Reihe (Chunk `drop-na`) | B | |
-| 50 | `k05-std` | 5.4 | neu | `age` auf dem Lineal: `center()` zieht den Mittelwert ab, `std()` teilt durch die SD (Chunk `std-center`) | B | |
+| 50 | `k05-std` | 5.4 | neu | `age` auf drei Linealen untereinander: `center()` zieht den Mittelwert ab, `std()` teilt durch die SD; gezeigt sind Person 1 und 3 (Chunk `std-center`) | B | |
 | 51 | `k05-join` | 5.5 | neu | `left_join()` über den Schlüssel `eastwest`: Kontextwerte werden zu neuen Türmen, alle Reihen bleiben (Chunks `join-kontext`, `join-demo`) | A | |
 | 52 | `k05-join-familie` | 5.5 | neu | Schema: zwei kleine Platten mit teils fehlenden Schlüsseln → `left_join()`, `inner_join()`, `full_join()` | B | |
 | 53 | `k05-pivot-longer` | 5.6.1 | neu | aus sechs Item-Türmen werden ein Turm `item` und ein Turm `antwort`; Namensschilder werden Steine (Chunks `pivot-wide-show`, `pivot-longer-demo`) | A | |
@@ -216,14 +220,14 @@ Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes
 | 57 | `k06-aes-konstante` | 6.3.2 | neu | in `aes()` ein Turm (Farbe je Stufe, Legende), außerhalb ein einzelner Wert (alle gleich, keine Legende) (Chunk `aes-vs-konstant`) | A | ja |
 | 58 | `k06-ebenen` | 6.3.3 | neu | bis `ggplot()` läuft die Bauplatte durch `\|>`, danach legt `+` Ebenen übereinander (Chunks `boxviolin`, `combo`) | B | |
 | 59 | `k06-bar-zaehlt` | 6.4.1 | neu | `geom_bar()` zählt erst (gewichtet) je Stufe, `after_stat(prop)` zeichnet die Anteile (Chunk `bar-prop`) | A | |
-| 60 | `k07-haeufigkeit` | 7.4.1 | neu | Turm `mm01`: N, Raw % und Valid %; leere Steine zählen bei den gültigen Prozent nicht mit (Chunk `freq-mm`) | A | |
+| 60 | `k07-haeufigkeit` | 7.4.1 | neu | Turm `mm01` als Schema aus zehn Steinen: N, Raw % und Valid % für den Wert 1; leere Steine zählen bei den gültigen Prozent nicht mit; N und Totals gewichtet (Chunk `freq-mm`) | A | |
 | 61 | `k08-latenter-faktor` | 8.1 | neu | sechs gemessene Item-Türme und ein nicht gemessener Faktor als gestrichelte Ellipse, die auf alle zeigt; ersetzt das Text-Diagramm im Konzept-Kasten | A | |
 | 62 | `k08-ergebnisobjekt` | 8.3.3 | T2 42 | `efa_vor` als Kiste mit Fächern (`$loadings`, `$eigenvalues`, `$kmo`, `$bartlett`, dahinter weitere); `$kmo` und `$bartlett` sind Kisten in der Kiste, `efa_vor$kmo$per_item` nimmt in zwei Schritten ein Fach heraus (Chunks `efa-vor`, `efa-bartlett`, `efa-msa`, `efa-1`) | A | |
 | 63 | `k08-item-total` | 8.7.4 | neu | korrigierte Item-Total-Korrelation: Summe der anderen fünf Items gegen `mm05r` (Chunk `reliability-summary`) | B | |
-| 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` (Reihen 1, 2, 8) wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz (Stufenleiste mit Schild wie in `k03-faktor`) | B | ja |
-| 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig; die ersten acht Reihen, nur 1 und 6 bleiben; Reihe 5 orange, weil ohne gemeinsames `drop_na()` nur `m_basis` mit ihr rechnen würde (Chunk `model-compare`) | A | |
+| 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` (Reihen 1, 2, 8) wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz (Kasten `levels(allbus$educ_kat)` mit Schild wie in `k03-faktor`) | B | ja |
+| 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig; die ersten acht Reihen, nur 1 und 6 bleiben; Reihe 5 orange mit der Notiz „ohne `drop_na()`: nur in `m_basis`“, weil ohne gemeinsames `drop_na()` nur `m_basis` mit ihr rechnen würde (Chunk `model-compare`) | A | |
 | 66 | `k09-augment` | 9.6.3 | neu | `augment()` stellt `.fitted` und `.resid` neben die Daten; Rechnung für Reihe 1 aus der Koeffiziententabelle; `(weights)` und `.hat` grau, `eastwest`/`sex` und die übrigen Diagnosespalten als Auslassungspunkte (8 Zoll reichen nicht für alle Türme); die Reihen sind respid 1 und 6 aus `k09-fallset` (Chunks `augment-setup`, `lm-summary`) | A | |
-| 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` aus 7.6.2 gegen die Randmittel aus Chunk `ancova-summary`) | B | |
+| 67 | `k09-randmittel` | 9.7.3 | neu | Gruppenmittel ohne und mit Kontrolle für Alter auf zwei Linealen (`oneway_anova()` aus 7.6.2 gegen die Randmittel aus Chunk `ancova-summary`); unten zeigt `niedrig` (4.41) von oben, `mittel` (4.43) von unten auf das Lineal | B | |
 | 68 | `k09-ame` | 9.8.1 | neu | vorhergesagte Wahrscheinlichkeit je Person (respid 1, 5, 6) bei niedriger und hoher Bildung, Differenz je Reihe, gewichteter Mittelwert = AME (Chunk `logreg-ame`, Vorhersagen mit `predict()` geprüft) | B | |
 
 Nach der Durchsicht verworfen: Inline-Code in 2.7 (Quelle und Ergebnis stehen schon untereinander), Geom-Wahl in 6.4 (die Tabelle zeigt es, und Steinfarbe ist nicht dasselbe wie kategorial/kontinuierlich), Facets in 6.5 (die Panels zeigen die Aufteilung selbst), Gruppenvergleich in 7.6.1 (zeigt `k05-summarise`), Korrelationsmatrix in 8.2.2 (Heatmap in 8.2.4), Vorhersage in 9.2.2 (geht in `k09-augment` auf), VIF in 9.5.3 (drei Chunks zeigen die Schritte).

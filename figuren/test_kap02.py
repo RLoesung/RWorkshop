@@ -101,6 +101,17 @@ class TestKap02(unittest.TestCase):
         for satz in ZITIERT:
             self.assertIn(satz, texte)
 
+    def test_zitieren_kursiv_ohne_langen_vorlauf(self):
+        """Ein kursiver Lauf steht am Zeilenanfang oder nach einem kurzen geraden Lauf. Nach einem langen <tspan>
+        setzt WebKit (Safari, macOS-Vorschau) mit der Systemschrift eine zu große Lücke („2023.  R for Data“)."""
+        import kap02
+        for t in ET.fromstring(kap02.zitieren().svg()).iter(NS + "text"):
+            vorher = 0
+            for sp in t.iter(NS + "tspan"):
+                if sp.get("font-style") == "italic":
+                    self.assertLessEqual(vorher, 10, "".join(t.itertext()))
+                vorher += len(sp.text or "")
+
 
 if __name__ == "__main__":
     unittest.main()

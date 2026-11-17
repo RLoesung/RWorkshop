@@ -146,8 +146,10 @@ def zitieren():
         P(R("Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. „What does research "
             "reproducibility mean?“ ", **st), R("Science Translational Medicine", italic=True, **st),
           R(" 8 (341): 341ps12.", **st), ls=1.05, sa=4),
-        P(R("Wickham, Hadley, und Garrett Grolemund. 2023. ", **st), R("R for Data Science", italic=True, **st),
-          R(". 2. Aufl. O’Reilly.", **st), ls=1.05),
+        # Der Titel beginnt eine neue Zeile: Folgt ein kursiver Lauf auf einen langen geraden, setzt WebKit
+        # (Safari, macOS-Vorschau) mit der Systemschrift davor eine zu große Lücke.
+        P(R("Wickham, Hadley, und Garrett Grolemund. 2023.", **st), ls=1.05),
+        P(R("R for Data Science", italic=True, **st), R(". 2. Aufl. O’Reilly.", **st), ls=1.05),
     ])
     return s
 

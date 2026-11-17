@@ -2,6 +2,13 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — Abbildungen mit Bausteinen: Erweiterung auf alle Kapitel
+
+- 31 weitere Abbildungen in derselben Bildsprache, jetzt in allen Kapiteln: Kap. 1 (2), Kap. 2 (3), Kap. 3 (5), Kap. 4 (2), Kap. 5 (6), Kap. 6 (4), Kap. 7 (1), Kap. 8 (3) und Kap. 9 (5). Zusammen hat das Buch 68 Bausteine-Abbildungen.
+- Neue Bildelemente: eine Kiste mit Fächern für Listen und Ergebnisobjekte, blasse Steine für Werte, die R wiederholt, ein Schild für die Referenzkategorie eines Faktors, Folien für die Ebenen einer ggplot-Grafik und eine gestrichelte Ellipse für einen nicht gemessenen Faktor. `BILDER.md` §5.2 listet alle Elemente.
+- Fünf neue Denkpausen „Kurz überlegen“ in 2.6.1, 3.5.2, 4.5.2, 6.3.2 und 9.3.1, zusammen sind es 14.
+- Außerdem liegt `ALLBUS2023.sav` in 2.11 direkt im Projektordner, ohne Unterordner `data/`; 3.7.2 sagt, dass nur der Punkt hinter `data =` der Platzhalter ist; in 6.3.2 passen die Farbe der Balken bei einer Konstante in `aes()` und ein Kommentar im Chunk jetzt zur Ausgabe; 2.9 beschreibt, wo Quarto in HTML die Literaturliste einfügt.
+
 ## 17. November 2026 — Abbildungen mit Bausteinen
 
 - 37 neue Abbildungen erklären Grundbegriffe von R mit Bausteinen: Ein Wert ist ein Stein, seine Farbe der Datentyp, ein Vektor ein Turm, ein Datensatz eine Bauplatte mit Türmen, ein Wertelabel ein Aufkleber. Die Bildsprache stammt aus dem Workshop „Reading Week“ vom November 2026 und wird am Anfang von Abschnitt 3.5 erklärt. Die Abbildungen stehen in Kap. 1 (2), Kap. 2 (1), Kap. 3 (11), Kap. 4 (10), Kap. 5 (11) und Kap. 7 (2).

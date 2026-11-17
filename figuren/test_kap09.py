@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 NS = "{http://www.w3.org/2000/svg}"
-GREEN, GRAY, ORANGE = "#36A266", "#6E7882", "#E6A033"
+INK, GREEN, GRAY, ORANGE = "#1E2D3C", "#36A266", "#6E7882", "#E6A033"
 SCHRIFT_NUM, SCHRIFT_TXT, SCHRIFT_DIM = "#042C53", "#26215C", "#A8A69E"
 
 # Die ersten acht Reihen von allbus nach dem Setup-Chunk von Kap. 9 (respid 1 bis 8), wie tibble sie druckt;
@@ -26,7 +26,8 @@ ERWARTET_KAP09 = {
     # 9.4.1: Chunk model-compare; Maße der Tibbles allbus und allbus_modell (N = 1881 im Chunk lm)
     "k09-fallset": ["allbus_modell <- allbus |>", "drop_na(islamophobie, educ_kat, age, eastwest, sex, populismus)",
                     "islamophobie", "educ_kat", "age", "eastwest", "sex", "populismus", "allbus", "allbus_modell",
-                    "5,246 × 593", "1,881 × 593", "m_basis", ALT, NEU, "MANN", "FRAU", "niedrig"]
+                    "5,246 × 593", "1,881 × 593", "ohne drop_na():", "nur in m_basis", ALT, NEU, "MANN", "FRAU",
+                    "niedrig"]
                    + [v for r in ACHT for v in r if v],
     # 9.6.3: Chunk augment-setup (Reihen 1 und 2 von diagnose_df, auf drei Stellen gerundet); Rechnung mit B aus
     # lm-summary
@@ -35,10 +36,11 @@ ERWARTET_KAP09 = {
                     "3.714", "1.252", "3.400", "3.829", "-0.067", "0.004", "0.005", "0.003", "0.808", "0.012 · 1",
                     "0.024 · 50", "0.603 · 2.286", "3.40", "(Intercept)", "educ_katmittel"],
     # 9.7.3: Mittelwerte aus summary() von oneway_anova() (7.6.2), Randmittel aus Chunk ancova-summary
-    "k09-randmittel": ["oneway_anova()", "ancova()", "covariate = age", "3", "3.5", "4", "4.5", "5",
+    # Zahlen nur an den ganzen Strichen; 3.5 und 4.5 sind kürzere Striche ohne Zahl
+    "k09-randmittel": ["oneway_anova()", "ancova()", "covariate = age", "3", "4", "5",
                        "niedrig 4.68", "mittel 4.45", "hoch 3.48", "niedrig 4.41", "mittel 4.43", "hoch 3.60"],
     # 9.8.1: predict(modell_log, newdata, type = "response") für respid 1, 5, 6; AME aus Chunk logreg-ame
-    "k09-ame": ["respid", "1", "5", "6", "educ_kat", "mittel", "hoch", "P(islam_hoch = 1) bei educ_kat =",
+    "k09-ame": ["respid", "1", "5", "6", "educ_kat", "mittel", "hoch", "P(islam_hoch = 1)", "bei educ_kat =",
                 "niedrig", "hoch - niedrig", "0.584", "0.394", "0.581", "0.316", "0.177", "0.314", "-0.27",
                 "-0.22", "-0.252", "gewichteter Mittelwert", "modell_log |> marginal_effects()",
                 "educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***"],
@@ -80,16 +82,26 @@ def innen(punkt, r):
     return rx < x < rx + rw and ry < y < ry + rh
 
 
-def pfeilspitzen(svg):
-    """Spitzen der Pfeile nach unten (lego.down_arrow: Polygon mit sieben Ecken, Spitze = größtes y)."""
+def pfeile(svg):
+    """Senkrechte Pfeile (Form wie lego.down_arrow: Polygon mit sieben Ecken) als (Spitze, Richtung, Umriss).
+    Richtung "ab": Spitze = einziger Punkt mit größtem y; "auf": einziger Punkt mit kleinstem y.
+    Umriss = (x0, y0, x1, y1) in Zoll."""
     out = []
     for p in ET.fromstring(svg).iter(NS + "polygon"):
         pts = [tuple(float(v) / 96 for v in q.split(",")) for q in p.get("points").split()]
-        if len(pts) == 7:
-            spitze = max(pts, key=lambda q: q[1])
+        if len(pts) != 7:
+            continue
+        xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+        umriss = (min(xs), min(ys), max(xs), max(ys))
+        for richtung, wahl in (("ab", max), ("auf", min)):
+            spitze = wahl(pts, key=lambda q: q[1])
             if sum(1 for q in pts if abs(q[1] - spitze[1]) < 1e-6) == 1:
-                out.append((spitze, p.get("fill")))
+                out.append((spitze, richtung, umriss))
     return out
+
+
+def ueberlappt(a, b):
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
 class TestKap09(unittest.TestCase):
@@ -160,6 +172,9 @@ class TestKap09(unittest.TestCase):
         ox, oy, ow, oh = orange[0]
         self.assertTrue(oy < zeilen_y[4] < oy + oh)
         self.assertFalse(oy < zeilen_y[3] < oy + oh or oy < zeilen_y[5] < oy + oh)
+        # die Notiz neben Reihe 5 ist eine Bedingung: ohne drop_na() wäre die Reihe nur in m_basis
+        notiz = sorted((y, t) for t, x, y, _ in pos if x > ox + ow and oy - 0.3 < y < oy + oh + 0.3)
+        self.assertEqual([t for _, t in notiz], ["ohne drop_na():", "nur in m_basis"])
         vorher = [(x, y) for t, x, y, _ in pos if t == "5,246 × 593"][0]
         nachher = [(x, y) for t, x, y, _ in pos if t == "1,881 × 593"][0]
         self.assertGreater(nachher[0], vorher[0])                          # allbus → drop_na() → allbus_modell
@@ -219,26 +234,57 @@ class TestKap09(unittest.TestCase):
 
     def test_randmittel(self):
         """Zwei Lineale mit derselben Skala 3 bis 5; die Pfeile stehen genau bei den Mittelwerten, oben ohne, unten
-        mit Kontrolle für Alter."""
+        mit Kontrolle für Alter. Unten liegen niedrig (4.41) und mittel (4.43) fast gleich: niedrig zeigt von oben,
+        mittel von unten auf das Lineal, kein Pfeil überdeckt einen anderen. Die gestrichelten Linien sind grau und
+        führen für jede Gruppe vom oberen zum unteren Pfeil."""
         import kap09
         svg = kap09.randmittel().svg()
+        root = ET.fromstring(svg)
         pos = texte_pos(svg)
-        striche = {t: (x, y) for t, x, y, f in pos if t in {"3", "3.5", "4", "4.5", "5"}}
+        lineale = sorted(zoll(e, "y1") for e in root.iter(NS + "line")
+                         if e.get("stroke") == INK and e.get("y1") == e.get("y2")
+                         and zoll(e, "x2") - zoll(e, "x1") > 4)
+        self.assertEqual(len(lineale), 2)
+        striche = {t: (x, y) for t, x, y, f in pos if t in {"3", "4", "5"}}
+        self.assertEqual(sorted(t for t, x, y, f in pos if t in {"3", "4", "5"}), ["3", "3", "4", "4", "5", "5"])
         x3, x5 = striche["3"][0], striche["5"][0]
         X = lambda v: x3 + (v - 3) / 2 * (x5 - x3)                      # noqa: E731
-        spitzen = sorted(pfeilspitzen(svg), key=lambda s: (round(s[0][1], 1), s[0][0]))
-        self.assertEqual(len(spitzen), 6)
-        oben = sorted(spitzen[:3], key=lambda s: s[0][0])
-        unten = sorted(spitzen[3:], key=lambda s: s[0][0])
-        self.assertLess(oben[0][0][1], unten[0][0][1])
-        for (spitze, _), v in zip(oben, (3.48, 4.45, 4.68)):
-            self.assertAlmostEqual(spitze[0], X(v), delta=0.01)
-        for (spitze, _), v in zip(unten, (3.60, 4.41, 4.43)):
-            self.assertAlmostEqual(spitze[0], X(v), delta=0.01)
-        for t, (spitze, _) in (("hoch 3.48", oben[0]), ("mittel 4.45", oben[1]), ("niedrig 4.68", oben[2]),
-                               ("hoch 3.60", unten[0]), ("niedrig 4.41", unten[1]), ("mittel 4.43", unten[2])):
-            ly = [y for tt, x, y, _ in pos if tt == t][0]
-            self.assertAlmostEqual(ly, spitze[1] - 0.15, delta=0.2, msg=t)
+        pf = pfeile(svg)
+        self.assertEqual(len(pf), 6)
+        erwartet = [(lineale[0], [("hoch 3.48", 3.48, "ab"), ("mittel 4.45", 4.45, "ab"), ("niedrig 4.68", 4.68, "ab")]),
+                    (lineale[1], [("hoch 3.60", 3.60, "ab"), ("niedrig 4.41", 4.41, "ab"), ("mittel 4.43", 4.43, "auf")])]
+        spitze_von = {}
+        for ly, gruppen in erwartet:
+            hier = sorted((p for p in pf if abs(p[0][1] - ly) < 0.1), key=lambda p: p[0][0])
+            self.assertEqual(len(hier), 3)
+            for (spitze, richtung, umriss), (t, v, soll) in zip(hier, gruppen):
+                self.assertAlmostEqual(spitze[0], X(v), delta=0.01, msg=t)
+                self.assertEqual(richtung, soll, t)
+                self.assertTrue(spitze[1] < ly if richtung == "ab" else spitze[1] > ly, t)
+                lx, lyy = [(x, y) for tt, x, y, _ in pos if tt == t][0]
+                self.assertTrue(umriss[1] - 0.05 < lyy < umriss[3] + 0.25, t)       # Beschriftung neben dem Pfeil
+                spitze_von[t] = (spitze, richtung, umriss)
+        for i, a in enumerate(pf):
+            for b in pf[i + 1:]:
+                self.assertFalse(ueberlappt(a[2], b[2]), (a[0], b[0]))
+        # gestrichelte Linien: grau, je Gruppe vom oberen Pfeil zum unteren
+        linien = [e for e in root.iter(NS + "line") if e.get("stroke-dasharray")]
+        self.assertEqual(len(linien), 3)
+        self.assertEqual({e.get("stroke") for e in linien}, {GRAY})
+        enden = [sorted(((zoll(e, "x1"), zoll(e, "y1")), (zoll(e, "x2"), zoll(e, "y2"))), key=lambda q: q[1])
+                 for e in linien]
+        for gruppe, v1, v2 in (("hoch", 3.48, 3.60), ("mittel", 4.45, 4.43), ("niedrig", 4.68, 4.41)):
+            treffer = [(o, u) for o, u in enden
+                       if abs(o[0] - X(v1)) < 0.01 and abs(u[0] - X(v2)) < 0.01 and o[1] < lineale[1]]
+            self.assertEqual(len(treffer), 1, gruppe)
+            o, u = treffer[0]
+            self.assertGreater(o[1], lineale[0])
+            unten_t = [t for t in spitze_von if t.startswith(gruppe) and abs(spitze_von[t][0][1] - lineale[1]) < 0.1][0]
+            spitze, richtung, umriss = spitze_von[unten_t]
+            if richtung == "ab":
+                self.assertLessEqual(u[1], umriss[1] + 0.01, gruppe)                # endet über dem Pfeil
+            else:
+                self.assertAlmostEqual(u[1], lineale[1], delta=0.03, msg=gruppe)    # endet am Lineal
 
     def test_ame(self):
         """Je Person die vorhergesagte Wahrscheinlichkeit mit niedriger und mit hoher Bildung, die Differenz als neuer,
@@ -260,6 +306,19 @@ class TestKap09(unittest.TestCase):
         ame = [(x, y, f) for t, x, y, f in pos if t == "-0.252"]
         self.assertEqual(len(ame), 1)
         self.assertGreater(ame[0][0], max(x for x, _ in punkte))
+        # die Kopfzeile steht in zwei Zeilen mittig über den Spalten niedrig und hoch und ist nicht breiter als sie
+        from lego import text_width, MONO
+        steine = [(zoll(r, "x"), zoll(r, "x") + zoll(r, "width")) for r in ET.fromstring(svg).iter(NS + "rect")
+                  if r.get("fill") == "#85B7EB" and any(zoll(r, "x") < x < zoll(r, "x") + zoll(r, "width")
+                                                        for t, x, y, _ in pos if t in ("0.584", "0.316"))]
+        links, rechts = min(a for a, _ in steine), max(b for _, b in steine)
+        kopf = sorted((y, t, x) for t, x, y, f in pos if t in ("P(islam_hoch = 1)", "bei educ_kat ="))
+        self.assertEqual([t for _, t, _ in kopf], ["P(islam_hoch = 1)", "bei educ_kat ="])
+        for _, t, x in kopf:
+            self.assertAlmostEqual(x, (links + rechts) / 2, delta=0.02, msg=t)
+            self.assertLessEqual(text_width(t, MONO, 10), rechts - links, t)
+        y_spalten = min(y for t, x, y, _ in pos if t == "niedrig")
+        self.assertLess(kopf[-1][0], y_spalten)
 
 
 if __name__ == "__main__":

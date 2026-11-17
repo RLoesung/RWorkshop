@@ -5,7 +5,7 @@ Kap. 9 (R/prep.R, dazu educ_kat aus educ und to_label(eastwest, sex)). Die Zeile
 der respid.
 """
 from lego import (Canvas, R, P, text, card, stein, schild, arrow, outline, connector, polygon, referenz,
-                  text_width, INK, GRAY, GREEN, ORANGE, CARDLINE, DARKORANGE, WHITE, MONO, L, RT)
+                  text_width, INK, GRAY, GREEN, ORANGE, DARKORANGE, WHITE, MONO, L, RT)
 from kap03 import mono, notiz, platte
 from kap04 import kopf, punkte, codezeile
 from kap05 import code, klammer
@@ -123,7 +123,8 @@ def fallset():
     outline(s, xs[0] - 0.08, y5 - 0.09, rechts + 0.08 - (xs[0] - 0.08), h + 0.13, color=ORANGE, lw=1.75)
     text(s, rechts + 0.14, y5 - 0.2, 7.58 - rechts - 0.14, h + 0.4,
          [P(R("ohne ", size=10, italic=True, color=DARKORANGE), R("drop_na()", font=MONO, size=10, bold=True,
-                                                                     color=DARKORANGE), ls=1.05),
+                                                                     color=DARKORANGE),
+            R(":", size=10, italic=True, color=DARKORANGE), ls=1.05),
           P(R("nur in ", size=10, italic=True, color=DARKORANGE), R("m_basis", font=MONO, size=10, bold=True,
                                                                        color=DARKORANGE), ls=1.05)],
          anchor="middle")
@@ -194,22 +195,28 @@ def augment():
 
 # 9.7.3 Randmittel: Mittelwerte von islamophobie je educ_kat aus summary() von oneway_anova() (7.6.2: 4.676, 4.452,
 # 3.482) und die Estimated Marginal Means aus dem Chunk `ancova-summary` (4.414, 4.426, 3.601), wie im Text auf zwei
-# Stellen gerundet. Beide Lineale haben dieselbe Skala; die gestrichelten Linien verbinden dieselbe Gruppe -----------
+# Stellen gerundet. Beide Lineale haben dieselbe Skala; die gestrichelten Linien verbinden dieselbe Gruppe. Unten liegen
+# niedrig und mittel 0.05 Zoll auseinander: niedrig zeigt von oben, mittel von unten auf das Lineal. Zahlen stehen nur
+# an den ganzen Strichen, damit unter 4.5 Platz für den Pfeil von unten ist ------------------------------------------
 OHNE = [("hoch", 3.48), ("mittel", 4.45), ("niedrig", 4.68)]
 MIT = [("hoch", 3.60), ("niedrig", 4.41), ("mittel", 4.43)]
 LINKS = {("hoch", 0), ("mittel", 0), ("hoch", 1), ("niedrig", 1)}         # Beschriftung links vom Pfeil
+VON_UNTEN = {("mittel", 1)}                                             # Pfeil von unten auf das Lineal
 
 
-def mittel_marke(s, x, y, t, rechts=True, color=DARKORANGE, size=11):
-    """Oranger Pfeil von oben auf das Lineal (ein Mittelwert), Gruppe und Wert daneben. Form wie lego.down_arrow,
-    dazu eine weiße Kante, damit zwei fast gleiche Werte als zwei Pfeile erkennbar bleiben."""
-    w, h, top = 0.18, 0.28, y - 0.33
-    l, r, kopf_y = x - w / 4, x + w / 4, top + h - w / 2
-    polygon(s, [(l, top), (r, top), (r, kopf_y), (x + w / 2, kopf_y), (x, top + h), (x - w / 2, kopf_y), (l, kopf_y)],
+def mittel_marke(s, x, y, t, rechts=True, unten=False, color=DARKORANGE, size=11):
+    """Oranger Pfeil auf das Lineal (ein Mittelwert), Gruppe und Wert daneben. Form wie lego.down_arrow, dazu eine
+    weiße Kante. unten=True: Der Pfeil zeigt von unten auf das Lineal."""
+    w, h = 0.18, 0.28
+    richtung = -1 if unten else 1                                       # 1: von oben nach unten
+    spitze = y - richtung * 0.05
+    ende, kopf_y = spitze - richtung * h, spitze - richtung * w / 2
+    l, r = x - w / 4, x + w / 4
+    polygon(s, [(l, ende), (r, ende), (r, kopf_y), (x + w / 2, kopf_y), (x, spitze), (x - w / 2, kopf_y), (l, kopf_y)],
             color, line=WHITE, lw=0.75)
     tw = text_width(t, MONO, size, True) + 0.05
     tx = x + 0.12 if rechts else x - 0.12 - tw
-    text(s, tx, y - 0.4, tw, 0.28, mono(t, size=size, color=color, align=L if rechts else RT))
+    text(s, tx, y + 0.12 if unten else y - 0.4, tw, 0.28, mono(t, size=size, color=color, align=L if rechts else RT))
 
 
 def randmittel():
@@ -217,17 +224,21 @@ def randmittel():
     x0, lo, hi, laenge = 1.95, 3.0, 5.0, 5.1
     X = lambda v: x0 + (v - lo) / (hi - lo) * laenge                       # noqa: E731
     y1, y2 = 0.72, 2.0
-    # dieselbe Gruppe auf beiden Linealen, von Pfeil zu Pfeil
+    # dieselbe Gruppe auf beiden Linealen, von Pfeil zu Pfeil; zu einem Pfeil von unten bis an das Lineal
     for (gruppe, v1) in OHNE:
         v2 = dict(MIT)[gruppe]
-        connector(s, X(v1), y1 + 0.36, X(v2), y2 - 0.36, color=CARDLINE, width=1.0, dash=True)
+        bis = y2 if (gruppe, 1) in VON_UNTEN else y2 - 0.36
+        connector(s, X(v1), y1 + 0.36, X(v2), bis, color=GRAY, width=1.0, dash=True)
     for k, (y, werte) in enumerate(((y1, OHNE), (y2, MIT))):
         connector(s, X(lo), y, X(hi), y, color=INK, width=2.0)
-        for v, t in ((3.0, "3"), (3.5, "3.5"), (4.0, "4"), (4.5, "4.5"), (5.0, "5")):
-            connector(s, X(v), y - 0.07, X(v), y + 0.07, color=INK, width=1.25)
-            text(s, X(v) - 0.3, y + 0.1, 0.6, 0.25, mono(t, size=10, color=GRAY, bold=False))
+        for v, t in ((3.0, "3"), (3.5, None), (4.0, "4"), (4.5, None), (5.0, "5")):
+            d = 0.07 if t else 0.045                                         # halbe Striche kürzer, ohne Zahl
+            connector(s, X(v), y - d, X(v), y + d, color=INK, width=1.25)
+            if t:
+                text(s, X(v) - 0.3, y + 0.1, 0.6, 0.25, mono(t, size=10, color=GRAY, bold=False))
         for gruppe, v in werte:
-            mittel_marke(s, X(v), y, f"{gruppe} {v:.2f}", rechts=(gruppe, k) not in LINKS)
+            mittel_marke(s, X(v), y, f"{gruppe} {v:.2f}", rechts=(gruppe, k) not in LINKS,
+                         unten=(gruppe, k) in VON_UNTEN)
     text(s, 0.15, y1 - 0.3, 1.7, 0.28, mono("oneway_anova()", size=10.5, color=GREEN, align=L))
     text(s, 0.15, y1 - 0.04, 1.7, 0.28, notiz("Mittelwerte", size=10.5, align=L))
     text(s, 0.15, y2 - 0.3, 1.7, 0.28, mono("ancova()", size=10.5, color=GREEN, align=L))
@@ -251,8 +262,9 @@ def ame():
     dx, dw = 4.45, 0.7                                                 # Differenz
     kopf(s, 0.12, 0.5, ky, "respid", size=10.5)
     kopf(s, ex, ew, ky, "educ_kat", size=10.5)
-    text(s, nx - 0.6, 0.15, hx + pw - nx + 1.2, 0.25,
-         mono("P(islam_hoch = 1) bei educ_kat =", size=10, color=GRAY, bold=False))
+    mitte_p = (nx + hx + pw) / 2                                         # über den Spalten niedrig und hoch
+    text(s, mitte_p - 0.9, 0.07, 1.8, 0.4, mono("P(islam_hoch = 1)", size=10, color=GRAY, bold=False)
+         + mono("bei educ_kat =", size=10, color=GRAY, bold=False))
     kopf(s, nx, pw, ky, "niedrig", size=10.5)
     kopf(s, hx, pw, ky, "hoch", size=10.5)
     text(s, dx - 0.4, ky, dw + 0.8, 0.25, mono("hoch - niedrig", size=10.5))

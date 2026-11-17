@@ -73,7 +73,7 @@ Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`.
 > Wo mariposa eine besonders elegante Abkürzung bietet. Z. B. dass `pearson_cor()` Korrelations**matrix**, KIs und Sterne in einem Aufruf liefert. Erkennbarkeit schaffen, nicht Marketing.
 
 **Kurz überlegen** (Absatz plus eingeklappter `.callout-tip`)
-> Eine Denkpause an einer Stelle, an der Lernende das Ergebnis selbst vorhersagen können. Ein Absatz beginnt mit **Kurz überlegen.** und stellt eine Frage zu einem *neuen* Fall, den die Abbildung daneben nicht zeigt. Direkt darunter folgt die Auflösung als `::: {.callout-tip title="Auflösung" collapse="true"}` mit Text und Code, ohne Bild. Höchstens eine pro Abschnitt, im ganzen Buch etwa zehn.
+> Eine Denkpause an einer Stelle, an der Lernende das Ergebnis selbst vorhersagen können. Ein Absatz beginnt mit **Kurz überlegen.** und stellt eine Frage zu einem *neuen* Fall, den die Abbildung daneben nicht zeigt. Direkt darunter folgt die Auflösung als `::: {.callout-tip title="Auflösung" collapse="true"}` mit Text und Code, ohne Bild. Sparsam, höchstens eine pro Abschnitt (derzeit 14).
 
 **Verbot.** Keine weiteren Callout-Typen ohne Eintrag hier. Wildwuchs vermeiden.
 
