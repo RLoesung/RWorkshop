@@ -128,6 +128,10 @@ knitr::include_graphics("Bilder/Files.png")
 **Vorsicht: Absolute Pfade.** Schreibe niemals `read_spss("/Users/anna/Documents/...")` in dein Skript. Sobald du es teilst oder auf einen anderen Rechner ziehst, ist der Pfad kaputt. Mit Projects reicht der relative Pfad — der Dateiname genügt, wenn die Datei im Projektordner liegt.
 :::
 
+Der Dateiname allein reicht, weil R ihn im Arbeitsverzeichnis sucht, und das ist bei einem Project auf jedem Rechner der Projektordner. Der absolute Pfad zeigt dagegen auf einen Ordner, den es nur auf Annas Rechner gibt (@fig-arbeitsverzeichnis).
+
+![Das Projekt `R-Workshop` auf zwei Rechnern. Mit dem Dateinamen findet `read_spss()` die Datei auf beiden, mit dem absoluten Pfad nur auf dem Rechner von Anna.](Bilder/figuren/k01-arbeitsverzeichnis.svg){#fig-arbeitsverzeichnis .lightbox fig-alt="Oben zwei nummerierte Code-Zeilen: 1 read_spss(„ALLBUS2023.sav“), 2 read_spss(„/Users/anna/Documents/R-Workshop/ALLBUS2023.sav“). Darunter zwei Kästen. Links RECHNER VON ANNA: getwd() gibt [1] „/Users/anna/Documents/R-Workshop“ aus, darunter ein Ordner R-Workshop mit den Dateien R-Workshop.Rproj, 01-erste_schritte.R und ALLBUS2023.sav, daneben 1 gefunden und 2 gefunden in Grün. Rechts RECHNER VON BORIS: getwd() gibt [1] „C:/Users/boris/Documents/R-Workshop“ aus, darunter derselbe Ordner mit denselben Dateien, daneben 1 gefunden in Grün und 2 nicht gefunden in Orange."}
+
 ## Mit RStudio arbeiten
 
 Jetzt geht es an die praktische Arbeit. Drei Konzepte sind zentral: das **Projekt** als Container, das **R-Skript** als Arbeitsmedium und die **Tastenkürzel** als Beschleuniger.
@@ -325,6 +329,10 @@ Wenn du eine Funktion im Kopf hast, geht es am schnellsten über die Konsole —
 ```
 
 Die Hilfe öffnet sich unten rechts im `Help`-Reiter und zeigt: Funktionsbeschreibung, Argumente, Default-Werte, am Ende immer Anwendungs-Beispiele. Letztere kannst du direkt in deine Konsole kopieren.
+
+Die Default-Werte stehen unter *Usage*: Bei `mean()` sind `trim = 0` und `na.rm = FALSE` voreingestellt (@fig-hilfeseite). Was ein Argument bewirkt, erklärt sein Eintrag unter *Arguments*.
+
+![Aufbau der Hilfeseite zu `?mean`. Die grauen Balken stehen für Fließtext, der hier ausgelassen ist.](Bilder/figuren/k01-hilfeseite.svg){#fig-hilfeseite .lightbox fig-alt="Schema einer Hilfeseite. Oben die Kopfzeile mit mean, dem Paket base und R Documentation, darunter der Titel Arithmetic Mean. Description mit dem Satz Generic function for the (trimmed) arithmetic mean., rechts beschriftet Funktionsbeschreibung. Usage mit den Zeilen mean(x, ...), ## Default S3 method: und mean(x, trim = 0, na.rm = FALSE, ...), in der trim = 0 und na.rm = FALSE hellorange hinterlegt sind, rechts beschriftet Default-Werte. Arguments mit x, trim, na.rm (hellorange hinterlegt) und ..., jeweils mit einem grauen Balken, rechts beschriftet Argumente. In Grau Value, References, See Also. Examples mit den Zeilen x <- c(0:10, 50), xm <- mean(x) und c(xm, mean(x, trim = 0.10)), rechts beschriftet Beispiele."}
 
 Um alle Funktionen eines Pakets aufzulisten, öffnest du den Reiter `Packages`, suchst das Paket und klickst es an. Du landest in der Paketreferenz.
 

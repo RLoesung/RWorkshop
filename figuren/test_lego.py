@@ -84,6 +84,35 @@ class TestBausteine(unittest.TestCase):
                     y[e.text.strip()] = float(yy)
         self.assertGreater(y["a"], y["b"])
 
+    def test_werkbank(self):
+        """Werkbank (1.6.2, 2.6.1): Platte mit zwei Beinen, die Paket-Kacheln stehen nebeneinander darauf."""
+        s = L.Canvas(4, 2)
+        L.werkbank(s, 0.2, 1.2, 3.0, ["tidyverse", "mariposa"])
+        els = alle_elemente(s.svg())
+        texte = ["".join(e.itertext()) for e in els if e.tag == NS + "text"]
+        self.assertEqual(texte, ["tidyverse", "mariposa"])
+        rects = [e for e in els if e.tag == NS + "rect"]
+        holz = [r for r in rects if r.get("fill") == L.INK]
+        self.assertEqual(len(holz), 3)                                    # Platte und zwei Beine
+        platte = max(holz, key=lambda r: float(r.get("width")))
+        self.assertAlmostEqual(float(platte.get("width")), 3.0 * L.DPI, places=1)
+        oben = float(platte.get("y"))
+        kacheln = [r for r in rects if r.get("fill") == L.WHITE]
+        self.assertEqual(len(kacheln), 2)
+        for k in kacheln:
+            unten = float(k.get("y")) + float(k.get("height"))
+            self.assertLessEqual(unten, oben)
+            self.assertGreaterEqual(unten, oben - 0.05 * L.DPI)
+            self.assertGreaterEqual(float(k.get("x")), 0.2 * L.DPI)
+            self.assertLessEqual(float(k.get("x")) + float(k.get("width")), 3.2 * L.DPI)
+
+    def test_werkbank_leer(self):
+        s = L.Canvas(4, 2)
+        L.werkbank(s, 0.2, 1.2, 3.0, [])
+        els = alle_elemente(s.svg())
+        self.assertFalse([e for e in els if e.tag == NS + "text"])
+        self.assertEqual(len([e for e in els if e.tag == NS + "rect"]), 3)
+
 
 class TestText(unittest.TestCase):
     def test_text_wraps(self):

@@ -19,7 +19,32 @@ ERWARTET_KAP02 = {
                           "## Einleitung", "In diesem Bericht analysiere ich den ALLBUS 2023.", "```{r}",
                           "mean(c(1, 2, 3, 4, 5))", "```", "YAML-Header", "Markdown-Lauftext", "Code-Chunk",
                           "Render", "Mein erster Bericht", "Anna Schmidt", "Einleitung", "[1] 3"],
+    # 2.6: Chunk mein-chunk mit mean(mtcars$mpg); Ausgabe in R 4.5.3 [1] 20.09062, Verhalten mit quarto render geprüft
+    "k02-chunk-optionen": ["OPTION", "IM BERICHT", "AUSGEFÜHRT", "ohne Option", "echo=FALSE", "eval=FALSE",
+                           "include=FALSE", "mean(mtcars$mpg)", "[1] 20.09062", "ja", "nein"],
+    # 2.6.1: Setup-Chunk wörtlich; Werkbank wie in 1.6.2
+    "k02-render-sitzung": ["NEUE R-SITZUNG", "NACH DEM SETUP-CHUNK", "WERKBANK", "ENVIRONMENT", "nur base R",
+                           "leer", "tidyverse", "mariposa", "allbus", "```{r setup, include=FALSE}",
+                           "library(tidyverse)", "library(mariposa)", 'allbus <- read_spss("ALLBUS2023.sav")'],
+    # 2.9: Verweise aus dem Beispiel; Ausgabe von quarto render 1.8.25 (Standardstil, lang: de)
+    "k02-zitieren": ["literatur.bib", "@article{Goodman2016,", "@book{Wickham2023,", "analyse.qmd",
+                     "Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren.",
+                     "Für eine ausführliche Behandlung siehe auch [@Wickham2023].", "Render", "Literatur"],
 }
+
+# gerenderter Text in k02-zitieren, über Zeilenumbrüche hinweg
+ZITIERT = ["Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich "
+           "definieren. Für eine ausführliche Behandlung siehe auch (Wickham und Grolemund 2023).",
+           "Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. „What does research "
+           "reproducibility mean?“ Science Translational Medicine 8 (341): 341ps12.",
+           "Wickham, Hadley, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."]
+
+
+def text_elemente(svg):
+    """(Text, x, y) je <text>, in Zoll."""
+    from lego import DPI
+    return [("".join(e.itertext()), float(e.get("x")) / DPI, float(e.get("y")) / DPI)
+            for e in ET.fromstring(svg).iter(NS + "text")]
 
 
 class TestKap02(unittest.TestCase):
@@ -37,6 +62,44 @@ class TestKap02(unittest.TestCase):
             # das Beispiel im Buch hat keinen Inline-Code
             self.assertNotIn("`r ", texte, name)
             self.assertNotIn("Inline", texte, name)
+
+    def test_chunk_optionen_zeilen(self):
+        """Je Option: Code und Ausgabe im Bericht, ausgeführt ja/nein (geprüft mit quarto render)."""
+        import kap02
+        els = text_elemente(kap02.chunk_optionen().svg())
+        optionen = ["ohne Option", "echo=FALSE", "eval=FALSE", "include=FALSE"]
+        zeile = {t: y for t, x, y in els if t in optionen}
+        self.assertEqual(sorted(optionen, key=zeile.get), optionen)
+
+        def wo(t):
+            return sorted(min(optionen, key=lambda o: abs(zeile[o] - y)) for tt, x, y in els if tt == t)
+        self.assertEqual(wo("mean(mtcars$mpg)"), sorted(["ohne Option", "eval=FALSE"]))
+        self.assertEqual(wo("[1] 20.09062"), sorted(["ohne Option", "echo=FALSE"]))
+        self.assertEqual(wo("ja"), sorted(["ohne Option", "echo=FALSE", "include=FALSE"]))
+        self.assertEqual(wo("nein"), ["eval=FALSE"])
+
+    def test_render_sitzung_vorher_nachher(self):
+        """Links die leere Sitzung, rechts nach dem Setup-Chunk: Pakete auf der Werkbank, allbus im Environment."""
+        import kap02
+        s = kap02.render_sitzung()
+        els = text_elemente(s.svg())
+        links = [x for t, x, y in els if t == "NEUE R-SITZUNG"][0]
+        rechts = [x for t, x, y in els if t == "NACH DEM SETUP-CHUNK"][0]
+        self.assertLess(links, rechts)
+        mitte = s.w / 2
+        for t in ["nur base R", "leer"]:
+            self.assertTrue(all(x < mitte for tt, x, y in els if tt == t), t)
+        for t in ["tidyverse", "mariposa", "allbus"]:
+            xs = [x for tt, x, y in els if tt == t]
+            self.assertEqual(len(xs), 1, t)                    # nur nach dem Setup-Chunk, nicht vorher
+            self.assertGreater(xs[0], mitte, t)
+
+    def test_zitieren_ausgabe(self):
+        import kap02
+        import re
+        texte = re.sub(r"\s+", " ", " ".join(t for t, x, y in text_elemente(kap02.zitieren().svg())))
+        for satz in ZITIERT:
+            self.assertIn(satz, texte)
 
 
 if __name__ == "__main__":

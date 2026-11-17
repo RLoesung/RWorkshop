@@ -288,3 +288,22 @@ def turm(s, x, base, w, h, kind, werte):
     for i, t in enumerate(werte):
         k = kind(i) if callable(kind) else kind
         stein(s, x, base - (i + 1) * (h + 0.07), w, h, k, t)
+
+
+# --- Pakete (1.6.2) ----------------------------------------------------------------------------
+
+def kachel(s, x, y, w, h, name, size=11):
+    """Ein installiertes Paket als Kachel im Regal oder auf der Werkbank."""
+    rect(s, x, y, w, h, WHITE, CARDLINE, 1.0, rx=0.07)
+    text(s, x, y, w, h, [P(R(name, font=MONO, size=size, bold=True, color=INK), align=C)], anchor="middle")
+
+
+def werkbank(s, x, y, w, pakete, beine=0.22, th=0.42, size=11, gap=0.08):
+    """Werkbank: Platte ab Oberkante y mit zwei Beinen; darauf nebeneinander die mit library() geladenen Pakete."""
+    rect(s, x, y, w, 0.14, INK)
+    for lx in (x + 0.15, x + w - 0.27):
+        rect(s, lx, y + 0.14, 0.12, beine, INK)
+    if pakete:
+        kw = (w - 0.1 - (len(pakete) - 1) * gap) / len(pakete)
+        for k, p in enumerate(pakete):
+            kachel(s, x + 0.05 + k * (kw + gap), y - th - 0.02, kw, th, p, size=size)

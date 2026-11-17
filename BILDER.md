@@ -82,6 +82,9 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | Zeitleiste mit grünen Nummernpunkten | Schritte einer Auswertung in ihrer Reihenfolge (Pipeline in 5.9) |
 | Breite eines Steins | Gewicht eines Falls (7.2) |
 | grüner Kasten / dunkel umrandeter Kasten / grün gestrichelter Rahmen | Funktion / Paket / Ökosystem (1.6) |
+| Regal / Werkbank mit Paket-Kacheln | Paket installiert / mit `library()` geladen (1.6.2, 2.6.1) |
+| Ordner mit Reiter und Datei-Kacheln | Projektordner, Arbeitsverzeichnis (1.4.4) |
+| graue Balken auf einer Seite | Fließtext, der nicht wiedergegeben ist (1.7) |
 
 ### 5.3 Werkzeug
 

@@ -26,7 +26,7 @@ Dieses Kapitel führt dich von deinem ersten `.qmd`-Dokument bis zu einem reprod
 - Tabellen und Grafiken mit Beschriftungen und Referenzen einbinden.
 - Literatur über BibTeX und Zotero zitieren.
 - Open-Science-Prinzipien (Reproduzierbarkeit, FAIR, OSF, Pre-Registration) auf dein Projekt anwenden.
-- Ein Projekt sauber strukturieren (`data/`, `R/`, `output/`) und mit Git versionieren.
+- Ein Projekt sauber strukturieren (`R/`, `output/`) und mit Git versionieren.
 
 ## Warum Quarto? — vom Skript zum Bericht
 
@@ -206,6 +206,10 @@ Die wichtigsten Optionen:
 | `fig-width`, `fig-height`| Größe der Grafik in Zoll                                         |
 | `fig-align`              | `"left"`, `"center"`, `"right"`                                  |
 
+@fig-chunk-optionen zeigt den Chunk mit `mean(mtcars$mpg)` ohne Option und mit drei Einstellungen. Mit `eval=FALSE` steht der Code im Bericht, R führt ihn aber nicht aus; mit `include=FALSE` führt R ihn aus, im Bericht steht nichts davon.
+
+![Derselbe Chunk mit `mean(mtcars$mpg)` unter vier Einstellungen: was im Bericht steht und ob R den Code ausführt.](Bilder/figuren/k02-chunk-optionen.svg){#fig-chunk-optionen .lightbox fig-alt="Eine Tabelle mit den Spalten OPTION, IM BERICHT und AUSGEFÜHRT und vier Zeilen. Ohne Option: der Code mean(mtcars$mpg) und die Ausgabe [1] 20.09062, ausgeführt ja. echo=FALSE: nur die Ausgabe [1] 20.09062, ja. eval=FALSE: nur der Code, nein. include=FALSE: ein leeres Feld, ja."}
+
 ::: {.callout-tip}
 **Welche Option brauche ich gerade?** In der Praxis stellt sich fast immer dieselbe Frage. Diese Mini-Entscheidung hilft:
 
@@ -245,6 +249,28 @@ allbus <- read_spss("ALLBUS2023.sav")
 ````
 
 Alle nachfolgenden Chunks erben den geladenen Zustand. Das ist der Grund, warum du in den Kapiteln dieses Buchs `tidyverse` und `mariposa` nicht in jedem Chunk neu lädst — der Setup-Chunk oben hat schon alles bereitgestellt.
+
+Beim Rendern startet Quarto eine neue R-Sitzung, in der nur base R geladen ist. Was du vorher in der Konsole geladen oder eingelesen hast, gibt es dort nicht; erst der Setup-Chunk legt tidyverse und mariposa auf die Werkbank und `allbus` ins Environment (@fig-render-sitzung).
+
+![Die R-Sitzung beim Rendern, vor und nach dem Setup-Chunk.](Bilder/figuren/k02-render-sitzung.svg){#fig-render-sitzung .lightbox fig-alt="Links ein Kasten NEUE R-SITZUNG mit einer leeren Werkbank, beschriftet nur base R, und einem Environment, beschriftet leer. Ein grüner Pfeil führt zum Kasten NACH DEM SETUP-CHUNK: Auf der Werkbank liegen tidyverse und mariposa, im Environment steht das dunkle Namensschild allbus über einer kleinen Bauplatte. Vom Pfeil führt eine grüne Linie zum Setup-Chunk darunter, mit der Kopfzeile r setup, include=FALSE und den Zeilen library(tidyverse), library(mariposa) und allbus <- read_spss(„ALLBUS2023.sav“)."}
+
+**Kurz überlegen.** Was passiert beim Rendern, wenn im Setup-Chunk `eval=FALSE` statt `include=FALSE` steht und ein späterer Chunk `nrow(allbus)` ausführt?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+````markdown
+```{{r setup, eval=FALSE}}
+library(tidyverse)
+library(mariposa)
+allbus <- read_spss("ALLBUS2023.sav")
+```
+
+```{{r}}
+nrow(allbus)
+```
+````
+
+Mit `eval=FALSE` überspringt R den Setup-Chunk. Die neue Sitzung bleibt leer, es gibt also weder die Pakete noch `allbus`. Beim zweiten Chunk bricht das Rendern deshalb mit der Meldung `Objekt 'allbus' nicht gefunden` ab (in englischer Einstellung `object 'allbus' not found`), und es entsteht kein Bericht.
+:::
 
 ## Inline-R-Code: Zahlen im Fließtext
 
@@ -333,6 +359,10 @@ Für eine ausführliche Behandlung siehe auch [@Wickham2023].
 
 Quarto formatiert die Zitationen automatisch und hängt am Ende eine **Literaturliste** an. Wenn du sie an einer bestimmten Stelle willst, setze einfach `## Literatur` ans Ende — Quarto füllt darunter.
 
+Aus `@Goodman2016` wird ein Zitat mit den Namen im Satz und dem Jahr in Klammern, aus `[@Wickham2023]` ein Zitat ganz in Klammern (@fig-zitieren). Ohne `csl`-Zeile nutzt Quarto den Stil *Chicago author-date*; mit `lang: de` stehen deutsche Wörter wie „und“ und „Aufl.“ in Zitat und Liste.
+
+![Die beiden Verweise aus dem Beispiel nach dem Rendern, im Standardstil und mit `lang: de`.](Bilder/figuren/k02-zitieren.svg){#fig-zitieren .lightbox fig-alt="Oben die zwei Zeilen aus analyse.qmd: Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch [@Wickham2023]. Links darunter literatur.bib mit den Schlüsseln Goodman2016 (article) und Wickham2023 (book), ihre Felder sind ausgelassen. Ein Pfeil Render führt zur gerenderten Seite: Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch (Wickham und Grolemund 2023). Darunter die Überschrift Literatur mit zwei Einträgen: Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. What does research reproducibility mean? Science Translational Medicine 8 (341): 341ps12. Und: Wickham, Hadley, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."}
+
 ::: {.callout-tip}
 **Zotero-Integration.** Die meisten Studierenden verwalten ihre Quellen in **Zotero**. Mit dem Plugin [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) exportierst du deine Sammlung als `.bib`-Datei und hältst sie automatisch synchron. Im **Quarto Visual Editor** in RStudio kannst du außerdem über `Insert` → `Citation` Zotero-Quellen direkt nachschlagen.
 :::
@@ -377,13 +407,12 @@ Ein gut strukturiertes Quarto-Projekt sieht typischerweise so aus:
 
 ```
 mein-projekt/
-├── data/
-│   ├── ALLBUS2023.sav        # Rohdaten — niemals bearbeiten
-│   └── README.md             # Beschreibung der Quelle
 ├── R/
 │   ├── _common.R             # geteilte Theme-/Helper-Funktionen
 │   └── prep.R                # Datenpräp als Funktion
 ├── output/                   # erzeugte Tabellen/Grafiken
+├── ALLBUS2023.sav            # Rohdaten — niemals bearbeiten
+├── README.md                 # Beschreibung der Datenquelle
 ├── literatur.bib
 ├── analyse.qmd               # das Hauptdokument
 └── mein-projekt.Rproj
@@ -391,7 +420,7 @@ mein-projekt/
 
 Drei Regeln, die sich bewährt haben:
 
-- **Rohdaten sind heilig.** Du schreibst nie in `data/` zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in `output/`.
+- **Rohdaten sind heilig.** Du schreibst nie in `ALLBUS2023.sav` zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in `output/`.
 - **Code, Daten und Dokument liegen zusammen.** Niemals absolute Pfade (`/Users/anna/...`) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
 - **Geteilte Logik kommt in `R/`.** Wenn drei `.qmd`-Dateien dieselben Daten vorbereiten, gehört der Code in `R/prep.R` und wird in jedem Dokument per `source("R/prep.R")` eingebunden.
 
@@ -492,7 +521,7 @@ Skizziere die Struktur eines reproduzierbaren Forschungsberichts in einer eigene
 - Du erzeugst Tabellen mit `kable()`/`gt` und Grafiken mit `fig-cap`/`fig-width`.
 - Du zitierst mit BibTeX, optional gekoppelt an Zotero.
 - Du kennst die Open-Science-Begriffe (Reproduzierbarkeit, FAIR, OSF, Pre-Registration) und kannst sie auf dein Projekt anwenden.
-- Du strukturierst dein Projekt mit `data/`, `R/`, `output/` und versionierst es mit Git.
+- Du strukturierst dein Projekt (`R/`, `output/`) und versionierst es mit Git.
 - Du publizierst in HTML, PDF oder Word.
 
 Im nächsten Kapitel kommst du zur **Programmiersprache R selbst** — Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.
