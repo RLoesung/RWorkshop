@@ -28,7 +28,7 @@ Anders als die SPSS-Syntax — die im Kern eine Befehlssprache mit festem Vokabu
 - Den Unterschied zwischen `|>` und dem älteren `%>%` aus `magrittr` einordnen.
 - Code mit Pipes lesbar und linear strukturieren.
 
-## Variablen definieren {#sec-variablen}
+## Variablen definieren mit `<-` {#sec-variablen}
 
 Eine **Variable** speichert einen Wert. In R weist du Werte über den Zuweisungspfeil `<-` zu:
 
@@ -76,7 +76,7 @@ mittelwertAlter_neu
 mittelwert alter
 ```
 
-### Kommentare
+### Kommentare mit `#`
 
 Alles, was hinter einem `#` steht, wird von R ignoriert — du nutzt das, um deinen Code zu erklären:
 
@@ -112,7 +112,7 @@ seq(1, 10, 2)                    # positional, identisch
 **Tipp: `?funktion`.** Wenn du die Argumente einer Funktion vergessen hast, gibt `?funktion` (z. B. `?seq`) die Hilfe in RStudio aus. Innerhalb der Klammern öffnet `Tab` ein Dropdown mit allen Argumenten.
 :::
 
-### Grundfunktionen für den Einstieg
+### Grundfunktionen für den Einstieg: `c()`, `seq()` und `round()`
 
 | Funktion              | Wirkung                                            |
 |-----------------------|----------------------------------------------------|
@@ -137,7 +137,7 @@ round(c(1.222, 2.345, 3.987), digits = 1)
 
 Drei Gruppen von Operatoren brauchst du immer wieder.
 
-**Arithmetisch.**
+### Arithmetische Operatoren `+`, `-`, `*`, `/`, `^` und `%%`
 
 | Operator | Wirkung           |
 |----------|-------------------|
@@ -148,7 +148,9 @@ Drei Gruppen von Operatoren brauchst du immer wieder.
 | `^`      | Potenzieren       |
 | `%%`     | Modulo (Rest)     |
 
-**Vergleich.** Geben einen logischen Wert `TRUE`/`FALSE` zurück.
+### Vergleichsoperatoren `==`, `!=`, `<`, `>` und `%in%`
+
+Sie geben einen logischen Wert `TRUE`/`FALSE` zurück.
 
 | Operator      | Wirkung                |
 |---------------|------------------------|
@@ -162,7 +164,9 @@ Drei Gruppen von Operatoren brauchst du immer wieder.
 **Vorsicht: `==` ist nicht `=`.** Für Vergleiche verwendest du immer `==` (doppeltes Gleichheitszeichen). Einzelnes `=` ist für Funktionsargumente reserviert — `mean(x = data)` setzt `x`, vergleicht aber nichts.
 :::
 
-**Logisch.** Verknüpfen Wahrheitswerte.
+### Logische Operatoren `&`, `|` und `!`
+
+Sie verknüpfen Wahrheitswerte.
 
 | Operator | Wirkung |
 |----------|---------|
@@ -185,7 +189,7 @@ Diese Operatoren wirst du in Kap. 4 ständig brauchen, wenn du Fälle mit `filte
 
 In R ist **alles ein Objekt** — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit:
 
-### Vektoren
+### Vektoren und Indizierung mit `[ ]`
 
 Ein **Vektor** ist eine eindimensionale Sammlung gleicher Datentypen. Drei Typen wirst du am häufigsten sehen:
 
@@ -230,7 +234,7 @@ c(1, 2, 3, 4) + c(10, 20)   # ergibt 11, 22, 13, 24 — nicht 11, 22!
 Das ist absichtliches Verhalten — und genau die Anfänger:innen-Falle, die zu falschen Ergebnissen führt. Wenn du dir nicht sicher bist, prüfe mit `length()`, dass beide Vektoren gleich lang sind.
 :::
 
-### Faktoren
+### Faktoren mit `factor()`, `levels()` und `fct_relevel()`
 
 Ein **Faktor** ist ein Vektor mit definierten **Ausprägungen** (`levels`) — für kategoriale Variablen wie Geschlecht oder Bildung. Warum nicht einfach ein Character-Vektor? Drei Gründe:
 
@@ -251,7 +255,7 @@ Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du d
 **Hintergrund: `haven_labelled` vs. Faktor.** Wenn du Daten aus SPSS einliest (Kap. 4), bekommst du Spalten vom Typ `<haven_labelled>`. Das ist *kein* Faktor — sondern ein numerischer Vektor mit Labels als Begleitinformation. Mit `to_label()` (mariposa) wandelst du sie bei Bedarf in einen klassischen Faktor.
 :::
 
-### Datensätze (Tibbles)
+### Datensätze (Tibbles) mit `tibble()`, `$` und `[[ ]]`
 
 Ein **Tibble** ist die moderne Form des Data Frames im tidyverse — eine Tabelle mit Zeilen (Fälle) und Spalten (Variablen). Du baust es mit `tibble()`:
 
@@ -278,7 +282,7 @@ befragte[1, "alter"]   # erste Zeile, Spalte "alter"
 
 In der Praxis liest du Datensätze fertig aus SPSS-, Stata- oder Excel-Dateien ein (siehe Kap. 4). Selbst-gebaute Tibbles brauchst du fast nur für kleine Demonstrationen.
 
-### Listen
+### Listen mit `list()`
 
 Eine **Liste** kann verschiedene Objekttypen unterschiedlicher Länge sammeln. Ergebnisse statistischer Analysen sind in R meistens Listen — ein Regressionsergebnis enthält Koeffizienten, Residuen, Modellgüte usw. Du musst sie selten selbst erstellen, aber regelmäßig lesen können:
 
@@ -293,7 +297,7 @@ ergebnis$koeffizient
 ergebnis$konfidenz[1]
 ```
 
-## Fehlende Werte: `NA` {#sec-na}
+## Fehlende Werte: `NA`, `is.na()` und `na.rm` {#sec-na}
 
 In echten Datensätzen fehlen oft einzelne Werte — eine Befragte hat eine Frage übersprungen, ein Messwert war ungültig, eine Auskunft wurde verweigert. R kodiert das mit einem speziellen Wert: **`NA`** (*Not Available*).
 

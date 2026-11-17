@@ -95,7 +95,7 @@ $$\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}$$
 
 Lies sie als: *„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut."* R rechnet das in Mikrosekunden aus; was du im Output unter `Estimate` siehst, ist genau diese Zahl.
 
-### Modell rechnen
+### Modell rechnen mit `linear_regression()`
 
 **Frage:** Wie viel von der Islamfeindlichkeit lässt sich *allein* durch Populismus erklären?
 
@@ -123,7 +123,7 @@ In der `Coefficients`-Tabelle stehen die zwei zentralen Zahlen:
 - **(Intercept)** — der Wert, den das Modell für Islamfeindlichkeit *vorhersagt*, wenn Populismus = 0 ist. Mathematisch die Verschiebung der Geraden auf der y-Achse.
 - **populismus** — die **Steigung**: *„um wie viel ändert sich Islamfeindlichkeit, wenn Populismus um eine Einheit steigt?"* Genau die $\hat{\beta}$ aus der Formel oben.
 
-### Regressionsgerade händisch zeichnen
+### Regressionsgerade händisch zeichnen mit `coef()` und `geom_abline()`
 
 Anders als beim Quick-and-dirty-`geom_smooth(method = "lm")` extrahieren wir die Koeffizienten direkt aus dem Modell und zeichnen die Gerade mit `geom_abline()`. Das macht den Zusammenhang Modell ↔ Visualisierung sichtbar:
 
@@ -176,7 +176,7 @@ Jeder Befragte bekommt ein Paar 0/1-Werte. „Niedrige Bildung" heißt: beide Du
 
 Die Referenz selbst hat keinen Koeffizienten — er wäre per Definition 0. Das ist wichtig für die Lesart: jede dummy-Zeile im Output bedeutet *„Differenz zur Referenzgruppe"*, nicht *„absoluter Wert"*.
 
-### Wer wird Referenz?
+### Wer wird Referenz? Umstellen mit `fct_relevel()`
 
 R nimmt das **erste Level** des Faktors. Bei `educ_kat` ist das `niedrig` (so wurde der Faktor im Setup definiert: `1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]`). Wenn du eine andere Vergleichsbasis möchtest — etwa weil du die *mittlere* Bildung als „normal" und „hoch/niedrig" als Abweichungen verstehen willst —, ändere die Reihenfolge mit `fct_relevel()`:
 
@@ -198,7 +198,7 @@ Danach würde der Output `educ_katniedrig` und `educ_kathoch` zeigen — beide j
 Die Wahl zwischen beiden ist eine *Annahme über das Skalenniveau*: behandelst du Bildung als ordinal-äquidistant (von Stufe 2 zu Stufe 3 ist derselbe Sprung wie von Stufe 1 zu Stufe 2 → `numeric`)? Oder als rein kategorial mit unbekanntem Abstand zwischen den Stufen (`dummy`)? Im Lehrbuch nehmen wir den `dummy`-Default, weil er methodisch *konservativer* ist — er erzwingt keine Äquidistanz-Annahme.
 :::
 
-## Multiple lineare Regression {#sec-regression}
+## Multiple lineare Regression mit `linear_regression()` {#sec-regression}
 
 Die einfache Regression hatte einen Prädiktor — Populismus. Aber Islamfeindlichkeit hängt vermutlich nicht *nur* von Populismus ab: Bildung, Alter, Region und Geschlecht spielen ebenfalls eine Rolle, und sie hängen untereinander zusammen. Die **multiple lineare Regression** fügt alle gleichzeitig ins Modell ein und zeigt, was bei jedem einzelnen Prädiktor *übrig bleibt*, wenn die anderen kontrolliert sind. Das ist die wichtigste Methode der gesamten quantitativen Sozialforschung.
 
@@ -313,7 +313,7 @@ Faustregel: für die *substantielle* Interpretation B, für den *Rangvergleich* 
 **Reviewer-Hinweis.** Eine vollständige Regressions-Tabelle enthält: B, SE, β, 95 %-KI, *p*-Wert, R², adjustiertes R², F des Modells, df, *N*. Wenn ein Reviewer fragt, „und was ist mit Multikollinearität?", solltest du VIF/Tolerance zur Hand haben — `summary(modell)` liefert beides in der Tabelle *Collinearity Statistics* gleich mit. Das gehört in den Methodenteil oder den Anhang.
 :::
 
-### Modelle vergleichen
+### Modelle vergleichen mit `anova()`
 
 Wenn du prüfen willst, ob ein zusätzlicher Prädiktor das Modell *signifikant* verbessert, rechnest du beide Modelle und vergleichst sie mit `anova()`.
 
@@ -422,7 +422,7 @@ Base R bietet `plot()` auf jedem `lm`-Objekt — und weil mariposa-Modelle von `
 | **Scale-Location**         | Homoskedastizität              | Streuung über alle Fitted-Werte konstant    |
 | **Residuals vs Leverage**  | Ausreißer / Hebelpunkte        | keine isolierten Punkte mit hoher Leverage  |
 
-### Modell-Residuen extrahieren
+### Modell-Residuen extrahieren mit `augment()`
 
 ```{r augment-setup}
 # einmalig installieren: install.packages("broom")
@@ -589,7 +589,7 @@ allbus |>
 **Vorsicht: Andere Referenzkategorie als in der Regression.** In der Tabelle *Parameter Estimates* setzt `ancova()` — wie SPSS `UNIANOVA` — die **letzte** Kategorie als Referenz (hier „hoch", mit „0 (a)" markiert). `linear_regression()` nimmt dagegen wie `lm()` die **erste** Kategorie („niedrig"). Die Koeffizienten beider Funktionen lassen sich deshalb nicht direkt nebeneinanderlegen; die Randmittel sind von der Referenzwahl unabhängig.
 :::
 
-## Logistische Regression {#sec-logistic}
+## Logistische Regression mit `logistic_regression()` {#sec-logistic}
 
 Die lineare Regression eignet sich nur für intervallskalierte abhängige Variablen — also Größen, die einen geordneten, kontinuierlichen Wertebereich haben. Was machst du, wenn dein Outcome nur zwei Werte hat? Etwa „wählt grün — wählt nicht grün", „hat einen Hochschulabschluss — hat keinen", „hat eine hohe Islamfeindlichkeit — hat eine niedrige"?
 
@@ -756,7 +756,7 @@ allbus_dummy |>
 
 Die Modelle stehen, die Koeffizienten sind interpretiert — jetzt fehlt nur noch die Kommunikation. In einer Hausarbeit, einem Paper oder einer Präsentation ist eine Regressions-Tabelle solider Standard; eine *Grafik* macht das Ergebnis auf einen Blick lesbar.
 
-### Coefficient-Plots: Regressionsergebnisse visualisieren {#sec-coefplot}
+### Coefficient-Plots: Regressionsergebnisse visualisieren mit `tidy()` {#sec-coefplot}
 
 Das wirkungsvollste Format ist ein **Coefficient-Plot**: ein Punkt für die Schätzung, eine Linie für das Konfidenzintervall, eine senkrechte Null-Linie als Referenz. So sieht der Plot für unser Hauptmodell aus — direkt aus dem `lm`-Objekt via `broom::tidy()`:
 
@@ -785,7 +785,7 @@ modell |>
 **Reviewer-Hinweis.** Coefficient-Plots haben sich in der politik- und sozialwissenschaftlichen Empirie als Standard etabliert (vgl. Gelman & Hill 2007; King et al. 2000). Sie ersetzen *nicht* die vollständige Tabelle im Anhang, machen das Ergebnis aber für nicht-statistisch Geschulte zugänglich — was in interdisziplinärer Forschung den Unterschied macht.
 :::
 
-### Mehrere Grafiken kombinieren mit patchwork {#sec-patchwork}
+### Mehrere Grafiken kombinieren mit patchwork: `+`, `/` und `|` {#sec-patchwork}
 
 `patchwork` ist der moderne Ersatz für `gridExtra::grid.arrange()`. Du speicherst Grafiken als Objekte und kombinierst sie mit `+`, `/` und `|`:
 
@@ -820,7 +820,7 @@ p3 <- allbus |>
 **mariposa-Tipp: Statistik aus mariposa, Komposition aus patchwork.** Die Trennung ist absichtlich. mariposa liefert dir die Inferenz-Outputs (Koeffizienten, χ², r, F), ggplot2 die Visualisierung — und patchwork hält ggplot2-typisch nichts dazwischen, sondern lässt dich Plots so kombinieren, als wären sie Bausteine.
 :::
 
-### Grafiken speichern
+### Grafiken speichern mit `ggsave()` {#sec-ggsave}
 
 `ggsave()` exportiert die letzte Grafik (oder ein benanntes Objekt) in beliebige Formate:
 

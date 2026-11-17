@@ -47,7 +47,7 @@ library(mariposa)
 **SPSS → R.** In SPSS bist du gewohnt, dass alle Funktionen direkt verfügbar sind. In R aktivierst du dir mit `library()` gezielt die Werkzeuge, die du brauchst — das hält den Funktions-Namensraum übersichtlich und macht jeden Schritt nachvollziehbar.
 :::
 
-## Datensatz einlesen
+## Datensatz einlesen mit `read_spss()`
 
 Der ALLBUS 2023 liegt als SPSS-Datei (`ALLBUS2023.sav`) im Projektordner. Mit `read_spss()` aus mariposa liest du sie ein:
 
@@ -98,6 +98,8 @@ Weiter unten in @sec-datentypen-verstehen kommen die Details.
 **Hintergrund: Was passiert beim Einlesen?** `read_spss()` aus mariposa verwendet im Hintergrund das Paket `haven` und reichert die Daten mit zwei Eigenschaften an, die du aus SPSS kennst: **Variablenlabels** (eine ausführliche Beschriftung pro Spalte) und **Wertelabels** (eine Beschriftung pro Ausprägung). Beide Informationen bleiben unsichtbar in den Spalten gespeichert — du kannst sie jederzeit abrufen oder als Faktor sichtbar machen.
 :::
 
+### Andere Formate und Export mit `read_stata()`, `read_xlsx()` und `write_spss()`
+
 Falls du Daten in anderen Formaten brauchst, gibt es passende Geschwister-Funktionen:
 
 ```{r read-formats, eval=FALSE}
@@ -112,7 +114,7 @@ Und wenn du einen bearbeiteten Datensatz zurück nach SPSS exportieren möchtest
 write_spss(allbus, "allbus_bearbeitet.sav")
 ```
 
-## Erster Blick auf den Datensatz
+## Erster Blick auf den Datensatz mit `glimpse()`, `nrow()` und `ncol()`
 
 Bei knapp 600 Variablen ist es unmöglich, sich alles in der Konsole anzeigen zu lassen. Drei Werkzeuge helfen dir bei der Orientierung:
 
@@ -191,7 +193,9 @@ allbus |>
 
 Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.
 
-**Tidyselect-Helfer.** Bei großen Datensätzen wie ALLBUS willst du oft *alle Variablen, die ein Muster erfüllen* auswählen. Statt sie einzeln aufzuzählen, helfen dir die folgenden Funktionen:
+#### Tidyselect-Helfer wie `starts_with()`, `where()` und `everything()`
+
+Bei großen Datensätzen wie ALLBUS willst du oft *alle Variablen, die ein Muster erfüllen* auswählen. Statt sie einzeln aufzuzählen, helfen dir die folgenden Funktionen:
 
 | Helfer                  | Wirkung                                              | Beispiel auf ALLBUS                     |
 | :---------------------- | :--------------------------------------------------- | :-------------------------------------- |
@@ -203,6 +207,8 @@ Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was 
 | `everything()`          | alle übrigen — typisch in `relocate()`               | `relocate(respid, .before = everything())` |
 
 Diese Helfer funktionieren genauso in `mutate(across(...))`, `summarise(across(...))` und in vielen mariposa-Aufrufen — ein tidyverse-weites Vokabular.
+
+#### Spalten herausziehen und umsortieren mit `pull()` und `relocate()`
 
 Zwei nahe Verwandte von `select()`:
 
@@ -238,7 +244,7 @@ allbus |> filter(!is.na(sex))     # alle Fälle, wo sex vorhanden ist
 Wenn du dich wunderst, warum deine Fallzahl plötzlich kleiner ist als erwartet — die `NA`-Filterung ist meist der Grund.
 :::
 
-### Fälle sortieren mit `arrange()`
+### Fälle sortieren mit `arrange()` und `desc()`
 
 ```{r arrange}
 allbus |>
@@ -256,7 +262,7 @@ allbus |>
   head(5)
 ```
 
-## Datentypen verstehen {#sec-datentypen-verstehen}
+## Datentypen verstehen mit `class()` {#sec-datentypen-verstehen}
 
 Wenn du in SPSS arbeitest, fragst du dich selten, *welcher Typ* eine Variable ist. SPSS macht das im Hintergrund: eine Variable ist „numerisch" oder „string", und Wertelabels („1 = Mann, 2 = Frau") sind nur eine Beschriftungs-Schicht obendrauf. In R ist das ein bisschen anders — und am Anfang verwirrend.
 
@@ -268,6 +274,8 @@ Mit `class()` siehst du den Typ einer Variable:
 class(allbus$sex)
 class(allbus$age)
 ```
+
+### Labelled-Variablen umwandeln mit `to_label()`, `to_numeric()` und `unlabel()`
 
 Drei Konvertierungen wirst du immer wieder brauchen:
 
@@ -294,7 +302,7 @@ Wenn du nur Labels *abstreifen* willst (z. B. weil eine Funktion mit labelled-Ve
 - **Beim Original lassen**, wenn die Variable noch nicht final ist und du das Label später noch brauchst.
 :::
 
-## Variablen- und Wertelabels lesen und setzen
+## Variablen- und Wertelabels lesen und setzen mit `var_label()` und `val_labels()`
 
 | Funktion                                            | Wirkung                                                              |
 | --------------------------------------------------- | -------------------------------------------------------------------- |
@@ -338,7 +346,7 @@ allbus <- val_labels(allbus, mm01 = c("stimme gar nicht zu" = 1, "stimme voll zu
 Mit `val_labels(allbus, mm01 = NULL)` entfernst du die Wertelabels einer Variable komplett.
 :::
 
-## Fehlende Werte deklarieren {#sec-fehlende-werte}
+## Fehlende Werte deklarieren mit `na_frequencies()`, `set_na()` und `drop_na()` {#sec-fehlende-werte}
 
 Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage — manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.
 

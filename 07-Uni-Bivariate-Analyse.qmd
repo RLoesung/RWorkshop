@@ -54,7 +54,7 @@ Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test 
 - Effektgrößen einordnen — wann ein signifikanter Test inhaltlich klein, mittel oder groß ist.
 - Die drei Grundbegriffe statistischer Inferenz — **p-Wert**, **Standardfehler**, **Konfidenzintervall** — richtig lesen.
 
-## Über Gewichtung
+## Über Gewichtung: das Argument `weights =`
 
 In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsentiert**, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das **personenbezogene Ost-West-Gewicht** `wghtpew`. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen" verzerrt.
 
@@ -287,7 +287,7 @@ tibble(
 ```
 :::
 
-### Einzelne Kennwerte
+### Einzelne Kennwerte mit `w_mean()` und Co.
 
 Manchmal brauchst du nicht eine ganze Tabelle, sondern *einen* Wert — etwa für eine `summarise()`-Pipeline oder eine Caption. mariposa hat dafür gewichtete Einzel-Funktionen:
 
@@ -442,18 +442,22 @@ allbus |> chi_square(eastwest, educ_kat, weights = wghtpew)
 
 **Lesart.** Die kompakte Ausgabe zeigt χ² mit Freiheitsgraden, *p*-Wert, Cramérs *V* mit Einordnung und N. Der Zusammenhang ist hochsignifikant, aber mit *V* ≈ 0.13 *klein*: Ost und West unterscheiden sich in der Bildungsstruktur, doch der Unterschied ist überschaubar. `summary()` ergänzt beobachtete und erwartete Häufigkeiten sowie die Effektgrößen im Detail: Cramérs *V* (universell, 0–1) und Phi (vorzeichenbehaftet bei 2×2-Tabellen). Goodman-Kruskal Gamma berichtet mariposa nur, wenn *beide* Variablen ordinal sind (geordneter Faktor oder numerisch) — bei der ungeordneten Region `eastwest` ergibt eine Rangkorrelation keinen Sinn.
 
+#### Effektgrößen einzeln mit `cramers_v()`, `phi()` und `goodman_gamma()`
+
 ::: {.callout-important}
-**mariposa-Tipp: Effektgröße als einzelne Zahl.** Brauchst du nur die Effektgröße — etwa für eine Caption, eine eigene Tabelle oder ein `summarise()` —, liefern dir `cramers_v()`, `phi()` und `goodman_gamma()` genau diese *eine Zahl* statt des ganzen Test-Outputs: `allbus |> cramers_v(eastwest, educ_kat, weights = wghtpew)` ergibt `0.125`. Für den vollständigen Test mit *p*-Wert bleibt `chi_square()` die richtige Wahl.
+**mariposa-Tipp.** Brauchst du nur die Effektgröße — etwa für eine Caption, eine eigene Tabelle oder ein `summarise()` —, liefern dir `cramers_v()`, `phi()` und `goodman_gamma()` genau diese *eine Zahl* statt des ganzen Test-Outputs: `allbus |> cramers_v(eastwest, educ_kat, weights = wghtpew)` ergibt `0.125`. Für den vollständigen Test mit *p*-Wert bleibt `chi_square()` die richtige Wahl.
 :::
 
+#### Verwandte Tests: `fisher_test()` und `mcnemar_test()`
+
 ::: {.callout-note}
-**Hintergrund: Verwandte Tests.**
+**Hintergrund.**
 - **`fisher_test()`** — exakter Test bei kleinen Erwarteten (< 5 in mehr als 20 % der Zellen). Kein Erwartungswert-Limit, dafür rechenintensiv; für große Tabellen gibt es mit `simulate.p.value = TRUE` einen Monte-Carlo-*p*-Wert. Bei 2×2-Tabellen berichtet `fisher_test()` zusätzlich das **Odds Ratio** mit 95 %-Konfidenzintervall.
 - **`chisq_gof()`** — Goodness-of-Fit, eine Variable gegen eine theoretische Verteilung (siehe @sec-univariat).
 - **`mcnemar_test()`** — gepaarte 2×2-Tabellen (vorher/nachher, Test-Retest).
 :::
 
-### Korrelation
+### Korrelation mit `pearson_cor()`, `spearman_rho()` und `kendall_tau()`
 
 Eine **Korrelation** ist die einfachste Antwort auf die Frage: *„Bewegen sich zwei Variablen gemeinsam?"* Wer hohe Werte auf der einen Skala hat, hat auch hohe Werte auf der anderen? Oder genau umgekehrt? Oder gibt es keinen Zusammenhang?
 
@@ -521,7 +525,7 @@ allbus |> pearson_cor(mm01:mm06, weights = wghtpew)
 **Vorsicht: tidyselect-Helfer greifen weiter, als du denkst.** Naheliegend wäre `pearson_cor(starts_with("mm0"))`. Nach der Datenpräp passt das Muster aber auch auf die umgepolten Kopien `mm02r` und `mm05r` (und auf `mm07`, ein Item aus einem anderen Fragenblock) — die Ausgabe enthielte dann sinnlose Paare wie `mm02 × mm02r` mit *r* = −1. Prüfe bei Mustern immer mit `allbus |> select(starts_with("mm0")) |> names()`, welche Spalten du tatsächlich erwischst.
 :::
 
-### Drittvariablen kontrollieren: partielle Korrelation
+### Drittvariablen kontrollieren: partielle Korrelation mit `partial_cor()`
 
 **Frage:** Bleibt der Zusammenhang zwischen Islamfeindlichkeit und Populismus bestehen, wenn man Alter und Bildung herausrechnet?
 
@@ -540,6 +544,8 @@ allbus |>
 :::
 
 ## Mittelwertvergleiche {#sec-mvc}
+
+### Voraussetzungen prüfen mit `normality_test()` {.unnumbered}
 
 **Voraussetzungs-Checkliste.** Bevor du t-Test, ANOVA oder Korrelation rechnest — ein Mini-Check, was die Verfahren brauchen. In der Praxis sind sie bei großen Stichproben *robust* gegen kleinere Verletzungen; trotzdem gehört der Check zum Methoden-Bericht.
 
@@ -560,7 +566,7 @@ allbus |> normality_test(islamophobie)
 
 **Lesart.** Beide Tests sind hochsignifikant — formal ist Islamfeindlichkeit also *nicht* normalverteilt. Das ist bei über 3.000 Fällen fast unvermeidlich: Mit großem N werden schon winzige Abweichungen von der Idealglocke signifikant. Für t-Test und ANOVA ist das unkritisch, weil sie bei großen Stichproben robust sind. Lies die Tests deshalb zusammen mit einem Histogramm und den Formmaßen aus `describe()` (Schiefe ≈ 0.2, Wölbung ≈ −0.8): Die Verteilung ist breit und flach, aber nicht problematisch schief. `normality_test()` hat kein `weights`-Argument, weil beide Tests für gebrochene Gewichte nicht definiert sind.
 
-### t-Test mit `t_test()`
+### t-Test mit `t_test()` und `levene_test()`
 
 Der **t-Test** ist eines der ältesten Werkzeuge der inferenziellen Statistik (William Gosset hat ihn 1908 unter dem Pseudonym „Student" veröffentlicht, weil sein Arbeitgeber Guinness Brauereigeheimnisse fürchtete). Die Frage, die er beantwortet, ist sehr konkret: *„Du siehst zwei Gruppen, die scheinbar unterschiedliche Mittelwerte haben. Wäre dieser Unterschied auch durch reinen Zufall in einer Stichprobe entstanden — oder ist er groß genug, dass man davon ausgehen kann, dass es in der Bevölkerung wirklich einen Unterschied gibt?"*
 
@@ -694,7 +700,7 @@ allbus |>
 **Forschungshintergrund: Bildung als Vorurteils-Prädiktor.** Bildung ist in der Sozialforschung der robusteste Prädiktor *gegen* gruppenbezogene Vorurteile — über Länder, Themen und Jahrzehnte hinweg. Die theoretische Debatte streitet, warum: *Liberalisierungs-Hypothese* (Bildung vermittelt liberale Werte direkt), *Kognitive-Komplexität-Hypothese* (Bildung erlaubt komplexere Bewertungen), *Status-Hypothese* (höher Gebildete fühlen sich weniger ökonomisch bedroht und weniger durch Outgroups herausgefordert). Eine ANOVA prüft *ob* der Effekt existiert; *welcher* der drei Erklärungsstränge stimmt, müsste über Mediator-Modelle oder qualitative Forschung beantwortet werden.
 :::
 
-### Post-Hoc: welche Gruppen genau?
+### Post-Hoc-Tests mit `tukey_test()`, `scheffe_test()` und `dunn_test()`
 
 Eine signifikante ANOVA sagt dir „mindestens zwei Gruppen unterscheiden sich" — aber nicht *welche*. Vier Post-Hoc-Verfahren stehen in mariposa zur Auswahl:
 
@@ -722,7 +728,7 @@ allbus |>
 
 **Lesart.** Jede Zeile ist ein Gruppenpaar in der SPSS-Schreibweise „(I) − (J)": Die Mittelwertdifferenz ist der Mittelwert der ersten minus den der zweiten Gruppe. Alle drei Paare unterscheiden sich signifikant. Der Sprung von mittlerer zu hoher Bildung (0.97 Skalenpunkte) ist aber gut viermal so groß wie der von niedriger zu mittlerer Bildung (0.22) — der Bildungseffekt sitzt vor allem am oberen Ende. Dieses Muster begegnet dir in der Regression in @sec-regression wieder.
 
-### Nicht-parametrisch
+### Nicht-parametrische Tests mit `mann_whitney()`, `kruskal_wallis()` und `wilcoxon_test()`
 
 Wenn die Voraussetzungen für *t*-Test oder ANOVA nicht erfüllt sind (z. B. stark schiefe Verteilungen, ordinale AV), gibt es Alternativen:
 

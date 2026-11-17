@@ -72,7 +72,7 @@ $$r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}$$
 Lies sie als: *„wie stark schwingen x und y gemeinsam — in Einheiten der typischen Schwingung jeder Variable einzeln."* Durch die Division steht $r$ immer zwischen $-1$ (perfekt gegenläufig) und $+1$ (perfekt gleichläufig). Genau diese Zahl bekommst du im `pearson_cor()`-Output für jede Item-Paarung.
 :::
 
-### Matrix berechnen
+### Matrix berechnen mit `pearson_cor()`
 
 **Frage:** Wie stark hängen die sechs Islamfeindlichkeits-Items untereinander zusammen?
 
@@ -159,7 +159,7 @@ Bartletts Sphärizitätstest stellt eine konservative Mindestfrage: Ist die Korr
 
 Wenn der Test signifikant ist ($p < .05$), heißt das: *„zumindest *irgendeine* Korrelation in der Matrix ist von Null verschieden — also gibt es etwas zu faktorisieren."* Bei N > 1000 ist Bartlett fast immer signifikant; er ist eher ein *technischer Mindest-Check* als ein inhaltliches Argument. KMO ist die viel aussagekräftigere Größe.
 
-### Drei Diagnose-Ebenen aus einem Aufruf
+### Drei Diagnose-Ebenen aus einem Aufruf von `efa()`
 
 Wir rufen `efa()` einmal mit `n_factors = 1` auf und speichern das Ergebnis — die Faktoranzahl ist hier egal, wir interessieren uns nur für die Voraussetzungs-Werte. Aus dem zurückgegebenen Objekt liest du *drei* Diagnose-Ebenen heraus.
 
@@ -322,7 +322,7 @@ faktor_radial |>
 
 **Lesart.** `mm01` (λ = 0.81) ist der stärkste **Kernindikator** — es reagiert am deutlichsten, wenn der Faktor sich „dreht"; `mm03`, `mm04` und `mm06` folgen dicht dahinter (je etwa 0.75–0.77). Die beiden umgepolten Items `mm02r` und `mm05r` hängen mit rund 0.66 etwas schwächer am Faktor, liegen aber immer noch klar im brauchbaren Bereich. Ein echter **Randindikator** (λ < 0.5) ist nicht dabei.
 
-### Modell rechnen und Ladungen lesen
+### Modell rechnen mit `efa()` und Ladungen lesen
 
 Die kompakte Ausgabe kennst du schon aus @sec-kmo-bartlett: KMO, erklärte Varianz, N. Für die Ladungen brauchst du die ausführliche Fassung mit `summary()` — sie ist aufgebaut wie der SPSS-Output von `FACTOR`:
 
@@ -464,7 +464,7 @@ Lies sie als: *„je mehr Items, und je höher sie im Schnitt zusammenhängen, d
 
 Daraus die zentrale Faustregel: **Mehr Items erkaufen Reliabilität — auch dann, wenn jedes einzelne Item nicht besser misst.** Das ist auch der Grund, warum etablierte Skalen oft 8–12 Items haben statt nur 3–4.
 
-### α berechnen
+### α berechnen mit `reliability()`
 
 ```{r reliability}
 rel_obj <- allbus |>
@@ -529,7 +529,7 @@ rel_obj$item_total |>
 **Reviewer-Hinweis.** In einem Methodenbericht reicht *nicht* der α-Wert allein. Standard ist: α (zunehmend ergänzt um ω) + Item-Total-Korrelationen aller Items + α-if-deleted aller Items — gerne in einer Tabelle oder dem Bar-Chart oben. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.
 :::
 
-## Konfirmatorische Faktorenanalyse als Ausblick {#sec-cfa}
+## Konfirmatorische Faktorenanalyse als Ausblick: `cfa()` und `semPaths()` {#sec-cfa}
 
 Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine **konfirmatorische Faktorenanalyse**. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`.
 

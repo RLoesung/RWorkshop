@@ -2,9 +2,10 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
-## 17. November 2026 — Tastenkürzel im Vorwort
+## 17. November 2026 — Tastenkürzel im Vorwort, Funktionsnamen in den Überschriften
 
 - Das Vorwort endet mit einer Tabelle der wichtigsten Tastenkürzel, getrennt nach macOS und Windows und abgestimmt auf die Arbeit mit Quarto-Dokumenten (Chunk einfügen, Chunk ausführen, Rendern). Sie verlinkt auf den Abschnitt „Nützliche Tastenbefehle" in Kap. 1.
+- Die Überschriften nennen wieder die Funktionen, die ein Abschnitt erklärt, zum Beispiel „Datensatz einlesen mit `read_spss()`“ oder „Fehlende Werte deklarieren mit `na_frequencies()`, `set_na()` und `drop_na()`“. So lässt sich das Buch über das Inhaltsverzeichnis und die Suche wieder als Nachschlagewerk nutzen. Wo ein Abschnitt viele Funktionen erklärt, gibt es neue Unterabschnitte (etwa 3.4.1–3.4.3 zu den Operatoren); bestehende Abschnittsnummern bleiben gleich.
 
 ## 15. November 2026 — Texte an die Ausgabe angeglichen
 

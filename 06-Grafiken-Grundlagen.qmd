@@ -122,7 +122,7 @@ Beide Grafiken folgen dem gleichen Drei-Schritt-Aufbau. Den schauen wir uns jetz
 
 ## Aufbau einer Grafik {#sec-aufbau}
 
-### Plot-Objekt erstellen
+### Plot-Objekt erstellen mit `ggplot()`
 
 Das Plot-Objekt entsteht mit `ggplot()`. Erstes Argument ist der Datensatz:
 
@@ -132,7 +132,7 @@ g <- allbus |> ggplot()
 
 Allein ist `g` ein „leeres" Plot-Objekt — es weiß noch nichts über Achsen oder Inhalte.
 
-### Aesthetic Mapping
+### Aesthetic Mapping mit `aes()`
 
 Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften der Grafik** zu. Die wichtigsten Eigenschaften:
 
@@ -178,7 +178,7 @@ g <- allbus |>
 
 `g` ist jetzt ein Plot-Objekt mit Achsenzuweisungen — du siehst aber noch nichts, weil kein Layer existiert.
 
-### Layer hinzufügen
+### Layer hinzufügen mit `geom_jitter()`, `geom_boxplot()` und `geom_violin()`
 
 Layer kommen mit `+` dazu. Die Layer-Funktionen beginnen alle mit dem Präfix `geom_`.
 
@@ -234,7 +234,7 @@ Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab. Eine Sc
 | Zwei kontinuierliche Variablen            | `geom_point()`, `geom_jitter()`, `geom_smooth()`           |
 | Zeitreihe                                 | `geom_line()`                                              |
 
-### Eine kategoriale Variable
+### Eine kategoriale Variable mit `geom_bar()` und `after_stat()`
 
 Klassischer Bar Chart mit `geom_bar()`:
 
@@ -267,7 +267,7 @@ allbus |>
   labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)", fill = "Geschlecht")
 ```
 
-### Eine kontinuierliche Variable
+### Eine kontinuierliche Variable mit `geom_histogram()` und `geom_density()`
 
 Histogramm mit `geom_histogram()`. Die wichtigste Stellschraube ist `binwidth`:
 
@@ -289,7 +289,7 @@ allbus |>
   labs(x = "Islamfeindlichkeit (1–7)", y = "Dichte", fill = "Geschlecht")
 ```
 
-### Zwei kontinuierliche Variablen
+### Zwei kontinuierliche Variablen mit `geom_smooth()`
 
 Streudiagramm mit Regressionsgerade — der Klassiker:
 
@@ -305,7 +305,7 @@ allbus |>
 
 `geom_smooth(method = "lm")` zeichnet eine lineare Regressionsgerade pro Gruppe. Für nichtlineare Trends nutzt du `method = "loess"`. *Was eine Regressionsgerade mathematisch ist, lernst du in @sec-regression — hier dient sie nur als visuelle Trend-Hilfe.*
 
-## Subgruppen aufteilen mit Facets {#sec-facets}
+## Subgruppen aufteilen mit Facets: `facet_wrap()` und `facet_grid()` {#sec-facets}
 
 Stell dir vor, du willst den Zusammenhang von Populismus und Islamfeindlichkeit zeigen — aber getrennt nach Bildungsgruppen. Du könntest die drei Gruppen in einer einzigen Grafik mit drei verschiedenen Farben übereinanderlegen. Bei zwei Gruppen funktioniert das noch; bei drei oder mehr wird es chaotisch — Punkte überlappen, Trendlinien kreuzen sich, das Auge findet sich nicht mehr zurecht.
 
@@ -342,6 +342,8 @@ allbus |>
 
 ## Farben und Themes {#sec-themes}
 
+### Farbpaletten mit `scale_color_*()` und `scale_fill_*()`
+
 Der Default-Farbverlauf von ggplot2 ist nicht barrierefrei. Eine kleine Sammlung Standard-Lösungen:
 
 ```{r colors-themes, eval=FALSE}
@@ -361,6 +363,8 @@ scale_color_manual(values = farben)
 ::: {.callout-note}
 **Hintergrund: Barrierefreiheit.** Etwa 8 % der Männer (und 0.5 % der Frauen) haben eine Form der Rot-Grün-Sehschwäche. Default-Farbpaletten verwenden oft Rot und Grün als Hauptkontrast — für betroffene Leser:innen verschwindet damit die Information. **Viridis** (Standardpalette in matplotlib, jetzt auch in ggplot2) bleibt für alle Sehschwächen unterscheidbar und ist auch in Schwarzweiß-Druck lesbar. Faustregel: bei kontinuierlichen Skalen immer Viridis, bei kategorialen Variablen aus ColorBrewer-Paletten wählen (`Set1`, `Set2`, `Blues`, `RdYlBu`).
 :::
+
+### Themes mit `theme_*()` und `theme()`
 
 Komplette Themes ersetzen mit einer Zeile das Standard-Aussehen:
 
@@ -394,7 +398,7 @@ In der Praxis kombinierst du beide: zuerst ein komplettes Theme als Basis, dann 
 **SPSS → R: Klick vs. Code.** In SPSS klickst du Farben in einem Dialogfeld an, und die nächste Grafik fängt wieder bei Null an. In ggplot2 *speicherst* du Theme und Farbpalette als Code — und kannst sie auf jede neue Grafik anwenden, ohne dich zu wiederholen.
 :::
 
-## Beschriftungen
+## Beschriftungen mit `labs()` und `to_label()`
 
 `labs()` setzt alle Texte einer Grafik in einem Funktionsaufruf:
 
@@ -426,11 +430,11 @@ allbus |>
 
 Wenn du eine zusätzliche labelled-Variable im Plot brauchst, wendest du `to_label()` einfach in der Pipeline an, bevor du `ggplot()` aufrufst.
 
-## Grafiken speichern und kombinieren — Ausblick
+## Grafiken speichern mit `ggsave()` und kombinieren — Ausblick
 
 Zwei weitere Bausteine, die du in den nächsten Kapiteln brauchst:
 
-- **Speichern mit `ggsave()`.** Eine Grafik in deine Hausarbeit oder Folien bringen geht über `ggsave("plot.png", width = 8, height = 5, dpi = 300)`. Vollständige Behandlung in @sec-coefplot.
+- **Speichern mit `ggsave()`.** Eine Grafik in deine Hausarbeit oder Folien bringen geht über `ggsave("plot.png", width = 8, height = 5, dpi = 300)`. Vollständige Behandlung in @sec-ggsave.
 - **Mehrere Plots kombinieren mit `patchwork`.** Wenn du zwei Grafiken nebeneinander oder untereinander brauchst, kombinierst du sie mit `p1 + p2` (nebeneinander) oder `p1 / p2` (untereinander). Vollständige Behandlung in @sec-patchwork.
 
 ## Übungen {-}

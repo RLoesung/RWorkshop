@@ -73,7 +73,7 @@ Eine Handvoll Funktionen aus `dplyr` deckt den Großteil aller Datentransformati
 | `distinct()`                   | Einzigartige Werte einer Variable                      |
 | `rename()`                     | Variablen umbenennen                                   |
 
-### Neue Variablen mit `mutate()`
+### Neue Variablen mit `mutate()` und `across()`
 
 `mutate()` ist das R-Pendant zu SPSS' `COMPUTE`. Du übergibst dem Tibble eine oder mehrere Zuweisungen *„neuer Spaltenname = Ausdruck"*, und mariposa/dplyr hängt die neue(n) Spalte(n) ans Tibble an. Wichtig: `mutate()` liefert das *gesamte* Tibble zurück — das Ergebnis musst du also der Variable zuweisen (`allbus <- allbus |> mutate(...)`), wenn die neue Spalte erhalten bleiben soll. Ohne Zuweisung wird die Änderung nur einmal ausgegeben und verschwindet wieder.
 
@@ -91,7 +91,7 @@ allbus |>
   mutate(across(c(mm01, mm02, mm03), as.numeric))
 ```
 
-### Bedingungslogik mit `case_when()` und `if_else()`
+### Bedingungslogik mit `case_when()`, `if_else()` und `recode_values()`
 
 `case_when()` ist das R-Äquivalent zu SPSS' `IF`. Du listest Bedingungen in der Form `bedingung ~ wert` auf — die erste zutreffende gewinnt.
 
@@ -152,7 +152,7 @@ allbus |>
 **Hintergrund: `recode_values()` statt `case_match()`.** In älteren Tutorials findest du für dieselbe Aufgabe `case_match()`. Seit dplyr 1.2 ist sie veraltet (*deprecated*) und meldet eine Warnung; `recode_values()` ist ihr Nachfolger mit identischer Schreibweise. Für das Umkodieren *ganzer Skalen* bleibt mariposas `rec()` (nächster Abschnitt) das bequemere Werkzeug.
 :::
 
-### Aggregation mit `group_by()` und `summarise()`
+### Aggregation mit `group_by()`, `summarise()` und `n()`
 
 ```{r group-summarise}
 allbus |>
@@ -333,7 +333,7 @@ allbus |>
 
 Die neuen Spalten werden automatisch angehängt; mit `ref =` legst du fest, welche Ausprägung als *Referenz* weggelassen wird. Dummy-Variablen brauchst du erst in @sec-erklaerung für die Regression — `lm()` und `linear_regression()` aus mariposa erstellen sie für Faktoren auch automatisch im Hintergrund.
 
-## Standardisieren und zentrieren
+## Standardisieren und zentrieren mit `std()` und `center()`
 
 Vor manchen Analysen ist es sinnvoll, eine Variable auf einen einheitlichen Maßstab zu bringen. Zwei verwandte Operationen:
 
@@ -356,7 +356,7 @@ allbus |>
 
 Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein `weights =`-Argument, falls du die Standardisierung gewichtet machen willst.
 
-## Datensätze verbinden mit Joins {#sec-joins}
+## Datensätze verbinden mit `left_join()`, `inner_join()` und `full_join()` {#sec-joins}
 
 In der Forschungspraxis kommt deine Information selten aus *einer* Datei. Du hast Individualdaten (ALLBUS-Befragte), willst aber Kontextinformationen dazumischen — Bundesländer-Wahlergebnisse, Wirtschaftsdaten, regionale Migrationsanteile. Beide Tabellen werden über eine **Schlüssel-Variable** verknüpft, die in beiden vorkommt.
 
@@ -501,7 +501,7 @@ Jetzt steht jedes Item in einer Zeile, Region in zwei Spalten — Ost und West d
 Wenn du eine Pipeline schreibst, in der genau ein Schritt das andere Format braucht, ist *zwischendurch* per `pivot_*()` umformen, dann das nächste Verb anwenden, dann ggf. zurück — völlig normal.
 :::
 
-## Skalen bilden {#sec-skalen}
+## Skalen bilden mit `row_means()`, `row_sums()` und `pick()` {#sec-skalen}
 
 Jetzt kommt der Moment, auf den dieses Kapitel zugelaufen ist: aus sechs umgepolten Items wird **eine** Skala. Das ist methodisch einfach — und konzeptionell der wichtigste Schritt zum Verstehen, was die Sozialforschung eigentlich macht.
 
