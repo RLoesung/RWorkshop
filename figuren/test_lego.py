@@ -134,6 +134,19 @@ ERWARTET_KAP03 = {
                       "logical", "numeric", "character"],
     "k03-tibble": ["befragte", "geschlecht", "alter", "<fct>", "<dbl>", "Divers", "52", "[1] 34 41 28 52"],
     "k03-pipe": ["zahlen", "1.11", "1.55", "round(", "digits = 1)", "head(", "n = 3)", "1.6", "1.3"],
+    "k03-name-inhalt": ["var1", "<-", "2 * 4", "8", "[1] 8", "ENVIRONMENT", "Name", "Ausdruck"],
+    "k03-reihenfolge": ["x <- 5", "y <- x + 2", "x <- 10", "[1] 7", "NACH ZEILE 1", "NACH ZEILE 3",
+                        "x", "y", "5", "7", "10"],
+    "k03-funktion": ["seq", "from", "to", "by", "from = 1", "to = 10", "by = 2", "[1] 1 3 5 7 9",
+                     "1", "3", "5", "7", "9", "10", "2", "Funktion", "Argumente"],
+    "k03-argumente": ["round()", "x", "digits", "1.222", "2.345", "3.987", "1.2", "2.3", "4.0", "1",
+                      "round(c(1.222, 2.345, 3.987), digits = 1)", "[1] 1.2 2.3 4.0", "Pflichtfeld",
+                      "vorausgefüllt mit 0"],
+    "k03-na": ["x", "1", "2", "NA", "4", "5", "mean", "na.rm = TRUE", "[1] NA", "[1] 3"],
+    "k03-analyseplan": ['allbus <- read_spss("ALLBUS2023.sav") |>', '  rec(mm02, rules = "rev", suffix = "r") |>',
+                        '  rec(mm05, rules = "rev", suffix = "r") |>', "  mutate(",
+                        "    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
+                        "min_valid = 5)", "Datensatz einlesen", "mm02", "mm05", "umpolen", "Skala bilden"],
 }
 
 

@@ -39,6 +39,10 @@ var1
 
 `var1` (links) ist der Variablenname; `2 * 4` (rechts) der Ausdruck, dessen Ergebnis (`8`) gespeichert wird.
 
+R rechnet also zuerst `2 * 4` aus und legt das Ergebnis unter dem Namen `var1` im `Environment` ab (@fig-name-inhalt). Wo danach `var1` steht, setzt R den Wert 8 ein. In den Abbildungen ist ein Wert ein Stein und ein Name ein dunkles Schild; mehr zu dieser Bildsprache in @sec-datentypen.
+
+![`var1 <- 2 * 4` legt das Ergebnis 8 unter dem Namen `var1` im Environment ab. Danach gibt `var1` den Wert 8 aus.](Bilder/figuren/k03-name-inhalt.svg){#fig-name-inhalt .lightbox fig-alt="Links die Code-Zeile var1 <- 2 * 4; var1 ist dunkel markiert und mit Name beschriftet, 2 * 4 mit Ausdruck. Ein orangefarbener Pfeil führt zu einem Kasten Environment mit einem dunklen Namensschild var1 neben einem blauen Stein mit 8. Darunter die zweite Code-Zeile var1 mit der Ausgabe [1] 8."}
+
 Wenn du die Zuweisung in runde Klammern setzt, wird das Ergebnis gleichzeitig in der Konsole angezeigt:
 
 ```{r var-paren}
@@ -49,6 +53,32 @@ Wenn du die Zuweisung in runde Klammern setzt, wird das Ergebnis gleichzeitig in
 **Vorsicht: `<-` statt `=`.** Aus anderen Programmiersprachen kennst du `=` als Zuweisungsoperator. R akzeptiert es in vielen Kontexten, der idiomatische Operator ist aber `<-`. Grund: `=` wird in R *innerhalb* von Funktionsaufrufen für Argumente verwendet (`mean(x = data)`). Wenn du `<-` für Zuweisung und `=` für Argumente strikt trennst, vermeidest du subtile Fehler.
 
 Tastenkürzel für `<-`: `option` + `-` (macOS) bzw. `alt` + `-` (Windows/Linux).
+:::
+
+R führt Code von oben nach unten aus, Zeile für Zeile. Was in einer Variablen steht, hängt deshalb davon ab, welche Zeilen vorher gelaufen sind:
+
+```{r reihenfolge}
+x <- 5
+y <- x + 2
+x <- 10
+y
+```
+
+`y` ist 7, obwohl `x` am Ende 10 ist. In Zeile 2 rechnet R `x + 2` mit dem Wert, den `x` in diesem Moment hat, und legt das Ergebnis 7 unter `y` ab. Die Rechnung selbst merkt sich R nicht, darum ändert Zeile 3 nichts an `y` (@fig-reihenfolge). Auch die Chunks eines Quarto-Dokuments laufen beim Rendern von oben nach unten.
+
+![Das Environment nach jeder Zeile des Chunks. Zeile 3 ändert nur `x`; `y` behält den Wert 7.](Bilder/figuren/k03-reihenfolge.svg){#fig-reihenfolge .lightbox fig-alt="Links der Chunk mit den nummerierten Zeilen 1 bis 4: x <- 5, y <- x + 2, x <- 10, y, darunter die Ausgabe [1] 7. Rechts drei Kästen. Nach Zeile 1: Namensschild x mit dem blauen Stein 5. Nach Zeile 2: x mit 5 und y mit 7. Nach Zeile 3: x mit 10, orange umrandet, und y weiterhin mit 7."}
+
+**Kurz überlegen.** Welchen Wert hat `a` nach diesen drei Zeilen: `a <- 3`, `a <- a + 1`, `a <- a * 2`?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r reihenfolge-loesung}
+a <- 3
+a <- a + 1
+a <- a * 2
+a
+```
+
+`a` ist erst 3, nach der zweiten Zeile 4 und nach der dritten 8. Rechts vom Pfeil rechnet R mit dem Wert, den `a` gerade hat; links legt es das Ergebnis unter demselben Namen ab und ersetzt damit den alten Wert.
 :::
 
 ### Variablennamen
@@ -108,6 +138,10 @@ seq(from = 1, to = 10, by = 2)   # explizit
 seq(1, 10, 2)                    # positional, identisch
 ```
 
+Beide Aufrufe geben dieselben fünf Zahlen zurück. @fig-funktion zeigt den ersten: Die Werte der drei Argumente gehen in `seq()`, heraus kommen die Zahlen 1, 3, 5, 7 und 9. In den Abbildungen sind Funktionen grün und Argumente orange markiert.
+
+![Der erste Aufruf aus dem Chunk: `seq()` bekommt drei Argumente und gibt fünf Zahlen zurück.](Bilder/figuren/k03-funktion.svg){#fig-funktion .lightbox fig-alt="Oben drei blaue Steine 1, 10 und 2, darüber die orangefarbenen Argumentnamen from, to und by. Ein Pfeil führt in einen grünen Kasten seq(), ein weiterer Pfeil zu einem Turm aus fünf blauen Steinen 1, 3, 5, 7 und 9. Darunter der Aufruf als Code-Bausteine: seq grün, beschriftet Funktion; from = 1, to = 10 und by = 2 orange, beschriftet Argumente; daneben die Ausgabe [1] 1 3 5 7 9."}
+
 ::: {.callout-tip}
 **Tipp: `?funktion`.** Wenn du die Argumente einer Funktion vergessen hast, gibt `?funktion` (z. B. `?seq`) die Hilfe in RStudio aus. Innerhalb der Klammern öffnet `Tab` ein Dropdown mit allen Argumenten.
 :::
@@ -132,6 +166,21 @@ seq(from = 1, to = 10, by = 2)
 rep(x = 0, times = 5)
 round(c(1.222, 2.345, 3.987), digits = 1)
 ```
+
+In der letzten Zeile bekommt `round()` zwei Argumente (@fig-argumente). `x` ist ein Pflichtfeld: Ohne `x` weiß `round()` nicht, was es runden soll. `digits` hat den Default-Wert 0; ohne Angabe rundet `round()` also auf ganze Zahlen. Hier setzt du `digits` auf 1.
+
+![Die Argumente von `round()` als Felder eines Formulars: `x` muss ausgefüllt werden, `digits` ist mit 0 vorausgefüllt und wird hier mit 1 überschrieben.](Bilder/figuren/k03-argumente.svg){#fig-argumente .lightbox fig-alt="Links ein Turm aus drei blauen Steinen 1.222, 2.345 und 3.987. Ein grüner Pfeil führt zu einem Formular round(): Das gestrichelte Feld x, beschriftet Pflichtfeld, nimmt den Turm auf; das Feld digits enthält 1, beschriftet vorausgefüllt mit 0. Ein Pfeil führt zum Ergebnis, einem Turm aus 1.2, 2.3 und 4.0. Darunter der Aufruf round(c(1.222, 2.345, 3.987), digits = 1) und die Ausgabe [1] 1.2 2.3 4.0."}
+
+**Kurz überlegen.** Was geben `round(digits = 1, x = 1.222)` und `round(1, 1.222)` aus?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r argumente-loesung}
+round(digits = 1, x = 1.222)
+round(1, 1.222)
+```
+
+Mit Namen ist die Reihenfolge egal: R setzt 1.222 in das Feld `x` und 1 in `digits`, das Ergebnis ist 1.2. Ohne Namen zählt die Position. Im zweiten Aufruf landet 1 im ersten Feld `x` und 1.222 in `digits`; R rundet also die Zahl 1 und gibt 1 zurück.
+:::
 
 ## Operatoren {#sec-operatoren}
 
@@ -190,7 +239,7 @@ Diese Operatoren wirst du in Kap. 4 ständig brauchen, wenn du Fälle mit `filte
 In R ist **alles ein Objekt** — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit stellen die folgenden Abschnitte vor.
 
 ::: {.callout-note}
-**Hintergrund: Die Bildsprache dieses Buchs.** Damit du siehst, was R mit deinen Daten macht, zeigen die Abbildungen ab hier Daten als Bausteine (@fig-legende). Ein einzelner Wert ist ein Stein, seine Farbe zeigt den Datentyp. Mehrere Steine übereinander sind ein Vektor, also ein Turm; gleich hohe Türme nebeneinander auf einer Bauplatte sind ein Datensatz. Ein leerer, gestrichelter Stein steht für einen fehlenden Wert, ein gelber Aufkleber für ein Wertelabel (@sec-datenimport). Im Code sind Objekte dunkel, Funktionen grün und Argumente orange markiert.
+**Hintergrund: Die Bildsprache dieses Buchs.** Damit du siehst, was R mit deinen Daten macht, zeigen die Abbildungen Daten als Bausteine (@fig-legende). Ein einzelner Wert ist ein Stein, seine Farbe zeigt den Datentyp. Mehrere Steine übereinander sind ein Vektor, also ein Turm; gleich hohe Türme nebeneinander auf einer Bauplatte sind ein Datensatz. Ein leerer, gestrichelter Stein steht für einen fehlenden Wert, ein gelber Aufkleber für ein Wertelabel (@sec-datenimport). Im Code sind Objekte dunkel, Funktionen grün und Argumente orange markiert.
 
 ![Die Bausteine im Überblick: Werte, Vektoren, Datensätze und die Farben im Code.](Bilder/figuren/k03-legende.svg){#fig-legende .lightbox fig-alt="Legende der Bildsprache. Ein blauer Stein mit 1 steht für eine Zahl (numeric), ein lila Stein mit „Anna“ für Text (character), ein rosa Stein mit TRUE für einen Wahrheitswert (logical), ein leerer gestrichelter Stein für einen fehlenden Wert (NA), ein blauer Stein mit gelbem Aufkleber MANN für eine Zahl mit Wertelabel. Ein Turm aus drei blauen Steinen mit dem Namensschild zahlen ist ein Vektor. Zwei Türme geschlecht und alter auf einer Bauplatte sind ein Datensatz; eine markierte Reihe ist ein Fall, ein Turm eine Variable. Darunter Code-Bausteine: zahlen dunkel als Objekt, round grün als Funktion, digits = 1 orange als Argument."}
 :::
@@ -356,6 +405,10 @@ mean(x, na.rm = TRUE)
 sum(x, na.rm = TRUE)
 ```
 
+@fig-na zeigt die beiden Aufrufe von `mean()`. Mit dem leeren Stein im Turm gibt `mean(x)` selbst `NA` zurück. Mit `na.rm = TRUE` lässt `mean()` den fehlenden Wert weg und rechnet mit den übrigen vier: (1 + 2 + 4 + 5) / 4 = 3.
+
+![Der Vektor `x` mit einem fehlenden Wert. `mean(x)` ergibt `NA`, `mean(x, na.rm = TRUE)` den Mittelwert der vier vorhandenen Werte.](Bilder/figuren/k03-na.svg){#fig-na .lightbox fig-alt="Links der Turm x aus fünf Steinen: blau 1 und 2, ein leerer gestrichelter Stein NA, blau 4 und 5. Ein Pfeil führt zu mean(x); das Ergebnis ist ein leerer Stein NA mit der Ausgabe [1] NA. Ein zweiter Pfeil führt zu mean(x, na.rm = TRUE), na.rm = TRUE orange markiert; das Ergebnis ist ein blauer Stein 3 mit der Ausgabe [1] 3."}
+
 ::: {.callout-warning}
 **Vorsicht: `NA` als Ergebnis ist kein Fehler.** Wenn `mean(daten$age)` plötzlich `NA` zurückgibt, hat R *keine* Fehlermeldung — es rechnet brav weiter und gibt `NA` aus. Das ist der häufigste „mein Output sieht komisch aus"-Fehler bei Anfänger:innen. Zwei Diagnosen helfen:
 
@@ -458,6 +511,10 @@ allbus <- read_spss("ALLBUS2023.sav") |>
 ```
 
 Du liest: Datensatz einlesen → `mm02` umpolen → `mm05` umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.
+
+In @fig-analyseplan steht jeder Schritt neben den Code-Zeilen, die ihn ausführen. Ab dem zweiten Schritt bekommt jede Funktion über `|>` den Datensatz aus dem Schritt davor.
+
+![Die Pipe aus dem Chunk, Schritt für Schritt: links der Code, rechts der Plan in Worten.](Bilder/figuren/k03-analyseplan.svg){#fig-analyseplan .lightbox fig-alt="Vier nummerierte Zeilen. 1: allbus <- read_spss(„ALLBUS2023.sav“) |>, rechts Datensatz einlesen. 2: rec(mm02, rules = „rev“, suffix = „r“) |>, rechts mm02 umpolen. 3: rec(mm05, rules = „rev“, suffix = „r“) |>, rechts mm05 umpolen. 4: mutate( islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5) ), rechts Skala bilden. Die Pipe-Zeichen |> sind grün."}
 
 ## Drei typische Anfänger:innen-Fehler {#sec-top-fehler}
 
