@@ -73,7 +73,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -348,6 +351,15 @@ Tipp
 </div>
 </div>
 <p>Im Kopf siehst du <code>5,246 × 579</code> — der Datensatz hat 5.246 Fälle und 579 Variablen. Darunter eine Auswahl der ersten Spalten mit ihren Datentypen.</p>
+<p><a href="#fig-einlesen" class="quarto-xref">Abbildung&nbsp;<span>4.1</span></a> zeigt den Weg von der Datei zum Objekt: <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> liest <code>ALLBUS2023.sav</code> aus dem Projektordner und legt das Ergebnis unter dem Namen <code>allbus</code> ab. Ab jetzt arbeitest du mit diesem Objekt in R; die Datei auf der Festplatte bleibt unverändert.</p>
+<div id="fig-einlesen" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links eine Datei-Kachel ALLBUS2023.sav, beschriftet Datei im Projektordner. Ein Pfeil führt zu einem grünen Kasten read_spss(), beschriftet Funktion aus mariposa. Ein weiterer Pfeil führt zu einer Bauplatte mit Türmen aus blauen und lila Steinen unter dem dunklen Namensschild allbus, daneben 5,246 × 579, beschriftet Objekt in R. Darunter die Code-Zeile allbus <- read_spss(„ALLBUS2023.sav“) als Code-Bausteine: allbus dunkel, read_spss grün, der Dateiname orange.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-einlesen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-einlesen.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Abbildung&nbsp;4.1: read_spss() liest die SPSS-Datei ein und legt das Ergebnis als Objekt allbus ab."><img src="Bilder/figuren/k04-einlesen.svg" class="img-fluid figure-img" alt="Links eine Datei-Kachel ALLBUS2023.sav, beschriftet Datei im Projektordner. Ein Pfeil führt zu einem grünen Kasten read_spss(), beschriftet Funktion aus mariposa. Ein weiterer Pfeil führt zu einer Bauplatte mit Türmen aus blauen und lila Steinen unter dem dunklen Namensschild allbus, daneben 5,246 × 579, beschriftet Objekt in R. Darunter die Code-Zeile allbus <- read_spss(„ALLBUS2023.sav“) als Code-Bausteine: allbus dunkel, read_spss grün, der Dateiname orange."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-einlesen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.1: <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> liest die SPSS-Datei ein und legt das Ergebnis als Objekt <code>allbus</code> ab.
+</figcaption></figure>
+</div>
 <p><strong>Was bedeuten die kleinen Typ-Marker unter jeder Spalte?</strong> Direkt unter dem Spaltennamen druckt das Tibble einen Typ-Tag in spitzen Klammern. Hier dein Mini-Glossar:</p>
 <table class="caption-top table">
 <colgroup>
@@ -468,6 +480,15 @@ Hinweis
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>           <span class="co"># kompakte Strukturübersicht</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># Anzahl Fälle</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># Anzahl Variablen</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> gibt 5246 zurück, <code><a href="https://rdrr.io/r/base/nrow.html">ncol()</a></code> 579. In der Bildsprache ist <code>allbus</code> eine Bauplatte mit 5.246 Reihen und 579 Türmen (<a href="#fig-platte" class="quarto-xref">Abbildung&nbsp;<span>4.2</span></a>): Jede Reihe ist eine befragte Person, jeder Turm eine Variable. Ein leerer Stein heißt, dass für diese Person bei dieser Variable kein gültiger Wert vorliegt.</p>
+<div id="fig-platte" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Bauplatte mit dem Namensschild allbus und drei Türmen respid, age und mm01, daneben Auslassungspunkte für weitere Türme. respid zeigt 1 bis 5, age 50, 51, 69, 72 und 18, mm01 die Werte 5, drei leere gestrichelte Steine und 2. Die erste Reihe ist orange umrandet, der Turm age grün. Rechts drei Kästen: Eine Reihe ist ein Fall, nrow(allbus) ergibt [1] 5246. Ein Turm ist eine Variable, ncol(allbus) ergibt [1] 579. Ein leerer Stein ist ein fehlender Wert.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-platte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-platte.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Abbildung&nbsp;4.2: Ein Ausschnitt von allbus: die ersten fünf Reihen der Variablen respid, age und mm01. Bei mm01 fehlt in drei Reihen der Wert."><img src="Bilder/figuren/k04-platte.svg" class="img-fluid figure-img" alt="Bauplatte mit dem Namensschild allbus und drei Türmen respid, age und mm01, daneben Auslassungspunkte für weitere Türme. respid zeigt 1 bis 5, age 50, 51, 69, 72 und 18, mm01 die Werte 5, drei leere gestrichelte Steine und 2. Die erste Reihe ist orange umrandet, der Turm age grün. Rechts drei Kästen: Eine Reihe ist ein Fall, nrow(allbus) ergibt [1] 5246. Ein Turm ist eine Variable, ncol(allbus) ergibt [1] 579. Ein leerer Stein ist ein fehlender Wert."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-platte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.2: Ein Ausschnitt von <code>allbus</code>: die ersten fünf Reihen der Variablen <code>respid</code>, <code>age</code> und <code>mm01</code>. Bei <code>mm01</code> fehlt in drei Reihen der Wert.
+</figcaption></figure>
 </div>
 <section id="variablen-finden-mit-find_var" class="level3" data-number="4.4.1"><h3 data-number="4.4.1" class="anchored" data-anchor-id="variablen-finden-mit-find_var">
 <span class="header-section-number">4.4.1</span> Variablen finden mit <code>find_var()</code>
@@ -1454,6 +1475,15 @@ Hinweis
 # ℹ 5,236 more rows</code></pre>
 </div>
 </div>
+<p><code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> behält nur die Türme, die du nennst; alle 5.246 Reihen bleiben auf der Platte (<a href="#fig-select" class="quarto-xref">Abbildung&nbsp;<span>4.3</span></a>).</p>
+<div id="fig-select" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen respid, mm01, mm02, mm03 und mm04 und Auslassungspunkten für weitere Türme; gezeigt sind die ersten fünf Reihen. respid und mm04 sind grau. mm01 bis mm03 zeigen oben 5, 3 und 4, unten 2, 4 und 4, dazwischen je drei leere Steine. Ein grüner Pfeil select() führt zu einer neuen Bauplatte, 5,246 × 3, mit nur den Türmen mm01, mm02 und mm03. Darunter der Code allbus |> select(mm01, mm02, mm03).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-select.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Abbildung&nbsp;4.3: select(mm01, mm02, mm03) behält drei Türme. Grau sind die Türme, die wegfallen; die Zahl der Reihen bleibt 5.246."><img src="Bilder/figuren/k04-select.svg" class="img-fluid figure-img" alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen respid, mm01, mm02, mm03 und mm04 und Auslassungspunkten für weitere Türme; gezeigt sind die ersten fünf Reihen. respid und mm04 sind grau. mm01 bis mm03 zeigen oben 5, 3 und 4, unten 2, 4 und 4, dazwischen je drei leere Steine. Ein grüner Pfeil select() führt zu einer neuen Bauplatte, 5,246 × 3, mit nur den Türmen mm01, mm02 und mm03. Darunter der Code allbus |> select(mm01, mm02, mm03)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.3: <code>select(mm01, mm02, mm03)</code> behält drei Türme. Grau sind die Türme, die wegfallen; die Zahl der Reihen bleibt 5.246.
+</figcaption></figure>
+</div>
 <p>Du kannst Bereiche mit <code>:</code> angeben und Variablen mit <code>-</code> ausschließen:</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -1478,6 +1508,69 @@ Hinweis
 </div>
 </div>
 <p>Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.</p>
+<p>In <a href="03-ProgrammierspracheR.html#sec-datentypen" class="quarto-xref"><span>Kapitel 3.5</span></a> hast du eine einzelne Spalte mit <code>$</code> herausgeholt. Das geht auch mit <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, aber du bekommst ein anderes Objekt zurück:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;labelled&lt;double&gt;[5]&gt;: ALTER: BEFRAGTE(R)
+[1] 50 51 69 72 18
+
+Labels:
+ value             label
+ NA(a) NICHT GENERIERBAR</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 1
+  age      
+  &lt;dbl+lbl&gt;
+1 50       
+2 51       
+3 69       
+4 72       
+5 18       </code></pre>
+</div>
+</div>
+<p><code>allbus$age</code> gibt einen Vektor zurück: die fünf Zahlen hinter <code>[1]</code>, darunter die Label-Tabelle. <code>allbus |&gt; select(age)</code> gibt ein Tibble mit einer Spalte zurück. Im Bild ist das eine ein Turm allein, das andere eine Bauplatte mit einem Turm (<a href="#fig-dollar-select" class="quarto-xref">Abbildung&nbsp;<span>4.4</span></a>). Welche Form du brauchst, hängt von der nächsten Funktion ab: Rechenfunktionen wie <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> erwarten einen Vektor, dplyr-Funktionen wie <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> einen Datensatz.</p>
+<div id="fig-dollar-select" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Zwei Hälften. Links der Code allbus$age |> head(5), darunter ein Turm aus fünf blauen Steinen 50, 51, 69, 72 und 18 auf einem kurzen Sockel, beschriftet Vektor, daneben die Ausgabe [1] 50 51 69 72 18. Rechts der Code allbus |> select(age) |> head(5), darunter derselbe Turm mit dem Spaltenkopf age und dem Typ dbl+lbl auf einer breiten Bauplatte, beschriftet Tibble, daneben die Ausgabe # A tibble: 5 × 1.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-dollar-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-dollar-select.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Abbildung&nbsp;4.4: Links gibt $ die Werte von age als Vektor zurück, rechts gibt select() ein Tibble mit der Spalte age zurück. Beide enthalten dieselben fünf Werte."><img src="Bilder/figuren/k04-dollar-select.svg" class="img-fluid figure-img" alt="Zwei Hälften. Links der Code allbus$age |> head(5), darunter ein Turm aus fünf blauen Steinen 50, 51, 69, 72 und 18 auf einem kurzen Sockel, beschriftet Vektor, daneben die Ausgabe [1] 50 51 69 72 18. Rechts der Code allbus |> select(age) |> head(5), darunter derselbe Turm mit dem Spaltenkopf age und dem Typ dbl+lbl auf einer breiten Bauplatte, beschriftet Tibble, daneben die Ausgabe # A tibble: 5 × 1."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dollar-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.4: Links gibt <code>$</code> die Werte von <code>age</code> als Vektor zurück, rechts gibt <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> ein Tibble mit der Spalte <code>age</code> zurück. Beide enthalten dieselben fünf Werte.
+</figcaption></figure>
+</div>
+<p><strong>Kurz überlegen.</strong> Was gibt <code>allbus |&gt; select(age) |&gt; mean(na.rm = TRUE)</code> zurück?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Auflösung">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tipp</span>Auflösung
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in mean.default(select(allbus, age), na.rm = TRUE): Argument ist weder
+numerisch noch boolesch: gebe NA zurück</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 52.51063</code></pre>
+</div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> bekommt im ersten Aufruf eine Bauplatte statt eines Turms. Damit kann es nicht rechnen: R gibt eine Warnung aus und als Ergebnis <code>NA</code>. Im zweiten Aufruf bekommt <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> mit <code>allbus$age</code> den Turm und berechnet das Durchschnittsalter, rund 52,5 Jahre. In einer Pipe holst du den Turm mit <code>pull(age)</code> heraus.</p>
+</div>
+</div>
+</div>
 <section id="tidyselect-helfer-wie-starts_with-where-und-everything" class="level4" data-number="4.5.1.1"><h4 data-number="4.5.1.1" class="anchored" data-anchor-id="tidyselect-helfer-wie-starts_with-where-und-everything">
 <span class="header-section-number">4.5.1.1</span> Tidyselect-Helfer wie <code>starts_with()</code>, <code>where()</code> und <code>everything()</code>
 </h4>
@@ -1542,7 +1635,7 @@ Hinweis
 <span class="header-section-number">4.5.2</span> Fälle filtern mit <code>filter()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1562,9 +1655,18 @@ Hinweis
 # ℹ 2,662 more rows</code></pre>
 </div>
 </div>
+<p><code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> prüft die Bedingung <code>sex == 2</code> für jede Reihe und behält nur die Reihen, in denen sie zutrifft. Der Code 2 steht für FRAU; übrig bleiben 2.672 Befragte (<a href="#fig-filter" class="quarto-xref">Abbildung&nbsp;<span>4.5</span></a>). Danach wählt <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> die drei Spalten aus.</p>
+<div id="fig-filter" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen sex, age und educ und Auslassungspunkten für weitere Türme; gezeigt sind die ersten sechs Reihen. Die Steine von sex tragen Aufkleber: 1 MANN, 1 MANN, 2 FRAU, 1 MANN, 2 FRAU, 2 FRAU. Die drei MANN-Reihen mit dem Alter 50, 51 und 72 sind grau. Ein grüner Pfeil mit sex == 2 führt zu einer neuen Bauplatte, 2,672 × 3, mit den drei FRAU-Reihen: Alter 69, 18 und 45, educ 4, 5 und 5, darunter Auslassungspunkte. Darunter der Code allbus |> filter(sex == 2) |> select(sex, age, educ).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-filter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-filter.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Abbildung&nbsp;4.5: filter(sex == 2) behält nur die Reihen mit dem Code 2 (FRAU). Grau sind die Reihen, die wegfallen; gezeigt sind die ersten sechs Reihen."><img src="Bilder/figuren/k04-filter.svg" class="img-fluid figure-img" alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen sex, age und educ und Auslassungspunkten für weitere Türme; gezeigt sind die ersten sechs Reihen. Die Steine von sex tragen Aufkleber: 1 MANN, 1 MANN, 2 FRAU, 1 MANN, 2 FRAU, 2 FRAU. Die drei MANN-Reihen mit dem Alter 50, 51 und 72 sind grau. Ein grüner Pfeil mit sex == 2 führt zu einer neuen Bauplatte, 2,672 × 3, mit den drei FRAU-Reihen: Alter 69, 18 und 45, educ 4, 5 und 5, darunter Auslassungspunkte. Darunter der Code allbus |> filter(sex == 2) |> select(sex, age, educ)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-filter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.5: <code>filter(sex == 2)</code> behält nur die Reihen mit dem Code 2 (FRAU). Grau sind die Reihen, die wegfallen; gezeigt sind die ersten sechs Reihen.
+</figcaption></figure>
+</div>
 <p>Die Vergleichs- und Logik-Operatoren aus <a href="03-ProgrammierspracheR.html#sec-operatoren" class="quarto-xref"><span>Kapitel 3.4</span></a> (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>|</code>, <code>%in%</code>) bilden hier dein Vokabular. Komplexere Filter kombinierst du frei:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">eastwest</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">30</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1584,7 +1686,7 @@ Warnung
 <div class="callout-body-container callout-body">
 <p><strong>Vorsicht: Fehlende Werte.</strong> <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> schließt Fälle mit <code>NA</code> in der Bedingung automatisch aus. Das ist meist gewünscht, kann dich aber überraschen. Drei Varianten im Vergleich:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>        <span class="co"># nur Männer (NAs werden ausgeschlossen)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>        <span class="co"># nur Männer (NAs werden ausgeschlossen)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>      <span class="co"># nur Fälle, wo sex fehlt</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>     <span class="co"># alle Fälle, wo sex vorhanden ist</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1595,7 +1697,7 @@ Warnung
 <span class="header-section-number">4.5.3</span> Fälle sortieren mit <code>arrange()</code> und <code>desc()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1612,7 +1714,7 @@ Warnung
 </div>
 <p>Absteigend mit <code><a href="https://dplyr.tidyverse.org/reference/desc.html">desc()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1634,14 +1736,23 @@ Warnung
 <p>R kennt eine ganze Reihe von Datentypen: reine Zahlen (<code>numeric</code>), Text (<code>character</code>), Logik (<code>logical</code>), Kategorien mit fester Reihenfolge (<code>factor</code>). Beim Einlesen eines SPSS-Datensatzes kommt noch ein vierter Typ hinzu, den mariposa von haven übernimmt: <code>&lt;haven_labelled&gt;</code>. Das ist eine Art <em>Hybrid</em>: Die Spalte verhält sich nach außen wie eine Zahl, aber im Hintergrund tragen die Werte ihre SPSS-Wertelabels mit. So bleibt die Information „1 bedeutet Mann” erhalten, ohne dass du sie aus dem Codebook nachschlagen musst.</p>
 <p>Mit <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> siehst du den Typ einer Variable:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
 </div>
+</div>
+<p>Beide Variablen sind <code>double</code>, also Zahlen, und zugleich <code>haven_labelled</code>. In der Bildsprache ist ein Wert von <code>sex</code> ein Stein mit Aufkleber, etwa die Zahl 1 mit dem Wertelabel MANN (<a href="#fig-dbl-lbl" class="quarto-xref">Abbildung&nbsp;<span>4.6</span></a>). Im Tibble steht dafür der Typ-Tag <code>&lt;dbl+lbl&gt;</code>. Bei <code>age</code> trägt nur der Missing-Code ein Label; auch das reicht, damit die Variable labelled ist.</p>
+<div id="fig-dbl-lbl" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Oben sex und der Typ-Tag dbl+lbl in spitzen Klammern, dbl dunkelblau, lbl orange. Darunter ein großer blauer Stein mit der Zahl 1 und einem gelben Aufkleber MANN. Unter der Zahl steht Zahl und double, unter dem Aufkleber Wertelabel und haven_labelled. Rechts der Code class(allbus$sex) mit der Ausgabe [1] „haven_labelled“ „vctrs_vctr“ „double“.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-dbl-lbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-dbl-lbl.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Abbildung&nbsp;4.6: Ein Wert von sex: die Zahl 1 mit dem Aufkleber MANN. dbl steht für die Zahl (double), lbl für das Wertelabel (haven_labelled)."><img src="Bilder/figuren/k04-dbl-lbl.svg" class="img-fluid figure-img" alt="Oben sex und der Typ-Tag dbl+lbl in spitzen Klammern, dbl dunkelblau, lbl orange. Darunter ein großer blauer Stein mit der Zahl 1 und einem gelben Aufkleber MANN. Unter der Zahl steht Zahl und double, unter dem Aufkleber Wertelabel und haven_labelled. Rechts der Code class(allbus$sex) mit der Ausgabe [1] „haven_labelled“ „vctrs_vctr“ „double“."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dbl-lbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.6: Ein Wert von <code>sex</code>: die Zahl 1 mit dem Aufkleber MANN. <code>dbl</code> steht für die Zahl (<code>double</code>), <code>lbl</code> für das Wertelabel (<code>haven_labelled</code>).
+</figcaption></figure>
 </div>
 <section id="labelled-variablen-umwandeln-mit-to_label-to_numeric-und-unlabel" class="level3" data-number="4.6.1"><h3 data-number="4.6.1" class="anchored" data-anchor-id="labelled-variablen-umwandeln-mit-to_label-to_numeric-und-unlabel">
 <span class="header-section-number">4.6.1</span> Labelled-Variablen umwandeln mit <code>to_label()</code>, <code>to_numeric()</code> und <code>unlabel()</code>
@@ -1673,7 +1784,7 @@ Warnung
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1685,6 +1796,15 @@ Warnung
 2 MANN  ALTE BUNDESLAENDER
 3 FRAU  ALTE BUNDESLAENDER</code></pre>
 </div>
+</div>
+<p><code><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label()</a></code> macht aus dem Aufkleber den Wert: Aus der 1 mit dem Label MANN wird die Faktorstufe <code>MANN</code> (<a href="#fig-to-label" class="quarto-xref">Abbildung&nbsp;<span>4.7</span></a>). <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_numeric.html">to_numeric()</a></code> zieht den Aufkleber ab, übrig bleibt die Zahl 1.</p>
+<div id="fig-to-label" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links der Turm sex, dbl+lbl, mit drei blauen Steinen 1, 1 und 2 und den gelben Aufklebern MANN, MANN und FRAU. Eine Verzweigung führt mit to_label() zu einem lila Turm sex, fct, mit MANN, MANN und FRAU, beschriftet Faktor, und mit to_numeric() zu einem blauen Turm sex, dbl, mit 1, 1 und 2, beschriftet Zahl ohne Label.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-to-label-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-to-label.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Abbildung&nbsp;4.7: Die ersten drei Werte von sex vor und nach der Umwandlung. to_label() ergibt einen Faktor mit den Labels als Werten, to_numeric() die Zahlen ohne Labels."><img src="Bilder/figuren/k04-to-label.svg" class="img-fluid figure-img" alt="Links der Turm sex, dbl+lbl, mit drei blauen Steinen 1, 1 und 2 und den gelben Aufklebern MANN, MANN und FRAU. Eine Verzweigung führt mit to_label() zu einem lila Turm sex, fct, mit MANN, MANN und FRAU, beschriftet Faktor, und mit to_numeric() zu einem blauen Turm sex, dbl, mit 1, 1 und 2, beschriftet Zahl ohne Label."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-to-label-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.7: Die ersten drei Werte von <code>sex</code> vor und nach der Umwandlung. <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label()</a></code> ergibt einen Faktor mit den Labels als Werten, <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_numeric.html">to_numeric()</a></code> die Zahlen ohne Labels.
+</figcaption></figure>
 </div>
 <p>Wenn du nur Labels <em>abstreifen</em> willst (z. B. weil eine Funktion mit labelled-Vektoren nicht klarkommt), nimmst du <code><a href="https://YannickDiehl.github.io/mariposa/reference/unlabel.html">unlabel()</a></code>: <code>allbus |&gt; unlabel(sex, age)</code>. Selten gebraucht, aber gut zu wissen, wenn ein fremdes Paket sich quer stellt.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1752,7 +1872,7 @@ Hinweis
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1765,14 +1885,23 @@ Hinweis
 </div>
 </div>
 <p>Das Ergebnis ist ein <strong>benannter Character-Vektor</strong> — pro Variable das hinterlegte Label. So liest du, was eine kryptische Variable wie <code>mm01</code> eigentlich bedeutet, ohne ins Codebook zu schauen.</p>
+<p>Eine Variable wie <code>mm01</code> trägt drei Beschriftungen (<a href="#fig-labels" class="quarto-xref">Abbildung&nbsp;<span>4.8</span></a>): den Variablennamen, mit dem du in R arbeitest, das Variablenlabel, das <code><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label()</a></code> ausliest, und die Wertelabels, die sagen, was eine Zahl bedeutet. Bei <code>mm01</code> haben nur die Endpunkte 1 und 7 ein Wertelabel; für 2 bis 6 zeigt <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> nur <code>..</code>.</p>
+<div id="fig-labels" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Drei Zeilen. Erste Zeile: ein dunkles Namensschild mm01, rechts Variablenname. Zweite Zeile: der Text „ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN“, rechts Variablenlabel und var_label(). Dritte Zeile: ein blauer Stein 1 mit dem Aufkleber STIMME GAR NICHT ZU, Auslassungspunkte und ein blauer Stein 7 mit dem Aufkleber STIMME VOLL+GANZ ZU, rechts Wertelabels und val_labels().">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-labels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-labels.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Abbildung&nbsp;4.8: Die drei Beschriftungen von mm01: Variablenname, Variablenlabel und Wertelabels. Die Wertelabels kleben als Aufkleber an den Steinen."><img src="Bilder/figuren/k04-labels.svg" class="img-fluid figure-img" alt="Drei Zeilen. Erste Zeile: ein dunkles Namensschild mm01, rechts Variablenname. Zweite Zeile: der Text „ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN“, rechts Variablenlabel und var_label(). Dritte Zeile: ein blauer Stein 1 mit dem Aufkleber STIMME GAR NICHT ZU, Auslassungspunkte und ein blauer Stein 7 mit dem Aufkleber STIMME VOLL+GANZ ZU, rechts Wertelabels und val_labels()."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-labels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.8: Die drei Beschriftungen von <code>mm01</code>: Variablenname, Variablenlabel und Wertelabels. Die Wertelabels kleben als Aufkleber an den Steinen.
+</figcaption></figure>
+</div>
 <p><strong>Label nachträglich setzen.</strong> Wenn du eine neue Variable erzeugst (z. B. eine Skala in <a href="05-Datentransformation.html" class="quarto-xref"><span>Kapitel 5</span></a>), kannst du ihr ein sprechendes Label verpassen — Zukunft-Du dankt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Islamfeindlichkeits-Skala (6 Items, 1–7)"</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobie</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Islamfeindlichkeits-Skala (6 Items, 1–7)"</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Dieses Label erscheint später automatisch in <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code>, in der Kopfzeile von <code><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency()</a></code> und in vielen <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>-Ausgaben — überall, wo mariposa Beschriftungen sucht. Für mehrere Variablen auf einmal übergibst du eine Liste: <code>var_label(allbus) &lt;- list(islamophobie = "…", populismus = "…")</code>.</p>
 <p><strong>Wertelabels setzen.</strong> Für Wertelabels gibt es keinen Zuweisungspfeil auf die Spalte. <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> bekommt Paare aus Variable und benanntem Vektor (<code>"Label" = Code</code>) und gibt den geänderten Datensatz zurück, den du wieder abspeicherst. Typischer Fall: Ein selbst gebauter 0/1-Dummy wie <code>islam_hoch</code> in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Kapitel 9</span></a> soll in <code><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency()</a></code> und <code><a href="https://YannickDiehl.github.io/mariposa/reference/crosstab.html">crosstab()</a></code> lesbare Ausprägungen zeigen statt nackter Nullen und Einsen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, islam_hoch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"niedrig"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"hoch"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, islam_hoch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"niedrig"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"hoch"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1786,7 +1915,7 @@ Warnung
 <div class="callout-body-container callout-body">
 <p><strong>Vorsicht: <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> ersetzt.</strong> Standardmäßig wirft <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> <em>alle</em> bisherigen Wertelabels der Variable weg. Bei einer frisch gebauten Variable ist das egal. Bei einer ALLBUS-Variable verschwinden damit aber auch die Labels der Missing-Codes: Nach <code>val_labels(allbus, mm01 = c("stimme gar nicht zu" = 1, "stimme voll zu" = 7))</code> steht in <code>frequency(mm01)</code> vor <code>-11</code> kein <code>TNZ: SPLIT</code> mehr. Willst du nur einzelne Labels ändern oder ergänzen, setzt du <code>.add = TRUE</code>. Dann bleiben alle übrigen Labels erhalten:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, mm01 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"stimme gar nicht zu"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"stimme voll zu"</span> <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>, .add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, mm01 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"stimme gar nicht zu"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"stimme voll zu"</span> <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>, .add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Mit <code>val_labels(allbus, mm01 = NULL)</code> entfernst du die Wertelabels einer Variable komplett.</p>
 </div>
@@ -1838,7 +1967,7 @@ Hinweis
 </div>
 <p>Wie viele Fälle pro Missing-Code in einer konkreten Variable stecken, zeigt dir <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  code            label    n         prc tag
 1  -42 DATENFEHLER: MFN    2  0.03812429   a
@@ -1848,9 +1977,41 @@ Hinweis
 </div>
 </div>
 <p>Du siehst die Aufschlüsselung: wie viele „weiß nicht”, wie viele „keine Angabe”, wie viele „trifft nicht zu” — alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.</p>
+<p>In <a href="#fig-missing-codes" class="quarto-xref">Abbildung&nbsp;<span>4.9</span></a> ist jede dieser Lücken ein leerer Stein mit Aufkleber: Der Stein ist leer, weil kein gültiger Wert vorliegt, und der Aufkleber nennt den Grund. Die Tags <code>a</code> bis <code>d</code> unterscheiden die vier Codes innerhalb von <code>mm01</code>; in einer anderen Variable kann derselbe Code ein anderes Tag haben (bei <code>mm05</code> hat TNZ: SPLIT das Tag <code>a</code>). Der größte Block, 1.647 Fälle mit TNZ: SPLIT, geht auf das Split-Design zurück: Diesen Befragten wurde keines der sechs <code>mm</code>-Items gestellt.</p>
+<div id="fig-missing-codes" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Oben der Aufruf na_frequencies(allbus$mm01). Darunter vier Zeilen mit den Spalten code, label, n und tag, jeweils mit einem leeren gestrichelten Stein und gelbem Aufkleber: -42 DATENFEHLER: MFN, n 2, NA(a); -11 TNZ: SPLIT, n 1647, NA(b), orange umrandet; -9 KEINE ANGABE, n 73, NA(c); -8 WEISS NICHT, n 123, NA(d). Rechts unter SPLIT-DESIGN sechs Türme mm01 bis mm06 mit je zwei blauen Steinen und einem leeren Stein; die Reihe der leeren Steine ist orange umrandet. Darunter: zwei Drittel: Fragen gestellt; knapp ein Drittel: TNZ: SPLIT.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-missing-codes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-missing-codes.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Abbildung&nbsp;4.9: Die vier Missing-Codes von mm01 aus na_frequencies(). Rechts schematisch das Split-Design: Knapp ein Drittel der Befragten hat die mm-Items nicht vorgelegt bekommen."><img src="Bilder/figuren/k04-missing-codes.svg" class="img-fluid figure-img" alt="Oben der Aufruf na_frequencies(allbus$mm01). Darunter vier Zeilen mit den Spalten code, label, n und tag, jeweils mit einem leeren gestrichelten Stein und gelbem Aufkleber: -42 DATENFEHLER: MFN, n 2, NA(a); -11 TNZ: SPLIT, n 1647, NA(b), orange umrandet; -9 KEINE ANGABE, n 73, NA(c); -8 WEISS NICHT, n 123, NA(d). Rechts unter SPLIT-DESIGN sechs Türme mm01 bis mm06 mit je zwei blauen Steinen und einem leeren Stein; die Reihe der leeren Steine ist orange umrandet. Darunter: zwei Drittel: Fragen gestellt; knapp ein Drittel: TNZ: SPLIT."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-missing-codes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.9: Die vier Missing-Codes von <code>mm01</code> aus <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>. Rechts schematisch das Split-Design: Knapp ein Drittel der Befragten hat die <code>mm</code>-Items nicht vorgelegt bekommen.
+</figcaption></figure>
+</div>
+<p><strong>Kurz überlegen.</strong> Was gibt <code>sum(is.na(allbus$mm01))</code> aus?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Auflösung">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tipp</span>Auflösung
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1845</code></pre>
+</div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/NA.html">is.na()</a></code> prüft nur, ob ein Wert fehlt. Alle vier Codes zählen deshalb als <code>NA</code>, gleich aus welchem Grund: 2 + 1647 + 73 + 123 = 1845. Wie sich die Lücken auf die Gründe verteilen, zeigt <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>.</p>
+</div>
+</div>
+</div>
 <p>Wenn bestimmte <em>gültige</em> Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code>. Ein Beispiel: Beim Schulabschluss <code>educ</code> lassen sich „anderer Abschluss” (Code 6) und „noch Schüler:in” (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an — <code>variable = c(code1, code2)</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency</a></span><span class="op">(</span><span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1885,9 +2046,18 @@ educ (ALLGEMEINER SCHULABSCHLUSS)
 </div>
 </div>
 <p>Mit <code>verbose = TRUE</code> zeigt mariposa dir an, wie viele Werte zu <code>NA</code> wurden — kontrolliert und nachvollziehbar. Die beiden Codes stehen anschließend mit ihrem Label im Missing-Block der Häufigkeitstabelle: Sie zählen nicht mehr als gültig, bleiben aber als eigener Missing-Typ unterscheidbar. Lässt du den Variablennamen weg (<code>set_na(-99)</code>), gilt der Code für <em>alle</em> numerischen Variablen.</p>
+<p><a href="#fig-set-na" class="quarto-xref">Abbildung&nbsp;<span>4.10</span></a> zeigt, was dabei passiert: Die Steine mit 6 und 7 verlieren ihren Wert und werden leer, ihr Aufkleber bleibt. Deshalb stehen beide Codes in der Ausgabe im Missing-Block, mit 18 und 26 Fällen. Die gültige Fallzahl sinkt um diese 44 auf 5.093.</p>
+<div id="fig-set-na" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links unter GÜLTIG zwei blaue Steine: 6 mit dem Aufkleber ANDERER ABSCHLUSS und 7 mit dem Aufkleber NOCH SCHUELER. Darüber der Aufruf set_na(educ = c(6, 7)) als Code-Bausteine. Grüne Pfeile führen nach rechts unter FEHLEND zu zwei leeren gestrichelten Steinen mit denselben Aufklebern, daneben N 18 und 26. Darunter die Ausgabe # total N=5246 valid N=5093 und 18 + 26 = 44 gültige Werte weniger.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-set-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k04-set-na.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Abbildung&nbsp;4.10: set_na() erklärt die gültigen Codes 6 und 7 von educ zu fehlenden Werten. Die Steine werden leer, die Aufkleber bleiben."><img src="Bilder/figuren/k04-set-na.svg" class="img-fluid figure-img" alt="Links unter GÜLTIG zwei blaue Steine: 6 mit dem Aufkleber ANDERER ABSCHLUSS und 7 mit dem Aufkleber NOCH SCHUELER. Darüber der Aufruf set_na(educ = c(6, 7)) als Code-Bausteine. Grüne Pfeile führen nach rechts unter FEHLEND zu zwei leeren gestrichelten Steinen mit denselben Aufklebern, daneben N 18 und 26. Darunter die Ausgabe # total N=5246 valid N=5093 und 18 + 26 = 44 gültige Werte weniger."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-set-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;4.10: <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> erklärt die gültigen Codes 6 und 7 von <code>educ</code> zu fehlenden Werten. Die Steine werden leer, die Aufkleber bleiben.
+</figcaption></figure>
+</div>
 <p>Mit <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> (aus tidyr) entfernst du Fälle mit <code>NA</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1984,7 +2154,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1993,10 +2163,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"vertrau"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"vertrau"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^st"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -2016,7 +2186,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2025,10 +2195,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">pt01</span><span class="op">:</span><span class="va">pt08</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -2048,7 +2218,7 @@ Hinweis
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Lösung">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2057,10 +2227,10 @@ Hinweis
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">analyse</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">analyse</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, <span class="va">pa29</span><span class="op">:</span><span class="va">pa35</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span>, <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">analyse</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2512,8 +2682,39 @@ Hinweis
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/04-Datenimport.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/04-Datenimport.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
-
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/04-Datenimport.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/04-Datenimport.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

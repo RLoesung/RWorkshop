@@ -63,6 +63,10 @@ allbus
 
 Im Kopf siehst du `5,246 × 579` — der Datensatz hat 5.246 Fälle und 579 Variablen. Darunter eine Auswahl der ersten Spalten mit ihren Datentypen.
 
+@fig-einlesen zeigt den Weg von der Datei zum Objekt: `read_spss()` liest `ALLBUS2023.sav` aus dem Projektordner und legt das Ergebnis unter dem Namen `allbus` ab. Ab jetzt arbeitest du mit diesem Objekt in R; die Datei auf der Festplatte bleibt unverändert.
+
+![`read_spss()` liest die SPSS-Datei ein und legt das Ergebnis als Objekt `allbus` ab.](Bilder/figuren/k04-einlesen.svg){#fig-einlesen .lightbox fig-alt="Links eine Datei-Kachel ALLBUS2023.sav, beschriftet Datei im Projektordner. Ein Pfeil führt zu einem grünen Kasten read_spss(), beschriftet Funktion aus mariposa. Ein weiterer Pfeil führt zu einer Bauplatte mit Türmen aus blauen und lila Steinen unter dem dunklen Namensschild allbus, daneben 5,246 × 579, beschriftet Objekt in R. Darunter die Code-Zeile allbus <- read_spss(„ALLBUS2023.sav“) als Code-Bausteine: allbus dunkel, read_spss grün, der Dateiname orange."}
+
 **Was bedeuten die kleinen Typ-Marker unter jeder Spalte?** Direkt unter dem Spaltennamen druckt das Tibble einen Typ-Tag in spitzen Klammern. Hier dein Mini-Glossar:
 
 | Tag           | Bedeutung                          | Beispiel                          |
@@ -124,6 +128,10 @@ nrow(allbus)              # Anzahl Fälle
 ncol(allbus)              # Anzahl Variablen
 ```
 
+`nrow()` gibt 5246 zurück, `ncol()` 579. In der Bildsprache ist `allbus` eine Bauplatte mit 5.246 Reihen und 579 Türmen (@fig-platte): Jede Reihe ist eine befragte Person, jeder Turm eine Variable. Ein leerer Stein heißt, dass für diese Person bei dieser Variable kein gültiger Wert vorliegt.
+
+![Ein Ausschnitt von `allbus`: die ersten fünf Reihen der Variablen `respid`, `age` und `mm01`. Bei `mm01` fehlt in drei Reihen der Wert.](Bilder/figuren/k04-platte.svg){#fig-platte .lightbox fig-alt="Bauplatte mit dem Namensschild allbus und drei Türmen respid, age und mm01, daneben Auslassungspunkte für weitere Türme. respid zeigt 1 bis 5, age 50, 51, 69, 72 und 18, mm01 die Werte 5, drei leere gestrichelte Steine und 2. Die erste Reihe ist orange umrandet, der Turm age grün. Rechts drei Kästen: Eine Reihe ist ein Fall, nrow(allbus) ergibt [1] 5246. Ein Turm ist eine Variable, ncol(allbus) ergibt [1] 579. Ein leerer Stein ist ein fehlender Wert."}
+
 ### Variablen finden mit `find_var()`
 
 Die Variablennamen im ALLBUS sind kryptisch (`mm01`, `pa29`, `wghtpew`). Was wirklich gemessen wird, steht im **Variablenlabel**. mariposas `find_var()` durchsucht beide gleichzeitig — Name und Label — und liefert dir die Treffer als kleine Übersichtstabelle:
@@ -184,6 +192,10 @@ allbus |>
   select(mm01, mm02, mm03)
 ```
 
+`select()` behält nur die Türme, die du nennst; alle 5.246 Reihen bleiben auf der Platte (@fig-select).
+
+![`select(mm01, mm02, mm03)` behält drei Türme. Grau sind die Türme, die wegfallen; die Zahl der Reihen bleibt 5.246.](Bilder/figuren/k04-select.svg){#fig-select .lightbox fig-alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen respid, mm01, mm02, mm03 und mm04 und Auslassungspunkten für weitere Türme; gezeigt sind die ersten fünf Reihen. respid und mm04 sind grau. mm01 bis mm03 zeigen oben 5, 3 und 4, unten 2, 4 und 4, dazwischen je drei leere Steine. Ein grüner Pfeil select() führt zu einer neuen Bauplatte, 5,246 × 3, mit nur den Türmen mm01, mm02 und mm03. Darunter der Code allbus |> select(mm01, mm02, mm03)."}
+
 Du kannst Bereiche mit `:` angeben und Variablen mit `-` ausschließen:
 
 ```{r select-range}
@@ -192,6 +204,29 @@ allbus |>
 ```
 
 Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.
+
+In @sec-datentypen hast du eine einzelne Spalte mit `$` herausgeholt. Das geht auch mit `select()`, aber du bekommst ein anderes Objekt zurück:
+
+```{r dollar-select}
+allbus$age |> head(5)
+allbus |> select(age) |> head(5)
+```
+
+`allbus$age` gibt einen Vektor zurück: die fünf Zahlen hinter `[1]`, darunter die Label-Tabelle. `allbus |> select(age)` gibt ein Tibble mit einer Spalte zurück. Im Bild ist das eine ein Turm allein, das andere eine Bauplatte mit einem Turm (@fig-dollar-select). Welche Form du brauchst, hängt von der nächsten Funktion ab: Rechenfunktionen wie `mean()` erwarten einen Vektor, dplyr-Funktionen wie `filter()` einen Datensatz.
+
+![Links gibt `$` die Werte von `age` als Vektor zurück, rechts gibt `select()` ein Tibble mit der Spalte `age` zurück. Beide enthalten dieselben fünf Werte.](Bilder/figuren/k04-dollar-select.svg){#fig-dollar-select .lightbox fig-alt="Zwei Hälften. Links der Code allbus$age |> head(5), darunter ein Turm aus fünf blauen Steinen 50, 51, 69, 72 und 18 auf einem kurzen Sockel, beschriftet Vektor, daneben die Ausgabe [1] 50 51 69 72 18. Rechts der Code allbus |> select(age) |> head(5), darunter derselbe Turm mit dem Spaltenkopf age und dem Typ dbl+lbl auf einer breiten Bauplatte, beschriftet Tibble, daneben die Ausgabe # A tibble: 5 × 1."}
+
+**Kurz überlegen.** Was gibt `allbus |> select(age) |> mean(na.rm = TRUE)` zurück?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r dollar-select-loesung}
+#| warning: true
+allbus |> select(age) |> mean(na.rm = TRUE)
+mean(allbus$age, na.rm = TRUE)
+```
+
+`mean()` bekommt im ersten Aufruf eine Bauplatte statt eines Turms. Damit kann es nicht rechnen: R gibt eine Warnung aus und als Ergebnis `NA`. Im zweiten Aufruf bekommt `mean()` mit `allbus$age` den Turm und berechnet das Durchschnittsalter, rund 52,5 Jahre. In einer Pipe holst du den Turm mit `pull(age)` heraus.
+:::
 
 #### Tidyselect-Helfer wie `starts_with()`, `where()` und `everything()`
 
@@ -222,6 +257,10 @@ allbus |>
   filter(sex == 2) |>
   select(sex, age, educ)
 ```
+
+`filter()` prüft die Bedingung `sex == 2` für jede Reihe und behält nur die Reihen, in denen sie zutrifft. Der Code 2 steht für FRAU; übrig bleiben 2.672 Befragte (@fig-filter). Danach wählt `select()` die drei Spalten aus.
+
+![`filter(sex == 2)` behält nur die Reihen mit dem Code 2 (FRAU). Grau sind die Reihen, die wegfallen; gezeigt sind die ersten sechs Reihen.](Bilder/figuren/k04-filter.svg){#fig-filter .lightbox fig-alt="Links die Bauplatte allbus, 5,246 × 579, mit den Türmen sex, age und educ und Auslassungspunkten für weitere Türme; gezeigt sind die ersten sechs Reihen. Die Steine von sex tragen Aufkleber: 1 MANN, 1 MANN, 2 FRAU, 1 MANN, 2 FRAU, 2 FRAU. Die drei MANN-Reihen mit dem Alter 50, 51 und 72 sind grau. Ein grüner Pfeil mit sex == 2 führt zu einer neuen Bauplatte, 2,672 × 3, mit den drei FRAU-Reihen: Alter 69, 18 und 45, educ 4, 5 und 5, darunter Auslassungspunkte. Darunter der Code allbus |> filter(sex == 2) |> select(sex, age, educ)."}
 
 Die Vergleichs- und Logik-Operatoren aus @sec-operatoren (`==`, `!=`, `<`, `>`, `&`, `|`, `%in%`) bilden hier dein Vokabular. Komplexere Filter kombinierst du frei:
 
@@ -275,6 +314,10 @@ class(allbus$sex)
 class(allbus$age)
 ```
 
+Beide Variablen sind `double`, also Zahlen, und zugleich `haven_labelled`. In der Bildsprache ist ein Wert von `sex` ein Stein mit Aufkleber, etwa die Zahl 1 mit dem Wertelabel MANN (@fig-dbl-lbl). Im Tibble steht dafür der Typ-Tag `<dbl+lbl>`. Bei `age` trägt nur der Missing-Code ein Label; auch das reicht, damit die Variable labelled ist.
+
+![Ein Wert von `sex`: die Zahl 1 mit dem Aufkleber MANN. `dbl` steht für die Zahl (`double`), `lbl` für das Wertelabel (`haven_labelled`).](Bilder/figuren/k04-dbl-lbl.svg){#fig-dbl-lbl .lightbox fig-alt="Oben sex und der Typ-Tag dbl+lbl in spitzen Klammern, dbl dunkelblau, lbl orange. Darunter ein großer blauer Stein mit der Zahl 1 und einem gelben Aufkleber MANN. Unter der Zahl steht Zahl und double, unter dem Aufkleber Wertelabel und haven_labelled. Rechts der Code class(allbus$sex) mit der Ausgabe [1] „haven_labelled“ „vctrs_vctr“ „double“."}
+
 ### Labelled-Variablen umwandeln mit `to_label()`, `to_numeric()` und `unlabel()`
 
 Drei Konvertierungen wirst du immer wieder brauchen:
@@ -291,6 +334,10 @@ allbus |>
   select(sex, eastwest) |>
   head(3)
 ```
+
+`to_label()` macht aus dem Aufkleber den Wert: Aus der 1 mit dem Label MANN wird die Faktorstufe `MANN` (@fig-to-label). `to_numeric()` zieht den Aufkleber ab, übrig bleibt die Zahl 1.
+
+![Die ersten drei Werte von `sex` vor und nach der Umwandlung. `to_label()` ergibt einen Faktor mit den Labels als Werten, `to_numeric()` die Zahlen ohne Labels.](Bilder/figuren/k04-to-label.svg){#fig-to-label .lightbox fig-alt="Links der Turm sex, dbl+lbl, mit drei blauen Steinen 1, 1 und 2 und den gelben Aufklebern MANN, MANN und FRAU. Eine Verzweigung führt mit to_label() zu einem lila Turm sex, fct, mit MANN, MANN und FRAU, beschriftet Faktor, und mit to_numeric() zu einem blauen Turm sex, dbl, mit 1, 1 und 2, beschriftet Zahl ohne Label."}
 
 Wenn du nur Labels *abstreifen* willst (z. B. weil eine Funktion mit labelled-Vektoren nicht klarkommt), nimmst du `unlabel()`: `allbus |> unlabel(sex, age)`. Selten gebraucht, aber gut zu wissen, wenn ein fremdes Paket sich quer stellt.
 
@@ -321,6 +368,10 @@ allbus |>
 ```
 
 Das Ergebnis ist ein **benannter Character-Vektor** — pro Variable das hinterlegte Label. So liest du, was eine kryptische Variable wie `mm01` eigentlich bedeutet, ohne ins Codebook zu schauen.
+
+Eine Variable wie `mm01` trägt drei Beschriftungen (@fig-labels): den Variablennamen, mit dem du in R arbeitest, das Variablenlabel, das `var_label()` ausliest, und die Wertelabels, die sagen, was eine Zahl bedeutet. Bei `mm01` haben nur die Endpunkte 1 und 7 ein Wertelabel; für 2 bis 6 zeigt `val_labels()` nur `..`.
+
+![Die drei Beschriftungen von `mm01`: Variablenname, Variablenlabel und Wertelabels. Die Wertelabels kleben als Aufkleber an den Steinen.](Bilder/figuren/k04-labels.svg){#fig-labels .lightbox fig-alt="Drei Zeilen. Erste Zeile: ein dunkles Namensschild mm01, rechts Variablenname. Zweite Zeile: der Text „ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN“, rechts Variablenlabel und var_label(). Dritte Zeile: ein blauer Stein 1 mit dem Aufkleber STIMME GAR NICHT ZU, Auslassungspunkte und ein blauer Stein 7 mit dem Aufkleber STIMME VOLL+GANZ ZU, rechts Wertelabels und val_labels()."}
 
 **Label nachträglich setzen.** Wenn du eine neue Variable erzeugst (z. B. eine Skala in @sec-datentransformation), kannst du ihr ein sprechendes Label verpassen — Zukunft-Du dankt:
 
@@ -377,6 +428,20 @@ na_frequencies(allbus$mm01)
 
 Du siehst die Aufschlüsselung: wie viele „weiß nicht", wie viele „keine Angabe", wie viele „trifft nicht zu" — alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.
 
+In @fig-missing-codes ist jede dieser Lücken ein leerer Stein mit Aufkleber: Der Stein ist leer, weil kein gültiger Wert vorliegt, und der Aufkleber nennt den Grund. Die Tags `a` bis `d` unterscheiden die vier Codes innerhalb von `mm01`; in einer anderen Variable kann derselbe Code ein anderes Tag haben (bei `mm05` hat TNZ: SPLIT das Tag `a`). Der größte Block, 1.647 Fälle mit TNZ: SPLIT, geht auf das Split-Design zurück: Diesen Befragten wurde keines der sechs `mm`-Items gestellt.
+
+![Die vier Missing-Codes von `mm01` aus `na_frequencies()`. Rechts schematisch das Split-Design: Knapp ein Drittel der Befragten hat die `mm`-Items nicht vorgelegt bekommen.](Bilder/figuren/k04-missing-codes.svg){#fig-missing-codes .lightbox fig-alt="Oben der Aufruf na_frequencies(allbus$mm01). Darunter vier Zeilen mit den Spalten code, label, n und tag, jeweils mit einem leeren gestrichelten Stein und gelbem Aufkleber: -42 DATENFEHLER: MFN, n 2, NA(a); -11 TNZ: SPLIT, n 1647, NA(b), orange umrandet; -9 KEINE ANGABE, n 73, NA(c); -8 WEISS NICHT, n 123, NA(d). Rechts unter SPLIT-DESIGN sechs Türme mm01 bis mm06 mit je zwei blauen Steinen und einem leeren Stein; die Reihe der leeren Steine ist orange umrandet. Darunter: zwei Drittel: Fragen gestellt; knapp ein Drittel: TNZ: SPLIT."}
+
+**Kurz überlegen.** Was gibt `sum(is.na(allbus$mm01))` aus?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r missing-codes-loesung}
+sum(is.na(allbus$mm01))
+```
+
+`is.na()` prüft nur, ob ein Wert fehlt. Alle vier Codes zählen deshalb als `NA`, gleich aus welchem Grund: 2 + 1647 + 73 + 123 = 1845. Wie sich die Lücken auf die Gründe verteilen, zeigt `na_frequencies()`.
+:::
+
 Wenn bestimmte *gültige* Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit `set_na()`. Ein Beispiel: Beim Schulabschluss `educ` lassen sich „anderer Abschluss" (Code 6) und „noch Schüler:in" (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an — `variable = c(code1, code2)`:
 
 ```{r set-na-demo}
@@ -386,6 +451,10 @@ allbus |>
 ```
 
 Mit `verbose = TRUE` zeigt mariposa dir an, wie viele Werte zu `NA` wurden — kontrolliert und nachvollziehbar. Die beiden Codes stehen anschließend mit ihrem Label im Missing-Block der Häufigkeitstabelle: Sie zählen nicht mehr als gültig, bleiben aber als eigener Missing-Typ unterscheidbar. Lässt du den Variablennamen weg (`set_na(-99)`), gilt der Code für *alle* numerischen Variablen.
+
+@fig-set-na zeigt, was dabei passiert: Die Steine mit 6 und 7 verlieren ihren Wert und werden leer, ihr Aufkleber bleibt. Deshalb stehen beide Codes in der Ausgabe im Missing-Block, mit 18 und 26 Fällen. Die gültige Fallzahl sinkt um diese 44 auf 5.093.
+
+![`set_na()` erklärt die gültigen Codes 6 und 7 von `educ` zu fehlenden Werten. Die Steine werden leer, die Aufkleber bleiben.](Bilder/figuren/k04-set-na.svg){#fig-set-na .lightbox fig-alt="Links unter GÜLTIG zwei blaue Steine: 6 mit dem Aufkleber ANDERER ABSCHLUSS und 7 mit dem Aufkleber NOCH SCHUELER. Darüber der Aufruf set_na(educ = c(6, 7)) als Code-Bausteine. Grüne Pfeile führen nach rechts unter FEHLEND zu zwei leeren gestrichelten Steinen mit denselben Aufklebern, daneben N 18 und 26. Darunter die Ausgabe # total N=5246 valid N=5093 und 18 + 26 = 44 gültige Werte weniger."}
 
 Mit `drop_na()` (aus tidyr) entfernst du Fälle mit `NA`:
 
