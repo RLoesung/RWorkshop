@@ -7,6 +7,7 @@ Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.gith
 - Das Buch hat ein neues Aussehen in Pastelltönen mit runden Schriften (Fredoka für Überschriften, Nunito für den Text). Jedes Kapitel hat eine eigene Steinfarbe, oben auf jeder Kapitelseite steht eine Leiste mit einem Stein je Kapitel, und ein schmaler Balken zeigt, wie weit du im Kapitel bist.
 - Die Kästen sind nach ihrer Art gesetzt (Hintergrund, SPSS → R, mariposa-Tipp, Vorsicht, Tipp, Forschungsjournal und weitere), jeweils mit einer kleinen Begleitfigur aus einem Baustein. Übungen, Lösungen und „Kurz überlegen“ stehen auf eigenen Karten. Die Punkte unter „Was du jetzt weißt“ lassen sich abhaken; das merkt sich nur der eigene Browser.
 - Das Vorwort beginnt mit einem Satz nach John Chambers über Objekte und Funktionsaufrufe, die Forschungsfrage steht jetzt im ersten Absatz. Darunter zeigt es alle Kapitel als Karten mit je zwei Lernzielen. Das Buch hat ein Cover.
+- Auf breiten Bildschirmen stehen Text und Inhaltsverzeichnis mittig im Platz neben der Kapitelleiste; vorher blieb rechts ein breiter leerer Streifen.
 - Die Schriften kommen von Google Fonts. Die Begleitfiguren erzeugt `figuren/begleiter.py`, die Kapitelkarten `figuren/kapitelkarten.py`; das Aussehen der Kästen steuert `seite.html` (`STYLE.md` §4).
 
 ## 17. November 2026 — Kap. 1 mit Quarto-Dokumenten, neue Bildschirmfotos

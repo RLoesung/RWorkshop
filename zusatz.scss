@@ -534,3 +534,16 @@ h2 .h-text { min-width: 0; }
 
 // Keine Silbentrennung in der Leiste: Kapitelnamen brechen nur an Wortgrenzen
 .sidebar-menu-container .menu-text .chapter-title { hyphens: manual; overflow-wrap: normal; }
+
+// Breite Fenster: Quarto gibt im Modus „docked“ den ganzen übrigen Platz nach rechts (5fr hinter page-end),
+// das Buch stand dann links. Hier wird der Rest geteilt: Die Leiste bleibt am linken Rand, Text und
+// Inhaltsverzeichnis stehen mittig im übrigen Platz. Bis etwa 1500 px bleibt nichts übrig, dort ändert sich nichts.
+@media (min-width: 992px) {
+  body.docked .page-columns {
+    grid-template-columns: [screen-start] 1.5em [screen-start-inset page-start] minmax(60px, 120px) [page-start-inset] 60px
+      [body-start-outset] 60px [leiste-ende] 1fr [body-start] 1.5em [body-content-start] minmax(500px, calc(1000px - 3em))
+      [body-content-end] 1.5em [body-end] 50px [body-end-outset] minmax(50px, 100px) [page-end-inset] 50px [page-end] 1fr
+      [screen-end-inset] 1.5em [screen-end];
+  }
+  body.docked #quarto-sidebar { grid-column: screen-start / leiste-ende; }
+}
