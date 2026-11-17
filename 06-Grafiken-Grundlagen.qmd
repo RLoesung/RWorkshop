@@ -60,6 +60,24 @@ allbus |>
 
 Die `aes()`-Funktion (kurz für *aesthetics*) macht die Übersetzung: „nimm diese Spalte und mappe sie auf diese visuelle Eigenschaft" — also etwa Bildungs-Variable → x-Achse, Skalenwert → y-Achse, Geschlecht → Farbe. Danach kommen die `geom_*()`-Funktionen als sichtbare Schicht oben drauf: Balken, Punkte, Boxen, was du brauchst.
 
+An vier Befragten sieht das so aus. Der Chunk nimmt die ersten vier Reihen, in denen `educ_kat`, `islamophobie` und `sex` einen Wert haben, und zeichnet sie als Punkte:
+
+```{r grammatik-vier}
+vier <- allbus |>
+  select(respid, educ_kat, islamophobie, sex) |>
+  drop_na() |>
+  head(4)
+vier
+
+vier |>
+  ggplot(aes(x = educ_kat, y = islamophobie, color = sex)) +
+  geom_point(size = 3)
+```
+
+`aes()` legt fest, welcher Turm welche Eigenschaft der Grafik bestimmt, und `geom_point()` zeichnet jede Reihe als Punkt (@fig-grammatik). Die x-Achse zeigt nur mittel und hoch, weil in den vier Reihen niemand mit niedriger Bildung ist.
+
+![`aes()` ordnet die Türme von `vier` der x-Achse, der y-Achse und der Farbe zu. `geom_point()` macht aus jeder Reihe einen Punkt; die Zahlen neben den Punkten sind die `respid`.](Bilder/figuren/k06-grammatik.svg){#fig-grammatik .lightbox fig-alt="Oben der Code vier |> ggplot(aes(x = educ_kat, y = islamophobie, color = sex)) + geom_point(size = 3). Links eine Bauplatte mit vier Reihen und den Türmen respid, educ_kat (fct), islamophobie (dbl) und sex (fct): 1, mittel, 3.33, MANN; 5, hoch, 4, FRAU; 6, hoch, 3.83, FRAU; 9, hoch, 1.5, MANN. Die erste Reihe ist orange umrandet. Unter den Türmen stehen die Zuordnungen x, y und color. Ein grüner Pfeil geom_point() führt zu einer kleinen Grafik mit der x-Achse mittel und hoch, beschriftet x, und der y-Achse von 1.5 bis 4.0, beschriftet y. Darin vier Punkte mit ihrer respid: 1 bei mittel und 3.33 in Lachsrot, orange umkreist; 5 und 6 bei hoch und 4 und 3.83 in Türkis; 9 bei hoch und 1.5 in Lachsrot. Rechts die Legende color mit MANN in Lachsrot und FRAU in Türkis."}
+
 Auffällig: Die Schichten werden mit `+` verbunden, nicht mit der tidyverse-Pipe `|>`. Das hat historische Gründe — ggplot2 ist älter als die native Pipe und hat seinen eigenen Operator behalten. Du kannst dir merken: alles vor `ggplot(...)` mit `|>`, alles nach `ggplot(...)` mit `+`.
 
 ::: {.callout-warning}
@@ -156,11 +174,23 @@ Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften
 - **Außerhalb `aes()`** → eine *konstante Eigenschaft* für alle Punkte/Balken. Keine Legende, alles in derselben Farbe.
 
 ```{r aes-vs-konstant, eval=FALSE}
-ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()         # ein Balken pro sex-Stufe, eingefärbt
+ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()         # ein Balken pro Alter, nach sex gestapelt
 ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")   # alle Balken einheitlich blau
 ```
 
-Wer eine Konstante (`"steelblue"`) versehentlich *in* `aes()` setzt, sieht braungrau eingefärbte Balken mit einer Legende, in der „steelblue" als einziger Eintrag steht — verlässliches Diagnose-Zeichen für diesen Tippfehler.
+Im ersten Aufruf bestimmt der Turm `sex` die Farbe jedes Stücks eines Balkens, im zweiten gilt der eine Wert `"steelblue"` für alle Balken (@fig-aes-konstante).
+
+![Oben bestimmt der Turm `sex` die Füllfarbe: Jeder Balken ist nach `sex` gestapelt, die Legende zeigt die Farben. Unten gilt der eine Wert `"steelblue"` für alle Balken, eine Legende gibt es nicht; gezeigt sind die Balken für 18 bis 24 Jahre.](Bilder/figuren/k06-aes-konstante.svg){#fig-aes-konstante .lightbox fig-alt="Zwei Teile untereinander. Oben unter INNERHALB aes() der Code ggplot(allbus, aes(x = age, fill = sex)) + geom_bar(). Links der Turm sex (fct) mit MANN, MANN, FRAU und Auslassungspunkten, ein grüner Pfeil mit der Zuordnung fill führt zu sieben Balken für die Alter 18 bis 24. Jeder Balken ist gestapelt: unten ein grünes Stück für FRAU, darüber ein lachsrotes für MANN, bei 19, 21, 22 und 24 ganz unten ein schmaler blauer Streifen für DIVERS. Rechts die Legende fill mit MANN in Lachsrot, FRAU in Grün, DIVERS in Blau und NA in Grau. Unten unter AUSSERHALB aes() der Code ggplot(allbus, aes(x = age)) + geom_bar(fill = „steelblue“). Ein lila Stein „steelblue“ führt mit dem Pfeil fill zu denselben sieben Balken, so hoch wie oben und alle in Stahlblau, daneben steht keine Legende."}
+:::
+
+**Kurz überlegen.** Was zeichnet R, wenn die Konstante in `aes()` steht: `ggplot(allbus, aes(x = age, fill = "steelblue")) + geom_bar()`? Welche Farbe haben die Balken, und gibt es eine Legende?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r aes-konstante-loesung}
+ggplot(allbus, aes(x = age, fill = "steelblue")) + geom_bar()
+```
+
+In `aes()` behandelt ggplot2 `"steelblue"` wie einen Turm, in dem in jeder Reihe derselbe Wert steht. Das ist eine einzige Stufe, und sie bekommt die erste Farbe der Standardpalette, ein Lachsrot (`#F8766D`). Die Legende hat genau einen Eintrag, „steelblue“. Eine solche Legende ist ein sicheres Zeichen dafür, dass eine Konstante in `aes()` steht.
 :::
 
 **`fill` vs. `color` — die Mini-Regel.** ggplot2 unterscheidet zwei Farb-Aesthetics:
@@ -221,6 +251,10 @@ g_base +
   theme(legend.position = "none")
 ```
 
+`g_base` enthält die Daten und das Mapping, aber noch keine Ebene. Bis dahin läuft die Bauplatte durch `|>`; danach legt jedes `+` eine Ebene darauf, und was später kommt, liegt oben (@fig-ebenen). `theme()` kommt zwar auch mit `+` dazu, legt aber keine Ebene an: Es ändert das Aussehen und blendet hier die Legende aus.
+
+![Bis `ggplot()` läuft die Bauplatte durch `|>`; das Ergebnis `g_base` hat Achsen, aber keine Ebene. Mit `+` kommen Violinen und Boxen als eigene Ebenen dazu, die Boxen liegen oben.](Bilder/figuren/k06-ebenen.svg){#fig-ebenen .lightbox fig-alt="Oben der Ablauf aus dem Chunk boxviolin: das Namensschild g_base und ein Zuweisungspfeil, die Bauplatte allbus, ein grüner Pfeil mit |> zum grünen Kasten filter(, in dessen gestricheltem ersten Feld eine kleine Bauplatte liegt, dahinter , …), ein weiterer Pfeil mit |> zum Kasten ggplot( mit einer kleineren Bauplatte im ersten Feld, dahinter , aes(…)). Darunter eine Reihe: eine leere Grafik mit den Achsen niedrig, mittel, hoch und 2, 4, 6, beschriftet g_base, plus eine Folie mit drei Violinen in Lachsrot, Grün und Blau, beschriftet geom_violin(alpha = 0.4), plus eine Folie mit drei schmalen weißen Boxen, beschriftet geom_boxplot(width = 0.1, fill = „white“), gleich die fertige Grafik, in der die Boxen über den Violinen liegen."}
+
 ## Geoms für verschiedene Datentypen {#sec-geoms}
 
 Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab. Eine Schnellübersicht:
@@ -256,6 +290,10 @@ allbus |>
   scale_y_continuous(labels = scales::percent) +
   labs(x = "Bildungsgruppe", y = "Anteil")
 ```
+
+Bevor `geom_bar()` zeichnet, zählt es: Für jede Stufe von `educ_kat` addiert es die Gewichte aus `wghtpew` zu `count` (`1049.6`, `1524.7` und `2510.5`) und rechnet daraus den Anteil `prop` (`0.206`, `0.300` und `0.494`). Ohne weitere Angabe kommt `count` auf die y-Achse wie im Chunk davor, `after_stat(prop)` holt stattdessen die Anteile (@fig-bar-zaehlt). `group = 1` fasst dabei alle Stufen zu einer Gruppe zusammen; ohne diese Angabe rechnet ggplot2 den Anteil jeder Stufe an sich selbst, und jeder Balken wäre 100 % hoch.
+
+![`geom_bar()` addiert je Stufe von `educ_kat` die Gewichte zu `count` und rechnet daraus den Anteil `prop`; `after_stat(prop)` setzt die Anteile auf die y-Achse. Links stehen die ersten zwei Befragten je Stufe.](Bilder/figuren/k06-bar-zaehlt.svg){#fig-bar-zaehlt .lightbox fig-alt="Oben der Code ggplot(aes(x = educ_kat, weight = wghtpew)) + geom_bar(aes(y = after_stat(prop), group = 1), fill = „steelblue“). Links eine Bauplatte mit den Türmen educ_kat (fct) und wghtpew (dbl+lbl), nach Stufen geordnet: zweimal niedrig mit 1.20 und 1.20, zweimal mittel mit 1.25 und 0.545, zweimal hoch mit 1.20 und 1.20, nach jeder Stufe Auslassungspunkte. Unter den Türmen die Zuordnungen x und weight. Ein grüner Pfeil geom_bar() führt zu einer Bauplatte mit den Türmen educ_kat, count und prop: niedrig, 1049.6, 0.206; mittel, 1524.7, 0.300; hoch, 2510.5, 0.494. Der Turm prop ist grün umrandet. Ein Pfeil führt zu einem Balkendiagramm mit der Zuordnung y = after_stat(prop) an der y-Achse von 0% bis 50% und x an der x-Achse: drei stahlblaue Balken für niedrig, mittel und hoch, etwa 21, 30 und 49 Prozent hoch."}
 
 Mit `fill =` als zweiter Gruppierungsvariable bekommst du gestapelte Balken — und mit `position = "dodge"` nebeneinander:
 

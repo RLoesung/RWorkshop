@@ -96,6 +96,9 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | dunkles Namensschild über einem Turm | Spaltenname, der beim Umformen zum Wert wird oder aus Werten entsteht (`pivot_longer()`, `pivot_wider()`, 5.6) |
 | oranger Rahmen um mehrere Reihen | ein Fall, der im Long-Format über mehrere Reihen verteilt ist (5.6.1) |
 | grüner Funktionsname über einer Platte | die Platte ist das Ergebnis dieser Funktion (Join-Familie in 5.5, 5.6.2) |
+| blassoranger Kasten mit `x`, `y`, `color`, `fill` oder `weight` | Zuordnung in `aes()`: Unter einem Turm sagt er, welche Eigenschaft der Grafik der Turm bestimmt; derselbe Kasten an der Grafik zeigt, wo sie erscheint (6.2, 6.3.2, 6.4.1; `kap06.etikett()`) |
+| kleine Grafik mit Achsen, Gitter und Punkten, Balken oder Violinen | vereinfachte Ausgabe von ggplot2 mit den Farben und Werten aus `layer_data()`; in 6.2 ist jeder Punkt eine Reihe |
+| Folie (helles Blatt mit umgeknickter Ecke) | eine Ebene einer ggplot-Grafik (`geom_*()`); `+` legt sie auf die Grafik aus `ggplot()`, was später kommt, liegt oben (6.3.3; `kap06.folie()`) |
 
 ### 5.3 Werkzeug
 
@@ -206,7 +209,7 @@ Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes
 | 53 | `k05-pivot-longer` | 5.6.1 | neu | aus sechs Item-Türmen werden ein Turm `item` und ein Turm `antwort`; Namensschilder werden Steine (Chunks `pivot-wide-show`, `pivot-longer-demo`) | A | |
 | 54 | `k05-pivot-wider` | 5.6.2 | neu | `names_from` liefert die Namensschilder, `values_from` die Steine (Chunks `pivot-mw-long`, `pivot-wider-demo`) | B | |
 | 55 | `k05-row-count` | 5.7.2 | neu | `row_count(count = 7)` zählt pro Reihe; Lücken ergeben 0, nicht NA (Chunk `row-count-demo`) | B | |
-| 56 | `k06-grammatik` | 6.2 | neu | `aes()` ordnet Türme der x-Achse, der y-Achse und der Farbe zu; jede Reihe wird ein Punkt | A | |
+| 56 | `k06-grammatik` | 6.2 | neu | `aes()` ordnet Türme der x-Achse, der y-Achse und der Farbe zu; jede Reihe wird ein Punkt (neuer Chunk `grammatik-vier`) | A | |
 | 57 | `k06-aes-konstante` | 6.3.2 | neu | in `aes()` ein Turm (Farbe je Stufe, Legende), außerhalb ein einzelner Wert (alle gleich, keine Legende) (Chunk `aes-vs-konstant`) | A | ja |
 | 58 | `k06-ebenen` | 6.3.3 | neu | bis `ggplot()` läuft die Bauplatte durch `\|>`, danach legt `+` Ebenen übereinander (Chunks `boxviolin`, `combo`) | B | |
 | 59 | `k06-bar-zaehlt` | 6.4.1 | neu | `geom_bar()` zählt erst (gewichtet) je Stufe, `after_stat(prop)` zeichnet die Anteile (Chunk `bar-prop`) | A | |

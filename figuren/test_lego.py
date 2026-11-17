@@ -177,6 +177,36 @@ class TestBausteine(unittest.TestCase):
         self.assertGreater(rechts - 1.0, L.text_width("Referenz", L.SANS, 10.5, True))
 
 
+    def test_kreis(self):
+        """Kreis um einen Mittelpunkt (Punkte in einer Grafik, Ring um einen Punkt), auch gestrichelt."""
+        s = L.Canvas(2, 2)
+        L.kreis(s, 1.0, 0.5, 0.25, L.WHITE)
+        L.kreis(s, 0.5, 1.5, 0.1, None, L.ORANGE, lw=1.5, dash=True)
+        k = [e for e in alle_elemente(s.svg()) if e.tag == NS + "circle"]
+        self.assertEqual(len(k), 2)
+        self.assertEqual([float(k[0].get(a)) / L.DPI for a in ("cx", "cy", "r")], [1.0, 0.5, 0.25])
+        self.assertEqual(k[0].get("fill"), L.WHITE)
+        self.assertIsNone(k[0].get("stroke"))
+        self.assertEqual((k[1].get("fill"), k[1].get("stroke")), ("none", L.ORANGE))
+        self.assertTrue(k[1].get("stroke-dasharray"))
+
+    def test_polygon(self):
+        """Fläche aus Punkten in Zoll, wahlweise mit Kante und Deckkraft (Violinen in k06-ebenen)."""
+        s = L.Canvas(2, 2)
+        L.polygon(s, [(0.1, 0.1), (1.0, 0.1), (0.5, 1.0)], "#F8766D", line=L.INK, deckkraft=0.4)
+        L.polygon(s, [(0.2, 0.2), (0.4, 0.2), (0.3, 0.4)], L.GRAY)
+        p = [e for e in alle_elemente(s.svg()) if e.tag == NS + "polygon"]
+        self.assertEqual(len(p), 2)
+        punkte = [tuple(float(v) / L.DPI for v in q.split(",")) for q in p[0].get("points").split()]
+        for ist, soll in zip(punkte, [(0.1, 0.1), (1.0, 0.1), (0.5, 1.0)]):
+            self.assertAlmostEqual(ist[0], soll[0], places=4)
+            self.assertAlmostEqual(ist[1], soll[1], places=4)
+        self.assertEqual(len(punkte), 3)
+        self.assertEqual((p[0].get("fill"), p[0].get("stroke"), p[0].get("fill-opacity")), ("#F8766D", L.INK, "0.4"))
+        self.assertIsNone(p[1].get("stroke"))
+        self.assertIsNone(p[1].get("fill-opacity"))
+
+
 class TestText(unittest.TestCase):
     def test_text_wraps(self):
         s = L.Canvas(4, 3)

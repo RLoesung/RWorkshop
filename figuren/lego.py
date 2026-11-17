@@ -192,6 +192,21 @@ def outline(s, x, y, w, h, color=ORANGE, lw=2.25):
     rect(s, x, y, w, h, None, color, lw)
 
 
+def kreis(s, cx, cy, r, fill, line=None, lw=0.75, dash=False):
+    """Kreis um den Mittelpunkt (cx, cy), etwa ein Punkt in einer kleinen Grafik (k06-grammatik)."""
+    st = f' stroke="{line}" stroke-width="{lw * PT:.2f}"' if line else ""
+    if dash and line:
+        st += f' stroke-dasharray="{4 * lw * PT:.1f} {3 * lw * PT:.1f}"'
+    s.add(f'<circle cx="{_u(cx)}" cy="{_u(cy)}" r="{_u(r)}" fill="{fill or "none"}"{st}/>')
+
+
+def polygon(s, punkte, fill, line=None, lw=0.75, deckkraft=None):
+    """Fläche durch die Punkte [(x, y), …] in Zoll; deckkraft zwischen 0 und 1 (alpha in ggplot2)."""
+    st = f' stroke="{line}" stroke-width="{lw * PT:.2f}" stroke-linejoin="round"' if line else ""
+    op = f' fill-opacity="{deckkraft:g}"' if deckkraft is not None else ""
+    s.add('<polygon points="' + " ".join(f"{_u(a)},{_u(b)}" for a, b in punkte) + f'" fill="{fill or "none"}"{op}{st}/>')
+
+
 def arrow(s, x, y, w=0.5, h=0.32, color=GRAY):
     """Pfeil nach rechts (Form wie PowerPoints RIGHT_ARROW)."""
     hl = min(w, h) * 0.5

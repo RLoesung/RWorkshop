@@ -131,12 +131,12 @@ def tibble_fig():
 
 
 # 3.7.1 Pipe aus dem Chunk `pipe-native` ------------------------------------------------------
-def _maschine(s, x, y, name, rest, h=0.95, size=12):
-    """Funktion als Kasten: Name, leeres erstes Feld (gestrichelt), Rest der Klammer. Gibt Feld-x und Breite zurück."""
+def _maschine(s, x, y, name, rest, h=0.95, size=12, fw=0.6):
+    """Funktion als Kasten: Name, leeres erstes Feld (gestrichelt, Breite fw), Rest der Klammer.
+    Gibt Feld-x, Feldbreite und Gesamtbreite zurück."""
     from lego import text_width
     wn = text_width(name, MONO, size, True)
     wr = text_width(rest, MONO, size, True)
-    fw = 0.6
     w = 0.12 + wn + 0.06 + fw + 0.06 + wr + 0.12
     rect(s, x, y, w, h, "#FFFFFF", GREEN, 1.75)
     text(s, x + 0.12, y, wn + 0.05, h, mono(name, size=size, color=GREEN, align="start"), anchor="middle")
