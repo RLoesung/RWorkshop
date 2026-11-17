@@ -73,7 +73,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-d7e9fa015762c1a7a1d630ba40e403b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -338,13 +341,15 @@ Hinweis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Konzept: Was ist eine latente Variable?</strong> Stell dir das visuell als Pfeil-Diagramm vor:</p>
-<pre><code>            ┌──→ mm01
-            ├──→ mm02r
-[Islamfeindlichkeit] ──┼──→ mm03
-   (latent)            ├──→ mm04
-            ├──→ mm05r
-            └──→ mm06</code></pre>
+<p><strong>Konzept: Was ist eine latente Variable?</strong> In den sechs Item-Türmen stehen die Antworten der Befragten. Islamfeindlichkeit selbst hat niemand gemessen; sie ist ein Faktor ohne eigene Werte (<a href="#fig-latenter-faktor" class="quarto-xref">Abbildung&nbsp;<span>8.1</span></a>). Der Skalenwert <code>islamophobie</code> aus <a href="05-Datentransformation.html" class="quarto-xref"><span>Kapitel 5</span></a> ist aus den Items berechnet.</p>
+<div id="fig-latenter-faktor" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Oben eine gestrichelte Ellipse mit dem Namen Islamfeindlichkeit, daneben nicht gemessen. Von ihr führen sechs Pfeile zu den Spaltennamen mm01, mm02r, mm03, mm04, mm05r und mm06. Darunter eine Bauplatte mit sechs blauen Türmen für die respid 1, 5 und 6: Reihe 1 hat 5, 5, 4, 2, 2 und 2, Reihe 5 hat 2, 4, 4, 3, 5 und 6, Reihe 6 hat 3, 5, 3, 7, 2 und 3. Rechts daneben gemessen.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-latenter-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k08-latenter-faktor.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Abbildung&nbsp;8.1: Die sechs Items sind gemessen, hier mit den Antworten der ersten drei Befragten, die alle sechs beantwortet haben. Der Faktor Islamfeindlichkeit hat keine Werte; von ihm führt ein Pfeil zu jedem Item."><img src="Bilder/figuren/k08-latenter-faktor.svg" class="img-fluid figure-img" alt="Oben eine gestrichelte Ellipse mit dem Namen Islamfeindlichkeit, daneben nicht gemessen. Von ihr führen sechs Pfeile zu den Spaltennamen mm01, mm02r, mm03, mm04, mm05r und mm06. Darunter eine Bauplatte mit sechs blauen Türmen für die respid 1, 5 und 6: Reihe 1 hat 5, 5, 4, 2, 2 und 2, Reihe 5 hat 2, 4, 4, 3, 5 und 6, Reihe 6 hat 3, 5, 3, 7, 2 und 3. Rechts daneben gemessen."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-latenter-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;8.1: Die sechs Items sind gemessen, hier mit den Antworten der ersten drei Befragten, die alle sechs beantwortet haben. Der Faktor Islamfeindlichkeit hat keine Werte; von ihm führt ein Pfeil zu jedem Item.
+</figcaption></figure>
+</div>
 <p>Die Pfeile gehen <em>vom</em> unsichtbaren Faktor <em>zu</em> den beobachteten Items — die Annahme ist: <em>der Faktor erzeugt die Antworten</em>. Wer eine hohe Islamfeindlichkeit hat, kreuzt deshalb auf allen sechs Items eher zustimmende Werte an. Genau diese Pfeil-Richtung siehst du in CFA-Pfaddiagrammen wieder.</p>
 </div>
 </div>
@@ -386,7 +391,7 @@ Hinweis
 </h3>
 <p><strong>Frage:</strong> Wie stark hängen die sechs Islamfeindlichkeits-Items untereinander zusammen?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pearson Correlation: 6 variables [Weighted]
@@ -457,7 +462,7 @@ Hinweis
 <span class="header-section-number">8.2.4</span> Heatmap mit ggplot2</h3>
 <p>Eine Tabelle mit fünfzehn Zahlen liest sich zäh. Die gleiche Information als <strong>Heatmap</strong> ist auf einen Blick lesbar — dunkle Felder = starker Zusammenhang. Wir bauen sie händisch aus dem <code>pearson_cor()</code>-Output:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cor_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cor_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cor_obj</span><span class="op">$</span><span class="va">matrices</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">correlations</span> <span class="op">|&gt;</span></span>
@@ -542,7 +547,7 @@ Wichtig
 <p>Wir rufen <code>efa()</code> einmal mit <code>n_factors = 1</code> auf und speichern das Ergebnis — die Faktoranzahl ist hier egal, wir interessieren uns nur für die Voraussetzungs-Werte. Aus dem zurückgegebenen Objekt liest du <em>drei</em> Diagnose-Ebenen heraus.</p>
 <p><strong>Ebene 1: Gesamt-KMO.</strong> Der kompakte Print zeigt ihn als zentrale Zahl:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">efa_vor</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -554,9 +559,18 @@ Use summary() for detailed output.</code></pre>
 </div>
 </div>
 <p>Gesamt-KMO ≈ 0.86 — die Stichprobe ist als Ganzes „meritorious” geeignet (siehe Schwellen-Tabelle oben).</p>
+<p><code>efa_vor</code> ist eine Liste mit 34 Elementen; der Print zeigt davon nur wenige Zahlen. Wie die Liste <code>ergebnis</code> in <a href="03-ProgrammierspracheR.html#fig-liste" class="quarto-xref">Abbildung&nbsp;<span>3.13</span></a> ist sie eine Kiste mit Fächern (<a href="#fig-ergebnisobjekt" class="quarto-xref">Abbildung&nbsp;<span>8.2</span></a>): Mit <code>$</code> nimmst du ein Fach heraus, und weil <code>$kmo</code> selbst eine Liste ist, führt <code>efa_vor$kmo$per_item</code> in zwei Schritten zu den Werten pro Item.</p>
+<div id="fig-ergebnisobjekt" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Ein dunkles Namensschild efa_vor über einer Kiste mit fünf Fächern. $loadings enthält unter PC1 einen Turm aus 0.811, 0.664, 0.753, 0.769, 0.657 und 0.769. $eigenvalues enthält einen Turm aus 3.281, 0.833, 0.555, 0.479, 0.439 und 0.412. $kmo enthält eine kleinere Kiste mit den Fächern $overall, darin der Stein 0.862, und $per_item, darin ein grün umrandeter Turm aus 0.857, 0.876, 0.874, 0.849, 0.851 und 0.867. $bartlett enthält eine kleinere Kiste mit den Fächern $chi_sq mit 6532.633, $df mit 15 und $p_value mit 0. Das letzte Fach zeigt nur graue Auslassungspunkte. Darunter der Code efa_vor$kmo$per_item.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-ergebnisobjekt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k08-ergebnisobjekt.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Abbildung&nbsp;8.2: Vier der 34 Elemente von efa_vor in ihrer Reihenfolge in der Liste; die Werte stammen aus den Ausgaben in diesem Abschnitt und aus summary() in sec-efa-1. Grün umrandet ist das Fach, das efa_vor$kmo$per_item herausnimmt."><img src="Bilder/figuren/k08-ergebnisobjekt.svg" class="img-fluid figure-img" alt="Ein dunkles Namensschild efa_vor über einer Kiste mit fünf Fächern. $loadings enthält unter PC1 einen Turm aus 0.811, 0.664, 0.753, 0.769, 0.657 und 0.769. $eigenvalues enthält einen Turm aus 3.281, 0.833, 0.555, 0.479, 0.439 und 0.412. $kmo enthält eine kleinere Kiste mit den Fächern $overall, darin der Stein 0.862, und $per_item, darin ein grün umrandeter Turm aus 0.857, 0.876, 0.874, 0.849, 0.851 und 0.867. $bartlett enthält eine kleinere Kiste mit den Fächern $chi_sq mit 6532.633, $df mit 15 und $p_value mit 0. Das letzte Fach zeigt nur graue Auslassungspunkte. Darunter der Code efa_vor$kmo$per_item."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ergebnisobjekt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;8.2: Vier der 34 Elemente von <code>efa_vor</code> in ihrer Reihenfolge in der Liste; die Werte stammen aus den Ausgaben in diesem Abschnitt und aus <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> in <a href="#sec-efa-1" class="quarto-xref"><span>Kapitel 8.5</span></a>. Grün umrandet ist das Fach, das <code>efa_vor$kmo$per_item</code> herausnimmt.
+</figcaption></figure>
+</div>
 <p><strong>Ebene 2: Bartlett-Test.</strong> Aus dem Objekt-Slot <code>$bartlett</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span><span class="op">$</span><span class="va">bartlett</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_vor</span><span class="op">$</span><span class="va">bartlett</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$chi_sq
 [1] 6532.633
@@ -571,7 +585,7 @@ $p_value
 <p>χ² ≈ 6533 bei df = 15 und <em>p</em> &lt; .001 — die Korrelationsmatrix ist klar verschieden von einer Identitätsmatrix. Mindest-Voraussetzung erfüllt.</p>
 <p><strong>Ebene 3: Per-Item-KMO (MSA).</strong> Das ist der eigentlich spannende Diagnose-Schritt — er zeigt, ob <em>jedes einzelne Item</em> ins gemeinsame Faktormodell passt. Im Output-Objekt liegt er als named numeric in <code>$kmo$per_item</code>; wir packen ihn in ein Tibble:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
 <span>       MSA  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -588,7 +602,7 @@ $p_value
 <p>Faustregel pro Item: <strong>MSA ≥ 0.5</strong> akzeptabel, <strong>&lt; 0.5</strong> Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.</p>
 <p>Visuell — gemeinsame (blau) vs.&nbsp;partielle (grau) Varianz pro Item, mit der MSA-Schwelle 0.5 als gestrichelter Linie:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
 <span>       gemeinsam <span class="op">=</span> <span class="va">efa_vor</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>partiell <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">gemeinsam</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">gemeinsam</span>, <span class="va">partiell</span><span class="op">)</span>,</span>
@@ -671,7 +685,7 @@ $p_value
 <p>Der <strong>Scree-Plot</strong> (englisch <em>scree</em> = Geröllhang) zeigt die Eigenwerte als absteigende Linie. Stell dir einen Berg mit großen Felsbrocken oben und feinem Geröll unten vor: oben sind die „echten” Faktoren, unten die Rauschfaktoren. Genau diese Trennstelle suchst du.</p>
 <p>Aus dem <code>efa()</code>-Objekt liest du die Eigenwerte über <code>$eigenvalues</code> heraus und plottest sie händisch:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
@@ -730,7 +744,7 @@ $p_value
 </table>
 <p><strong>Bild dazu.</strong> Der Faktor in der Mitte, die Items strahlen aus — Linien-Dicke = Ladungsstärke. Items mit dicker Linie hängen <em>stark</em> am Faktor, Items mit dünner Linie hängen <em>schwächer</em>. Die Ladungen stammen schon aus unserer echten Einfaktor-Lösung (dem <code>efa_obj</code> aus dem Scree-Plot-Chunk); im nächsten Abschnitt liest du sie in der Output-Tabelle nach:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">faktor_radial</span> <span class="op">&lt;-</span> <span class="va">efa_obj</span><span class="op">$</span><span class="va">loadings</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">faktor_radial</span> <span class="op">&lt;-</span> <span class="va">efa_obj</span><span class="op">$</span><span class="va">loadings</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rename</span><span class="op">(</span>ladung <span class="op">=</span> <span class="va">PC1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>winkel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,</span>
@@ -767,7 +781,7 @@ $p_value
 <span class="header-section-number">8.5.2</span> Modell rechnen mit <code>efa()</code> und Ladungen lesen</h3>
 <p>Die kompakte Ausgabe kennst du schon aus <a href="#sec-kmo-bartlett" class="quarto-xref"><span>Kapitel 8.3</span></a>: KMO, erklärte Varianz, N. Für die Ladungen brauchst du die ausführliche Fassung mit <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> — sie ist aufgebaut wie der SPSS-Output von <code>FACTOR</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -871,7 +885,7 @@ Only one component was extracted. The solution cannot be rotated.</code></pre>
 <span class="header-section-number">8.5.3</span> Ladungen visualisieren</h3>
 <p>Eine Tabelle mit sechs Ladungen liest sich noch gut — aber ein <strong>sortierter Bar-Chart</strong> macht auf einen Blick sichtbar, welche Items am stärksten am Konstrukt hängen und welche eher Randindikatoren sind. Auch das bauen wir händisch aus dem <code>efa()</code>-Objekt:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
@@ -921,7 +935,7 @@ Hinweis
 </div>
 <p><strong>Bild dazu.</strong> Was bewirkt eine Rotation visuell? Sechs Items im 2D-Faktor-Raum, <em>vor</em> und <em>nach</em> einer Varimax-Rotation. Vor der Rotation laden die Items diffus auf beiden Achsen; nach der Rotation sind sie sauber an <em>je einer</em> Achse ausgerichtet:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">items_unrot</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">items_unrot</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"mm0"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>,</span>
 <span>  F1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.55</span>, <span class="fl">0.50</span>, <span class="fl">0.40</span>, <span class="fl">0.45</span>, <span class="fl">0.35</span><span class="op">)</span>,</span>
 <span>  F2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.40</span>, <span class="op">-</span><span class="fl">0.50</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="op">-</span><span class="fl">0.45</span>, <span class="fl">0.50</span><span class="op">)</span></span>
@@ -960,7 +974,7 @@ Hinweis
 </div>
 <p><strong>Lesart.</strong> Links: keine Achse beschreibt klar einen Faktor — Items hängen schräg in der Luft. Rechts: durch die Drehung sind Items entweder <em>fast nur</em> an Faktor 1 angeheftet (rechts) oder <em>fast nur</em> an Faktor 2 (oben). Genau das macht die Interpretation lesbar: <em>„F1 = diese Item-Gruppe, F2 = jene Item-Gruppe.”</em></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
 <span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">2</span>, rotation <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1116,7 +1130,7 @@ Hinweis
 <span class="header-section-number">8.7.3</span> α berechnen mit <code>reliability()</code>
 </h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
 <span><span class="va">rel_obj</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1157,7 +1171,7 @@ Use summary() for detailed output.</code></pre>
 <span class="header-section-number">8.7.4</span> Item-Statistiken lesen</h3>
 <p>Die Item-Statistiken liefert <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> — in denselben Tabellen wie SPSS <code>RELIABILITY</code> (<em>Item Statistics</em>, <em>Inter-Item Correlation Matrix</em>, <em>Item-Total Statistics</em>):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">rel_obj</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">rel_obj</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Weighted Reliability Analysis Results
@@ -1236,11 +1250,20 @@ Item-Total Statistics
 <strong>α sinkt beim Entfernen</strong> → das Item trägt zur Reliabilität bei, behalten.</li>
 </ul>
 <p>In unserer Skala liegen alle korrigierten Item-Total-Korrelationen zwischen 0.52 (<code>mm05r</code>) und 0.70 (<code>mm01</code>) — durchweg <em>stark</em>. Und kein Item würde α beim Streichen über 0.83 heben: Alle sechs tragen die Skala.</p>
+<p>Für <code>mm05r</code> zählt <code>reliability()</code> in jeder Reihe die anderen fünf Items zusammen und korreliert diese Summe mit <code>mm05r</code> (<a href="#fig-item-total" class="quarto-xref">Abbildung&nbsp;<span>8.3</span></a>).</p>
+<div id="fig-item-total" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links eine Bauplatte mit respid und den Türmen mm01, mm02r, mm03, mm04, mm05r und mm06 für die respid 1, 5 und 6: 5, 5, 4, 2, 2, 2; 2, 4, 4, 3, 5, 6; 3, 5, 3, 7, 2, 3. Die Steine von mm05r sind grau, darunter steht nicht in der Summe. Ein grüner Pfeil führt zu einem Turm Summe ohne mm05r mit 18, 19 und 21, daneben steht ein blauer Turm mm05r mit 2, 5 und 2. Eine Klammer unter beiden Türmen ist mit Corrected Item-Total 0.520 beschriftet.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-item-total-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k08-item-total.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Abbildung&nbsp;8.3: Die korrigierte Item-Total-Korrelation von mm05r: Die anderen fünf Items werden je Reihe addiert, mm05r zählt nicht mit. Gezeigt sind die ersten drei Befragten, die alle sechs Items beantwortet haben; die Korrelation 0.520 ist gewichtet und über alle Befragten mit sechs Antworten gerechnet."><img src="Bilder/figuren/k08-item-total.svg" class="img-fluid figure-img" alt="Links eine Bauplatte mit respid und den Türmen mm01, mm02r, mm03, mm04, mm05r und mm06 für die respid 1, 5 und 6: 5, 5, 4, 2, 2, 2; 2, 4, 4, 3, 5, 6; 3, 5, 3, 7, 2, 3. Die Steine von mm05r sind grau, darunter steht nicht in der Summe. Ein grüner Pfeil führt zu einem Turm Summe ohne mm05r mit 18, 19 und 21, daneben steht ein blauer Turm mm05r mit 2, 5 und 2. Eine Klammer unter beiden Türmen ist mit Corrected Item-Total 0.520 beschriftet."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-item-total-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;8.3: Die korrigierte Item-Total-Korrelation von <code>mm05r</code>: Die anderen fünf Items werden je Reihe addiert, <code>mm05r</code> zählt nicht mit. Gezeigt sind die ersten drei Befragten, die alle sechs Items beantwortet haben; die Korrelation 0.520 ist gewichtet und über alle Befragten mit sechs Antworten gerechnet.
+</figcaption></figure>
+</div>
 </section><section id="α-if-deleted-visualisieren" class="level3" data-number="8.7.5"><h3 data-number="8.7.5" class="anchored" data-anchor-id="α-if-deleted-visualisieren">
 <span class="header-section-number">8.7.5</span> α-if-deleted visualisieren</h3>
 <p>Auch hier macht ein <strong>Bar-Chart</strong> den diagnostischen Blick auf einen Schlag möglich. Wir extrahieren <code>$item_total$alpha_if_deleted</code> aus dem mariposa-Objekt <code>rel_obj</code> von oben und legen die Gesamtschwelle als senkrechte Referenzlinie:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span><span class="op">$</span><span class="va">item_total</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span><span class="op">$</span><span class="va">item_total</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha_if_deleted</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">item</span>, <span class="va">alpha_if_deleted</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_col</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1303,7 +1326,7 @@ Wichtig
 </div>
 <p>Installation einmalig:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lavaan"</span>, <span class="st">"semPlot"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lavaan"</span>, <span class="st">"semPlot"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1353,7 +1376,7 @@ Warnung
 </table>
 <p>Modell aufstellen und schätzen:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell_cfa</span> <span class="op">&lt;-</span> <span class="st">"islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell_cfa</span> <span class="op">&lt;-</span> <span class="st">"islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">lavaan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/cfa.html">cfa</a></span><span class="op">(</span><span class="va">modell_cfa</span>, data <span class="op">=</span> <span class="va">allbus</span>,</span>
 <span>                   sampling.weights <span class="op">=</span> <span class="st">"wghtpew"</span>, estimator <span class="op">=</span> <span class="st">"MLR"</span><span class="op">)</span></span>
@@ -1384,7 +1407,7 @@ Hinweis
 </div>
 <p><strong>Bild dazu.</strong> Ein „Fit-Ampel”-Plot — vier Indizes auf einen Blick, grün = Schwelle erfüllt, rot = verfehlt (schematische Beispielwerte für ein gut passendes Modell):</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
 <span>  index     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CFI"</span>, <span class="st">"TLI"</span>, <span class="st">"RMSEA"</span>, <span class="st">"SRMR"</span><span class="op">)</span>,</span>
 <span>  wert      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.96</span>, <span class="fl">0.95</span>, <span class="fl">0.055</span>, <span class="fl">0.06</span><span class="op">)</span>,</span>
 <span>  schwelle  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">0.95</span>, <span class="fl">0.06</span>, <span class="fl">0.08</span><span class="op">)</span>,</span>
@@ -1421,7 +1444,7 @@ Hinweis
 <p>Mit <code>estimator = "MLR"</code> (Maximum Likelihood mit robusten Standardfehlern) bist du auf der sicheren Seite, wenn die Items nicht ideal normalverteilt sind. Für rein ordinale Items wäre <code>"WLSMV"</code> die sauberere Wahl, ist aber rechenintensiver.</p>
 <p>Eine Pfaddiagramm-Grafik:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">semPlot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/semPlot/man/semPaths.html">semPaths</a></span><span class="op">(</span><span class="va">fit</span>, whatLabels <span class="op">=</span> <span class="st">"std"</span>, layout <span class="op">=</span> <span class="st">"tree"</span>, edge.color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">semPlot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/semPlot/man/semPaths.html">semPaths</a></span><span class="op">(</span><span class="va">fit</span>, whatLabels <span class="op">=</span> <span class="st">"std"</span>, layout <span class="op">=</span> <span class="st">"tree"</span>, edge.color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1482,7 +1505,7 @@ Hinweis
 <div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">efa</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
 <span>      n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
@@ -1518,7 +1541,7 @@ Hinweis
 <div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
 <span>              weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1565,7 +1588,7 @@ Hinweis
 <div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="st">'</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">modell</span> <span class="op">&lt;-</span> <span class="st">'</span></span>
 <span><span class="st">  islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06</span></span>
 <span><span class="st">  mm02r ~~ mm05r</span></span>
 <span><span class="st">'</span></span>
@@ -2092,8 +2115,39 @@ Hinweis
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
-
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi bi-github"></i>Seite editieren</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/08-Latente-Strukturen.qmd" class="toc-action"><i class="bi empty"></i>Quellcode anzeigen</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Problem melden</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

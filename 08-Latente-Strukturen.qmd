@@ -31,16 +31,9 @@ Diese Validierung ist der Job dieses Kapitels. Drei Werkzeuge stehen dafür bere
 Am Ende blicken wir kurz auf die **konfirmatorische Faktorenanalyse (CFA)** mit `lavaan` — den nächsten Schritt, wenn du eine konkrete Strukturhypothese *prüfen* statt nur *erkunden* willst. Die EFA fragt: „Welche Struktur passt am besten?". Die CFA fragt: „Passt *diese* spezifische Struktur, die ich aus der Theorie behaupte, zu den Daten?".
 
 ::: {.callout-note}
-**Konzept: Was ist eine latente Variable?** Stell dir das visuell als Pfeil-Diagramm vor:
+**Konzept: Was ist eine latente Variable?** In den sechs Item-Türmen stehen die Antworten der Befragten. Islamfeindlichkeit selbst hat niemand gemessen; sie ist ein Faktor ohne eigene Werte (@fig-latenter-faktor). Der Skalenwert `islamophobie` aus @sec-datentransformation ist aus den Items berechnet.
 
-```
-            ┌──→ mm01
-            ├──→ mm02r
-[Islamfeindlichkeit] ──┼──→ mm03
-   (latent)            ├──→ mm04
-            ├──→ mm05r
-            └──→ mm06
-```
+![Die sechs Items sind gemessen, hier mit den Antworten der ersten drei Befragten, die alle sechs beantwortet haben. Der Faktor Islamfeindlichkeit hat keine Werte; von ihm führt ein Pfeil zu jedem Item.](Bilder/figuren/k08-latenter-faktor.svg){#fig-latenter-faktor .lightbox fig-alt="Oben eine gestrichelte Ellipse mit dem Namen Islamfeindlichkeit, daneben nicht gemessen. Von ihr führen sechs Pfeile zu den Spaltennamen mm01, mm02r, mm03, mm04, mm05r und mm06. Darunter eine Bauplatte mit sechs blauen Türmen für die respid 1, 5 und 6: Reihe 1 hat 5, 5, 4, 2, 2 und 2, Reihe 5 hat 2, 4, 4, 3, 5 und 6, Reihe 6 hat 3, 5, 3, 7, 2 und 3. Rechts daneben gemessen."}
 
 Die Pfeile gehen *vom* unsichtbaren Faktor *zu* den beobachteten Items — die Annahme ist: *der Faktor erzeugt die Antworten*. Wer eine hohe Islamfeindlichkeit hat, kreuzt deshalb auf allen sechs Items eher zustimmende Werte an. Genau diese Pfeil-Richtung siehst du in CFA-Pfaddiagrammen wieder.
 :::
@@ -173,6 +166,10 @@ efa_vor
 ```
 
 Gesamt-KMO ≈ 0.86 — die Stichprobe ist als Ganzes „meritorious" geeignet (siehe Schwellen-Tabelle oben).
+
+`efa_vor` ist eine Liste mit 34 Elementen; der Print zeigt davon nur wenige Zahlen. Wie die Liste `ergebnis` in @fig-liste ist sie eine Kiste mit Fächern (@fig-ergebnisobjekt): Mit `$` nimmst du ein Fach heraus, und weil `$kmo` selbst eine Liste ist, führt `efa_vor$kmo$per_item` in zwei Schritten zu den Werten pro Item.
+
+![Vier der 34 Elemente von `efa_vor` in ihrer Reihenfolge in der Liste; die Werte stammen aus den Ausgaben in diesem Abschnitt und aus `summary()` in @sec-efa-1. Grün umrandet ist das Fach, das `efa_vor$kmo$per_item` herausnimmt.](Bilder/figuren/k08-ergebnisobjekt.svg){#fig-ergebnisobjekt .lightbox fig-alt="Ein dunkles Namensschild efa_vor über einer Kiste mit fünf Fächern. $loadings enthält unter PC1 einen Turm aus 0.811, 0.664, 0.753, 0.769, 0.657 und 0.769. $eigenvalues enthält einen Turm aus 3.281, 0.833, 0.555, 0.479, 0.439 und 0.412. $kmo enthält eine kleinere Kiste mit den Fächern $overall, darin der Stein 0.862, und $per_item, darin ein grün umrandeter Turm aus 0.857, 0.876, 0.874, 0.849, 0.851 und 0.867. $bartlett enthält eine kleinere Kiste mit den Fächern $chi_sq mit 6532.633, $df mit 15 und $p_value mit 0. Das letzte Fach zeigt nur graue Auslassungspunkte. Darunter der Code efa_vor$kmo$per_item."}
 
 **Ebene 2: Bartlett-Test.** Aus dem Objekt-Slot `$bartlett`:
 
@@ -501,6 +498,10 @@ Daraus liest du sofort, *welches Item* die Skala trägt — und welches sie eher
 - **α sinkt beim Entfernen** → das Item trägt zur Reliabilität bei, behalten.
 
 In unserer Skala liegen alle korrigierten Item-Total-Korrelationen zwischen 0.52 (`mm05r`) und 0.70 (`mm01`) — durchweg *stark*. Und kein Item würde α beim Streichen über 0.83 heben: Alle sechs tragen die Skala.
+
+Für `mm05r` zählt `reliability()` in jeder Reihe die anderen fünf Items zusammen und korreliert diese Summe mit `mm05r` (@fig-item-total).
+
+![Die korrigierte Item-Total-Korrelation von `mm05r`: Die anderen fünf Items werden je Reihe addiert, `mm05r` zählt nicht mit. Gezeigt sind die ersten drei Befragten, die alle sechs Items beantwortet haben; die Korrelation 0.520 ist gewichtet und über alle Befragten mit sechs Antworten gerechnet.](Bilder/figuren/k08-item-total.svg){#fig-item-total .lightbox fig-alt="Links eine Bauplatte mit respid und den Türmen mm01, mm02r, mm03, mm04, mm05r und mm06 für die respid 1, 5 und 6: 5, 5, 4, 2, 2, 2; 2, 4, 4, 3, 5, 6; 3, 5, 3, 7, 2, 3. Die Steine von mm05r sind grau, darunter steht nicht in der Summe. Ein grüner Pfeil führt zu einem Turm Summe ohne mm05r mit 18, 19 und 21, daneben steht ein blauer Turm mm05r mit 2, 5 und 2. Eine Klammer unter beiden Türmen ist mit Corrected Item-Total 0.520 beschriftet."}
 
 ### α-if-deleted visualisieren
 

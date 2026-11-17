@@ -161,6 +161,26 @@ class TestBausteine(unittest.TestCase):
         schild_y = float(texte[0].get("y")) / L.DPI
         self.assertLess(schild_y, ry)                                       # Schild über der Kiste
 
+    def test_kiste_mehr(self):
+        """mehr = Breite eines letzten Fachs mit grauen Auslassungspunkten: Die Liste hat weitere Elemente.
+        Es hat keinen $-Namen und keinen Inhalt; zurück kommen nur die benannten Fächer."""
+        s = L.Canvas(5, 3)
+        faecher = L.kiste(s, 0.2, 0.2, [("a", 1.0), ("bb", 1.5)], h=1.4, mehr=0.4)
+        els = alle_elemente(s.svg())
+        texte = [e for e in els if e.tag == NS + "text"]
+        self.assertEqual(["".join(e.itertext()) for e in texte], ["$a", "$bb", "…"])
+        self.assertEqual(texte[-1].get("fill"), L.GRAY)
+        self.assertEqual(len(faecher), 2)
+        rahmen = [e for e in els if e.tag == NS + "rect" and e.get("fill") == L.CARD and e.get("stroke") == L.INK]
+        self.assertAlmostEqual(float(rahmen[0].get("width")) / L.DPI, 2.9, places=2)
+        x_punkte = float(texte[-1].get("x")) / L.DPI
+        self.assertAlmostEqual(x_punkte, 0.2 + 2.5 + 0.2, places=2)        # mittig im letzten Fach
+        # ohne mehr: dieselbe Kiste wie bisher (k03-liste bleibt byte-gleich)
+        a, b = L.Canvas(5, 3), L.Canvas(5, 3)
+        L.kiste(a, 0.2, 0.2, [("a", 1.0)], h=1.0, name="x")
+        L.kiste(b, 0.2, 0.2, [("a", 1.0)], h=1.0, name="x", mehr=None)
+        self.assertEqual(a.svg(), b.svg())
+
     def test_referenz(self):
         """Markierung der Referenzkategorie: Schild mit Spitze nach links, Spitze an der angegebenen Stelle."""
         s = L.Canvas(3, 1)

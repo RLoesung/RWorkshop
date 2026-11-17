@@ -318,15 +318,16 @@ def turm(s, x, base, w, h, kind, werte):
         stein(s, x, base - (i + 1) * (h + 0.07), w, h, k, t)
 
 
-def kiste(s, x, y, faecher, h, name=None, size=10.5, kopf=0.34):
+def kiste(s, x, y, faecher, h, name=None, size=10.5, kopf=0.34, mehr=None):
     """Liste als Kiste mit Fächern (k03-liste, k08-ergebnisobjekt): ein dunkel umrandeter Rahmen, darin
     lückenlos nebeneinander die Fächer, jedes oben mit seinem Namen ($name). faecher: [(name, breite)].
     h: Höhe der Kiste; name: Objektname als dunkles Schild über der Kiste (die Kiste beginnt dann 0,48 tiefer).
-    Gibt je Fach (x, oben, breite, boden) der Inhaltsfläche zurück; Inhalte stellt der Aufrufer auf den Boden."""
+    mehr: Breite eines letzten, leeren Fachs mit grauen Auslassungspunkten (die Liste hat weitere Elemente).
+    Gibt je benanntem Fach (x, oben, breite, boden) der Inhaltsfläche zurück; Inhalte stellt der Aufrufer auf den Boden."""
     if name:
         schild(s, x, y, name, w=max(1.0, text_width(name, MONO, 12.5, True) + 0.3))
         y += 0.48
-    breite = sum(b for _, b in faecher)
+    breite = sum(b for _, b in faecher) + (mehr or 0)
     rect(s, x, y, breite, h, CARD, INK, 1.5)
     out, fx = [], x
     for i, (n, b) in enumerate(faecher):
@@ -336,6 +337,10 @@ def kiste(s, x, y, faecher, h, name=None, size=10.5, kopf=0.34):
         hline(s, fx, y + kopf, b, color=CARDLINE, width=0.75)
         out.append((fx, y + kopf, b, y + h))
         fx += b
+    if mehr:
+        vline(s, fx, y, y + h, color=INK, width=1.0)
+        text(s, fx, y, mehr, kopf, [P(R("…", size=16, bold=True, color=GRAY), align=C)], anchor="middle")
+        hline(s, fx, y + kopf, mehr, color=CARDLINE, width=0.75)
     return out
 
 

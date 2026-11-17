@@ -89,7 +89,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | rosa Turm neben einem Turm | Wahrheitsturm als Schablone für `[ ]`: Steine neben `FALSE` werden grau und fallen weg (3.5.1) |
 | blasser Stein (Farbe des Datentyps, heller, Kante in der vollen Farbe) | ein Wert, den R wiederholt (Recycling, 3.5.1); anders als ein grauer Stein geht er in die Rechnung ein (`lego.stein(…, blass=True)`) |
 | weißes Schild „Referenz“ mit Spitze zum Stein | Referenzkategorie eines Faktors, die erste Stufe (3.5.2; `lego.referenz()`) |
-| Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`) |
+| Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`). Ein letztes Fach mit grauen Auslassungspunkten: Die Liste hat weitere Elemente (`kiste(…, mehr=…)`); eine Kiste in einem Fach ist eine Liste in der Liste (8.3.3) |
 | graue Zahlen links neben einer Reihe | Reihennummer wie in der Ausgabe eines Tibbles; Lücken in der Zählung stehen für Reihen, die nicht gezeigt sind (4.5.2, 4.8) |
 | leerer Stein mit blassem Aufkleber | fehlender Wert in einer Reihe, die im Ergebnis wegfällt (4.5.2; `kap04.lstein(…, blass=True)`) |
 | Lineale untereinander mit gestrichelten Hilfslinien | dieselben Fälle auf verschiedenen Skalen: Die blauen Pfeile (einzelne Werte) bleiben an ihrer Stelle, Nullpunkt und Einheit ändern sich (`center()`, `std()`, 5.4); der orange Pfeil zeigt den Mittelwert |
@@ -99,6 +99,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | blassoranger Kasten mit `x`, `y`, `color`, `fill` oder `weight` | Zuordnung in `aes()`: Unter einem Turm sagt er, welche Eigenschaft der Grafik der Turm bestimmt; derselbe Kasten an der Grafik zeigt, wo sie erscheint (6.2, 6.3.2, 6.4.1; `kap06.etikett()`) |
 | kleine Grafik mit Achsen, Gitter und Punkten, Balken oder Violinen | vereinfachte Ausgabe von ggplot2 mit den Farben und Werten aus `layer_data()`; in 6.2 ist jeder Punkt eine Reihe |
 | Folie (helles Blatt mit umgeknickter Ecke) | eine Ebene einer ggplot-Grafik (`geom_*()`); `+` legt sie auf die Grafik aus `ggplot()`, was später kommt, liegt oben (6.3.3; `kap06.folie()`) |
+| gestrichelte Ellipse mit dunkler Kante, darin nur ein Name | nicht gemessener (latenter) Faktor ohne Werte; Pfeile führen von ihm zu den Items, die er erzeugt. Anders als ein leerer Stein (`NA`) hat sie keine Noppen und steht auf keiner Platte (8.1; `kap08.faktor()`) |
 
 ### 5.3 Werkzeug
 
@@ -214,8 +215,8 @@ Yannick wollte das Buch „endgültig abrunden“; vier Durchsichten haben jedes
 | 58 | `k06-ebenen` | 6.3.3 | neu | bis `ggplot()` läuft die Bauplatte durch `\|>`, danach legt `+` Ebenen übereinander (Chunks `boxviolin`, `combo`) | B | |
 | 59 | `k06-bar-zaehlt` | 6.4.1 | neu | `geom_bar()` zählt erst (gewichtet) je Stufe, `after_stat(prop)` zeichnet die Anteile (Chunk `bar-prop`) | A | |
 | 60 | `k07-haeufigkeit` | 7.4.1 | neu | Turm `mm01`: N, Raw % und Valid %; leere Steine zählen bei den gültigen Prozent nicht mit (Chunk `freq-mm`) | A | |
-| 61 | `k08-latenter-faktor` | 8.1 | neu | sechs gemessene Item-Türme und ein nicht gemessener Faktor als gestrichelter Umriss, der auf alle zeigt; ersetzt das Text-Diagramm im Konzept-Kasten | A | |
-| 62 | `k08-ergebnisobjekt` | 8.3.3 | T2 42 | `efa_vor` als Kiste mit Schubladen (`$kmo`, `$bartlett`, `$eigenvalues`, `$loadings`); jedes `$` öffnet eine Schublade | A | |
+| 61 | `k08-latenter-faktor` | 8.1 | neu | sechs gemessene Item-Türme und ein nicht gemessener Faktor als gestrichelte Ellipse, die auf alle zeigt; ersetzt das Text-Diagramm im Konzept-Kasten | A | |
+| 62 | `k08-ergebnisobjekt` | 8.3.3 | T2 42 | `efa_vor` als Kiste mit Fächern (`$loadings`, `$eigenvalues`, `$kmo`, `$bartlett`, dahinter weitere); `$kmo` und `$bartlett` sind Kisten in der Kiste, `efa_vor$kmo$per_item` nimmt in zwei Schritten ein Fach heraus (Chunks `efa-vor`, `efa-bartlett`, `efa-msa`, `efa-1`) | A | |
 | 63 | `k08-item-total` | 8.7.4 | neu | korrigierte Item-Total-Korrelation: Summe der anderen fünf Items gegen `mm05r` (Chunk `reliability-summary`) | B | |
 | 64 | `k09-dummy` | 9.3.1 | neu | der Faktor `educ_kat` wird zu zwei 0/1-Türmen, `niedrig` ist die Referenz | B | ja |
 | 65 | `k09-fallset` | 9.4.1 | neu | `drop_na()` über alle Modellvariablen: Die Split-Module lassen 1.881 von 5.246 Reihen übrig (Chunk `model-compare`) | A | |

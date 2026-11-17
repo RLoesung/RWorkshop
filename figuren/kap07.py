@@ -4,10 +4,10 @@ Alle Werte stammen aus ALLBUS 2023 (ALLBUS2023.sav), geprüft mit R 4.5.3 und ma
 Setup-Chunk von Kap. 7 (R/prep.R, educ_kat, eastwest als Faktor). Kap. 7 rechnet gewichtet; jede Zahl kommt aus
 der Ausgabe des Chunks neben dem Bild.
 """
-from lego import (Canvas, R, P, text, rect, stein, eyebrow, connector, INK, GRAY, CARDLINE, PALE, LIGHT, ORANGE,
-                  MONO, RT)
-from kap03 import mono, platte
-from kap04 import codezeile
+from lego import (Canvas, R, P, text, rect, stein, eyebrow, connector, vline, INK, GRAY, CARDLINE, PALE, LIGHT,
+                  ORANGE, MONO, RT)
+from kap03 import mono, notiz, platte
+from kap04 import codezeile, kopf
 from kap05 import klammer
 
 
@@ -77,7 +77,52 @@ def zeilenprozente():
     return s
 
 
+# 7.4.1 Häufigkeiten aus dem Chunk `freq-mm`, Tabelle zu mm01 ---------------------------------------
+# Der Turm ist ein Schema: zehn Steine, nach Wert sortiert wie die Zeilen der Tabelle. Anteile wie in der Ausgabe:
+# 2 von 10 Steinen haben den Wert 1 (Raw % 20.53), 2 von 6 gefüllten (Valid % 31.66), 4 von 10 sind leer (35.16 %).
+# N und Totals sind gewichtete Summen, gerundet; 1077.005 / 3401.347 = 31.66 % (mit den gerundeten Zahlen 31.67).
+MM01 = ["1", "1", "2", "4", "5", "7", "", "", "", ""]
+
+
+def klammer_links(s, x, y0, y1, color=GRAY, w=0.1):
+    """Eckige Klammer links neben den Steinen von y0 bis y1 (öffnet nach rechts)."""
+    connector(s, x + w, y0, x, y0, color=color, width=1.25)
+    vline(s, x, y0, y1, color=color, width=1.25)
+    connector(s, x + w, y1, x, y1, color=color, width=1.25)
+
+
+def haeufigkeit():
+    s = Canvas(7.5, 4.05)
+    text(s, 0.15, 0.12, 7.3, 0.28, codezeile("allbus |> frequency(mm01:mm06, weights = wghtpew)", size=10.5))
+    h, pitch, top, w = 0.2, 0.27, 1.12, 0.55
+    ys = [top + i * pitch for i in range(len(MM01))]
+    unten_1, unten_gueltig, unten = ys[1] + h, ys[5] + h, ys[-1] + h
+    spalten = [(0.15, "PROZENT", "Raw % = 20.53", [("Total", "5246", ys[0], unten, INK)]),
+               (3.7, "GÜLTIGE PROZENT", "Valid % = 31.66",
+                [("Total valid", "3401", ys[0], unten_gueltig, INK), ("Total missing", "1845", ys[6], unten, GRAY)])]
+    for x0, titel, prozent, klammern in spalten:
+        eyebrow(s, x0, 0.5, 3.3, titel, size=10.5)
+        tx = x0 + 1.65
+        kopf(s, tx, w, 0.8, "mm01")
+        for y, v in zip(ys, MM01):
+            stein(s, tx, y, w, h, "num" if v else "na", v, size=10)
+        platte(s, tx - 0.1, unten + 0.07, w + 0.2)
+        klammer_links(s, tx - 0.2, ys[0], unten_1, color=INK)
+        text(s, x0 - 0.05, ys[0] - 0.08, tx - 0.25 - x0, unten_1 - ys[0] + 0.16,
+             [P(R("N = 1077", font=MONO, size=10.5, bold=True), align=RT),
+              P(R(prozent, font=MONO, size=10.5, bold=True, color=INK), align=RT, sb=1)], anchor="middle")
+        for name, n, y0, y1, farbe in klammern:
+            klammer(s, tx + w + 0.1, y0, y1, color=farbe)
+            zeilen = [P(R(name, font=MONO, size=10, color=GRAY)), P(R(n, font=MONO, size=11, bold=True, color=farbe))]
+            if name == "Total missing":
+                zeilen.append(P(R("zählen nicht mit", size=10.5, italic=True, color=GRAY), sb=2))
+            text(s, tx + w + 0.32, y0, 1.6, y1 - y0, zeilen, anchor="middle")
+    vline(s, 3.55, 0.5, unten + 0.1, color=CARDLINE, width=0.75)
+    return s
+
+
 FIGUREN = {
     "k07-gewichtung": gewichtung,
     "k07-zeilenprozente": zeilenprozente,
+    "k07-haeufigkeit": haeufigkeit,
 }
