@@ -165,19 +165,21 @@ def klammer(s, x, y0, y1, color=GRAY, w=0.1):
 
 # 5.3.1 rec() aus dem Chunk `rec-bildung` ----------------------------------------------------
 def rec_fig():
-    s = Canvas(7.0, 4.3)
-    text(s, 0.15, 0.12, 6.8, 0.5, code(['rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",',
-                                        "    as_factor = TRUE)"], size=10))
+    zeilen = ["mutate(", '  educ = rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",',
+              "             as_factor = TRUE)", ")"]
+    dy = 0.4                                     # Platz für die zwei zusätzlichen Code-Zeilen
+    s = Canvas(7.3, 4.3 + dy)
+    text(s, 0.15, 0.12, 7.1, 0.9, code(zeilen, size=10))
     codes = [("1", "OHNE ABSCHLUSS"), ("2", "VOLKS-,HAUPTSCHULE"), ("3", "MITTLERE REIFE"), ("4", "FACHHOCHSCHULREIFE"),
              ("5", "HOCHSCHULREIFE"), ("6", "ANDERER ABSCHLUSS"), ("7", "NOCH SCHUELER"), ("", "")]
     gruppen = [((0, 1), "1:2=1 [niedrig]", "niedrig", "982"), ((2, 2), "3=2 [mittel]", "mittel", "1639"),
                ((3, 4), "4:5=3 [hoch]", "hoch", "2472"), ((5, 7), "else=NA", "", "153")]
     lw = lstein_breite("FACHHOCHSCHULREIFE")
-    h, pitch, top = 0.28, 0.35, 1.35
-    kopf(s, 0.15, lw, 0.78, "educ", "<dbl+lbl>")
+    h, pitch, top = 0.28, 0.35, 1.35 + dy
+    kopf(s, 0.15, lw, 0.78 + dy, "educ", "<dbl+lbl>")
     ox, ow, nx = 4.85, 0.95, 6.0
-    kopf(s, ox, ow, 0.78, "educ", "<fct>")
-    text(s, nx, 0.78, 0.6, 0.25, mono("n", size=11, align=RT))
+    kopf(s, ox, ow, 0.78 + dy, "educ", "<fct>")
+    text(s, nx, 0.78 + dy, 0.6, 0.25, mono("n", size=11, align=RT))
     for i, (wert, label) in enumerate(codes):
         y = top + i * pitch
         if wert:
@@ -200,7 +202,7 @@ def rec_fig():
 def dicho_fig():
     s = Canvas(7.0, 3.7)
     text(s, 0.15, 0.12, 6.8, 0.28,
-         codezeile('allbus |> rec(age, rules = "dicho(50)", suffix = "_d") |> count(age_d)', size=10.5))
+         codezeile('allbus |> mutate(age_d = rec(age, rules = "dicho(50)")) |> count(age_d)', size=10.5))
     w = lstein_breite("NICHT GENERIERBAR", wert=False)
     ax, dx = 1.15, 1.15 + w + 0.55
     h, pitch, top, extra = 0.3, 0.37, 1.08, 0.16
@@ -236,7 +238,7 @@ def dicho_fig():
 # 5.3.3 Umpolen aus den Chunks `reverse` und `reverse-check` ----------------------------------
 def umpolen():
     s = Canvas(6.7, 4.35)
-    text(s, 0.15, 0.12, 6.4, 0.28, code(['rec(mm02, rules = "rev", suffix = "r")'], size=10.5))
+    text(s, 0.15, 0.12, 6.4, 0.28, code(['mutate(mm02r = rec(mm02, rules = "rev"))'], size=10.5))
     lw = lstein_breite("STIMME GAR NICHT ZU")
     lx, rx, nx = 0.15, 0.15 + lw + 0.85, 0.15 + 2 * lw + 0.95
     h, pitch, top = 0.27, 0.33, 1.12
@@ -333,7 +335,7 @@ def polung():
     mitte = top + 2 * 0.34 + 0.14
     text(s, ax - 0.1, mitte - 0.42, 5.45 - ax, 0.28, mono("6 - x", size=10.5, color=GREEN))
     arrow(s, ax, mitte - 0.13, w=5.45 - ax - 0.1, h=0.26, color=GREEN)
-    text(s, 2.85, 2.9, 4.6, 0.28, mono('rec(pa29, rules = "rev", suffix = "r")', size=10.5, color=INK))
+    text(s, 2.85, 2.9, 4.6, 0.28, mono('mutate(pa29r = rec(pa29, rules = "rev"))', size=10.5, color=INK))
     return s
 
 def lineal(s, x0, y, laenge, lo, hi, step=1, color=INK):

@@ -10,6 +10,7 @@
 - mariposa-Ergebnisse drucken kompakt; die vollständigen SPSS-Tabellen kommen mit `summary()`. Lesart-Texte, die Tabellendetails zitieren (Gruppenmittelwerte, Ladungen, Item-Total-Statistiken, Post-Hoc-Paare), brauchen einen `summary()`-Chunk.
 - `library()` ausschließlich im Setup-Chunk, nie im Kapitel-Text.
 - mariposa-Funktionen sind data-first und tidyselect-fähig — `data |> fn(var1, var2, weights = w)` ist die Standardform.
+- `rec()` steht im Buch immer innerhalb von `mutate()`: `mutate(neu = rec(alt, rules = "…"))`. Der neue Name links vom `=` ersetzt `suffix`; weitere Argumente (`as_factor`, `var_label`, `val_labels`) bleiben in `rec()`. Mehrere Variablen stehen in einem `mutate()` mit einer Zeile je Variable.
 
 ---
 
@@ -70,17 +71,17 @@ allbus <- allbus |> to_label(sex)
 
 | Alt | Neu (mariposa) |
 |---|---|
-| `sjmisc::rec(x, rec = "1=1; 2,3=2; else=NA")` | `rec(data, var, rules = "1=1; 2,3=2; else=NA")` (Faktor-Ausgabe: `as_factor = TRUE`) |
+| `sjmisc::rec(x, rec = "1=1; 2,3=2; else=NA")` | `mutate(neu = rec(var, rules = "1=1; 2,3=2; else=NA"))` (Faktor-Ausgabe: `as_factor = TRUE`) |
 | `sjmisc::to_dummy()` | `to_dummy(data, var)` |
 | `dplyr::case_when()` (für simple Rekodierungen) | bleibt `case_when()` / für reine Wert-Mappings `recode_values()` |
 | `scale(x)` / `sjmisc::std()` | `std(data, var)` (gewichtsfähig) |
 | `sjmisc::center()` | `center(data, var)` |
 | `sjmisc::row_means(data, var:var)` | `row_means(data, var1, var2, …, min_valid = 10)` |
-| `psych::reverse.code()` | `rec(data, var, rules = "rev")` — Skalengrenzen aus den Wertelabels; ohne Labels `rules = "rev(1, 5)"` |
+| `psych::reverse.code()` | `mutate(neu = rec(var, rules = "rev"))` — Skalengrenzen aus den Wertelabels; ohne Labels `rules = "rev(1, 5)"` |
 
 **Wichtig.** `case_when()` bleibt die Standardform für Bedingungslogik. `case_match()` ist seit dplyr 1.2 *deprecated* — Nachfolger ist `recode_values()` mit identischer Formelschreibweise.
 
-**`rec()` seit 0.7.4.** `"rev"` polt anhand der Wertelabel-Spannweite um (nicht mehr anhand des beobachteten Bereichs) und spiegelt die Labels mit. Werte ohne passende Regel werden `NA` *mit Warnung* — `else=copy` oder `else=NA` immer explizit setzen. Neue Regelsyntax: Wertelisten `"1,2=1"`, explizite Grenzen `"rev(lo, hi)"`. Mehrere Variablen in einem Aufruf: `rec(pa29:pa35, rules = "rev", suffix = "r")`.
+**`rec()` seit 0.7.4.** `"rev"` polt anhand der Wertelabel-Spannweite um (nicht mehr anhand des beobachteten Bereichs) und spiegelt die Labels mit. Werte ohne passende Regel werden `NA` *mit Warnung* — `else=copy` oder `else=NA` immer explizit setzen. Neue Regelsyntax: Wertelisten `"1,2=1"`, explizite Grenzen `"rev(lo, hi)"`. Mehrere Variablen in einem Schritt: `mutate(across(pa29:pa35, ~ rec(.x, rules = "rev"), .names = "{.col}r"))`.
 
 **Folge für `pivot_longer()`.** Umgepolte Items tragen gespiegelte Labels; vor dem Stapeln labelled-Spalten mit `unlabel()` ablegen, sonst „conflicting value labels"-Warnungen.
 

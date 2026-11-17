@@ -532,19 +532,21 @@ Hier ein Ausschnitt der echten Datenpräp-Pipeline aus Kap. 5 (@sec-pipeline), d
 
 ```{r real-pipe, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>
-  rec(mm02, rules = "rev", suffix = "r") |>
-  rec(mm05, rules = "rev", suffix = "r") |>
+  mutate(
+    mm02r = rec(mm02, rules = "rev"),
+    mm05r = rec(mm05, rules = "rev")
+  ) |>
   mutate(
     islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
                              min_valid = 5)
   )
 ```
 
-Du liest: Datensatz einlesen → `mm02` umpolen → `mm05` umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.
+Du liest: Datensatz einlesen → `mm02` und `mm05` umpolen → Skala bilden. Ohne Pipe wäre das ein verschachteltes Etwas, das du nur mit Mühe rückwärts lesen könntest.
 
 In @fig-analyseplan steht jeder Schritt neben den Code-Zeilen, die ihn ausführen. Ab dem zweiten Schritt bekommt jede Funktion über `|>` den Datensatz aus dem Schritt davor.
 
-![Die Pipe aus dem Chunk, Schritt für Schritt: links der Code, rechts der Plan in Worten.](Bilder/figuren/k03-analyseplan.svg){#fig-analyseplan .lightbox fig-alt="Vier nummerierte Zeilen. 1: allbus <- read_spss(„ALLBUS2023.sav“) |>, rechts Datensatz einlesen. 2: rec(mm02, rules = „rev“, suffix = „r“) |>, rechts mm02 umpolen. 3: rec(mm05, rules = „rev“, suffix = „r“) |>, rechts mm05 umpolen. 4: mutate( islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5) ), rechts Skala bilden. Die Pipe-Zeichen |> sind grün."}
+![Die Pipe aus dem Chunk, Schritt für Schritt: links der Code, rechts der Plan in Worten.](Bilder/figuren/k03-analyseplan.svg){#fig-analyseplan .lightbox fig-alt="Drei nummerierte Schritte. 1: allbus <- read_spss(„ALLBUS2023.sav“) |>, rechts Datensatz einlesen. 2: mutate( mm02r = rec(mm02, rules = „rev“), mm05r = rec(mm05, rules = „rev“) ) |>, rechts mm02 und mm05 umpolen. 3: mutate( islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5) ), rechts Skala bilden. Die Pipe-Zeichen |> sind grün."}
 
 ## Drei typische Anfänger:innen-Fehler {#sec-top-fehler}
 

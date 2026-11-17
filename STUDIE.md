@@ -70,8 +70,8 @@ Die verbindliche Fassung steht in **`R/prep.R`**. Kap. 5 baut sie Schritt für S
 Die Schritte:
 
 1. `read_spss("ALLBUS2023.sav")` — fehlende Werte werden als *tagged NAs* gelesen.
-2. `mm02` und `mm05` mit `rec(rules = "rev", suffix = "r")` umpolen.
-3. Alle sieben `pa`-Items umpolen (5-stufig invers: `1 = stimme zu` → `5 = lehne ab`).
+2. `mm02` und `mm05` in `mutate()` mit `rec(rules = "rev")` zu `mm02r` und `mm05r` umpolen.
+3. Alle sieben `pa`-Items im selben `mutate()` zu `pa29r` bis `pa35r` umpolen (5-stufig invers: `1 = stimme zu` → `5 = lehne ab`).
 4. Skalen bilden: `islamophobie` (6 Items, `min_valid = 5`) und `populismus` (7 Items, `min_valid = 6`) mit `row_means()`.
 5. POMPS-Versionen `islamophobie_p` und `populismus_p` (0–100) mit `pomps()`.
 

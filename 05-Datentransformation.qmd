@@ -50,7 +50,7 @@ Am Ende des Kapitels hast du die zwei Skalen der Mini-Studie — **Islamfeindlic
 - Neue Variablen mit `mutate()` erzeugen.
 - Mit `case_when()`, `recode_values()` und `if_else()` Bedingungslogik schreiben.
 - Subgruppen-Aggregate mit `summarise(.by = ...)` rechnen.
-- Variablen mit `rec()` rekodieren — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum **Umpolen** (Reverse Coding).
+- Variablen mit `rec()` in `mutate()` rekodieren — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum **Umpolen** (Reverse Coding).
 - Dummy-Variablen für Regressionen mit `to_dummy()` erzeugen.
 - Variablen standardisieren (`std()`) und zentrieren (`center()`).
 - Zwei Datensätze mit `left_join()` zusammenführen — etwa Individualdaten und Kontextdaten.
@@ -232,14 +232,16 @@ Beide sind kleine, aber regelmäßig genutzte Werkzeuge — gerade beim Überset
 
 Stell dir vor, du hast die Bildungsangaben von 5.246 Personen in der Variable `educ`. Die Werte 1 bis 5 stehen für die Schulabschlüsse — von „ohne Abschluss" über Volks-/Hauptschule, mittlere Reife und Fachhochschulreife bis zur Hochschulreife; dazu kommen 6 („anderer Abschluss") und 7 („noch Schüler:in"). Für eine Regression willst du das aber nicht als sieben Kategorien haben, sondern gröber: niedrig / mittel / hoch. Du *rekodierst* die Variable.
 
-Das ist die häufigste Datenoperation in der Sozialforschung — und gleichzeitig eine der fehleranfälligsten. Ein vertauschter Wert, eine vergessene Kategorie, und deine ganze Analyse läuft auf einem falschen Maßstab. SPSS hat dafür den `RECODE`-Befehl mit einer eigenen kleinen Syntax. mariposas `rec()`-Funktion macht dasselbe, ist aber für tidyverse-Workflows gebaut: pipe-freundlich, behält Labels, und versteht eine kompakte **Regel-Syntax**, in der du eine ganze Umkodierung in einer einzigen Zeichenkette ausdrückst.
+Das ist die häufigste Datenoperation in der Sozialforschung — und gleichzeitig eine der fehleranfälligsten. Ein vertauschter Wert, eine vergessene Kategorie, und deine ganze Analyse läuft auf einem falschen Maßstab. SPSS hat dafür den `RECODE`-Befehl mit einer eigenen kleinen Syntax. mariposas `rec()`-Funktion macht dasselbe, ist aber für tidyverse-Workflows gebaut: Du setzt sie in `mutate()` ein, sie behält Labels und versteht eine kompakte **Regel-Syntax**, in der du eine ganze Umkodierung in einer einzigen Zeichenkette ausdrückst.
 
 **Syntax:**
 
 ```r
 data |>
-  rec(variable, rules = "1=1; 2:3=2; else=NA")
+  mutate(neu = rec(alt, rules = "1=1; 2:3=2; else=NA"))
 ```
+
+`rec()` bekommt die alte Variable und die Regel und gibt die umkodierten Werte zurück. `mutate()` legt sie unter dem Namen links vom `=` ab.
 
 Die Regel-Syntax im Überblick:
 
@@ -267,8 +269,10 @@ Regeln werden in Reihenfolge geprüft, die erste passende gewinnt. Gültige Wert
 
 ```{r rec-bildung}
 allbus |>
-  rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
-      as_factor = TRUE) |>
+  mutate(
+    educ = rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",
+               as_factor = TRUE)
+  ) |>
   count(educ)
 ```
 
@@ -276,7 +280,7 @@ Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…
 
 @fig-rec zerlegt die Regel in ihre Teile. Jeder Teil nimmt die Codes, die er nennt: `1:2=1 [niedrig]` fasst 1 und 2 zur Stufe niedrig zusammen, `else=NA` nimmt alles Übrige, auch die fehlenden Werte aus dem Import.
 
-![Die Regel von `rec()` in ihren Teilen. Jeder Teil macht aus einem oder mehreren Codes von `educ` eine Stufe des neuen Faktors.](Bilder/figuren/k05-rec.svg){#fig-rec .lightbox fig-alt="Oben der Code rec(educ, rules = „1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA“, as_factor = TRUE). Links der Turm educ, dbl+lbl, mit sieben blauen Steinen und ihren Aufklebern: 1 OHNE ABSCHLUSS, 2 VOLKS-,HAUPTSCHULE, 3 MITTLERE REIFE, 4 FACHHOCHSCHULREIFE, 5 HOCHSCHULREIFE, 6 ANDERER ABSCHLUSS, 7 NOCH SCHUELER, darunter ein leerer gestrichelter Stein. Klammern fassen die Steine zu Gruppen zusammen. Jede Gruppe führt über einen Teil der Regel und einen grünen Pfeil zu einem Stein des Faktors educ, fct, daneben die Zahl n: 1 und 2 über 1:2=1 [niedrig] zu niedrig, 982; 3 über 3=2 [mittel] zu mittel, 1639; 4 und 5 über 4:5=3 [hoch] zu hoch, 2472; 6, 7 und der leere Stein über else=NA zu einem leeren Stein, 153."}
+![Die Regel von `rec()` in ihren Teilen. Jeder Teil macht aus einem oder mehreren Codes von `educ` eine Stufe des neuen Faktors.](Bilder/figuren/k05-rec.svg){#fig-rec .lightbox fig-alt="Oben der Code mutate( educ = rec(educ, rules = „1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA“, as_factor = TRUE) ). Links der Turm educ, dbl+lbl, mit sieben blauen Steinen und ihren Aufklebern: 1 OHNE ABSCHLUSS, 2 VOLKS-,HAUPTSCHULE, 3 MITTLERE REIFE, 4 FACHHOCHSCHULREIFE, 5 HOCHSCHULREIFE, 6 ANDERER ABSCHLUSS, 7 NOCH SCHUELER, darunter ein leerer gestrichelter Stein. Klammern fassen die Steine zu Gruppen zusammen. Jede Gruppe führt über einen Teil der Regel und einen grünen Pfeil zu einem Stein des Faktors educ, fct, daneben die Zahl n: 1 und 2 über 1:2=1 [niedrig] zu niedrig, 982; 3 über 3=2 [mittel] zu mittel, 1639; 4 und 5 über 4:5=3 [hoch] zu hoch, 2472; 6, 7 und der leere Stein über else=NA zu einem leeren Stein, 153."}
 
 ### Spezial-Modi: Dichotomisieren und Quartile
 
@@ -284,19 +288,19 @@ Statt eine Regel-Kette zu schreiben, kannst du eine Variable in einem Aufruf am 
 
 ```{r rec-dicho}
 allbus |>
-  rec(age, rules = "dicho(50)", suffix = "_d") |>
+  mutate(age_d = rec(age, rules = "dicho(50)")) |>
   count(age_d)
 ```
 
-Hier wird `age_d` zu 0 für alle bis einschließlich 50 Jahre und zu 1 für alle über 50 — der Cut-Punkt selbst gehört also zur unteren Gruppe. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
+Hier wird `age_d` zu 0 für alle bis einschließlich 50 Jahre und zu 1 für alle über 50 — der Cut-Punkt selbst gehört also zur unteren Gruppe. Der Name `age_d` links vom `=` legt eine neue Variable an; das Original `age` bleibt erhalten.
 
 In @fig-dicho liegt der Schnitt zwischen 51 und 50. Die 23 Befragten ohne gültige Altersangabe (NICHT GENERIERBAR) bleiben auch in `age_d` fehlend.
 
-![`dicho(50)` teilt `age` in zwei Gruppen. Gezeigt sind die ersten fünf Werte, nach Größe sortiert; die 50 landet in der Gruppe 0.](Bilder/figuren/k05-dicho.svg){#fig-dicho .lightbox fig-alt="Oben der Code allbus |> rec(age, rules = „dicho(50)“, suffix = „_d“) |> count(age_d). Darunter zwei Türme, age und age_d. Die Steine von age, 72, 69, 51, 50 und 18, führen mit Pfeilen zu 1, 1, 1, 0 und 0. Eine orange gestrichelte Linie mit der Beschriftung dicho(50) trennt 51 und 50. Rechts eine Klammer um die drei Einsen mit n 2942 und über 50, eine Klammer um die zwei Nullen mit n 2281 und bis 50. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber NICHT GENERIERBAR, n 23."}
+![`dicho(50)` teilt `age` in zwei Gruppen. Gezeigt sind die ersten fünf Werte, nach Größe sortiert; die 50 landet in der Gruppe 0.](Bilder/figuren/k05-dicho.svg){#fig-dicho .lightbox fig-alt="Oben der Code allbus |> mutate(age_d = rec(age, rules = „dicho(50)“)) |> count(age_d). Darunter zwei Türme, age und age_d. Die Steine von age, 72, 69, 51, 50 und 18, führen mit Pfeilen zu 1, 1, 1, 0 und 0. Eine orange gestrichelte Linie mit der Beschriftung dicho(50) trennt 51 und 50. Rechts eine Klammer um die drei Einsen mit n 2942 und über 50, eine Klammer um die zwei Nullen mit n 2281 und bis 50. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber NICHT GENERIERBAR, n 23."}
 
 ```{r rec-quart}
 allbus |>
-  rec(age, rules = "quart", suffix = "_q") |>
+  mutate(age_q = rec(age, rules = "quart")) |>
   count(age_q)
 ```
 
@@ -326,13 +330,15 @@ Bevor du aus den sechs Items einen Mittelwert bildest, **musst** du `mm02` und `
 
 ```{r reverse}
 allbus <- allbus |>
-  rec(mm02, rules = "rev", suffix = "r") |>
-  rec(mm05, rules = "rev", suffix = "r")
+  mutate(
+    mm02r = rec(mm02, rules = "rev"),
+    mm05r = rec(mm05, rules = "rev")
+  )
 ```
 
 `"rev"` rechnet intern `hi + lo - x`. Die Skalengrenzen `lo` und `hi` nimmt mariposa aus den **Wertelabels** der gültigen Codes — bei den `mm`-Items also 1 („stimme gar nicht zu") und 7 („stimme voll und ganz zu"). Daraus wird `8 - x`, genau das gewünschte Umpolen. Die Wertelabels werden mitgespiegelt: In `mm02r` trägt jetzt die 7 das Label „stimme gar nicht zu". Fehlende Werte (`-9`, `-11`, …) bleiben fehlend und behalten ihren Missing-Typ.
 
-Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen. Die Gegenprobe ist eine Kreuztabelle aus Original und umgepolter Version — jede 1 muss zur 7 geworden sein, jede 2 zur 6 und so weiter:
+Im `mutate()` steht eine Zeile je Item. Die Namen `mm02r` und `mm05r` links vom `=` legen zwei neue Variablen an; die Originale `mm02` und `mm05` bleiben unverändert. Das ist die saubere Form — du verlierst nichts und kannst die Umpolung jederzeit nachvollziehen. Die Gegenprobe ist eine Kreuztabelle aus Original und umgepolter Version — jede 1 muss zur 7 geworden sein, jede 2 zur 6 und so weiter:
 
 ```{r reverse-check}
 allbus |> count(mm02, mm02r)
@@ -340,14 +346,14 @@ allbus |> count(mm02, mm02r)
 
 In @fig-umpolen ist jede Zeile der Kreuztabelle ein Paar aus altem und neuem Wert. Der Turm `mm02r` ist `mm02` auf dem Kopf, und die Aufkleber wandern mit: STIMME GAR NICHT ZU klebt jetzt an der 7. Die letzte Zeile fasst alle 1.842 fehlenden Werte zusammen; sie bleiben fehlend.
 
-![Die Kreuztabelle aus `count(mm02, mm02r)` als Steine: Aus 1 wird 7, aus 2 wird 6, die 4 bleibt. Die Wertelabels wandern mit.](Bilder/figuren/k05-umpolen.svg){#fig-umpolen .lightbox fig-alt="Oben der Code rec(mm02, rules = „rev“, suffix = „r“). Darunter zwei Türme, mm02 und mm02r, beide dbl+lbl, dazwischen grüne Pfeile mit der Beschriftung 8 - x. Links stehen von oben 1 bis 7, rechts 7 bis 1. Die 1 links und die 7 rechts tragen den Aufkleber STIMME GAR NICHT ZU, die 7 links und die 1 rechts den Aufkleber STIMME VOLL+GANZ ZU. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber TNZ: SPLIT. Rechts die Spalte n mit 954, 515, 494, 629, 350, 235, 227 und 1842. Darunter der Code allbus |> count(mm02, mm02r)."}
+![Die Kreuztabelle aus `count(mm02, mm02r)` als Steine: Aus 1 wird 7, aus 2 wird 6, die 4 bleibt. Die Wertelabels wandern mit.](Bilder/figuren/k05-umpolen.svg){#fig-umpolen .lightbox fig-alt="Oben der Code mutate(mm02r = rec(mm02, rules = „rev“)). Darunter zwei Türme, mm02 und mm02r, beide dbl+lbl, dazwischen grüne Pfeile mit der Beschriftung 8 - x. Links stehen von oben 1 bis 7, rechts 7 bis 1. Die 1 links und die 7 rechts tragen den Aufkleber STIMME GAR NICHT ZU, die 7 links und die 1 rechts den Aufkleber STIMME VOLL+GANZ ZU. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber TNZ: SPLIT. Rechts die Spalte n mit 954, 515, 494, 629, 350, 235, 227 und 1842. Darunter der Code allbus |> count(mm02, mm02r)."}
 
 **Kurz überlegen.** Die `pa`-Items, die du in @sec-skalen umpolst, haben die Werte 1 bis 5. Was macht `rules = "rev"` dort aus einer 2?
 
 ::: {.callout-tip title="Auflösung" collapse="true"}
 ```{r umpolen-loesung}
 allbus |>
-  rec(pa29, rules = "rev", suffix = "r") |>
+  mutate(pa29r = rec(pa29, rules = "rev")) |>
   count(pa29, pa29r)
 ```
 
@@ -363,11 +369,11 @@ Aus der 2 wird eine 4. `"rev"` rechnet `hi + lo - x`; mit den Grenzen 1 und 5 is
 :::
 
 ::: {.callout-note}
-**Hintergrund: `allbus <- allbus |> ...` überschreibt.** Wenn du `allbus <-` schreibst, ersetzt du das Tibble *im Speicher* um die rekodierten Spalten. Die Originaldatei `ALLBUS2023.sav` auf der Festplatte bleibt unangetastet — du kannst die Pipeline jederzeit neu starten. Möchtest du Zwischenstände parallel behalten, weist du einer neuen Variable zu (`allbus_mm <- allbus |> rec(...)`).
+**Hintergrund: `allbus <- allbus |> ...` überschreibt.** Wenn du `allbus <-` schreibst, ersetzt du das Tibble *im Speicher* um die rekodierten Spalten. Die Originaldatei `ALLBUS2023.sav` auf der Festplatte bleibt unangetastet — du kannst die Pipeline jederzeit neu starten. Möchtest du Zwischenstände parallel behalten, weist du einer neuen Variable zu (`allbus_mm <- allbus |> mutate(...)`).
 :::
 
 ::: {.callout-important}
-**mariposa-Tipp: Saubere Umpolung mit `suffix`.** Andere Pakete überschreiben gerne die Originalvariable beim Rekodieren. mariposa zwingt dich, dir bewusst zu sein, *was du tust* — Original bleibt, neue Variable bekommt einen klaren Namen mit Suffix. Wenn drei Wochen später ein:e Reviewer:in fragt „warum war Skalenwert für Fall 42 = 4.5?", kannst du den Schritt rekonstruieren.
+**mariposa-Tipp: Saubere Umpolung mit neuem Namen.** Steht links in `mutate()` ein neuer Name wie in `mm02r = rec(mm02, rules = "rev")`, entsteht eine neue Variable, und die Originalvariable bleibt erhalten. Schreibst du links denselben Namen (`mm02 = rec(mm02, rules = "rev")`), überschreibst du die Originalvariable. Mit neuem Namen kannst du den Schritt rekonstruieren, wenn drei Wochen später ein:e Reviewer:in fragt „warum war Skalenwert für Fall 42 = 4.5?".
 :::
 
 ::: {.callout-warning}
@@ -666,13 +672,15 @@ Damit am Ende `populismus` so funktioniert wie `islamophobie` (hoch = mehr von d
 
 ```{r scale-pop}
 allbus <- allbus |>
-  rec(pa29, rules = "rev", suffix = "r") |>
-  rec(pa30, rules = "rev", suffix = "r") |>
-  rec(pa31, rules = "rev", suffix = "r") |>
-  rec(pa32, rules = "rev", suffix = "r") |>
-  rec(pa33, rules = "rev", suffix = "r") |>
-  rec(pa34, rules = "rev", suffix = "r") |>
-  rec(pa35, rules = "rev", suffix = "r") |>
+  mutate(
+    pa29r = rec(pa29, rules = "rev"),
+    pa30r = rec(pa30, rules = "rev"),
+    pa31r = rec(pa31, rules = "rev"),
+    pa32r = rec(pa32, rules = "rev"),
+    pa33r = rec(pa33, rules = "rev"),
+    pa34r = rec(pa34, rules = "rev"),
+    pa35r = rec(pa35, rules = "rev")
+  ) |>
   mutate(
     populismus = row_means(pick(pa29r, pa30r, pa31r, pa32r, pa33r, pa34r, pa35r),
                            min_valid = 6)
@@ -683,13 +691,13 @@ allbus |> describe(populismus)
 
 @fig-polung stellt die Wertelabels nebeneinander. Bei `mm01` steht die Zustimmung beim höchsten Wert, bei `pa29` beim niedrigsten. Nach dem Umpolen steht sie auch bei `pa29r` beim höchsten Wert. Ohne diesen Schritt würde `populismus` das Gegenteil messen: Hohe Werte stünden für Ablehnung populistischer Aussagen.
 
-![Die Wertelabels von `mm01`, `pa29` und `pa29r`. Bei `pa29` steht die Zustimmung beim niedrigsten Wert; `rec()` mit `"rev"` dreht die Skala um.](Bilder/figuren/k05-polung.svg){#fig-polung .lightbox fig-alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code rec(pa29, rules = „rev“, suffix = „r“)."}
+![Die Wertelabels von `mm01`, `pa29` und `pa29r`. Bei `pa29` steht die Zustimmung beim niedrigsten Wert; `rec()` mit `"rev"` dreht die Skala um.](Bilder/figuren/k05-polung.svg){#fig-polung .lightbox fig-alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code mutate(pa29r = rec(pa29, rules = „rev“))."}
 
 ::: {.callout-important}
-**mariposa-Tipp: Mehrere Variablen in einem `rec()`-Aufruf.** Wir schreiben die sieben Umpolungen hier bewusst einzeln untereinander — so ist jeder Schritt der Pipeline sichtbar. `rec()` nimmt aber beliebig viele Variablen auf einmal, auch mit tidyselect-Helfern. Diese eine Zeile ist gleichwertig zu den sieben `rec()`-Zeilen oben und erzeugt ebenfalls `pa29r` bis `pa35r`:
+**mariposa-Tipp: Mehrere Variablen mit `across()` umpolen.** Wir schreiben die sieben Umpolungen hier bewusst einzeln untereinander — so ist jeder Schritt der Pipeline sichtbar. Kompakter geht es mit `across()`, das du bei `mutate()` kennengelernt hast. `~ rec(.x, rules = "rev")` wendet `rec()` auf jede Variable von `pa29` bis `pa35` an; `.x` steht dabei für die jeweilige Variable. `.names = "{.col}r"` legt die neuen Namen fest: `{.col}` ist der alte Name, dahinter kommt ein `r`. Diese eine Zeile ist gleichwertig zu den sieben `rec()`-Zeilen oben und erzeugt ebenfalls `pa29r` bis `pa35r`:
 
 ```{r rec-multi, eval=FALSE}
-allbus |> rec(pa29:pa35, rules = "rev", suffix = "r")
+allbus |> mutate(across(pa29:pa35, ~ rec(.x, rules = "rev"), .names = "{.col}r"))
 ```
 :::
 
@@ -755,15 +763,17 @@ Was du in diesem Kapitel Stück für Stück aufgebaut hast, lässt sich zu einer
 
 ```{r full-pipeline, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
-  rec(mm02, rules = "rev", suffix = "r") |>                       # <2>
-  rec(mm05, rules = "rev", suffix = "r") |>                       # <2>
-  rec(pa29, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa30, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa31, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa32, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa33, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa34, rules = "rev", suffix = "r") |>                       # <3>
-  rec(pa35, rules = "rev", suffix = "r") |>                       # <3>
+  mutate(
+    mm02r = rec(mm02, rules = "rev"),                             # <2>
+    mm05r = rec(mm05, rules = "rev"),                             # <2>
+    pa29r = rec(pa29, rules = "rev"),                             # <3>
+    pa30r = rec(pa30, rules = "rev"),                             # <3>
+    pa31r = rec(pa31, rules = "rev"),                             # <3>
+    pa32r = rec(pa32, rules = "rev"),                             # <3>
+    pa33r = rec(pa33, rules = "rev"),                             # <3>
+    pa34r = rec(pa34, rules = "rev"),                             # <3>
+    pa35r = rec(pa35, rules = "rev")                              # <3>
+  ) |>
   mutate(
     islamophobie   = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
                                min_valid = 5),                     # <4>
@@ -801,8 +811,10 @@ allbus |>
   var_label()
 # Items pe05 und pe07 sind positiv gepolt, müssen umgepolt werden.
 allbus <- allbus |>
-  rec(pe05, rules = "rev", suffix = "r") |>
-  rec(pe07, rules = "rev", suffix = "r") |>
+  mutate(
+    pe05r = rec(pe05, rules = "rev"),
+    pe07r = rec(pe07, rules = "rev")
+  ) |>
   mutate(
     polit_effizienz = row_means(pick(pe01, pe04, pe05r, pe06, pe07r, pe08),
                                 min_valid = 5)
@@ -817,8 +829,10 @@ Statt `educ` kannst du auch die international vergleichbare ISCED-Variable `isce
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```{r ex2-kap5-loesung, eval=FALSE}
 allbus |>
-  rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
-      as_factor = TRUE) |>
+  mutate(
+    isced97 = rec(isced97, rules = "1:2=1 [niedrig]; 3:4=2 [mittel]; 5:6=3 [hoch]",
+                  as_factor = TRUE)
+  ) |>
   count(isced97)
 ```
 :::
@@ -851,7 +865,7 @@ Wähle ein politik-/sozialwissenschaftliches Konstrukt, das dich interessiert (D
 
 - Du transformierst Variablen mit `mutate()`, `case_when()`, `recode_values()` und `if_else()`.
 - Du aggregierst Subgruppen mit `summarise(.by = ...)` und nutzt `n()`/`n_distinct()`.
-- Du rekodierst Variablen mit `rec()` — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum sauberen Umpolen.
+- Du rekodierst Variablen mit `rec()` in `mutate()` — vom einfachen Umkodieren über `"dicho"`/`"quart"` bis zum sauberen Umpolen.
 - Du erzeugst Dummy-Variablen mit `to_dummy()`.
 - Du standardisierst und zentrierst Variablen mit `std()` und `center()`.
 - Du verbindest Datensätze per Schlüssel mit `left_join()` (und kennst die Join-Familie).

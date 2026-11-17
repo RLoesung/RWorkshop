@@ -285,10 +285,10 @@ ERWARTET_KAP03 = {
                       "round(c(1.222, 2.345, 3.987), digits = 1)", "[1] 1.2 2.3 4.0", "Pflichtfeld",
                       "vorausgefüllt mit 0"],
     "k03-na": ["x", "1", "2", "NA", "4", "5", "mean", "na.rm = TRUE", "[1] NA", "[1] 3"],
-    "k03-analyseplan": ['allbus <- read_spss("ALLBUS2023.sav") |>', '  rec(mm02, rules = "rev", suffix = "r") |>',
-                        '  rec(mm05, rules = "rev", suffix = "r") |>', "  mutate(",
+    "k03-analyseplan": ['allbus <- read_spss("ALLBUS2023.sav") |>', "  mutate(",
+                        '    mm02r = rec(mm02, rules = "rev"),', '    mm05r = rec(mm05, rules = "rev")', "  ) |>",
                         "    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
-                        "min_valid = 5)", "Datensatz einlesen", "mm02", "mm05", "umpolen", "Skala bilden"],
+                        "min_valid = 5)", "Datensatz einlesen", "mm02 und mm05 umpolen", "Skala bilden"],
     "k03-vergleich": ["alter", "22", "45", "67", "18", "33", "alter >= 18", "alter <= 65", "&", "TRUE", "FALSE",
                       "alter >= 18 & alter <= 65", "[1]  TRUE  TRUE FALSE  TRUE  TRUE"],
     "k03-index": ["zahlen", "10", "20", "30", "40", "50", "zahlen > 25", "TRUE", "FALSE", "zahlen[zahlen > 25]",
@@ -394,6 +394,14 @@ class TestKap03(unittest.TestCase):
             texte = alle_texte(svg)
             for wert in ERWARTET_KAP03[name]:
                 self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_analyseplan_rec_in_mutate(self):
+        """rec() steht in mutate(); die beiden Umpolungen bilden einen Schritt, also drei Schritte."""
+        import kap03
+        svg = kap03.analyseplan().svg()
+        texte = alle_texte(svg)
+        self.assertNotIn("suffix", texte)
+        self.assertEqual([t for t, *_ in texte_pos(svg) if t in {"1", "2", "3", "4"}], ["1", "2", "3"])
 
 
 if __name__ == "__main__":

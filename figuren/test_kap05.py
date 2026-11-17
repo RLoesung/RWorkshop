@@ -30,17 +30,20 @@ ERWARTET_KAP05 = {
     "k05-rec": ["educ", "1", "2", "3", "4", "5", "6", "7", "OHNE ABSCHLUSS", "VOLKS-,HAUPTSCHULE", "MITTLERE REIFE",
                 "FACHHOCHSCHULREIFE", "HOCHSCHULREIFE", "ANDERER ABSCHLUSS", "NOCH SCHUELER", "1:2=1 [niedrig]",
                 "3=2 [mittel]", "4:5=3 [hoch]", "else=NA", "niedrig", "mittel", "hoch", "982", "1639", "2472", "153",
-                "<fct>"],
+                "<fct>", "mutate(",
+                '  educ = rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",',
+                "             as_factor = TRUE)"],
     "k05-dicho": ["age", "age_d", "72", "69", "51", "50", "18", "1", "0", "dicho(50)", "2942", "2281",
-                  "NICHT GENERIERBAR", "23", "bis 50", "über 50"],
+                  "NICHT GENERIERBAR", "23", "bis 50", "über 50",
+                  'allbus |> mutate(age_d = rec(age, rules = "dicho(50)")) |> count(age_d)'],
     "k05-umpolen": ["mm02", "mm02r", "1", "2", "3", "4", "5", "6", "7", "STIMME GAR NICHT ZU", "STIMME VOLL+GANZ ZU",
                     "TNZ: SPLIT", "954", "515", "494", "629", "350", "235", "227", "1842", "8 - x",
-                    "allbus |> count(mm02, mm02r)"],
+                    'mutate(mm02r = rec(mm02, rules = "rev"))', "allbus |> count(mm02, mm02r)"],
     "k05-skala": ["respid", "mm01", "mm02r", "mm03", "mm04", "mm05r", "mm06", "islamophobie", "1", "53", "120",
                   "5", "4", "2", "6", "3", "3.33", "3.4", "min_valid = 5", "6 gültig", "5 gültig", "4 gültig"],
     "k05-polung": ["mm01", "pa29", "pa29r", "STIMME GAR NICHT ZU", "STIMME VOLL+GANZ ZU", "STIMME VOLL ZU",
                    "LEHNE GANZ AB", "1", "5", "7", "hoch = islamophob", "niedrig = populistisch",
-                   "hoch = populistisch", 'rec(pa29, rules = "rev", suffix = "r")'],
+                   "hoch = populistisch", 'mutate(pa29r = rec(pa29, rules = "rev"))'],
     "k05-pomps": ["islamophobie", "populismus", "islamophobie_p", "populismus_p", "4.11", "3.4", "51.9", "60.0",
                   "0", "25", "50", "75", "100", "1", "5", "7"],
     "k05-pipeline": ["1", "2", "3", "4", "5", "6", "R/prep.R", 'source("R/prep.R")', "4.3", "5.3.3", "5.7.1",
@@ -108,6 +111,16 @@ class TestKap05(unittest.TestCase):
             texte = alle_texte(svg)
             for wert in ERWARTET_KAP05[name]:
                 self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_rec_in_mutate(self):
+        """Jede Code-Zeile mit rec(…) kommt ohne suffix aus; der neue Name steht links in mutate().
+        Der Funktionsname rec() allein (Zeitleiste in k05-pipeline) ist keine Code-Zeile."""
+        import kap05
+        for name, fn in kap05.FIGUREN.items():
+            for zeile in alle_texte(fn().svg()).split("\n"):
+                if "rec(" in zeile and zeile.strip() != "rec()":
+                    self.assertNotIn("suffix", zeile, name)
+                    self.assertRegex(zeile, r"\w+ = rec\(", name)
 
     def test_std_lineale(self):
         """Die Personen 50 und 69 stehen auf allen drei Linealen an derselben Stelle; nur die Skala ändert sich."""

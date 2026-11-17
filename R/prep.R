@@ -7,15 +7,17 @@
 # Voraussetzungen: tidyverse und mariposa sind im Setup-Chunk geladen.
 
 allbus <- read_spss("ALLBUS2023.sav") |>
-  rec(mm02, rules = "rev", suffix = "r") |>
-  rec(mm05, rules = "rev", suffix = "r") |>
-  rec(pa29, rules = "rev", suffix = "r") |>
-  rec(pa30, rules = "rev", suffix = "r") |>
-  rec(pa31, rules = "rev", suffix = "r") |>
-  rec(pa32, rules = "rev", suffix = "r") |>
-  rec(pa33, rules = "rev", suffix = "r") |>
-  rec(pa34, rules = "rev", suffix = "r") |>
-  rec(pa35, rules = "rev", suffix = "r") |>
+  mutate(
+    mm02r = rec(mm02, rules = "rev"),
+    mm05r = rec(mm05, rules = "rev"),
+    pa29r = rec(pa29, rules = "rev"),
+    pa30r = rec(pa30, rules = "rev"),
+    pa31r = rec(pa31, rules = "rev"),
+    pa32r = rec(pa32, rules = "rev"),
+    pa33r = rec(pa33, rules = "rev"),
+    pa34r = rec(pa34, rules = "rev"),
+    pa35r = rec(pa35, rules = "rev")
+  ) |>
   mutate(
     islamophobie   = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
                                min_valid = 5),

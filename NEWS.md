@@ -2,6 +2,10 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — `rec()` innerhalb von `mutate()`
+
+- `rec()` steht im ganzen Buch jetzt innerhalb von `mutate()`, etwa `mutate(mm02r = rec(mm02, rules = "rev"))`. Der neue Name links vom `=` ersetzt das Argument `suffix`; mehrere Variablen stehen in einem `mutate()` mit einer Zeile je Variable. Das betrifft Kap. 3, 5, 6, 7 und 9, `R/prep.R` und fünf Abbildungen; die Ergebnisse im Buch bleiben gleich.
+
 ## 17. November 2026 — Abbildungen mit Bausteinen: Erweiterung auf alle Kapitel
 
 - 31 weitere Abbildungen in derselben Bildsprache, jetzt in allen Kapiteln: Kap. 1 (2), Kap. 2 (3), Kap. 3 (5), Kap. 4 (2), Kap. 5 (6), Kap. 6 (4), Kap. 7 (1), Kap. 8 (3) und Kap. 9 (5). Zusammen hat das Buch 68 Bausteine-Abbildungen.

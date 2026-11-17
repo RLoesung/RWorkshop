@@ -319,14 +319,14 @@ def _codezeile(t, size):
 
 
 def analyseplan():
-    s = Canvas(7.7, 3.0)
+    s = Canvas(7.7, 3.2)
     size = 11
     lh = size * 1.45 / 72
     schritte = [(['allbus <- read_spss("ALLBUS2023.sav") |>'], [R("Datensatz einlesen", size=11.5, bold=True)]),
-                (['  rec(mm02, rules = "rev", suffix = "r") |>'],
-                 [R("mm02", font=MONO, size=11, bold=True), R(" umpolen", size=11.5, bold=True)]),
-                (['  rec(mm05, rules = "rev", suffix = "r") |>'],
-                 [R("mm05", font=MONO, size=11, bold=True), R(" umpolen", size=11.5, bold=True)]),
+                (["  mutate(", '    mm02r = rec(mm02, rules = "rev"),', '    mm05r = rec(mm05, rules = "rev")',
+                  "  ) |>"],
+                 [R("mm02", font=MONO, size=11, bold=True), R(" und ", size=11.5, bold=True),
+                  R("mm05", font=MONO, size=11, bold=True), R(" umpolen", size=11.5, bold=True)]),
                 (["  mutate(", "    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
                   "                             min_valid = 5)", "  )"], [R("Skala bilden", size=11.5, bold=True)])]
     eyebrow(s, 0.55, 0.12, 3.0, "DIE PIPE", size=10)
