@@ -1,0 +1,536 @@
+/*-- scss:defaults --*/
+
+// Variante H · Baukasten, ausgebaut. Baut auf F (theme.scss) auf; hier nur Zusätze.
+$h-ink: #1E2D3C;
+$grid-docked-sidebar-width: 300px;
+
+/*-- scss:rules --*/
+
+$rund: "Fredoka", "Nunito", "Arial Rounded MT Bold", system-ui, sans-serif;
+$warm: #8A7A6E;
+$check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3 3 7-7' fill='none' stroke='%231E2D3C' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+@mixin zwei-noppen($breite: 7px, $hoehe: 5px, $rand: 5px) {
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    top: -$hoehe;
+    width: $breite;
+    height: $hoehe;
+    background: inherit;
+    border-radius: 2px 2px 0 0;
+  }
+  &::before { left: $rand; }
+  &::after  { right: $rand; }
+}
+
+// 1 · Luft: Rhythmus von Absätzen und Überschriften ----------------------------------------------
+main.content p { margin-bottom: 1.15rem; }
+h2 { margin-top: 3.4rem; margin-bottom: 1.2rem; line-height: 1.3; }
+h3 { margin-top: 2.4rem; margin-bottom: 0.8rem; line-height: 1.35; }
+h4 { margin-top: 1.9rem; margin-bottom: 0.6rem; }
+h2.anchored:has(> .header-section-number) {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+h2 .header-section-number {
+  flex: none;
+  margin: 5px 0 0 0 !important;
+  padding: 0.1em 0.45em !important;
+  font-size: 0.8em;
+  line-height: 1.35;
+}
+
+// 2 · Kapitelkopf: Stein und Titel nebeneinander, Titel bricht neben dem Stein um ----------------
+#title-block-header.quarto-title-block { margin: 0.4rem 0 2.6rem; }
+h1.title .quarto-section-identifier,
+h1.kapitelkopf {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+h1.title .quarto-section-identifier { font-size: 0; }
+h1.title .chapter-title,
+h1.kapitelkopf .chapter-title {
+  font-size: 2.35rem;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+}
+h1.title .chapter-number,
+h1.kapitelkopf .chapter-number {
+  flex: none;
+  font-size: 2rem;
+  line-height: 1.25;
+  min-width: 1.9em;
+  margin: 10px 0 0 0 !important;
+  padding: 0.12em 0.4em !important;
+}
+h1.kapitelkopf { margin: 0.6rem 0 2.2rem; }
+
+// Leitfrage in der Sprechblase: ruhigerer Zeilenabstand
+main.content > blockquote:first-of-type,
+main.content > section.level1 > blockquote:first-of-type {
+  font-size: 1.16rem;
+  line-height: 1.45;
+  margin-top: 0;
+  margin-bottom: 2.6rem;
+  padding: 1.1rem 1.4rem;
+}
+
+// 3 · Bausteine-Leiste über dem Kapiteltitel ----------------------------------------------------
+nav.leiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0.2rem 0 1.8rem;
+  padding-top: 8px;
+}
+.leiste-stein {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 21px;
+  border-radius: 4px;
+  font: 600 0.72rem/1 $rund;
+  color: $h-ink !important;
+  text-decoration: none !important;
+  opacity: 0.45;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  @include zwei-noppen(7px, 5px, 5px);
+  &:hover, &:focus-visible { opacity: 1; transform: translateY(-2px); }
+  &.aktiv {
+    width: 38px;
+    height: 26px;
+    font-size: 0.85rem;
+    opacity: 1;
+    transform: translateY(-3px);
+    box-shadow: 0 3px 0 rgba(30, 45, 60, 0.18);
+  }
+}
+$leiste: (0: #FFE7A3, 1: #BFE3F7, 2: #CDEFD9, 3: #DCD6F8, 4: #FFD2BC, 5: #F7C9DA, 6: #C6ECE8, 7: #FFE7A3, 8: #E6D3F2, 9: #D8EBC4);
+@each $n, $c in $leiste { .leiste-stein.k#{$n} { background: $c; } }
+
+// 4 · Seitenleiste: Titel auf zwei Zeilen, mehr Zeilenabstand ------------------------------------
+.sidebar-header { padding-top: 1.1rem; }
+.sidebar-title { font-size: 1rem !important; line-height: 1.2; margin-bottom: 0.4rem; }
+.sidebar-title .titel-eins { display: block; font-family: $rund; font-weight: 600; font-size: 1.45rem; color: $h-ink; }
+.sidebar-title .titel-zwei { display: block; font-family: $rund; font-weight: 500; font-size: 1.02rem; color: $warm; margin-top: 0.2rem; }
+.sidebar-menu-container ul > li.sidebar-item { margin-bottom: 0.25rem; }
+.sidebar-item-container .sidebar-link { padding: 0.32rem 0.5rem !important; line-height: 1.32; }
+.sidebar-menu-container .menu-text:has(.chapter-number) { gap: 0.55em; }
+.sidebar-menu-container ul > li:nth-child(1) .chapter-number { background: #FFE7A3; }
+
+// 5 · Startseite: Titelkarte mit Cover -----------------------------------------------------------
+body.startseite #title-block-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  column-gap: 2.6rem;
+  align-items: center;
+  background: #FFF4E8;
+  border-radius: 28px;
+  padding: 2.4rem 2.6rem 2.2rem;
+  margin: 1.2rem 0 3.4rem;
+  > * { grid-column: 1; }
+  .start-cover { grid-column: 2; grid-row: 1 / span 3; }
+  .start-cover img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 12px 26px rgba(30, 45, 60, 0.16);
+    transform: rotate(2.5deg);
+  }
+  h1.title { font-size: 2.75rem; line-height: 1.1; margin: 0 0 1.1rem; }
+  h1.title .titel-zwei { display: block; font-size: 0.6em; font-weight: 500; color: #B0607E; margin-top: 0.45rem; }
+  .subtitle { font-size: 1.18rem; line-height: 1.5; margin: 0 0 1rem; color: #4A4038; }
+  .description { font-size: 0.98rem; line-height: 1.55; color: #6A625A; margin-bottom: 1.3rem; }
+  .quarto-title-meta { margin-top: 0; padding-top: 1rem; border-top: 2px dashed #F1DFC1; }
+}
+
+// Kapitelübersicht auf der Startseite
+.kapitel-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.3rem 1.1rem;
+  margin: 1.8rem 0 2.6rem;
+}
+.kapitel-karte {
+  position: relative;
+  display: block;
+  padding: 1.5rem 1.15rem 1.05rem;
+  background: #FFFFFF;
+  border: 2.5px solid var(--kk);
+  border-radius: 18px;
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  &:hover, &:focus-visible { transform: translateY(-3px); box-shadow: 0 6px 0 var(--kk); }
+  .nr {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1em;
+    height: 1.65em;
+    border-radius: 6px;
+    background: var(--kk);
+    box-shadow: 0 3px 0 var(--kk2);
+    font: 600 1.05rem/1 $rund;
+    @include zwei-noppen(8px, 6px, 6px);
+  }
+  .titel { font: 600 1.08rem/1.3 $rund; color: $h-ink; margin: 0.8rem 0 0.55rem; }
+  ul { margin: 0; padding-left: 1.05rem; font-size: 0.86rem; line-height: 1.45; color: #5A5048; }
+  li { margin: 0.2rem 0; }
+}
+
+// 6 · Kästen nach Typ ------------------------------------------------------------------------------
+.callout.kasten .callout-icon-container { display: none; }
+.callout.kasten .callout-header { padding-top: 0.95rem !important; align-items: center; }
+.callout.kasten .callout-title-container { line-height: 1.4; }
+.kasten-label {
+  display: inline-block;
+  margin-right: 0.6rem;
+  padding: 0.4em 0.75em;
+  border-radius: 999px;
+  font: 600 0.76rem/1 $rund;
+  letter-spacing: 0.03em;
+  color: $h-ink;
+  vertical-align: 2px;
+}
+.kasten-titel { font-family: $rund; font-weight: 600; font-size: 1.04rem; color: $h-ink; }
+.kasten-titel code { font-size: 0.85em; }
+
+$kaesten: (
+  hintergrund: (#EAF5FC, #BFE3F7, hinweis),
+  journal:     (#FFF7DE, #FFE7A3, journal),
+  reviewer:    (#EEF1F6, #D7DEEA, hinweis),
+  spss:        (#E6F6F3, #C6ECE8, spss),
+  mariposa:    (#F1EFFC, #DCD6F8, mariposa),
+  vorsicht:    (#FFF0E8, #FFD2BC, vorsicht),
+  tipp:        (#EDF8F1, #CDEFD9, tipp)
+);
+@each $name, $werte in $kaesten {
+  .callout.kasten.kasten-#{$name} {
+    background: nth($werte, 1) !important;
+    .kasten-label { background: nth($werte, 2); }
+  }
+}
+.callout.kasten.kasten-hintergrund::after { background-image: $fig-hinweis !important; }
+.callout.kasten.kasten-journal::after     { background-image: $fig-journal !important; }
+.callout.kasten.kasten-reviewer::after    { background-image: $fig-hinweis !important; }
+.callout.kasten.kasten-spss::after        { background-image: $fig-spss !important; }
+.callout.kasten.kasten-mariposa::after    { background-image: $fig-mariposa !important; }
+.callout.kasten.kasten-vorsicht::after    { background-image: $fig-vorsicht !important; }
+.callout.kasten.kasten-tipp::after        { background-image: $fig-tipp !important; }
+
+// Forschungsjournal: Notizzettel mit Klebestreifen
+.callout.kasten.kasten-journal::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 36px;
+  width: 96px;
+  height: 22px;
+  background: rgba(247, 201, 218, 0.8);
+  border-radius: 2px;
+  transform: rotate(-3deg);
+}
+.callout.kasten.kasten-journal { margin-top: 2.4rem; }
+
+// Übung mit angehängter Lösung
+.callout.uebung {
+  background: #FFFFFF !important;
+  border: 2.5px solid #FFE7A3 !important;
+  box-shadow: none;
+}
+.callout.uebung::after { background-image: $fig-uebung !important; }
+.uebung-nr {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2em;
+  height: 1.7em;
+  margin: 6px 0.7rem 0 0;
+  padding: 0 0.4em;
+  border-radius: 6px;
+  background: #FFE7A3;
+  box-shadow: 0 3px 0 #EFC867;
+  font: 600 1rem/1 $rund;
+  vertical-align: middle;
+  @include zwei-noppen(8px, 6px, 6px);
+}
+.uebung-typ {
+  display: inline-block;
+  margin-left: 0.7rem;
+  padding: 0.38em 0.7em;
+  border-radius: 999px;
+  background: #F4EFE6;
+  color: #6A5E52;
+  font: 600 0.74rem/1 $rund;
+  vertical-align: 2px;
+}
+.callout.uebung.mit-loesung {
+  margin-bottom: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+.callout.loesung.angehaengt {
+  margin-top: 0 !important;
+  margin-bottom: 2.2rem !important;
+  background: #FFFBEC !important;
+  border: 2.5px solid #FFE7A3 !important;
+  border-top: 2px dashed #FFE7A3 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  box-shadow: none;
+}
+
+// Kurz überlegen: Denkpause mit Figur
+.denkpause {
+  position: relative;
+  min-height: 128px;
+  margin: 2.2rem 0;
+  padding: 1rem 112px 1.1rem 1.25rem;
+  background: #FCEDF3;
+  border-radius: 18px;
+  &::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    bottom: 10px;
+    width: 76px;
+    height: 87px;
+    background: $fig-denken no-repeat center / contain;
+  }
+  .kasten-label { background: #F7C9DA; }
+  .denkpause-kopf { margin-bottom: 0.55rem; }
+  > p { margin-bottom: 0.75rem; font-size: 1.02rem; }
+  .callout.aufloesung {
+    margin: 0.4rem 0 0 !important;
+    background: #FFFFFF !important;
+    border-radius: 12px !important;
+    box-shadow: none;
+  }
+}
+
+// 7 · Lernziele, Selbstcheck, Weiterführend als Karten ------------------------------------------
+section.karte {
+  margin: 2.8rem 0;
+  padding: 0.3rem 1.6rem 1.1rem;
+  background: #FFFFFF;
+  border: 2.5px solid var(--k);
+  border-radius: 22px;
+  > h2 { margin-top: 1.1rem; font-size: 1.3rem; }
+}
+section.lernziele ul, section.selbstcheck ul { list-style: none; padding-left: 0; }
+section.lernziele li, section.selbstcheck li { position: relative; padding-left: 2.1rem; margin: 0.5rem 0; }
+section.lernziele li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 19px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--k);
+  box-shadow: 0 2px 0 var(--k2);
+}
+section.lernziele li::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: calc(0.55em - 4px);
+  width: 9px;
+  height: 4px;
+  border-radius: 2px 2px 0 0;
+  background: var(--k);
+}
+section.selbstcheck li { cursor: pointer; border-radius: 8px; transition: background 0.15s; }
+section.selbstcheck li:hover { background: var(--k-hell); }
+section.selbstcheck li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.28em;
+  width: 21px;
+  height: 21px;
+  border-radius: 6px;
+  border: 2.5px solid var(--k2);
+  background: #FFFFFF no-repeat center / 14px;
+}
+section.selbstcheck li.erledigt::before { background-color: var(--k); background-image: $check; }
+section.selbstcheck li.erledigt { color: #7A6E64; }
+section.selbstcheck > h2::after {
+  content: "zum Abhaken";
+  margin-left: 0.7rem;
+  font: 500 0.78rem/1 $rund;
+  color: $warm;
+}
+
+// 8 · Code und Ausgabe als Einheit -----------------------------------------------------------------
+.cell:has(> .code-copy-outer-scaffold + .cell-output) div.sourceCode {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.code-copy-outer-scaffold + .cell-output { position: relative; }
+.code-copy-outer-scaffold + .cell-output pre {
+  margin-top: 0;
+  background: #FBFAFE;
+  border: 2px solid #E4DDF3;
+  border-top: 2px dashed #E4DDF3;
+  border-radius: 0 0 14px 14px;
+}
+.code-copy-outer-scaffold + .cell-output::before {
+  content: "Ausgabe";
+  position: absolute;
+  top: 0.55rem;
+  right: 0.9rem;
+  font: 600 0.68rem/1 $rund;
+  letter-spacing: 0.04em;
+  color: #8A80B0;
+}
+
+// 9 · Blättern zwischen Kapiteln ------------------------------------------------------------------
+.page-navigation { margin-top: 3.6rem; gap: 1rem; }
+.page-navigation .pagination-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.1rem;
+  background: #FFFFFF;
+  border: 2.5px solid #EFE6DA;
+  border-radius: 16px;
+  font-family: $rund;
+  font-weight: 600;
+  color: $h-ink !important;
+  text-decoration: none !important;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  &:hover { transform: translateY(-2px); border-color: #E39AB6; }
+  .chapter-number {
+    display: inline-block;
+    min-width: 1.7em;
+    text-align: center;
+    border-radius: 5px;
+    background: #FFE7A3;
+  }
+}
+
+// Lesefortschritt
+.lesefortschritt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  width: 0;
+  height: 4px;
+  background: var(--k2);
+  border-radius: 0 2px 2px 0;
+  pointer-events: none;
+}
+
+// Schmale Bildschirme ------------------------------------------------------------------------------
+@media (max-width: 767px) {
+  body.startseite #title-block-header {
+    grid-template-columns: 1fr;
+    padding: 1.6rem 1.4rem;
+    .start-cover { grid-column: 1; grid-row: auto; max-width: 170px; margin-top: 1.4rem; }
+    h1.title { font-size: 2.1rem; }
+  }
+  h1.title .chapter-title, h1.kapitelkopf .chapter-title { font-size: 1.8rem; }
+  h1.title .chapter-number, h1.kapitelkopf .chapter-number { font-size: 1.6rem; }
+  .callout.kasten, .callout.uebung { padding-right: 0; &::after { display: none; } }
+  .denkpause { padding-right: 1.25rem; &::after { display: none; } }
+  .leiste-stein { width: 26px; }
+}
+
+// Quelle unter dem Zitat in der Sprechblase
+.blockquote .quelle {
+  display: block;
+  margin-top: 0.55rem;
+  font-family: "Nunito", system-ui, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #8A7A6E;
+}
+
+// Nachbesserungen nach der ersten Durchsicht ----------------------------------------------------
+// Cover in der Titelkarte in voller Spaltenbreite
+body.startseite .start-cover img.quarto-cover-image {
+  float: none;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+// Figur sitzt oben auf dem Kastenrand; der Text behält die volle Breite
+.callout.kasten, .callout.uebung, .denkpause {
+  padding-right: 0;
+  min-height: 0;
+  margin-top: 3.4rem;
+}
+.denkpause { padding-right: 1.25rem; }
+.callout.kasten::after, .callout.uebung::after, .denkpause::after {
+  top: -57px !important;
+  bottom: auto !important;
+  right: 22px !important;
+  width: 66px !important;
+  height: 65px !important;
+}
+.callout.kasten .callout-header, .callout.uebung .callout-header, .denkpause .denkpause-kopf { padding-right: 96px; }
+.callout.kasten.kasten-journal { margin-top: 3.4rem; }
+h2 .h-text { min-width: 0; }
+@media (max-width: 767px) {
+  main table.table { display: block; max-width: 100%; overflow-x: auto; }
+}
+.page-navigation .nav-page { min-width: 0; }
+.page-navigation .nav-page-text { white-space: normal; }
+@media (max-width: 767px) {
+  p code:not(.sourceCode), li code:not(.sourceCode), td code:not(.sourceCode), li strong { overflow-wrap: anywhere; }
+  h1.title .chapter-title, h1.kapitelkopf .chapter-title { font-size: 1.6rem; hyphens: auto; overflow-wrap: anywhere; min-width: 0; }
+  .page-navigation { flex-direction: column; align-items: stretch; }
+  .page-navigation .pagination-link { display: flex; width: 100%; }
+  .page-navigation .nav-page-next { text-align: left; }
+}
+@media (max-width: 767px) {
+  p code:not(.sourceCode), li code:not(.sourceCode), td code:not(.sourceCode) { white-space: pre-wrap !important; }
+  mjx-container, .math.inline { max-width: 100%; overflow-x: auto; display: inline-block; vertical-align: middle; }
+}
+@media (max-width: 767px) { main code:not(.sourceCode) { overflow-wrap: anywhere; white-space: pre-wrap; } }
+@media (max-width: 767px) { nav.leiste { gap: 5px; } .leiste-stein { width: 24px !important; } .leiste-stein.aktiv { width: 30px !important; } }
+
+// Seitenleiste eingepasst (Rückmeldung 17.11.) ------------------------------------------------------
+// Abstände in rem, weil der Eintrag selbst font-size 0 hat (em wäre 0)
+.sidebar-menu-container .menu-text:has(.chapter-number) {
+  align-items: baseline;
+  gap: 0;
+  > span { font-size: 0.88rem; }
+  .chapter-number {
+    flex: none;
+    min-width: 1.75rem;
+    margin: 0 0.5rem 0 0;
+    padding: 0.05rem 0.3rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+  .chapter-title {
+    min-width: 0;
+    line-height: 1.32;
+    hyphens: manual;
+    overflow-wrap: normal;
+  }
+}
+.sidebar-menu-container ul > li.sidebar-item { margin-bottom: 0.1rem; }
+.sidebar-item-container .sidebar-link { padding: 0.3rem 0.4rem !important; }
+#quarto-sidebar .sidebar-link:not(.active):hover,
+#quarto-sidebar .sidebar-link:not(.active):focus-visible {
+  color: $h-ink !important;
+  background: rgba(30, 45, 60, 0.05);
+}
+#quarto-sidebar .sidebar-link:not(.active) { color: #3A4652; }
+
+// Keine Silbentrennung in der Leiste: Kapitelnamen brechen nur an Wortgrenzen
+.sidebar-menu-container .menu-text .chapter-title { hyphens: manual; overflow-wrap: normal; }

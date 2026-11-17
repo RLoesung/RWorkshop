@@ -75,6 +75,8 @@ Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`.
 **Kurz überlegen** (Absatz plus eingeklappter `.callout-tip`)
 > Eine Denkpause an einer Stelle, an der Lernende das Ergebnis selbst vorhersagen können. Ein Absatz beginnt mit **Kurz überlegen.** und stellt eine Frage zu einem *neuen* Fall, den die Abbildung daneben nicht zeigt. Direkt darunter folgt die Auflösung als `::: {.callout-tip title="Auflösung" collapse="true"}` mit Text und Code, ohne Bild. Sparsam, höchstens eine pro Abschnitt (derzeit 14).
 
+**Aussehen im Buch.** Im Design „Baukasten“ liest `seite.html` den fetten Einstieg eines Kastens und setzt ihn als eigenen Kastentyp mit Begleitfigur. Erkannt werden die Einstiege Hintergrund, Forschungshintergrund, Konzept, Forschungsjournal, Reviewer-Hinweis, SPSS → R, mariposa-Tipp, Vorsicht, Tipp und Faustregel, außerdem Übungen (`title="Übung …"`), Lösungen und „Kurz überlegen“ mit Auflösung. Ein neuer Einstieg gehört in die Liste `TYPEN` in `seite.html`, sonst bekommt der Kasten das schlichte Standardaussehen. Ohne JavaScript bleibt das Buch lesbar, nur schlichter.
+
 **Verbot.** Keine weiteren Callout-Typen ohne Eintrag hier. Wildwuchs vermeiden.
 
 ---

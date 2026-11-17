@@ -36,7 +36,7 @@ Im Buch werden genau diese Begriffe bisher nur mit Text und Code erklärt: Kap. 
 
 ## 3 — Rahmenbedingungen
 
-- Das Buch ist ein Quarto-Buch (Theme cosmo, nur hell), ausgegeben nach `docs/`, Text in Systemschrift ohne Serifen, Textspalte etwa 800 px breit.
+- Das Buch ist ein Quarto-Buch (Theme cosmo mit dem Design „Baukasten“ aus `theme.scss` und `zusatz.scss`, nur hell), ausgegeben nach `docs/`, Text in der Webschrift Nunito, Textspalte bei großen Fenstern etwa 850 px breit.
 - Die Folien entstehen mit python-pptx und den Helfern aus Methoden Ib (`_build_folien*.py`, außerhalb dieses Repositorys). Ihre Grafiken bestehen aus PowerPoint-Formen mit Klick-Animationen.
 - `STYLE.md` §4 verbietet neue Callout-Typen ohne Eintrag dort.
 - Abschnittsnummern dürfen sich nicht verschieben. Neue Überschriften nur, wo sie nichts verschieben; Texte zur Bildsprache kommen deshalb in vorhandene Abschnitte oder Callouts.
@@ -120,7 +120,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 ### 5.4 Aussehen
 
 - Farben exakt wie auf den Folien (Palette aus `_build_folien.py` und `_build_folien_s4.py`, in `lego.py` übernommen).
-- Schrift: Das Buch nutzt die Webschrift Source Sans Pro; ein als Bild eingebundenes SVG kann sie nicht nachladen. Beschriftungen bekommen deshalb die Schriftliste `'Source Sans Pro', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif`, Code `Menlo, Consolas, 'DejaVu Sans Mono', monospace`. Keine eingebetteten Schriften. Text bleibt Text, damit er scharf zoomt. *(Entscheidung des Umsetzers)*
+- Schrift: Ein als Bild eingebundenes SVG kann die Webschrift des Buchs nicht nachladen (bis November 2026 Source Sans Pro, seit dem Design „Baukasten“ Nunito). Beschriftungen bekommen deshalb die Schriftliste `'Source Sans Pro', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif`, Code `Menlo, Consolas, 'DejaVu Sans Mono', monospace`. Keine eingebetteten Schriften. Text bleibt Text, damit er scharf zoomt. *(Entscheidung des Umsetzers)*
 - Größe: Folien sind 13,33 Zoll breit; im Buch wäre so ein Bild winzig. Jede Abbildung wird deshalb für die Textspalte neu angeordnet: höchstens 8 Zoll breit, kleinste Schrift 10 pt. Die Bausteine und ihre Zeichenbefehle bleiben, die Anordnung ändert sich.
 - Handy: Keine zweite Fassung, die Breite bleibt bei höchstens 8 Zoll (Entscheidung von Yannick, 17.11.2026). Im Hochformat (375 px) ist eine Abbildung etwa 324 px breit; gut lesbar ist sie dann erst mit Zwei-Finger-Zoom oder im Querformat. Jede Abbildung hat die Klasse `.lightbox` und öffnet sich per Antippen größer.
 - Klickfolgen werden zu nummerierten Schritten nebeneinander oder untereinander (grüne Nummernpunkte wie auf den Folien).

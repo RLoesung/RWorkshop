@@ -2,6 +2,13 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 17. November 2026 — Neues Aussehen: Design „Baukasten“
+
+- Das Buch hat ein neues Aussehen in Pastelltönen mit runden Schriften (Fredoka für Überschriften, Nunito für den Text). Jedes Kapitel hat eine eigene Steinfarbe, oben auf jeder Kapitelseite steht eine Leiste mit einem Stein je Kapitel, und ein schmaler Balken zeigt, wie weit du im Kapitel bist.
+- Die Kästen sind nach ihrer Art gesetzt (Hintergrund, SPSS → R, mariposa-Tipp, Vorsicht, Tipp, Forschungsjournal und weitere), jeweils mit einer kleinen Begleitfigur aus einem Baustein. Übungen, Lösungen und „Kurz überlegen“ stehen auf eigenen Karten. Die Punkte unter „Was du jetzt weißt“ lassen sich abhaken; das merkt sich nur der eigene Browser.
+- Das Vorwort beginnt mit einem Satz nach John Chambers über Objekte und Funktionsaufrufe, die Forschungsfrage steht jetzt im ersten Absatz. Darunter zeigt es alle Kapitel als Karten mit je zwei Lernzielen. Das Buch hat ein Cover.
+- Die Schriften kommen von Google Fonts. Die Begleitfiguren erzeugt `figuren/begleiter.py`, die Kapitelkarten `figuren/kapitelkarten.py`; das Aussehen der Kästen steuert `seite.html` (`STYLE.md` §4).
+
 ## 17. November 2026 — Kap. 1 mit Quarto-Dokumenten, neue Bildschirmfotos
 
 - Kap. 1 arbeitet von Anfang an mit einem Quarto-Dokument statt mit einem R-Skript, so wie der Workshop. Der Abschnitt „Quarto-Dokument“ ersetzt den Abschnitt „R-Skript“: Das erste Beispiel steht in einem Chunk in `01-erste_schritte.qmd`, ein Absatz sagt, was in die Konsole und was ins Dokument gehört, und ein Satz erklärt, was ein R-Skript ist. Lernziel, Tastenkürzel, Checkliste, Übung 2 und Zusammenfassung sind angepasst, ebenso der Abschnitt „Dein erstes `.qmd`“ in Kap. 2 und zwei Sätze im Vorwort.

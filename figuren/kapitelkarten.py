@@ -1,0 +1,60 @@
+"""Kapitelkarten im Vorwort (Design „Baukasten“): je Kapitel Nummer, Titel und die ersten zwei Lernziele.
+
+Baut den Abschnitt „Die Kapitel im Überblick“ in index.qmd aus den Kapitel-Dateien neu. Nach einer Änderung an
+Kapiteltiteln oder Lernzielen aufrufen: python3 figuren/kapitelkarten.py
+"""
+import glob
+import html
+import os
+import re
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+# Steinfarben je Kapitel, wie in theme.scss (body[data-kapitel])
+FARBEN = ["#FFE7A3", "#BFE3F7", "#CDEFD9", "#DCD6F8", "#FFD2BC", "#F7C9DA", "#C6ECE8", "#FFE7A3", "#E6D3F2", "#D8EBC4"]
+FARBEN2 = ["#EFC867", "#86B9DE", "#8FCBA6", "#A79FE2", "#F0A27E", "#E39AB6", "#86CBC3", "#EFC867", "#BE9EDB", "#A8CC85"]
+KOPF = "## Die Kapitel im Überblick {-}"
+DANACH = "## Wie liest du dieses Buch? {-}"
+
+
+def _inline(t):
+    t = html.escape(t, quote=False)
+    t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+    return re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", t)
+
+
+def karten():
+    out = []
+    for i, f in enumerate(sorted(glob.glob(os.path.join(ROOT, "0[1-9]-*.qmd"))), start=1):
+        zeilen = open(f, encoding="utf-8").read().splitlines()
+        titel = re.sub(r"\s*\{#.*\}\s*$", "", zeilen[0].lstrip("# ")).strip()
+        ziele, drin = [], False
+        for z in zeilen:
+            if z.startswith("## Was du nach diesem Kapitel kannst"):
+                drin = True
+                continue
+            if drin and z.startswith("## "):
+                break
+            if drin and z.startswith("- "):
+                ziele.append(_inline(z[2:].strip()))
+            if len(ziele) == 2:
+                break
+        href = os.path.basename(f).replace(".qmd", ".html")
+        lis = "".join(f"<li>{z}</li>" for z in ziele)
+        out.append(f'<a class="kapitel-karte" href="{href}" style="--kk:{FARBEN[i]};--kk2:{FARBEN2[i]}">'
+                   f'<span class="nr">{i}</span><div class="titel">{_inline(titel)}</div><ul>{lis}</ul></a>')
+    return f'{KOPF}\n\n```{{=html}}\n<div class="kapitel-raster">{"".join(out)}</div>\n```\n\n'
+
+
+def main():
+    p = os.path.join(ROOT, "index.qmd")
+    t = open(p, encoding="utf-8").read()
+    if KOPF in t:
+        t = t[:t.index(KOPF)] + t[t.index(DANACH):]
+    assert t.count(DANACH) == 1
+    t = t.replace(DANACH, karten() + DANACH)
+    open(p, "w", encoding="utf-8").write(t)
+    print("Kapitelkarten in index.qmd geschrieben")
+
+
+if __name__ == "__main__":
+    main()

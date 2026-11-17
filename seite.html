@@ -1,0 +1,195 @@
+<script>
+/* Variante H: Seitenaufbau. Läuft am Ende von <body>, ändert nur die Darstellung. */
+(function () {
+  var main = document.querySelector("main.content");
+  if (!main) return;
+
+  // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
+  var num = main.querySelector("h1 .chapter-number");
+  var kap = num ? num.textContent.trim() : "0";
+  document.body.dataset.kapitel = kap;
+  var header = document.getElementById("title-block-header");
+  var start = !!(header && header.querySelector(".subtitle"));
+  if (start) document.body.classList.add("startseite");
+
+  // Titel an „ – “ auf zwei Zeilen setzen
+  function zweizeilig(el, klasseEins) {
+    if (!el) return;
+    var t = el.textContent.trim();
+    var i = t.indexOf(" – ");
+    if (i < 0) return;
+    el.innerHTML = '<span class="' + klasseEins + '">' + t.slice(0, i) + '</span><span class="titel-zwei">' + t.slice(i + 3) + "</span>";
+  }
+  zweizeilig(document.querySelector(".sidebar-title a") || document.querySelector(".sidebar-title"), "titel-eins");
+  if (start) {
+    zweizeilig(header.querySelector("h1.title"), "titel-eins");
+    var cover = main.querySelector(".quarto-cover-image");
+    if (cover) {
+      var hülle = document.createElement("div");
+      hülle.className = "start-cover";
+      var alt = cover.parentElement;
+      hülle.appendChild(cover);
+      header.appendChild(hülle);
+      if (alt && alt.tagName === "P" && !alt.textContent.trim() && !alt.children.length) alt.remove();
+    }
+  }
+
+  // Vorwort in der Seitenleiste: Nummer als eigener Stein wie bei den Kapiteln
+  var erster = document.querySelector(".sidebar-menu-container ul > li:first-child .menu-text");
+  if (erster && !erster.querySelector(".chapter-number")) {
+    var m = erster.textContent.replace(/\u00a0/g, " ").trim().match(/^(\d+)\s+(.*)$/);
+    if (m) erster.innerHTML = '<span class="chapter-number">' + m[1] + '</span>&nbsp; <span class="chapter-title">' + m[2] + "</span>";
+  }
+
+  // Kapitelüberschriften ohne Titelblock (Vorwort): Text in eigenes Element
+  main.querySelectorAll("h1").forEach(function (h) {
+    var n = h.querySelector(".chapter-number");
+    if (!n || h.querySelector(".chapter-title")) return;
+    var rest = h.textContent.replace(n.textContent, "").replace(/ /g, " ").trim();
+    h.innerHTML = "";
+    h.appendChild(n);
+    var s = document.createElement("span");
+    s.className = "chapter-title";
+    s.textContent = rest;
+    h.appendChild(s);
+    h.classList.add("kapitelkopf");
+  });
+
+  // Abschnittsüberschriften: Text hinter dem Nummern-Stein in ein Element fassen (bricht dann sauber um)
+  main.querySelectorAll("h2 > .header-section-number").forEach(function (n) {
+    var h = n.parentElement;
+    var s = document.createElement("span");
+    s.className = "h-text";
+    while (n.nextSibling) s.appendChild(n.nextSibling);
+    h.appendChild(s);
+  });
+
+  // Bausteine-Leiste: ein Stein je Kapitel, der aktuelle steht vorne
+  if (!start && header && num) {
+    var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
+    var nav = document.createElement("nav");
+    nav.className = "leiste";
+    nav.setAttribute("aria-label", "Kapitel");
+    links.forEach(function (a, i) {
+      var b = document.createElement("a");
+      b.href = a.getAttribute("href");
+      b.className = "leiste-stein k" + i;
+      b.textContent = i;
+      b.title = a.textContent.replace(/\s+/g, " ").trim();
+      if (String(i) === kap) { b.classList.add("aktiv"); b.setAttribute("aria-current", "page"); }
+      nav.appendChild(b);
+    });
+    header.insertBefore(nav, header.firstChild);
+  }
+
+  // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
+  var TYPEN = [
+    [/^Hintergrund\b/, "hintergrund", "Hintergrund"],
+    [/^Forschungshintergrund\b/, "hintergrund", "Forschungshintergrund"],
+    [/^Konzept\b/, "hintergrund", "Konzept"],
+    [/^Forschungsjournal\b/, "journal", "Forschungsjournal"],
+    [/^Reviewer-Hinweis\b/, "reviewer", "Reviewer-Hinweis"],
+    [/^SPSS → R\b/, "spss", "SPSS → R"],
+    [/^mariposa-Tipp\b/, "mariposa", "mariposa-Tipp"],
+    [/^Vorsicht\b/, "vorsicht", "Vorsicht"],
+    [/^Tipp\b/, "tipp", "Tipp"],
+    [/^Faustregel\b/, "tipp", "Faustregel"]
+  ];
+  function führendeLeerzeichenWeg(p) {
+    if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
+  }
+  main.querySelectorAll(".callout").forEach(function (c) {
+    var titel = c.getAttribute("title") || "";
+    var kopf = c.querySelector(".callout-title-container");
+    if (/^Übung/.test(titel)) {
+      var teile = titel.split(" · ");
+      var nr = (teile[0].match(/\d+/) || [""])[0];
+      c.classList.add("kasten", "uebung");
+      if (kopf) kopf.innerHTML = '<span class="uebung-nr">' + nr + '</span><span class="kasten-titel">' + (teile[1] || "") + "</span>" +
+        (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
+      return;
+    }
+    if (/^Lösung/.test(titel)) {
+      c.classList.add("loesung");
+      var vor = c.previousElementSibling;
+      if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
+      return;
+    }
+    if (titel) return;
+    var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
+    var st = p && p.firstElementChild;
+    if (!st || st.tagName !== "STRONG" || p.firstChild !== st) return;
+    var text = st.textContent.trim();
+    for (var i = 0; i < TYPEN.length; i++) {
+      if (!TYPEN[i][0].test(text)) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[i][1]);
+      var html = st.innerHTML.trim();
+      var rest = html.slice(html.indexOf(TYPEN[i][2]) + TYPEN[i][2].length)
+        .replace(/^\s*[:./–-]?\s*/, "").replace(/\.\s*$/, "");
+      if (kopf) kopf.innerHTML = '<span class="kasten-label">' + TYPEN[i][2] + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      st.remove();
+      führendeLeerzeichenWeg(p);
+      if (!p.textContent.trim() && !p.children.length) p.remove();
+      break;
+    }
+  });
+
+  // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
+  main.querySelectorAll("p > strong:first-child").forEach(function (st) {
+    if (st.textContent.trim() !== "Kurz überlegen.") return;
+    var p = st.parentElement;
+    if (p.firstChild !== st) return;
+    var nach = p.nextElementSibling;
+    var karte = document.createElement("div");
+    karte.className = "denkpause";
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">Kurz überlegen</span></div>';
+    p.parentNode.insertBefore(karte, p);
+    st.remove();
+    führendeLeerzeichenWeg(p);
+    karte.appendChild(p);
+    if (nach && nach.classList.contains("callout") && /^Auflösung/.test(nach.getAttribute("title") || "")) {
+      nach.classList.add("aufloesung");
+      karte.appendChild(nach);
+    }
+  });
+
+  // Lernziele, Selbstcheck, Weiterführend als Karten
+  main.querySelectorAll("section.level2 > h2").forEach(function (h) {
+    var t = h.textContent.trim();
+    var s = h.parentElement;
+    if (/^Was du nach diesem (Kapitel|Buch) kannst/.test(t)) s.classList.add("karte", "lernziele");
+    else if (/^Was du jetzt weißt/.test(t)) s.classList.add("karte", "selbstcheck");
+    else if (/^Weiterführend/.test(t)) s.classList.add("karte", "weiter");
+  });
+
+  // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
+  var schlüssel = "rw-selbstcheck:" + location.pathname;
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(schlüssel) || "{}"); } catch (e) { stand = {}; }
+  main.querySelectorAll("section.selbstcheck li").forEach(function (li, i) {
+    li.setAttribute("role", "checkbox");
+    li.tabIndex = 0;
+    function setze(an) { li.classList.toggle("erledigt", an); li.setAttribute("aria-checked", an ? "true" : "false"); }
+    setze(!!stand[i]);
+    function umschalten() {
+      stand[i] = !stand[i];
+      setze(stand[i]);
+      try { localStorage.setItem(schlüssel, JSON.stringify(stand)); } catch (e) {}
+    }
+    li.addEventListener("click", function (e) { if (!e.target.closest("a")) umschalten(); });
+    li.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); umschalten(); } });
+  });
+
+  // Lesefortschritt oben in der Kapitelfarbe
+  var balken = document.createElement("div");
+  balken.className = "lesefortschritt";
+  document.body.appendChild(balken);
+  function fortschritt() {
+    var d = document.documentElement, m = d.scrollHeight - d.clientHeight;
+    balken.style.width = (m > 0 ? d.scrollTop / m * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", fortschritt, { passive: true });
+  fortschritt();
+})();
+</script>
