@@ -14,15 +14,20 @@ def aufkleber(s, x, y, w, h, t, size=10):
     label_box(s, x, y, w, h, t, STICKER, color=INK, size=size, rounded=False, margin=0.03)
 
 
-def lstein(s, x, y, w, h, kind, wert, label, size=12, lsize=10, nw=0.42):
-    """Stein mit breitem Aufkleber: Wert links, Wertelabel rechts. Ohne Wert füllt der Aufkleber den Stein."""
+def lstein(s, x, y, w, h, kind, wert, label, size=12, lsize=10, nw=0.42, blass=False):
+    """Stein mit breitem Aufkleber: Wert links, Wertelabel rechts. Ohne Wert füllt der Aufkleber den Stein.
+    Bei einem grauen Stein (kind "dim") und mit blass=True ist auch der Aufkleber blass: Die Reihe fällt weg."""
     stein(s, x, y, w, h, kind, "")
     if wert:
         text(s, x + 0.02, y, nw, h, mono(wert, size=size, color=STEIN[kind][1]), anchor="middle")
         kx = x + nw + 0.04
     else:
         kx = x + 0.08
-    aufkleber(s, kx, y + 0.06, x + w - 0.08 - kx, h - 0.12, label, size=lsize)
+    if blass or kind == "dim":
+        label_box(s, kx, y + 0.06, x + w - 0.08 - kx, h - 0.12, label, BLASS[0], color=BLASS[1], size=lsize,
+                  rounded=False, margin=0.03)
+    else:
+        aufkleber(s, kx, y + 0.06, x + w - 0.08 - kx, h - 0.12, label, size=lsize)
 
 
 def lstein_breite(label, lsize=10, wert=True, nw=0.42):
@@ -343,6 +348,94 @@ def set_na_fig():
     return s
 
 
+# 4.5.2 Fehlende Werte in filter() (Kasten „Vorsicht“, Chunk `filter-na-trio`, eval=FALSE): die Reihen 1 bis 3
+# und Reihe 110, die erste ohne gültigen Wert bei sex (NA(b) KEINE ANGABE) -----------------------------------------
+def filter_na():
+    s = Canvas(5.65, 3.1)
+    h, pitch, top = 0.3, 0.37, 0.72
+    sw = lstein_breite("KEINE ANGABE", wert=False)
+    sx, lx, lw = 0.65, 0.65 + sw + 0.25, 0.8
+    reihen = [("1", "num", "1", "MANN", "TRUE"), ("2", "num", "1", "MANN", "TRUE"), ("3", "dim", "2", "FRAU", "FALSE"),
+              None, ("110", "na", "", "KEINE ANGABE", "")]
+    kopf(s, sx, sw, 0.12, "sex", "<dbl+lbl>")
+    text(s, lx - 0.3, 0.12, lw + 0.6, 0.25, mono("sex == 1", size=11))
+    y = top
+    for r in reihen:
+        if r is None:                                     # weitere Reihen, nicht gezeigt
+            punkte(s, sx, y - 0.06, w=sw)
+            punkte(s, lx, y - 0.06, w=lw)
+            y += 0.3
+            continue
+        nr, kind, wert, label, vergleich = r
+        text(s, 0.05, y, 0.45, h, mono(nr, size=10.5, color=GRAY, bold=False, align=RT), anchor="middle")
+        lstein(s, sx, y, sw, h, kind, wert, label, size=11, blass=(kind == "na"))
+        stein(s, lx, y, lw, h, "log" if vergleich else "na", vergleich, size=11)
+        if not vergleich:
+            text(s, lx, y, lw, h, mono("NA", size=11, color=GRAY), anchor="middle")
+        y += pitch
+    base = y - pitch + h + 0.07
+    platte(s, sx - 0.1, base, lx + lw + 0.1 - (sx - 0.1))
+    mitte = (top + base) / 2
+    ax, aw = lx + lw + 0.2, 0.75
+    text(s, ax - 0.2, mitte - 0.45, aw + 0.4, 0.28, mono("filter()", size=11, color=GREEN))
+    arrow(s, ax, mitte - 0.14, w=aw, h=0.28, color=GREEN)
+    # Ergebnis: nur die Reihen mit TRUE, auf derselben Höhe wie vorher
+    rx = ax + aw + 0.2
+    kopf(s, rx, sw, 0.12, "sex", "<dbl+lbl>")
+    for i in range(2):
+        lstein(s, rx, top + i * pitch, sw, h, "num", "1", "MANN", size=11)
+    unten = top + pitch + h
+    platte(s, rx - 0.1, unten + 0.07, sw + 0.2)
+    punkte(s, rx, unten + 0.17, w=sw)
+    text(s, 0.15, base + 0.2, 5.4, 0.28, codezeile("allbus |> filter(sex == 1)", size=11))
+    return s
+
+
+# 4.8 drop_na() aus dem Chunk `drop-na`: Reihe 1 (vollständig), Reihe 2 (drei Lücken) und Reihe 53, die erste
+# mit genau einer Lücke ---------------------------------------------------------------------------------------
+def drop_na_fig():
+    s = Canvas(5.85, 2.85)
+    w, h, pitch, step, top = 0.55, 0.3, 0.37, 0.65, 0.55
+    namen = ["mm01", "mm02", "mm03"]
+    reihen = [("1", ["5", "3", "4"], "num"), ("2", ["", "", ""], "num"), None, ("53", ["1", "", "4"], "dim")]
+    x0 = 0.65
+    for k, name in enumerate(namen):
+        kopf(s, x0 + k * step, w, 0.15, name, size=10.5)
+    y = top
+    for r in reihen:
+        if r is None:
+            for k in range(3):
+                punkte(s, x0 + k * step, y - 0.06, w=w)
+            y += 0.3
+            continue
+        nr, werte, kind = r
+        text(s, 0.05, y, 0.45, h, mono(nr, size=10.5, color=GRAY, bold=False, align=RT), anchor="middle")
+        for k, v in enumerate(werte):
+            stein(s, x0 + k * step, y, w, h, kind if v else "na", v, size=11)
+        y += pitch
+    y53 = y - pitch
+    base = y53 + h + 0.1                                  # etwas Luft für den Rahmen um die unterste Reihe
+    breite = 2 * step + w
+    platte(s, x0 - 0.1, base, breite + 0.2)
+    outline(s, x0 - 0.08, y53 - 0.1, breite + 0.16, h + 0.14, color=ORANGE, lw=1.75)
+    text(s, x0 + breite + 0.18, y53, 1.0, h, notiz("eine Lücke", size=10.5, color=DARKORANGE, align="start"),
+         anchor="middle")
+    mitte = (top + base) / 2 - 0.15
+    ax, aw = x0 + breite + 0.25, 0.75
+    text(s, ax - 0.2, mitte - 0.45, aw + 0.4, 0.28, mono("drop_na()", size=11, color=GREEN))
+    arrow(s, ax, mitte - 0.14, w=aw, h=0.28, color=GREEN)
+    rx = ax + aw + 0.25
+    for k, name in enumerate(namen):
+        kopf(s, rx + k * step, w, 0.15, name, size=10.5)
+        stein(s, rx + k * step, top, w, h, "num", reihen[0][1][k], size=11)
+    platte(s, rx - 0.1, top + h + 0.07, breite + 0.2)
+    punkte(s, rx, top + h + 0.17, w=breite)
+    text(s, 0.15, base + 0.2, 5.6, 0.28, codezeile("allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow()",
+                                                  size=11))
+    text(s, 0.15, base + 0.48, 2.0, 0.28, mono("[1] 3285", size=11, color=GREEN, align="start"))
+    return s
+
+
 FIGUREN = {
     "k04-einlesen": einlesen,
     "k04-platte": platte_fig,
@@ -354,4 +447,6 @@ FIGUREN = {
     "k04-labels": labels_fig,
     "k04-missing-codes": missing_codes,
     "k04-set-na": set_na_fig,
+    "k04-filter-na": filter_na,
+    "k04-drop-na": drop_na_fig,
 }

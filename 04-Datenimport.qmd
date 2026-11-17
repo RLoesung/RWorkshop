@@ -280,7 +280,21 @@ allbus |> filter(is.na(sex))      # nur Fälle, wo sex fehlt
 allbus |> filter(!is.na(sex))     # alle Fälle, wo sex vorhanden ist
 ```
 
+`sex == 1` vergleicht jede Reihe einzeln (@fig-filter-na). In Reihe 110 fehlt `sex` (KEINE ANGABE). Ob dieser Wert 1 ist, kann R nicht sagen, und der Vergleich ergibt wieder `NA`. `filter()` behält nur die Reihen mit `TRUE`, die Reihe 110 fällt also weg wie die Reihe mit `FALSE`. `is.na(sex)` fragt nur, ob der Wert fehlt, und ergibt immer `TRUE` oder `FALSE`.
+
+![`filter(sex == 1)` behält nur die Reihen, in denen der Vergleich `TRUE` ergibt. Wo `sex` fehlt, ist auch das Ergebnis des Vergleichs ein leerer Stein, und die Reihe fällt weg.](Bilder/figuren/k04-filter-na.svg){#fig-filter-na .lightbox fig-alt="Links der Turm sex, dbl+lbl, mit den Reihen 1, 2, 3 und 110: 1 MANN, 1 MANN, 2 FRAU in Grau, Auslassungspunkte und ein leerer gestrichelter Stein mit dem blassen Aufkleber KEINE ANGABE. Daneben der rosa Turm sex == 1 mit TRUE, TRUE, FALSE und einem leeren gestrichelten Stein NA. Ein grüner Pfeil filter() führt zum Turm sex mit zwei Steinen 1 MANN auf Höhe der Reihen 1 und 2, darunter Auslassungspunkte. Darunter der Code allbus |> filter(sex == 1)."}
+
 Wenn du dich wunderst, warum deine Fallzahl plötzlich kleiner ist als erwartet — die `NA`-Filterung ist meist der Grund.
+:::
+
+**Kurz überlegen.** `allbus |> filter(sex == 1)` behält 2.546 Reihen, `filter(sex == 2)` 2.672 (@fig-filter). Zusammen sind das 5.218, `allbus` hat aber 5.246 Reihen. Wo sind die übrigen 28?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r filter-na-loesung}
+allbus |> frequency(sex)
+```
+
+18 Befragte haben bei `sex` den Code 3 (DIVERS); sie erfasst weder `sex == 1` noch `sex == 2`. Bei den übrigen 10 fehlt der Wert (9-mal KEINE ANGABE, einmal DATENFEHLER: MFN), und diese Reihen fallen bei jedem Vergleich mit `==` weg. Mit `filter(is.na(sex))` bekommst du genau diese 10 Reihen.
 :::
 
 ### Fälle sortieren mit `arrange()` und `desc()`
@@ -465,6 +479,10 @@ allbus |>
   drop_na() |>
   nrow()
 ```
+
+`drop_na()` behält nur die Reihen ohne Lücke (@fig-drop-na). In Reihe 53 fehlt nur `mm02` (KEINE ANGABE); die Reihe fällt trotzdem ganz weg, mit ihren gültigen Antworten 1 und 4. Von den 5.246 Reihen bleiben 3.285. Bei 1.739 der 1.961 Reihen, die wegfallen, fehlen alle drei Werte, meist wegen des Split-Designs; bei den übrigen 222 fehlen ein oder zwei Werte.
+
+![`drop_na()` entfernt jede Reihe, in der mindestens ein Wert fehlt. Reihe 53 fällt mit ihren gültigen Werten 1 und 4 weg (grau).](Bilder/figuren/k04-drop-na.svg){#fig-drop-na .lightbox fig-alt="Links drei Türme mm01, mm02 und mm03 mit den Reihen 1, 2 und 53. Reihe 1: 5, 3 und 4. Reihe 2: drei leere gestrichelte Steine. Nach Auslassungspunkten Reihe 53, orange umrandet und beschriftet eine Lücke: 1 und 4 in Grau, dazwischen ein leerer Stein. Ein grüner Pfeil drop_na() führt zu denselben drei Türmen mit nur der Reihe 5, 3, 4, darunter Auslassungspunkte. Darunter der Code allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow() und die Ausgabe [1] 3285."}
 
 ::: {.callout-warning}
 **Vorsicht: Listenweiser Ausschluss.** `drop_na()` schließt Fälle aus, sobald *eine* der ausgewählten Variablen `NA` ist. Das ist klassischer *listwise deletion*. Wenn du in einer großen Pipeline mit vielen Variablen `drop_na()` rufst, kann deine Fallzahl drastisch schrumpfen. Setze `drop_na()` deshalb gezielt auf die Variablen, die du wirklich brauchst.

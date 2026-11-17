@@ -36,7 +36,34 @@ ERWARTET_KAP04 = {
                           "na_frequencies(allbus$mm01)", "mm01", "mm06", "SPLIT-DESIGN"],
     "k04-set-na": ["6", "7", "ANDERER ABSCHLUSS", "NOCH SCHUELER", "18", "26", "set_na", "educ = c(6, 7)",
                    "# total N=5246 valid N=5093", "GÜLTIG", "FEHLEND"],
+    "k04-filter-na": ["sex", "<dbl+lbl>", "1", "2", "3", "110", "MANN", "FRAU", "KEINE ANGABE", "sex == 1", "TRUE",
+                      "FALSE", "NA", "filter()", "allbus |> filter(sex == 1)"],
+    "k04-drop-na": ["mm01", "mm02", "mm03", "1", "2", "53", "5", "3", "4", "drop_na()", "eine Lücke",
+                    "allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow()", "[1] 3285"],
 }
+
+
+def texte_pos(svg):
+    """(Text, x, y, Farbe) je <text>, in Zoll; x ist bei zentrierten Steinwerten die Mitte."""
+    from lego import DPI
+    return [("".join(e.itertext()), float(e.get("x")) / DPI, float(e.get("y")) / DPI, e.get("fill"))
+            for e in ET.fromstring(svg).iter(NS + "text")]
+
+
+def spalten(svg, werte):
+    """Gruppiert Texte aus `werte` nach x (Spalten von links nach rechts), je Spalte von oben nach unten."""
+    sp = {}
+    for t, x, y, _ in texte_pos(svg):
+        if t in werte:
+            sp.setdefault(round(x, 2), []).append((y, t))
+    return [[t for _, t in sorted(v)] for _, v in sorted(sp.items())]
+
+
+def rahmen(svg, farbe):
+    """Rechtecke ohne Füllung mit Kante in `farbe`: (x, y, w, h) in Zoll."""
+    from lego import DPI
+    return [tuple(float(r.get(k)) / DPI for k in ("x", "y", "width", "height"))
+            for r in ET.fromstring(svg).iter(NS + "rect") if r.get("stroke") == farbe and r.get("fill") == "none"]
 
 
 class TestKap04(unittest.TestCase):
@@ -64,6 +91,48 @@ class TestKap04(unittest.TestCase):
         self.assertLessEqual(platten[0], 1.5 * turm)        # Sockel unter dem Vektor
         self.assertGreaterEqual(platten[1], 3 * turm)       # Platte mit Platz für weitere Türme
         self.assertIn("5 × 1", ["".join(e.itertext()) for e in root.iter(NS + "text")])
+
+    def test_filter_na_leerer_stein(self):
+        """sex == 1 ergibt TRUE TRUE FALSE und bei der Lücke wieder eine Lücke; nur die TRUE-Reihen bleiben."""
+        import kap04
+        from lego import STEIN
+        svg = kap04.filter_na().svg()
+        root = ET.fromstring(svg)
+        self.assertEqual(spalten(svg, {"TRUE", "FALSE", "NA"}), [["TRUE", "TRUE", "FALSE", "NA"]])
+        self.assertEqual(spalten(svg, {"1", "2", "3", "110"})[0], ["1", "2", "3", "110"])   # Reihennummern
+        # NA steht in einem leeren, gestrichelten Stein (Typ log: rosa Spalte)
+        x_na, y_na = [(x, y) for t, x, y, _ in texte_pos(svg) if t == "NA"][0]
+        leer = [r for r in root.iter(NS + "rect") if r.get("fill") == STEIN["na"][0] and r.get("stroke-dasharray")
+                and float(r.get("y")) / 96 < y_na < (float(r.get("y")) + float(r.get("height"))) / 96
+                and float(r.get("x")) / 96 < x_na < (float(r.get("x")) + float(r.get("width"))) / 96]
+        self.assertEqual(len(leer), 1)
+        # grau: Wert und Aufkleber der FALSE-Reihe, Aufkleber der Lücke (beide fallen weg);
+        # das Ergebnis behält zweimal 1 MANN auf Höhe der Reihen 1 und 2
+        grau = [t for t, _, _, f in texte_pos(svg) if f == STEIN["dim"][1]]
+        self.assertEqual(grau, ["2", "FRAU", "KEINE ANGABE"])
+        einsen = spalten(svg, {"1"})
+        self.assertEqual(einsen[-1], ["1", "1"])
+        y_quelle = sorted(y for t, x, y, f in texte_pos(svg) if t == "1" and f == STEIN["num"][1])
+        self.assertEqual(len(y_quelle), 4)
+        self.assertAlmostEqual(y_quelle[0], y_quelle[1], delta=0.01)
+        self.assertEqual(len([t for t, *_ in texte_pos(svg) if t == "MANN"]), 4)
+        self.assertEqual(len([t for t, *_ in texte_pos(svg) if t == "KEINE ANGABE"]), 1)
+
+    def test_drop_na_ganze_reihe(self):
+        """Reihe 53 hat eine Lücke: 1 und 4 werden grau und die Reihe ist orange umrandet; übrig bleibt Reihe 1."""
+        import kap04
+        from lego import STEIN, ORANGE
+        svg = kap04.drop_na_fig().svg()
+        grau = [t for t, _, _, f in texte_pos(svg) if f == STEIN["dim"][1]]
+        self.assertEqual(grau, ["1", "4"])
+        pos = texte_pos(svg)
+        y53 = [y for t, _, y, _ in pos if t == "53"][0]
+        orange = rahmen(svg, ORANGE)
+        self.assertEqual(len(orange), 1)
+        self.assertTrue(orange[0][1] < y53 < orange[0][1] + orange[0][3])
+        blau = [(t, round(y, 2)) for t, _, y, f in pos if f == STEIN["num"][1]]
+        self.assertEqual([t for t, _ in blau], ["5", "3", "4", "5", "3", "4"])     # Quelle und Ergebnis: Reihe 1
+        self.assertEqual(len({y for _, y in blau}), 1)                           # auf gleicher Höhe
 
 
 if __name__ == "__main__":

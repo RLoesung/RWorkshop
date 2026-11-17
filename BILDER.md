@@ -90,6 +90,8 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | blasser Stein (Farbe des Datentyps, heller, Kante in der vollen Farbe) | ein Wert, den R wiederholt (Recycling, 3.5.1); anders als ein grauer Stein geht er in die Rechnung ein (`lego.stein(…, blass=True)`) |
 | weißes Schild „Referenz“ mit Spitze zum Stein | Referenzkategorie eines Faktors, die erste Stufe (3.5.2; `lego.referenz()`) |
 | Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`) |
+| graue Zahlen links neben einer Reihe | Reihennummer wie in der Ausgabe eines Tibbles; Lücken in der Zählung stehen für Reihen, die nicht gezeigt sind (4.5.2, 4.8) |
+| leerer Stein mit blassem Aufkleber | fehlender Wert in einer Reihe, die im Ergebnis wegfällt (4.5.2; `kap04.lstein(…, blass=True)`) |
 
 ### 5.3 Werkzeug
 
