@@ -71,7 +71,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | gelber Aufkleber am Stein | Wertelabel |
 | Code-Bausteine dunkel / grün / orange | Objekt / Funktion / Argument |
 | grüner Kasten mit gestricheltem Feld | Funktion mit ihrem ersten Argument |
-| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`) |
+| grauer Stein | fällt im Ergebnis weg (`select()`, `filter()`, `drop_na()`) oder wird nur angezeigt, nicht gespeichert (ohne `<-`); bei `row_count()` ein Wert, der nicht mitgezählt wird (5.7.2) |
 | leerer Stein mit Aufkleber | fehlender Wert mit Missing-Code und Label |
 | Name und grauer Typ über einem Turm | Spaltenkopf wie in der Ausgabe eines Tibbles, etwa `<dbl+lbl>` |
 | graue Auslassungspunkte | weitere Türme oder Reihen, die nicht gezeigt sind |
@@ -92,6 +92,10 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`) |
 | graue Zahlen links neben einer Reihe | Reihennummer wie in der Ausgabe eines Tibbles; Lücken in der Zählung stehen für Reihen, die nicht gezeigt sind (4.5.2, 4.8) |
 | leerer Stein mit blassem Aufkleber | fehlender Wert in einer Reihe, die im Ergebnis wegfällt (4.5.2; `kap04.lstein(…, blass=True)`) |
+| Lineale untereinander mit gestrichelten Hilfslinien | dieselben Fälle auf verschiedenen Skalen: Die blauen Pfeile (einzelne Werte) bleiben an ihrer Stelle, Nullpunkt und Einheit ändern sich (`center()`, `std()`, 5.4); der orange Pfeil zeigt den Mittelwert |
+| dunkles Namensschild über einem Turm | Spaltenname, der beim Umformen zum Wert wird oder aus Werten entsteht (`pivot_longer()`, `pivot_wider()`, 5.6) |
+| oranger Rahmen um mehrere Reihen | ein Fall, der im Long-Format über mehrere Reihen verteilt ist (5.6.1) |
+| grüner Funktionsname über einer Platte | die Platte ist das Ergebnis dieser Funktion (Join-Familie in 5.5, 5.6.2) |
 
 ### 5.3 Werkzeug
 

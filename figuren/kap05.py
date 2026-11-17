@@ -6,7 +6,7 @@ ersten Zeilen des Datensatzes (head()); welche genau, steht beim Bild.
 """
 from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, stein, schild, arrow, down_arrow, outline,
                   connector, vline, numdot, codebox, text_width, INK, GRAY, GREEN, ORANGE, CARDLINE, DARKORANGE,
-                  WHITE, PALE, MONO, C, RT)
+                  WHITE, PALE, STEIN, MONO, C, RT)
 from kap03 import mono, notiz, platte
 from kap04 import lstein, lstein_breite, saeule, kopf, punkte, codezeile
 
@@ -411,6 +411,288 @@ def pipeline():
     text(s, bx - 0.2, ty - 0.27 + bh + 0.08, 7.5 - bx + 0.4, 0.25, notiz("Setup-Chunk in Kap. 6 bis 9", size=10.5))
     return s
 
+# 5.4 std() und center() aus den Chunks `std-center` und `center` (eval=FALSE): die erste und die dritte Person der
+# Ausgabe (age 50 und 69). Mittelwert 52.51 und SD 18.25 von age (5.223 gültige Werte) druckt kein Chunk; der Text
+# nennt sie, ebenso die Werte von age_c (-2.51 und 16.49). -------------------------------------------------------
+def std_fig():
+    s = Canvas(7.6, 3.45)
+    mw, sd = 52.51063, 18.25121
+    x0, lo, hi = 1.9, 30, 75
+    X = lambda a: x0 + (a - lo) * 5.4 / (hi - lo)
+    blau, tinte = STEIN["num"]
+    y1, y2, y3 = 0.6, 1.9, 3.05
+    lineale = [(y1, "age", None, [(v, str(v)) for v in range(30, 80, 10)]),
+               (y2, "age_c", "center()", [(mw + d, str(d)) for d in (-20, -10, 0, 10, 20)]),
+               (y3, "age_z", "std()", [(mw + k * sd, t) for k, t in ((-1, "-1"), (-0.5, "-0.5"), (0, "0"),
+                                                                    (0.5, "0.5"), (1, "1"))])]
+    personen = [(50, ["50", "-2.51", "-0.138"]), (69, ["69", "16.49", "0.903"])]
+    # Hilfslinien bei Mittelwert und +1 SD, von Lineal zu Lineal (unter den Zahlen unterbrochen)
+    for a in (mw, mw + sd):
+        for ya, yb in ((y1 + 0.38, y2 - 0.05), (y2 + 0.38, y3 - 0.05)):
+            connector(s, X(a), ya, X(a), yb, color=CARDLINE, width=1.0, dash=True)
+    for k, (y, name, fn, striche) in enumerate(lineale):
+        connector(s, X(lo), y, X(hi), y, color=INK, width=2.0)
+        for a, t in striche:
+            connector(s, X(a), y - 0.07, X(a), y + 0.07, color=INK, width=1.25)
+            text(s, X(a) - 0.3, y + 0.1, 0.6, 0.25, mono(t, size=10, color=GRAY, bold=False))
+        text(s, 0.15, y - 0.14, 1.5, 0.28, mono(name, size=11, align="start"), anchor="middle")
+        if fn:
+            text(s, 0.15, y + 0.12, 1.5, 0.28, mono(fn, size=10.5, color=GREEN, align="start"))
+        for a, werte in personen:
+            down_arrow(s, X(a) - 0.09, y - 0.33, w=0.18, h=0.28, color=blau)
+            text(s, X(a) - 1.02, y - 0.4, 0.9, 0.28, mono(werte[k], size=11, color=tinte, align=RT))
+    # Mittelwert und SD auf dem ersten Lineal
+    down_arrow(s, X(mw) - 0.09, y1 - 0.33, w=0.18, h=0.28, color=DARKORANGE)
+    text(s, X(mw) + 0.12, y1 - 0.4, 1.6, 0.28, [P(R("Mittelwert ", size=10.5, italic=True, color=DARKORANGE),
+                                                  R("52.51", font=MONO, size=11, bold=True, color=DARKORANGE))])
+    yb = y1 + 0.47
+    connector(s, X(mw), yb, X(mw + sd), yb, color=GRAY, width=1.25)
+    for a in (mw, mw + sd):
+        connector(s, X(a), yb - 0.06, X(a), yb + 0.06, color=GRAY, width=1.25)
+    text(s, X(mw), yb + 0.03, X(mw + sd) - X(mw), 0.28, [P(R("SD ", size=10.5, italic=True, color=GRAY),
+                                                         R("18.25", font=MONO, size=11, bold=True, color=GRAY),
+                                                         align=C)])
+    # Rechenschritte zwischen den Linealen
+    for ya, yb, t in ((y1 + 0.25, y2 - 0.22, "- 52.51"), (y2 + 0.45, y3 - 0.22, "/ 18.25")):
+        down_arrow(s, 0.2, ya, w=0.2, h=yb - ya, color=GRAY)
+        text(s, 0.48, ya, 1.2, yb - ya, mono(t, size=10.5, color=GRAY, align="start"), anchor="middle")
+    return s
+
+
+def tuerme(s, x0, top, spalten, h=0.28, pitch=0.34, size=11, gap=0.1, kopf_y=None, typen=None):
+    """Bauplatte von oben: spalten = [(name, breite, [(kind, wert), …])]; leerer Wert = NA.
+    Gibt die x-Positionen der Türme und die Grundlinie zurück."""
+    xs, x = [], x0
+    for j, (name, w, steine) in enumerate(spalten):
+        if kopf_y is not None:
+            kopf(s, x, w, kopf_y, name, typen[j] if typen else None, size=10.5)
+        for i, (kind, wert) in enumerate(steine):
+            stein(s, x, top + i * pitch, w, h, kind if wert else "na", wert, size=size)
+        xs.append(x)
+        x += w + gap
+    n = max(len(st) for _, _, st in spalten)
+    return xs, top + (n - 1) * pitch + h + 0.07
+
+
+# 5.5 left_join() aus den Chunks `join-kontext` und `join-demo`: die ersten vier Reihen der Ausgabe -------------
+def join_fig():
+    s = Canvas(7.7, 4.15)
+    h, pitch = 0.28, 0.4                                   # Fuge 0.12: Platz für den Rahmen um eine Reihe
+    west, ost = ("7.2", "45000"), ("1.4", "32000")
+    reihen = [("1", "50"), ("1", "51"), ("1", "69"), ("2", "72")]
+    # Ergebnis unten: eastwest, age, …, und die zwei neuen Türme genau unter den Spalten von kontext_bl
+    ex, ax, mx, bx = 3.05, 3.7, 5.2, 6.55
+    mwid, bwid = 0.75, 0.9
+    top = 2.0
+    for x, w, name in [(ex, 0.55, "eastwest"), (ax, 0.55, "age"), (mx, mwid, "muslim_anteil"),
+                       (bx, bwid, "bip_pro_kopf")]:
+        kopf(s, x, w, top - 0.33, name, size=10.5)
+    for i, (e, a) in enumerate(reihen):
+        y = top + i * pitch
+        m, b = west if e == "1" else ost
+        stein(s, ex, y, 0.55, h, "num", e, size=11)
+        stein(s, ax, y, 0.55, h, "num", a, size=11)
+        stein(s, mx, y, mwid, h, "num", m, size=11)
+        stein(s, bx, y, bwid, h, "num", b, size=11)
+    unten = top + 3 * pitch + h
+    base = unten + 0.1
+    punkte(s, ax + 0.6, top + pitch - 0.05, w=0.8)
+    platte(s, ex - 0.1, base, bx + bwid + 0.1 - (ex - 0.1))
+    for x, w in [(mx, mwid), (bx, bwid)]:
+        outline(s, x - 0.07, top - 0.13, w + 0.14, unten + 0.06 - (top - 0.13), color=GREEN, lw=1.75)
+    y_ost = top + 3 * pitch
+    outline(s, ex - 0.1, y_ost - 0.09, bx + bwid + 0.1 - (ex - 0.1), h + 0.13, color=ORANGE, lw=1.75)
+    # kontext_bl oben rechts
+    kx, ktop = 4.15, 0.45
+    kopf(s, kx, 0.55, 0.12, "eastwest", size=10.5)
+    kopf(s, mx, mwid, 0.12, "muslim_anteil", size=10.5)
+    kopf(s, bx, bwid, 0.12, "bip_pro_kopf", size=10.5)
+    for i, (e, (m, b)) in enumerate([("1", west), ("2", ost)]):
+        y = ktop + i * pitch
+        stein(s, kx, y, 0.55, h, "num", e, size=11)
+        stein(s, mx, y, mwid, h, "num", m, size=11)
+        stein(s, bx, y, bwid, h, "num", b, size=11)
+    kunten = ktop + pitch + h
+    platte(s, kx - 0.1, kunten + 0.1, bx + bwid + 0.1 - (kx - 0.1))
+    outline(s, kx - 0.1, ktop + pitch - 0.09, bx + bwid + 0.1 - (kx - 0.1), h + 0.13, color=ORANGE, lw=1.75)
+    schild(s, kx - 1.5, ktop + pitch / 2 - 0.04, "kontext_bl", w=1.25)
+    for x, w in [(mx, mwid), (bx, bwid)]:
+        down_arrow(s, x + w / 2 - 0.11, kunten + 0.25, w=0.22, h=top - 0.36 - (kunten + 0.25), color=GREEN)
+    # allbus links, Reihen auf derselben Höhe wie im Ergebnis
+    schild(s, 0.2, top - 0.85, "allbus", w=1.0)
+    kopf(s, 0.3, 0.55, top - 0.33, "eastwest", size=10.5)
+    kopf(s, 0.95, 0.55, top - 0.33, "age", size=10.5)
+    for i, (e, a) in enumerate(reihen):
+        stein(s, 0.3, top + i * pitch, 0.55, h, "num", e, size=11)
+        stein(s, 0.95, top + i * pitch, 0.55, h, "num", a, size=11)
+    punkte(s, 1.52, top + pitch - 0.05, w=0.3)
+    platte(s, 0.2, base, 1.7)
+    mitte = top + 1.5 * pitch + h / 2
+    arrow(s, 2.0, mitte - 0.14, w=0.8, h=0.28, color=GREEN)
+    text(s, 1.8, mitte - 0.45, 1.2, 0.28, mono("left_join()", size=10.5, color=GREEN))
+    text(s, 0.15, base + 0.2, 7.3, 0.28,
+         codezeile('allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = "eastwest")', size=10.5))
+    return s
+
+
+# 5.5 Kasten „Die Join-Familie“: Schema mit zwei kleinen Platten x und y (Schlüssel id); die Ergebnisse sind mit
+# R geprüft (left_join(), inner_join(), full_join() aus dplyr) ------------------------------------------------------
+def join_familie():
+    s = Canvas(7.3, 2.45)
+    w, gap, top = 0.4, 0.06, 0.85
+    x_ = [("num", "1", "num", "10"), ("num", "2", "num", "20"), ("num", "3", "num", "30")]
+    y_ = [("num", "1", "txt", "A"), ("num", "2", "txt", "B"), ("num", "4", "txt", "D")]
+    ergebnisse = [("left_join(x, y)", [("1", "10", "A"), ("2", "20", "B"), ("3", "30", "")]),
+                  ("inner_join(x, y)", [("1", "10", "A"), ("2", "20", "B")]),
+                  ("full_join(x, y)", [("1", "10", "A"), ("2", "20", "B"), ("3", "30", ""), ("4", "", "D")])]
+    x = 0.15
+    for name, zeilen, spalte2 in [("x", x_, "a"), ("y", y_, "b")]:
+        schild(s, x, 0.1, name, w=0.45)
+        _, base = tuerme(s, x, top, [("id", w, [(k, v) for k, v, _, _ in zeilen]),
+                                     (spalte2, w, [(k, v) for _, _, k, v in zeilen])], gap=gap, kopf_y=0.5)
+        platte(s, x - 0.06, base, 2 * w + gap + 0.12)
+        x += 2 * w + gap + 0.25
+    vline(s, x, 0.15, 2.3, color=CARDLINE, width=0.75)
+    x += 0.23
+    breite = 3 * w + 2 * gap
+    for fn, zeilen in ergebnisse:
+        text(s, x - 0.2, 0.12, breite + 0.4, 0.28, mono(fn, size=10, color=GREEN))
+        _, base = tuerme(s, x, top, [("id", w, [("num", z[0]) for z in zeilen]),
+                                     ("a", w, [("num", z[1]) for z in zeilen]),
+                                     ("b", w, [("txt", z[2]) for z in zeilen])], gap=gap, kopf_y=0.5)
+        platte(s, x - 0.06, base, breite + 0.12)
+        x += breite + 0.28
+    return s
+
+
+# 5.6.1 pivot_longer() aus den Chunks `pivot-wide-show` und `pivot-longer-demo`: Person 1 und 2 (wide) und die
+# ersten acht Reihen (long) ---------------------------------------------------------------------------------------
+def pivot_longer_fig():
+    s = Canvas(7.7, 3.75)
+    items = ["mm01", "mm02r", "mm03", "mm04", "mm05r", "mm06"]
+    person1 = ["5", "5", "4", "2", "2", "2"]
+    h, pitch, fuge = 0.28, 0.34, 0.1                      # breitere Fuge unter Person 1 für den Rahmen
+    # wide: Spaltennamen als dunkle Namensschilder
+    x0, sw, step, sh = 0.15, 0.62, 0.7, 0.32
+    top = 0.62
+    for j, it in enumerate(items):
+        x = x0 + j * step
+        label_box(s, x, 0.12, sw, sh, it, INK, size=10.5, rounded=False, margin=0.04)
+        stein(s, x + 0.06, top, sw - 0.12, h, "num", person1[j], size=11)
+        stein(s, x + 0.06, top + pitch + fuge, sw - 0.12, h, "na", "")
+    breite = 5 * step + sw
+    base = top + pitch + fuge + h + 0.07
+    platte(s, x0 - 0.05, base, breite + 0.1)
+    outline(s, x0 - 0.03, top - 0.1, breite + 0.06, h + 0.14, color=ORANGE, lw=1.75)
+    text(s, x0, base + 0.12, breite, 0.25, mono("5,246 × 6", size=10.5, color=GRAY, bold=False))
+    # long: item und antwort; Person 1 sind die ersten sechs Reihen
+    lx, iw, aw = 5.75, 0.85, 0.6
+    ax = lx + iw + 0.12
+    ltop = 0.62
+    kopf(s, lx, iw, 0.08, "item", "<chr>", size=10.5)
+    kopf(s, ax, aw, 0.08, "antwort", "<dbl>", size=10.5)
+    werte = person1 + ["", ""]
+    ly = [ltop + i * pitch + (fuge if i >= 6 else 0) for i in range(8)]
+    for i, y in enumerate(ly):
+        stein(s, lx, y, iw, h, "txt", items[i % 6], size=11)
+        stein(s, ax, y, aw, h, "num" if werte[i] else "na", werte[i], size=11)
+    lbase = ly[-1] + h + 0.07
+    platte(s, lx - 0.1, lbase, iw + aw + 0.32)
+    outline(s, lx - 0.07, ltop - 0.1, iw + aw + 0.26, ly[5] + h + 0.04 - (ltop - 0.1), color=ORANGE, lw=1.75)
+    text(s, lx - 0.3, lbase + 0.12, iw + aw + 0.72, 0.25, mono("31,476 × 2", size=10.5, color=GRAY, bold=False))
+    mitte = top + h / 2
+    pa = x0 + breite + 0.2
+    arrow(s, pa, mitte - 0.14, w=lx - 0.25 - pa, h=0.28, color=GREEN)
+    text(s, pa - 0.1, mitte + 0.2, lx - 0.25 - pa + 0.2, 0.28, mono("pivot_longer()", size=10.5, color=GREEN))
+    text(s, 0.15, 2.0, 5.0, 0.9, code(["pivot_longer(cols = everything(),",
+                                       '             names_to = "item",',
+                                       '             values_to = "antwort")'], size=10.5))
+    return s
+
+
+# 5.6.2 pivot_wider() aus den Chunks `pivot-mw-long` und `pivot-wider-demo` -------------------------------------
+def pivot_wider_fig():
+    s = Canvas(7.8, 3.7)
+    h, pitch = 0.28, 0.34
+    alt, neu = "ALTE BUNDESLAENDER", "NEUE BUNDESLAENDER"
+    mw = {(alt, "mm01"): "3.19", (alt, "mm03"): "3.97", (alt, "mm06"): "4.14",
+          (neu, "mm01"): "4.01", (neu, "mm03"): "4.63", (neu, "mm06"): "4.58"}
+    items = ["mm01", "mm03", "mm06"]
+    lang = [(r, it, mw[(r, it)]) for r in (alt, neu) for it in items]
+    ew = text_width(alt, MONO, 10, True) + 0.1
+    # long
+    ex, ix, mx, w = 0.12, 0.12 + ew + 0.08, 0.12 + ew + 0.71, 0.55
+    top = 0.72
+    kopf(s, ex, ew, 0.12, "eastwest", "<fct>", size=10.5)
+    kopf(s, ix, w, 0.12, "item", "<chr>", size=10.5)
+    kopf(s, mx, w, 0.12, "mw", "<dbl>", size=10.5)
+    for i, (r, it, m) in enumerate(lang):
+        y = top + i * pitch
+        stein(s, ex, y, ew, h, "txt", r, size=10)
+        stein(s, ix, y, w, h, "txt", it, size=11)
+        stein(s, mx, y, w, h, "num", m, size=11)
+    base = top + 5 * pitch + h + 0.07
+    platte(s, ex - 0.06, base, mx + w + 0.06 - (ex - 0.06))
+    for x, bw, t in [(ex, ew, "names_from"), (mx, w, "values_from")]:
+        tw = text_width(t, MONO, 10.5, True) + 0.14
+        label_box(s, x + bw / 2 - tw / 2, base + 0.17, tw, 0.3, t, PALE, color=INK, size=10.5, rounded=False,
+                  margin=0)
+    # wide: der Funktionsname steht über dem Ergebnis (zwischen den Platten ist für ihn kein Platz)
+    pa = mx + w + 0.1
+    wx = pa + 0.6
+    wt = 0.45                                              # Oberkante der Spaltenköpfe
+    text(s, wx, 0.12, 2.0, 0.28, mono("pivot_wider()", size=10.5, color=GREEN, align="start"))
+    kopf(s, wx, w, wt, "item", "<chr>", size=10.5)
+    sx = [wx + w + 0.08, wx + w + 0.16 + ew]
+    for x, r in zip(sx, (alt, neu)):
+        label_box(s, x, wt - 0.02, ew, 0.32, r, INK, size=10, rounded=False, margin=0.03)
+        text(s, x, wt + 0.32, ew, 0.22, mono("<dbl>", size=10, color=GRAY, bold=False))
+    wtop = wt + 0.62
+    for i, it in enumerate(items):
+        y = wtop + i * pitch
+        stein(s, wx, y, w, h, "txt", it, size=11)
+        for x, r in zip(sx, (alt, neu)):
+            stein(s, x + (ew - w) / 2, y, w, h, "num", mw[(r, it)], size=11)
+    wbase = wtop + 2 * pitch + h + 0.07
+    platte(s, wx - 0.06, wbase, sx[1] + ew + 0.06 - (wx - 0.06))
+    mitte = wtop + pitch + h / 2
+    arrow(s, pa, mitte - 0.14, w=0.5, h=0.28, color=GREEN)
+    text(s, 0.12, base + 0.57, 7.5, 0.28, code(["pivot_wider(names_from = eastwest, values_from = mw)"], size=10.5))
+    return s
+
+
+# 5.7.2 row_count() aus dem Chunk `row-count-demo`: respid 1 (keine 7), 2 (keine Antwort) und 95, die erste Person
+# mit genau drei Siebenern ------------------------------------------------------------------------------------------
+def row_count_fig():
+    s = Canvas(7.75, 2.15)
+    items = ["mm01", "mm02", "mm03", "mm04", "mm05", "mm06"]
+    reihen = [("1", ["5", "3", "4", "2", "6", "2"], "0", "keine 7"),
+              ("2", ["", "", "", "", "", ""], "0", "keine Antwort"),
+              ("95", ["7", "1", "6", "7", "4", "7"], "3", "dreimal 7")]
+    h, pitch, top, w, step, ix = 0.32, 0.4, 0.62, 0.52, 0.62, 1.0
+    kopf(s, 0.15, 0.6, 0.15, "respid")
+    for j, it in enumerate(items):
+        kopf(s, ix + j * step, w, 0.15, it, size=10.5)
+    rx, rw = 5.95, 0.6
+    kopf(s, rx, rw, 0.08, "n_extrem", "<int>", size=10.5)
+    for i, (rid, werte, n, notiz_) in enumerate(reihen):
+        y = top + i * pitch
+        text(s, 0.15, y, 0.6, h, mono(rid, size=10.5, color=GRAY, align=RT), anchor="middle")
+        for j, v in enumerate(werte):
+            stein(s, ix + j * step, y, w, h, "num" if v == "7" else ("dim" if v else "na"), v, size=11)
+        stein(s, rx, y, rw, h, "num", n, size=11)
+        text(s, rx + rw + 0.12, y, 1.0, h, notiz(notiz_, size=10.5, color=GRAY, align="start"), anchor="middle")
+    unten = top + 2 * pitch + h
+    platte(s, 0.85, unten + 0.07, ix + 5 * step + w + 0.1 - 0.85)
+    platte(s, rx - 0.1, unten + 0.07, rw + 0.2)
+    mitte = (top + unten) / 2
+    ax = ix + 5 * step + w + 0.2
+    text(s, ax - 0.1, mitte - 0.45, rx - ax, 0.28, mono("row_count()", size=10.5, color=GREEN))
+    arrow(s, ax, mitte - 0.14, w=rx - ax - 0.2, h=0.28, color=GREEN)
+    text(s, ax - 0.1, mitte + 0.18, rx - ax, 0.28, mono("count = 7", size=10, color=GREEN))
+    return s
+
+
 FIGUREN = {
     "k05-mutate": mutate_fig,
     "k05-zuweisung": zuweisung,
@@ -423,4 +705,10 @@ FIGUREN = {
     "k05-polung": polung,
     "k05-pomps": pomps_fig,
     "k05-pipeline": pipeline,
+    "k05-std": std_fig,
+    "k05-join": join_fig,
+    "k05-join-familie": join_familie,
+    "k05-pivot-longer": pivot_longer_fig,
+    "k05-pivot-wider": pivot_wider_fig,
+    "k05-row-count": row_count_fig,
 }

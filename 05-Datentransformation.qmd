@@ -406,6 +406,10 @@ allbus |>
   center(age, suffix = "_c")     # neue Variable age_c (Mittelwert 0)
 ```
 
+`age` hat im ALLBUS einen Mittelwert von 52.51 Jahren und eine Standardabweichung von 18.25. `center()` zieht von jedem Wert den Mittelwert ab: Aus 50 wird -2.51, aus 69 wird 16.49. `std()` teilt das Ergebnis zusätzlich durch die Standardabweichung; die 69 liegt damit 0.903 Standardabweichungen über dem Mittelwert (@fig-std). Die Personen behalten ihre Lage zueinander, es ändern sich nur Nullpunkt und Einheit der Skala.
+
+![`center()` zieht den Mittelwert von `age` ab, `std()` teilt zusätzlich durch die Standardabweichung. Gezeigt sind die erste und die dritte Person aus der Ausgabe von `std()`.](Bilder/figuren/k05-std.svg){#fig-std .lightbox fig-alt="Drei waagerechte Lineale untereinander. Oben age von 30 bis 75 mit blauen Pfeilen bei 50 und 69 und einem orangen Pfeil Mittelwert 52.51, darunter eine Klammer vom Mittelwert um eine Standardabweichung nach rechts, beschriftet SD 18.25. Ein grauer Pfeil mit - 52.51 führt zum mittleren Lineal age_c, center(), mit den Strichen -20 bis 20; die blauen Pfeile stehen an derselben Stelle und zeigen -2.51 und 16.49. Ein grauer Pfeil mit / 18.25 führt zum unteren Lineal age_z, std(), mit den Strichen -1 bis 1; die Pfeile zeigen -0.138 und 0.903. Gestrichelte Hilfslinien verbinden den Mittelwert mit der 0 und das Ende der Klammer mit der 1."}
+
 Ohne `suffix`-Argument **überschreiben** beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein `weights =`-Argument, falls du die Standardisierung gewichtet machen willst.
 
 ## Datensätze verbinden mit `left_join()`, `inner_join()` und `full_join()` {#sec-joins}
@@ -438,6 +442,10 @@ allbus_mit_kontext |>
 
 **Lesart.** Vergleiche die Tabelle vor und nach dem Join: vorher hatte die Kontext-Tabelle nur zwei Zeilen, jetzt sind die Kontext-Werte *pro Fall* angedockt — Westdeutsche bekommen `muslim_anteil = 7.2` und `bip_pro_kopf = 45000`, Ostdeutsche entsprechend andere Werte. Die ursprünglichen 5.246 ALLBUS-Zeilen bleiben unverändert; nur zwei neue Spalten sind hinzugekommen.
 
+`left_join()` sucht für jede Reihe von `allbus` die Reihe in `kontext_bl` mit demselben Wert von `eastwest` und hängt deren übrige Spalten an (@fig-join). Die vierte Reihe gehört zu den neuen Bundesländern (`eastwest` 2) und bekommt deshalb 1.4 und 32000.
+
+![`left_join()` hängt an jede Reihe von `allbus` die Werte aus der Reihe von `kontext_bl` mit demselben Schlüssel `eastwest`. Alle Reihen bleiben, zwei Türme kommen dazu; gezeigt sind die ersten vier Reihen.](Bilder/figuren/k05-join.svg){#fig-join .lightbox fig-alt="Oben rechts das Namensschild kontext_bl und eine Bauplatte mit den Türmen eastwest, muslim_anteil und bip_pro_kopf und zwei Reihen: 1, 7.2, 45000 und 2, 1.4, 32000; die zweite Reihe ist orange umrandet. Links die Bauplatte allbus mit eastwest 1, 1, 1, 2 und age 50, 51, 69, 72 und Auslassungspunkten. Ein grüner Pfeil left_join() führt zum Ergebnis mit eastwest, age, Auslassungspunkten und den grün umrandeten neuen Türmen muslim_anteil mit 7.2, 7.2, 7.2, 1.4 und bip_pro_kopf mit 45000, 45000, 45000, 32000. Grüne Pfeile führen von kontext_bl in diese Türme, die vierte Reihe des Ergebnisses ist orange umrandet. Darunter der Code allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = „eastwest“)."}
+
 ::: {.callout-note}
 **Konzept: Die Join-Familie.** dplyr kennt vier Join-Verben — sie unterscheiden sich nur, *welche Zeilen* am Ende bleiben:
 
@@ -447,6 +455,10 @@ allbus_mit_kontext |>
 | `inner_join(x, y)` | nur Zeilen, die in beiden vorkommen                      | Schnittmenge — nur Fälle mit kompletter Info  |
 | `right_join(x, y)` | alle aus `y`, passende aus `x`                            | selten — meist als `left_join(y, x)` lesbarer |
 | `full_join(x, y)` | alle Zeilen aus beiden                                    | Vereinigung — typisch für Daten-Konsolidierung |
+
+Für zwei kleine Tabellen `x` (Schlüssel `id` 1, 2, 3) und `y` (`id` 1, 2, 4) zeigt @fig-join-familie die Ergebnisse von `left_join()`, `inner_join()` und `full_join()`. Kommt ein Schlüssel nur in einer Tabelle vor, bleiben die Spalten der anderen Tabelle leer (`NA`).
+
+![Drei Joins mit denselben Tabellen `x` und `y`, verknüpft über `id`. `left_join()` behält alle Reihen von `x`, `inner_join()` nur die Schlüssel, die in beiden Tabellen vorkommen, `full_join()` alle Schlüssel.](Bilder/figuren/k05-join-familie.svg){#fig-join-familie .lightbox fig-alt="Links zwei kleine Bauplatten: x mit id 1, 2, 3 und a 10, 20, 30; y mit id 1, 2, 4 und den lila Steinen b A, B, D. Rechts drei Ergebnisse mit den Türmen id, a und b. left_join(x, y): id 1, 2, 3, a 10, 20, 30, b A, B und ein leerer Stein. inner_join(x, y): id 1 und 2, a 10 und 20, b A und B. full_join(x, y): id 1, 2, 3, 4, a 10, 20, 30 und ein leerer Stein, b A, B, ein leerer Stein und D."}
 
 In 90 % der Sozialforschung brauchst du `left_join()` — Individualdaten links, Kontextdaten rechts.
 :::
@@ -497,6 +509,10 @@ allbus_long |> head(8)
 
 **Lesart.** Vorher: 6 Spalten × 5.246 Zeilen = breite Tabelle. Nachher: 2 Spalten × 31.476 Zeilen — die *Spaltennamen* (`mm01`, `mm02r`, …) sind in die neue Spalte `item` gewandert, die ursprünglichen *Werte* in die Spalte `antwort`. Die ersten sechs Zeilen oben gehören zur ersten Person, die nächsten sechs zur zweiten Person.
 
+Die Spaltennamen werden dabei zu Werten: Aus den sechs Namensschildern werden Steine im Turm `item`, und jede Person bekommt sechs Reihen (@fig-pivot-longer).
+
+![`pivot_longer()` macht aus den sechs Spaltennamen Werte im Turm `item` und aus den Antworten den Turm `antwort`. Die erste Person (orange) steht danach in sechs Reihen.](Bilder/figuren/k05-pivot-longer.svg){#fig-pivot-longer .lightbox fig-alt="Links die Wide-Form, 5,246 × 6: sechs dunkle Namensschilder mm01, mm02r, mm03, mm04, mm05r und mm06, darunter die erste Person mit 5, 5, 4, 2, 2, 2, orange umrandet, und die zweite Person mit sechs leeren Steinen. Ein grüner Pfeil pivot_longer() führt zur Long-Form, 31,476 × 2, mit den Türmen item (chr) und antwort (dbl): Die sechs Namen stehen als lila Steine untereinander, daneben 5, 5, 4, 2, 2, 2; diese sechs Reihen sind orange umrandet. Darunter mm01 und mm02r der zweiten Person mit leeren Steinen. Links unten der Code pivot_longer(cols = everything(), names_to = „item“, values_to = „antwort“)."}
+
 ::: {.callout-warning}
 **Vorsicht: Labelled-Spalten stapeln.** `pivot_longer()` schreibt alle Items in *eine* Spalte `antwort` — und die kann nur *einen* Satz Wertelabels tragen. Die Items haben aber unterschiedliche Labels: In den umgepolten `mm02r` und `mm05r` steht „stimme gar nicht zu" bei der 7, in den übrigen bei der 1, und auch die Missing-Labels unterscheiden sich von Item zu Item. Ohne `unlabel()` meldet R deshalb Warnungen wie *„`mm01` and `mm02r` have conflicting value labels"* und übernimmt kommentarlos die Labels des ersten Items — für `mm02r` wären sie dann falsch. Mit `unlabel()` (siehe @sec-datentypen-verstehen) stapelst du die reinen Zahlen; fehlende Werte bleiben `NA`.
 :::
@@ -540,6 +556,10 @@ mittelwerte_long |>
 ```
 
 Jetzt steht jedes Item in einer Zeile, Region in zwei Spalten — Ost und West direkt nebeneinander. Genau das Format, das in einer Hausarbeit gut aussieht.
+
+`names_from = eastwest` legt fest, woher die neuen Spaltennamen kommen: Die beiden Stufen von `eastwest` werden zu Namensschildern. `values_from = mw` liefert die Steine darunter (@fig-pivot-wider).
+
+![`pivot_wider()` macht aus den Werten von `eastwest` zwei Spaltennamen und verteilt die Mittelwerte aus `mw` darauf.](Bilder/figuren/k05-pivot-wider.svg){#fig-pivot-wider .lightbox fig-alt="Links die Long-Form mit den Türmen eastwest (fct), item (chr) und mw (dbl) und sechs Reihen: dreimal ALTE BUNDESLAENDER mit mm01, mm03, mm06 und 3.19, 3.97, 4.14, dreimal NEUE BUNDESLAENDER mit 4.01, 4.63, 4.58. Unter eastwest steht names_from, unter mw values_from. Ein grüner Pfeil führt zur Wide-Form, überschrieben mit pivot_wider(): der Turm item mit mm01, mm03, mm06 und zwei dunkle Namensschilder ALTE BUNDESLAENDER und NEUE BUNDESLAENDER, jeweils dbl, darunter 3.19, 3.97, 4.14 und 4.01, 4.63, 4.58. Unten der Code pivot_wider(names_from = eastwest, values_from = mw)."}
 
 **Faustregel:** `pivot_wider()` für Endtabellen im Bericht, `pivot_longer()` als Arbeitsformat für jede ggplot2-Visualisierung mehrerer Items.
 
@@ -625,6 +645,10 @@ allbus |>
                               count = 7)) |>
   count(n_extrem)
 ```
+
+`row_count()` zählt in jeder Reihe, wie viele der sechs Antworten eine 7 sind (@fig-row-count). Die Person mit der `respid` 95 hat dreimal 7 gewählt, die mit der `respid` 1 keinmal. Die Person mit der `respid` 2 hat die Items nicht vorgelegt bekommen und bekommt ebenfalls 0; `row_means()` hätte ihr einen fehlenden Wert gegeben.
+
+![`row_count(count = 7)` zählt je Reihe die Siebener (blau); die übrigen Werte zählen nicht mit (grau). Eine Reihe ohne Antwort ergibt 0.](Bilder/figuren/k05-row-count.svg){#fig-row-count .lightbox fig-alt="Sechs Türme mm01 bis mm06 mit drei Reihen, links die respid 1, 2 und 95. Reihe 1: 5, 3, 4, 2, 6, 2, alle grau. Reihe 2: sechs leere Steine. Reihe 95: 7, 1, 6, 7, 4, 7; die drei Siebener sind blau, die übrigen Steine grau. Ein grüner Pfeil row_count() mit count = 7 führt zum Turm n_extrem (int) mit 0, 0 und 3, daneben keine 7, keine Antwort und dreimal 7."}
 
 Die meisten Befragten zeigen *kein* solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. Lies die Zeile `0` dabei mit Vorsicht: Darin stecken auch die rund 1.650 Befragten, denen die Items wegen des Split-Designs gar nicht vorgelegt wurden — fehlende Werte zählen nie als Treffer. `row_count()` ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht", wie viele Extremantworten, wie viele Mittelantworten? Mehrere Werte zählst du auf einmal mit `count = c(1, 7)` — dann landen *beide* Extreme in der Summe.
 

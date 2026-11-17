@@ -1086,6 +1086,17 @@ Warnung
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>allbus <span class="sc">|&gt;</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">center</span>(age, <span class="at">suffix =</span> <span class="st">"_c"</span>)     <span class="co"># neue Variable age_c (Mittelwert 0)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p><code>age</code> hat im ALLBUS einen Mittelwert von 52.51 Jahren und eine Standardabweichung von 18.25. <code>center()</code> zieht von jedem Wert den Mittelwert ab: Aus 50 wird -2.51, aus 69 wird 16.49. <code>std()</code> teilt das Ergebnis zusätzlich durch die Standardabweichung; die 69 liegt damit 0.903 Standardabweichungen über dem Mittelwert (<a href="#fig-std" class="quarto-xref">Abbildung&nbsp;<span>5.8</span></a>). Die Personen behalten ihre Lage zueinander, es ändern sich nur Nullpunkt und Einheit der Skala.</p>
+<div id="fig-std" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Drei waagerechte Lineale untereinander. Oben age von 30 bis 75 mit blauen Pfeilen bei 50 und 69 und einem orangen Pfeil Mittelwert 52.51, darunter eine Klammer vom Mittelwert um eine Standardabweichung nach rechts, beschriftet SD 18.25. Ein grauer Pfeil mit - 52.51 führt zum mittleren Lineal age_c, center(), mit den Strichen -20 bis 20; die blauen Pfeile stehen an derselben Stelle und zeigen -2.51 und 16.49. Ein grauer Pfeil mit / 18.25 führt zum unteren Lineal age_z, std(), mit den Strichen -1 bis 1; die Pfeile zeigen -0.138 und 0.903. Gestrichelte Hilfslinien verbinden den Mittelwert mit der 0 und das Ende der Klammer mit der 1.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-std-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-std.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Abbildung&nbsp;5.8: center() zieht den Mittelwert von age ab, std() teilt zusätzlich durch die Standardabweichung. Gezeigt sind die erste und die dritte Person aus der Ausgabe von std()."><img src="Bilder/figuren/k05-std.svg" class="img-fluid figure-img" alt="Drei waagerechte Lineale untereinander. Oben age von 30 bis 75 mit blauen Pfeilen bei 50 und 69 und einem orangen Pfeil Mittelwert 52.51, darunter eine Klammer vom Mittelwert um eine Standardabweichung nach rechts, beschriftet SD 18.25. Ein grauer Pfeil mit - 52.51 führt zum mittleren Lineal age_c, center(), mit den Strichen -20 bis 20; die blauen Pfeile stehen an derselben Stelle und zeigen -2.51 und 16.49. Ein grauer Pfeil mit / 18.25 führt zum unteren Lineal age_z, std(), mit den Strichen -1 bis 1; die Pfeile zeigen -0.138 und 0.903. Gestrichelte Hilfslinien verbinden den Mittelwert mit der 0 und das Ende der Klammer mit der 1."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-std-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.8: <code>center()</code> zieht den Mittelwert von <code>age</code> ab, <code>std()</code> teilt zusätzlich durch die Standardabweichung. Gezeigt sind die erste und die dritte Person aus der Ausgabe von <code>std()</code>.
+</figcaption>
+</figure>
+</div>
 <p>Ohne <code>suffix</code>-Argument <strong>überschreiben</strong> beide Funktionen die Originalvariable — das ist selten gewünscht. Beide akzeptieren außerdem ein <code>weights =</code>-Argument, falls du die Standardisierung gewichtet machen willst.</p>
 </section>
 <section id="sec-joins" class="level2" data-number="5.5">
@@ -1129,6 +1140,17 @@ Warnung
 </div>
 </div>
 <p><strong>Lesart.</strong> Vergleiche die Tabelle vor und nach dem Join: vorher hatte die Kontext-Tabelle nur zwei Zeilen, jetzt sind die Kontext-Werte <em>pro Fall</em> angedockt — Westdeutsche bekommen <code>muslim_anteil = 7.2</code> und <code>bip_pro_kopf = 45000</code>, Ostdeutsche entsprechend andere Werte. Die ursprünglichen 5.246 ALLBUS-Zeilen bleiben unverändert; nur zwei neue Spalten sind hinzugekommen.</p>
+<p><code>left_join()</code> sucht für jede Reihe von <code>allbus</code> die Reihe in <code>kontext_bl</code> mit demselben Wert von <code>eastwest</code> und hängt deren übrige Spalten an (<a href="#fig-join" class="quarto-xref">Abbildung&nbsp;<span>5.9</span></a>). Die vierte Reihe gehört zu den neuen Bundesländern (<code>eastwest</code> 2) und bekommt deshalb 1.4 und 32000.</p>
+<div id="fig-join" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Oben rechts das Namensschild kontext_bl und eine Bauplatte mit den Türmen eastwest, muslim_anteil und bip_pro_kopf und zwei Reihen: 1, 7.2, 45000 und 2, 1.4, 32000; die zweite Reihe ist orange umrandet. Links die Bauplatte allbus mit eastwest 1, 1, 1, 2 und age 50, 51, 69, 72 und Auslassungspunkten. Ein grüner Pfeil left_join() führt zum Ergebnis mit eastwest, age, Auslassungspunkten und den grün umrandeten neuen Türmen muslim_anteil mit 7.2, 7.2, 7.2, 1.4 und bip_pro_kopf mit 45000, 45000, 45000, 32000. Grüne Pfeile führen von kontext_bl in diese Türme, die vierte Reihe des Ergebnisses ist orange umrandet. Darunter der Code allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = „eastwest“).">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-join-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-join.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Abbildung&nbsp;5.9: left_join() hängt an jede Reihe von allbus die Werte aus der Reihe von kontext_bl mit demselben Schlüssel eastwest. Alle Reihen bleiben, zwei Türme kommen dazu; gezeigt sind die ersten vier Reihen."><img src="Bilder/figuren/k05-join.svg" class="img-fluid figure-img" alt="Oben rechts das Namensschild kontext_bl und eine Bauplatte mit den Türmen eastwest, muslim_anteil und bip_pro_kopf und zwei Reihen: 1, 7.2, 45000 und 2, 1.4, 32000; die zweite Reihe ist orange umrandet. Links die Bauplatte allbus mit eastwest 1, 1, 1, 2 und age 50, 51, 69, 72 und Auslassungspunkten. Ein grüner Pfeil left_join() führt zum Ergebnis mit eastwest, age, Auslassungspunkten und den grün umrandeten neuen Türmen muslim_anteil mit 7.2, 7.2, 7.2, 1.4 und bip_pro_kopf mit 45000, 45000, 45000, 32000. Grüne Pfeile führen von kontext_bl in diese Türme, die vierte Reihe des Ergebnisses ist orange umrandet. Darunter der Code allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = „eastwest“)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-join-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.9: <code>left_join()</code> hängt an jede Reihe von <code>allbus</code> die Werte aus der Reihe von <code>kontext_bl</code> mit demselben Schlüssel <code>eastwest</code>. Alle Reihen bleiben, zwei Türme kommen dazu; gezeigt sind die ersten vier Reihen.
+</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1176,6 +1198,17 @@ Hinweis
 </tr>
 </tbody>
 </table>
+<p>Für zwei kleine Tabellen <code>x</code> (Schlüssel <code>id</code> 1, 2, 3) und <code>y</code> (<code>id</code> 1, 2, 4) zeigt <a href="#fig-join-familie" class="quarto-xref">Abbildung&nbsp;<span>5.10</span></a> die Ergebnisse von <code>left_join()</code>, <code>inner_join()</code> und <code>full_join()</code>. Kommt ein Schlüssel nur in einer Tabelle vor, bleiben die Spalten der anderen Tabelle leer (<code>NA</code>).</p>
+<div id="fig-join-familie" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links zwei kleine Bauplatten: x mit id 1, 2, 3 und a 10, 20, 30; y mit id 1, 2, 4 und den lila Steinen b A, B, D. Rechts drei Ergebnisse mit den Türmen id, a und b. left_join(x, y): id 1, 2, 3, a 10, 20, 30, b A, B und ein leerer Stein. inner_join(x, y): id 1 und 2, a 10 und 20, b A und B. full_join(x, y): id 1, 2, 3, 4, a 10, 20, 30 und ein leerer Stein, b A, B, ein leerer Stein und D.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-join-familie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-join-familie.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Abbildung&nbsp;5.10: Drei Joins mit denselben Tabellen x und y, verknüpft über id. left_join() behält alle Reihen von x, inner_join() nur die Schlüssel, die in beiden Tabellen vorkommen, full_join() alle Schlüssel."><img src="Bilder/figuren/k05-join-familie.svg" class="img-fluid figure-img" alt="Links zwei kleine Bauplatten: x mit id 1, 2, 3 und a 10, 20, 30; y mit id 1, 2, 4 und den lila Steinen b A, B, D. Rechts drei Ergebnisse mit den Türmen id, a und b. left_join(x, y): id 1, 2, 3, a 10, 20, 30, b A, B und ein leerer Stein. inner_join(x, y): id 1 und 2, a 10 und 20, b A und B. full_join(x, y): id 1, 2, 3, 4, a 10, 20, 30 und ein leerer Stein, b A, B, ein leerer Stein und D."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-join-familie-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.10: Drei Joins mit denselben Tabellen <code>x</code> und <code>y</code>, verknüpft über <code>id</code>. <code>left_join()</code> behält alle Reihen von <code>x</code>, <code>inner_join()</code> nur die Schlüssel, die in beiden Tabellen vorkommen, <code>full_join()</code> alle Schlüssel.
+</figcaption>
+</figure>
+</div>
 <p>In 90 % der Sozialforschung brauchst du <code>left_join()</code> — Individualdaten links, Kontextdaten rechts.</p>
 </div>
 </div>
@@ -1259,6 +1292,17 @@ Tipp
 </div>
 </div>
 <p><strong>Lesart.</strong> Vorher: 6 Spalten × 5.246 Zeilen = breite Tabelle. Nachher: 2 Spalten × 31.476 Zeilen — die <em>Spaltennamen</em> (<code>mm01</code>, <code>mm02r</code>, …) sind in die neue Spalte <code>item</code> gewandert, die ursprünglichen <em>Werte</em> in die Spalte <code>antwort</code>. Die ersten sechs Zeilen oben gehören zur ersten Person, die nächsten sechs zur zweiten Person.</p>
+<p>Die Spaltennamen werden dabei zu Werten: Aus den sechs Namensschildern werden Steine im Turm <code>item</code>, und jede Person bekommt sechs Reihen (<a href="#fig-pivot-longer" class="quarto-xref">Abbildung&nbsp;<span>5.11</span></a>).</p>
+<div id="fig-pivot-longer" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links die Wide-Form, 5,246 × 6: sechs dunkle Namensschilder mm01, mm02r, mm03, mm04, mm05r und mm06, darunter die erste Person mit 5, 5, 4, 2, 2, 2, orange umrandet, und die zweite Person mit sechs leeren Steinen. Ein grüner Pfeil pivot_longer() führt zur Long-Form, 31,476 × 2, mit den Türmen item (chr) und antwort (dbl): Die sechs Namen stehen als lila Steine untereinander, daneben 5, 5, 4, 2, 2, 2; diese sechs Reihen sind orange umrandet. Darunter mm01 und mm02r der zweiten Person mit leeren Steinen. Links unten der Code pivot_longer(cols = everything(), names_to = „item“, values_to = „antwort“).">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pivot-longer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-pivot-longer.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Abbildung&nbsp;5.11: pivot_longer() macht aus den sechs Spaltennamen Werte im Turm item und aus den Antworten den Turm antwort. Die erste Person (orange) steht danach in sechs Reihen."><img src="Bilder/figuren/k05-pivot-longer.svg" class="img-fluid figure-img" alt="Links die Wide-Form, 5,246 × 6: sechs dunkle Namensschilder mm01, mm02r, mm03, mm04, mm05r und mm06, darunter die erste Person mit 5, 5, 4, 2, 2, 2, orange umrandet, und die zweite Person mit sechs leeren Steinen. Ein grüner Pfeil pivot_longer() führt zur Long-Form, 31,476 × 2, mit den Türmen item (chr) und antwort (dbl): Die sechs Namen stehen als lila Steine untereinander, daneben 5, 5, 4, 2, 2, 2; diese sechs Reihen sind orange umrandet. Darunter mm01 und mm02r der zweiten Person mit leeren Steinen. Links unten der Code pivot_longer(cols = everything(), names_to = „item“, values_to = „antwort“)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pivot-longer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.11: <code>pivot_longer()</code> macht aus den sechs Spaltennamen Werte im Turm <code>item</code> und aus den Antworten den Turm <code>antwort</code>. Die erste Person (orange) steht danach in sechs Reihen.
+</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1331,6 +1375,17 @@ Warnung
 </div>
 </div>
 <p>Jetzt steht jedes Item in einer Zeile, Region in zwei Spalten — Ost und West direkt nebeneinander. Genau das Format, das in einer Hausarbeit gut aussieht.</p>
+<p><code>names_from = eastwest</code> legt fest, woher die neuen Spaltennamen kommen: Die beiden Stufen von <code>eastwest</code> werden zu Namensschildern. <code>values_from = mw</code> liefert die Steine darunter (<a href="#fig-pivot-wider" class="quarto-xref">Abbildung&nbsp;<span>5.12</span></a>).</p>
+<div id="fig-pivot-wider" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Links die Long-Form mit den Türmen eastwest (fct), item (chr) und mw (dbl) und sechs Reihen: dreimal ALTE BUNDESLAENDER mit mm01, mm03, mm06 und 3.19, 3.97, 4.14, dreimal NEUE BUNDESLAENDER mit 4.01, 4.63, 4.58. Unter eastwest steht names_from, unter mw values_from. Ein grüner Pfeil führt zur Wide-Form, überschrieben mit pivot_wider(): der Turm item mit mm01, mm03, mm06 und zwei dunkle Namensschilder ALTE BUNDESLAENDER und NEUE BUNDESLAENDER, jeweils dbl, darunter 3.19, 3.97, 4.14 und 4.01, 4.63, 4.58. Unten der Code pivot_wider(names_from = eastwest, values_from = mw).">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pivot-wider-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-pivot-wider.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Abbildung&nbsp;5.12: pivot_wider() macht aus den Werten von eastwest zwei Spaltennamen und verteilt die Mittelwerte aus mw darauf."><img src="Bilder/figuren/k05-pivot-wider.svg" class="img-fluid figure-img" alt="Links die Long-Form mit den Türmen eastwest (fct), item (chr) und mw (dbl) und sechs Reihen: dreimal ALTE BUNDESLAENDER mit mm01, mm03, mm06 und 3.19, 3.97, 4.14, dreimal NEUE BUNDESLAENDER mit 4.01, 4.63, 4.58. Unter eastwest steht names_from, unter mw values_from. Ein grüner Pfeil führt zur Wide-Form, überschrieben mit pivot_wider(): der Turm item mit mm01, mm03, mm06 und zwei dunkle Namensschilder ALTE BUNDESLAENDER und NEUE BUNDESLAENDER, jeweils dbl, darunter 3.19, 3.97, 4.14 und 4.01, 4.63, 4.58. Unten der Code pivot_wider(names_from = eastwest, values_from = mw)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pivot-wider-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.12: <code>pivot_wider()</code> macht aus den Werten von <code>eastwest</code> zwei Spaltennamen und verteilt die Mittelwerte aus <code>mw</code> darauf.
+</figcaption>
+</figure>
+</div>
 <p><strong>Faustregel:</strong> <code>pivot_wider()</code> für Endtabellen im Bericht, <code>pivot_longer()</code> als Arbeitsformat für jede ggplot2-Visualisierung mehrerer Items.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1396,18 +1451,18 @@ Tipp
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">min_valid =</span> <span class="dv">5</span>)</span>
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><code>row_means()</code> rechnet für jede Person den Mittelwert der Items, die sie beantwortet hat (<a href="#fig-skala" class="quarto-xref">Abbildung&nbsp;<span>5.8</span></a>). Bei sechs gültigen Antworten sind das alle sechs, bei fünf die fünf vorhandenen. Wer nur vier gültige Antworten hat, bekommt mit <code>min_valid = 5</code> keinen Skalenwert.</p>
+<p><code>row_means()</code> rechnet für jede Person den Mittelwert der Items, die sie beantwortet hat (<a href="#fig-skala" class="quarto-xref">Abbildung&nbsp;<span>5.13</span></a>). Bei sechs gültigen Antworten sind das alle sechs, bei fünf die fünf vorhandenen. Wer nur vier gültige Antworten hat, bekommt mit <code>min_valid = 5</code> keinen Skalenwert.</p>
 <div id="fig-skala" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Sechs Türme mm01, mm02r, mm03, mm04, mm05r und mm06 mit drei Reihen, links die respid 1, 53 und 120. Reihe 1: 5, 5, 4, 2, 2, 2. Reihe 53: 1, ein leerer Stein, 4, 6, 1, 5. Reihe 120: 3, 4, ein leerer Stein, 4, 5, ein leerer Stein. Ein grüner Pfeil row_means() mit min_valid = 5 führt zum Turm islamophobie: 3.33 mit der Notiz 6 gültig, 3.4 mit 5 gültig und ein leerer Stein mit 4 gültig in Orange.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-skala-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="Bilder/figuren/k05-skala.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Abbildung&nbsp;5.8: Drei Befragte aus dem ALLBUS: die erste Person mit sechs, die erste mit fünf und die erste mit vier gültigen Antworten. Leere Steine sind fehlende Antworten."><img src="Bilder/figuren/k05-skala.svg" class="img-fluid figure-img" alt="Sechs Türme mm01, mm02r, mm03, mm04, mm05r und mm06 mit drei Reihen, links die respid 1, 53 und 120. Reihe 1: 5, 5, 4, 2, 2, 2. Reihe 53: 1, ein leerer Stein, 4, 6, 1, 5. Reihe 120: 3, 4, ein leerer Stein, 4, 5, ein leerer Stein. Ein grüner Pfeil row_means() mit min_valid = 5 führt zum Turm islamophobie: 3.33 mit der Notiz 6 gültig, 3.4 mit 5 gültig und ein leerer Stein mit 4 gültig in Orange."></a>
+<a href="Bilder/figuren/k05-skala.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Abbildung&nbsp;5.13: Drei Befragte aus dem ALLBUS: die erste Person mit sechs, die erste mit fünf und die erste mit vier gültigen Antworten. Leere Steine sind fehlende Antworten."><img src="Bilder/figuren/k05-skala.svg" class="img-fluid figure-img" alt="Sechs Türme mm01, mm02r, mm03, mm04, mm05r und mm06 mit drei Reihen, links die respid 1, 53 und 120. Reihe 1: 5, 5, 4, 2, 2, 2. Reihe 53: 1, ein leerer Stein, 4, 6, 1, 5. Reihe 120: 3, 4, ein leerer Stein, 4, 5, ein leerer Stein. Ein grüner Pfeil row_means() mit min_valid = 5 führt zum Turm islamophobie: 3.33 mit der Notiz 6 gültig, 3.4 mit 5 gültig und ein leerer Stein mit 4 gültig in Orange."></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skala-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Abbildung&nbsp;5.8: Drei Befragte aus dem ALLBUS: die erste Person mit sechs, die erste mit fünf und die erste mit vier gültigen Antworten. Leere Steine sind fehlende Antworten.
+Abbildung&nbsp;5.13: Drei Befragte aus dem ALLBUS: die erste Person mit sechs, die erste mit fünf und die erste mit vier gültigen Antworten. Leere Steine sind fehlende Antworten.
 </figcaption>
 </figure>
 </div>
-<p><strong>Kurz überlegen.</strong> Welchen Skalenwert bekäme die Person mit der <code>respid</code> 120 aus <a href="#fig-skala" class="quarto-xref">Abbildung&nbsp;<span>5.8</span></a>, wenn du <code>min_valid = 4</code> setzt?</p>
+<p><strong>Kurz überlegen.</strong> Welchen Skalenwert bekäme die Person mit der <code>respid</code> 120 aus <a href="#fig-skala" class="quarto-xref">Abbildung&nbsp;<span>5.13</span></a>, wenn du <code>min_valid = 4</code> setzt?</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Auflösung">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1500,6 +1555,17 @@ Hinweis
 7        6     5</code></pre>
 </div>
 </div>
+<p><code>row_count()</code> zählt in jeder Reihe, wie viele der sechs Antworten eine 7 sind (<a href="#fig-row-count" class="quarto-xref">Abbildung&nbsp;<span>5.14</span></a>). Die Person mit der <code>respid</code> 95 hat dreimal 7 gewählt, die mit der <code>respid</code> 1 keinmal. Die Person mit der <code>respid</code> 2 hat die Items nicht vorgelegt bekommen und bekommt ebenfalls 0; <code>row_means()</code> hätte ihr einen fehlenden Wert gegeben.</p>
+<div id="fig-row-count" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Sechs Türme mm01 bis mm06 mit drei Reihen, links die respid 1, 2 und 95. Reihe 1: 5, 3, 4, 2, 6, 2, alle grau. Reihe 2: sechs leere Steine. Reihe 95: 7, 1, 6, 7, 4, 7; die drei Siebener sind blau, die übrigen Steine grau. Ein grüner Pfeil row_count() mit count = 7 führt zum Turm n_extrem (int) mit 0, 0 und 3, daneben keine 7, keine Antwort und dreimal 7.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-row-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/k05-row-count.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Abbildung&nbsp;5.14: row_count(count = 7) zählt je Reihe die Siebener (blau); die übrigen Werte zählen nicht mit (grau). Eine Reihe ohne Antwort ergibt 0."><img src="Bilder/figuren/k05-row-count.svg" class="img-fluid figure-img" alt="Sechs Türme mm01 bis mm06 mit drei Reihen, links die respid 1, 2 und 95. Reihe 1: 5, 3, 4, 2, 6, 2, alle grau. Reihe 2: sechs leere Steine. Reihe 95: 7, 1, 6, 7, 4, 7; die drei Siebener sind blau, die übrigen Steine grau. Ein grüner Pfeil row_count() mit count = 7 führt zum Turm n_extrem (int) mit 0, 0 und 3, daneben keine 7, keine Antwort und dreimal 7."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-row-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Abbildung&nbsp;5.14: <code>row_count(count = 7)</code> zählt je Reihe die Siebener (blau); die übrigen Werte zählen nicht mit (grau). Eine Reihe ohne Antwort ergibt 0.
+</figcaption>
+</figure>
+</div>
 <p>Die meisten Befragten zeigen <em>kein</em> solches Muster — wer alle sechs Items mit 7 beantwortet, ist eine kleine Minderheit. Lies die Zeile <code>0</code> dabei mit Vorsicht: Darin stecken auch die rund 1.650 Befragten, denen die Items wegen des Split-Designs gar nicht vorgelegt wurden — fehlende Werte zählen nie als Treffer. <code>row_count()</code> ist generell nützlich für Daten-Quality-Checks: wie viele „weiß nicht”, wie viele Extremantworten, wie viele Mittelantworten? Mehrere Werte zählst du auf einmal mit <code>count = c(1, 7)</code> — dann landen <em>beide</em> Extreme in der Summe.</p>
 </section>
 <section id="populismus-skala" class="level3" data-number="5.7.3">
@@ -1541,14 +1607,14 @@ Descriptive Statistics
   -----------------------------------------------------------------------</code></pre>
 </div>
 </div>
-<p><a href="#fig-polung" class="quarto-xref">Abbildung&nbsp;<span>5.9</span></a> stellt die Wertelabels nebeneinander. Bei <code>mm01</code> steht die Zustimmung beim höchsten Wert, bei <code>pa29</code> beim niedrigsten. Nach dem Umpolen steht sie auch bei <code>pa29r</code> beim höchsten Wert. Ohne diesen Schritt würde <code>populismus</code> das Gegenteil messen: Hohe Werte stünden für Ablehnung populistischer Aussagen.</p>
+<p><a href="#fig-polung" class="quarto-xref">Abbildung&nbsp;<span>5.15</span></a> stellt die Wertelabels nebeneinander. Bei <code>mm01</code> steht die Zustimmung beim höchsten Wert, bei <code>pa29</code> beim niedrigsten. Nach dem Umpolen steht sie auch bei <code>pa29r</code> beim höchsten Wert. Ohne diesen Schritt würde <code>populismus</code> das Gegenteil messen: Hohe Werte stünden für Ablehnung populistischer Aussagen.</p>
 <div id="fig-polung" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code rec(pa29, rules = „rev“, suffix = „r“).">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-polung-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="Bilder/figuren/k05-polung.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Abbildung&nbsp;5.9: Die Wertelabels von mm01, pa29 und pa29r. Bei pa29 steht die Zustimmung beim niedrigsten Wert; rec() mit &quot;rev&quot; dreht die Skala um."><img src="Bilder/figuren/k05-polung.svg" class="img-fluid figure-img" alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code rec(pa29, rules = „rev“, suffix = „r“)."></a>
+<a href="Bilder/figuren/k05-polung.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Abbildung&nbsp;5.15: Die Wertelabels von mm01, pa29 und pa29r. Bei pa29 steht die Zustimmung beim niedrigsten Wert; rec() mit &quot;rev&quot; dreht die Skala um."><img src="Bilder/figuren/k05-polung.svg" class="img-fluid figure-img" alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code rec(pa29, rules = „rev“, suffix = „r“)."></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-polung-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Abbildung&nbsp;5.9: Die Wertelabels von <code>mm01</code>, <code>pa29</code> und <code>pa29r</code>. Bei <code>pa29</code> steht die Zustimmung beim niedrigsten Wert; <code>rec()</code> mit <code>"rev"</code> dreht die Skala um.
+Abbildung&nbsp;5.15: Die Wertelabels von <code>mm01</code>, <code>pa29</code> und <code>pa29r</code>. Bei <code>pa29</code> steht die Zustimmung beim niedrigsten Wert; <code>rec()</code> mit <code>"rev"</code> dreht die Skala um.
 </figcaption>
 </figure>
 </div>
@@ -1628,14 +1694,14 @@ Warnung
 </div>
 </div>
 <p>Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in <em>relativer Intensität</em> stärker islamophob als populistisch — oder umgekehrt.</p>
-<p>Auf den eigenen Skalen liegen die Mittelwerte bei 4.11 von 7 und 3.4 von 5, auf der gemeinsamen Skala von 0 bis 100 bei 51.9 und 60.0 (<a href="#fig-pomps" class="quarto-xref">Abbildung&nbsp;<span>5.10</span></a>).</p>
+<p>Auf den eigenen Skalen liegen die Mittelwerte bei 4.11 von 7 und 3.4 von 5, auf der gemeinsamen Skala von 0 bis 100 bei 51.9 und 60.0 (<a href="#fig-pomps" class="quarto-xref">Abbildung&nbsp;<span>5.16</span></a>).</p>
 <div id="fig-pomps" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Drei Lineale untereinander. Oben islamophobie von 1 bis 7 mit einem orangen Pfeil bei 4.11. Darunter das kürzere Lineal populismus von 1 bis 5 mit einem grünen Pfeil bei 3.4. Gestrichelte Linien führen von den Enden beider Lineale zu einem gemeinsamen Lineal von 0 bis 100, links beschriftet mit einem grünen Kasten pomps() und den Namen islamophobie_p und populismus_p. Darauf zeigt der orange Pfeil auf 51.9, der grüne auf 60.0.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pomps-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="Bilder/figuren/k05-pomps.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Abbildung&nbsp;5.10: Die Mittelwerte beider Skalen auf ihren eigenen Linealen und nach pomps() auf einem gemeinsamen Lineal von 0 bis 100."><img src="Bilder/figuren/k05-pomps.svg" class="img-fluid figure-img" alt="Drei Lineale untereinander. Oben islamophobie von 1 bis 7 mit einem orangen Pfeil bei 4.11. Darunter das kürzere Lineal populismus von 1 bis 5 mit einem grünen Pfeil bei 3.4. Gestrichelte Linien führen von den Enden beider Lineale zu einem gemeinsamen Lineal von 0 bis 100, links beschriftet mit einem grünen Kasten pomps() und den Namen islamophobie_p und populismus_p. Darauf zeigt der orange Pfeil auf 51.9, der grüne auf 60.0."></a>
+<a href="Bilder/figuren/k05-pomps.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Abbildung&nbsp;5.16: Die Mittelwerte beider Skalen auf ihren eigenen Linealen und nach pomps() auf einem gemeinsamen Lineal von 0 bis 100."><img src="Bilder/figuren/k05-pomps.svg" class="img-fluid figure-img" alt="Drei Lineale untereinander. Oben islamophobie von 1 bis 7 mit einem orangen Pfeil bei 4.11. Darunter das kürzere Lineal populismus von 1 bis 5 mit einem grünen Pfeil bei 3.4. Gestrichelte Linien führen von den Enden beider Lineale zu einem gemeinsamen Lineal von 0 bis 100, links beschriftet mit einem grünen Kasten pomps() und den Namen islamophobie_p und populismus_p. Darauf zeigt der orange Pfeil auf 51.9, der grüne auf 60.0."></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pomps-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Abbildung&nbsp;5.10: Die Mittelwerte beider Skalen auf ihren eigenen Linealen und nach <code>pomps()</code> auf einem gemeinsamen Lineal von 0 bis 100.
+Abbildung&nbsp;5.16: Die Mittelwerte beider Skalen auf ihren eigenen Linealen und nach <code>pomps()</code> auf einem gemeinsamen Lineal von 0 bis 100.
 </figcaption>
 </figure>
 </div>
@@ -1718,14 +1784,14 @@ Hinweis
 </dl>
 </div>
 </div>
-<p>Mit dieser Pipeline ist der Datensatz fertig für die Analyse. <a href="#fig-pipeline" class="quarto-xref">Abbildung&nbsp;<span>5.11</span></a> ordnet die sechs Schritte den Abschnitten zu, in denen du sie kennengelernt hast. Zusammen stehen sie in <code>R/prep.R</code>; der Setup-Chunk jedes folgenden Kapitels liest das Skript mit <code>source("R/prep.R")</code> ein.</p>
+<p>Mit dieser Pipeline ist der Datensatz fertig für die Analyse. <a href="#fig-pipeline" class="quarto-xref">Abbildung&nbsp;<span>5.17</span></a> ordnet die sechs Schritte den Abschnitten zu, in denen du sie kennengelernt hast. Zusammen stehen sie in <code>R/prep.R</code>; der Setup-Chunk jedes folgenden Kapitels liest das Skript mit <code>source("R/prep.R")</code> ein.</p>
 <div id="fig-pipeline" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Eine Zeitleiste mit sechs grünen Nummernpunkten: 1 einlesen, read_spss(), 4.3; 2 mm02, mm05 umpolen, rec(), 5.3.3; 3 pa29 bis pa35 umpolen, rec(), 5.7.3; 4 Skala islamophobie, row_means(), 5.7.1; 5 Skala populismus, row_means(), 5.7.3; 6 POMPS-Versionen, pomps(), 5.8. Eine Linie fasst alle Schritte zusammen, ein grüner Pfeil führt zur Datei R/prep.R, beschriftet Skript im Projektordner. Ein Pfeil führt weiter zu einem Code-Kasten mit library(tidyverse), library(mariposa), source(„R/_common.R“) und source(„R/prep.R“), beschriftet Setup-Chunk in Kap. 6 bis 9.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="Bilder/figuren/k05-pipeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Abbildung&nbsp;5.11: Die sechs Schritte der Pipeline mit den Abschnitten, in denen sie eingeführt werden. R/prep.R fasst sie zusammen, die Setup-Chunks von Kap. 6 bis 9 lesen das Skript ein."><img src="Bilder/figuren/k05-pipeline.svg" class="img-fluid figure-img" alt="Eine Zeitleiste mit sechs grünen Nummernpunkten: 1 einlesen, read_spss(), 4.3; 2 mm02, mm05 umpolen, rec(), 5.3.3; 3 pa29 bis pa35 umpolen, rec(), 5.7.3; 4 Skala islamophobie, row_means(), 5.7.1; 5 Skala populismus, row_means(), 5.7.3; 6 POMPS-Versionen, pomps(), 5.8. Eine Linie fasst alle Schritte zusammen, ein grüner Pfeil führt zur Datei R/prep.R, beschriftet Skript im Projektordner. Ein Pfeil führt weiter zu einem Code-Kasten mit library(tidyverse), library(mariposa), source(„R/_common.R“) und source(„R/prep.R“), beschriftet Setup-Chunk in Kap. 6 bis 9."></a>
+<a href="Bilder/figuren/k05-pipeline.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Abbildung&nbsp;5.17: Die sechs Schritte der Pipeline mit den Abschnitten, in denen sie eingeführt werden. R/prep.R fasst sie zusammen, die Setup-Chunks von Kap. 6 bis 9 lesen das Skript ein."><img src="Bilder/figuren/k05-pipeline.svg" class="img-fluid figure-img" alt="Eine Zeitleiste mit sechs grünen Nummernpunkten: 1 einlesen, read_spss(), 4.3; 2 mm02, mm05 umpolen, rec(), 5.3.3; 3 pa29 bis pa35 umpolen, rec(), 5.7.3; 4 Skala islamophobie, row_means(), 5.7.1; 5 Skala populismus, row_means(), 5.7.3; 6 POMPS-Versionen, pomps(), 5.8. Eine Linie fasst alle Schritte zusammen, ein grüner Pfeil führt zur Datei R/prep.R, beschriftet Skript im Projektordner. Ein Pfeil führt weiter zu einem Code-Kasten mit library(tidyverse), library(mariposa), source(„R/_common.R“) und source(„R/prep.R“), beschriftet Setup-Chunk in Kap. 6 bis 9."></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Abbildung&nbsp;5.11: Die sechs Schritte der Pipeline mit den Abschnitten, in denen sie eingeführt werden. <code>R/prep.R</code> fasst sie zusammen, die Setup-Chunks von Kap. 6 bis 9 lesen das Skript ein.
+Abbildung&nbsp;5.17: Die sechs Schritte der Pipeline mit den Abschnitten, in denen sie eingeführt werden. <code>R/prep.R</code> fasst sie zusammen, die Setup-Chunks von Kap. 6 bis 9 lesen das Skript ein.
 </figcaption>
 </figure>
 </div>
