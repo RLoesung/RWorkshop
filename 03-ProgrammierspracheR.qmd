@@ -232,6 +232,10 @@ alter >= 18 & alter <= 65
 alter %in% c(22, 33, 44)
 ```
 
+@fig-vergleich zeigt die dritte Zeile Stein für Stein. `alter >= 18` ist für alle fünf Werte `TRUE`, `alter <= 65` für alle außer 67. `&` verknüpft die beiden Wahrheitstürme Reihe für Reihe und ergibt nur dort `TRUE`, wo beide Steine `TRUE` sind.
+
+![Die dritte Zeile aus dem Chunk: Jede Bedingung ergibt einen Turm aus Wahrheitswerten, `&` verknüpft die beiden Türme Reihe für Reihe.](Bilder/figuren/k03-vergleich.svg){#fig-vergleich .lightbox fig-alt="Links das Namensschild alter über einem Turm aus den blauen Steinen 22, 45, 67, 18 und 33. Daneben zwei rosa Türme: alter >= 18 mit fünfmal TRUE und alter <= 65 mit TRUE, TRUE, FALSE, TRUE, TRUE. Zwischen den beiden rosa Türmen steht in jeder Reihe ein &, ein Pfeil führt jeweils zum Ergebnisturm TRUE, TRUE, FALSE, TRUE, TRUE. Die Reihe mit 67 ist orange umrandet. Darunter der Code alter >= 18 & alter <= 65 und die Ausgabe [1] TRUE TRUE FALSE TRUE TRUE."}
+
 Diese Operatoren wirst du in Kap. 4 ständig brauchen, wenn du Fälle mit `filter()` auswählst.
 
 ## Objekte und Datentypen {#sec-datentypen}
@@ -279,6 +283,10 @@ zahlen[zahlen > 25]          # behält nur Werte > 25
 zahlen[!is.na(zahlen)]       # behält nur Nicht-NA-Werte
 ```
 
+`zahlen > 25` ergibt einen Turm aus Wahrheitswerten, der so hoch ist wie `zahlen`. In `zahlen[zahlen > 25]` legt R ihn wie eine Schablone neben `zahlen` und behält nur die Steine, neben denen `TRUE` steht (@fig-index).
+
+![Boolesche Indizierung: Der Wahrheitsturm `zahlen > 25` wählt die Steine aus. Die grauen Steine neben `FALSE` fallen weg.](Bilder/figuren/k03-index.svg){#fig-index .lightbox fig-alt="Links das Namensschild zahlen über einem Turm aus 10, 20, 30, 40 und 50; die Steine 10 und 20 sind grau, die übrigen blau. Daneben der rosa Turm zahlen > 25 mit FALSE, FALSE, TRUE, TRUE, TRUE. Ein grüner Pfeil führt zum Ergebnis, einem blauen Turm aus 30, 40 und 50. Darunter zahlen > 25 mit der Ausgabe [1] FALSE FALSE TRUE TRUE TRUE und zahlen[zahlen > 25] mit der Ausgabe [1] 30 40 50."}
+
 Diese Logik ist *exakt* das, was tidyverse-Funktionen wie `filter()` (Kap. 4) intern machen. Wer hier sicher ist, versteht `filter(allbus, age > 30)` sofort.
 
 ::: {.callout-note}
@@ -289,6 +297,10 @@ Diese Logik ist *exakt* das, was tidyverse-Funktionen wie `filter()` (Kap. 4) in
 ```{r recycling}
 c(1, 2, 3, 4) + c(10, 20)   # ergibt 11, 22, 13, 24 — nicht 11, 22!
 ```
+
+@fig-recycling zeigt, welche Werte R wiederholt: Bei `zahlen * 2` nimmt R dieselbe 2 für jeden der fünf Steine, bei `c(1, 2, 3, 4) + c(10, 20)` nimmt es 10 und 20 ein zweites Mal.
+
+![Recycling: R wiederholt den kürzeren Vektor, bis er so lang ist wie der längere. Blasse Steine sind wiederholte Werte.](Bilder/figuren/k03-recycling.svg){#fig-recycling .lightbox fig-alt="Zwei Beispiele. Links zahlen * 2: der Turm zahlen mit 10, 20, 30, 40 und 50, daneben in jeder Reihe ein * und ein Stein 2; die oberste 2 ist kräftig blau, die vier darunter sind blass. Pfeile führen zum Ergebnis 20, 40, 60, 80, 100, darunter die Ausgabe [1] 20 40 60 80 100. Rechts c(1, 2, 3, 4) + c(10, 20): der Turm 1, 2, 3, 4, daneben in jeder Reihe ein + und die Steine 10 und 20, darunter blass noch einmal 10 und 20. Das Ergebnis ist 11, 22, 13, 24, darunter die Ausgabe [1] 11 22 13 24."}
 
 Das ist absichtliches Verhalten — und genau die Anfänger:innen-Falle, die zu falschen Ergebnissen führt. Wenn du dir nicht sicher bist, prüfe mit `length()`, dass beide Vektoren gleich lang sind.
 :::
@@ -328,6 +340,20 @@ geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),
 geschlecht
 levels(geschlecht)
 ```
+
+@fig-faktor zeigt, was in `geschlecht` steckt: Intern speichert R für jeden Wert eine Zahl, hier 1, 2, 1, 3, und `levels` legt fest, für welche Ausprägung jede Zahl steht. Die erste Stufe, `Mann`, ist die Referenzkategorie.
+
+![Der Faktor `geschlecht`: R speichert intern die Zahlen 1 bis 3, `levels` ordnet ihnen die Ausprägungen in fester Reihenfolge zu. Die erste Stufe ist die Referenz.](Bilder/figuren/k03-faktor.svg){#fig-faktor .lightbox fig-alt="Links das Namensschild geschlecht über einem lila Turm aus Mann, Frau, Mann und Divers; daneben, mit intern beschriftet, ein blauer Turm aus 1, 2, 1 und 3. Rechts ein Kasten levels(geschlecht) mit drei Reihen: 1 Mann, 2 Frau, 3 Divers; neben Mann ein Schild Referenz. Im Kasten unten die Ausgabe [1] „Mann“ „Frau“ „Divers“. Darunter der Code geschlecht <- factor(c(„Mann“, „Frau“, „Mann“, „Divers“), levels = c(„Mann“, „Frau“, „Divers“))."}
+
+**Kurz überlegen.** In welcher Reihenfolge stehen die Stufen von `factor(c("niedrig", "hoch", "mittel"))`, wenn du `levels` weglässt?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r faktor-loesung}
+factor(c("niedrig", "hoch", "mittel"))
+```
+
+Ohne `levels` sortiert R die Stufen alphabetisch: `hoch`, `mittel`, `niedrig`. Referenzkategorie wäre damit `hoch`. Die inhaltliche Reihenfolge legst du mit `levels = c("niedrig", "mittel", "hoch")` fest.
+:::
 
 Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du die Reihenfolge nachträglich. `forcats` ist Teil des tidyverse und liefert ein ganzes Set an Faktor-Werkzeugen (`fct_recode()`, `fct_lump()`, `fct_reorder()`) — du brauchst sie spätestens bei Grafiken in Kap. 6.
 
@@ -380,6 +406,10 @@ ergebnis <- list(
 ergebnis$koeffizient
 ergebnis$konfidenz[1]
 ```
+
+Eine Liste ist eine Kiste mit Fächern (@fig-liste). Jedes Fach hat einen Namen und kann Werte eines anderen Typs und einer anderen Länge enthalten. `ergebnis$konfidenz[1]` greift in zwei Schritten zu: `$konfidenz` nimmt den Turm aus seinem Fach, `[1]` davon den ersten Stein.
+
+![Die Liste `ergebnis` als Kiste mit vier Fächern. `ergebnis$konfidenz[1]` holt erst den Turm aus dem Fach `konfidenz` und davon den ersten Wert.](Bilder/figuren/k03-liste.svg){#fig-liste .lightbox fig-alt="Ein dunkles Namensschild ergebnis über einer Kiste mit vier Fächern: $koeffizient mit dem blauen Stein 0.42, $p_wert mit 0.001, $konfidenz mit einem grün umrandeten Turm aus 0.31 und 0.53, $modell mit dem lila Stein „lm“. Schritt 1, $konfidenz: Ein Pfeil führt zum Turm aus 0.31 und 0.53. Schritt 2, [1]: Ein Pfeil führt zum Stein 0.31. Darunter der Code ergebnis$konfidenz[1] und die Ausgabe [1] 0.31."}
 
 ## Fehlende Werte: `NA`, `is.na()` und `na.rm` {#sec-na}
 
@@ -489,7 +519,7 @@ Beide funktionieren in tidyverse-Code, beide liefern dieselben Ergebnisse. Wir n
 
 ::: {.callout-note}
 **Hintergrund: Wo `%>%` etwas anders ist.** Der magrittr-Pipe hat einen Platzhalter `.`, der überall positionierbar ist:
-`x %>% lm(y ~ ., data = .)`. Der native `_` muss benannt sein. Bei den meisten Tidyverse-Funktionen brauchst du den Platzhalter nicht — das erste Argument ist immer der Datensatz.
+`x %>% lm(y ~ ., data = .)`. Platzhalter ist hier nur der Punkt hinter `data =`; der Punkt in `y ~ .` gehört zur Formel und steht für alle übrigen Variablen im Datensatz. Der native `_` muss benannt sein. Bei den meisten Tidyverse-Funktionen brauchst du den Platzhalter nicht — das erste Argument ist immer der Datensatz.
 :::
 
 ::: {.callout-warning}

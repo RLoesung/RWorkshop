@@ -16,6 +16,17 @@ PALE, LIGHT, STICKER, DARKORANGE = "#FBECD2", "#F3CF97", "#FAC775", "#B86E0A"
 STEIN = {"num": ("#85B7EB", "#042C53"), "txt": ("#AFA9EC", "#26215C"), "log": ("#F4C0D1", "#4B1528"),
          "na": ("#FFFFFF", "#6E7882"), "dim": ("#E4E1D8", "#A8A69E")}
 
+
+def _mischen(farbe, weiss):
+    """Mischt eine Farbe #RRGGBB mit Weiß; weiss = Anteil Weiß zwischen 0 und 1."""
+    kanaele = (int(farbe[i:i + 2], 16) for i in (1, 3, 5))
+    return "#" + "".join(f"{round(k + (255 - k) * weiss):02X}" for k in kanaele)
+
+
+# Blasser Stein: ein Wert, den R wiederholt (Recycling). Farbton des Datentyps bleibt, damit er sich
+# vom grauen Stein (fällt weg) unterscheidet; die Schrift bleibt gut lesbar.
+STEIN_BLASS = {k: (_mischen(STEIN[k][0], 0.55), _mischen(STEIN[k][1], 0.25)) for k in ("num", "txt", "log")}
+
 SANS = "'Source Sans Pro', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
 MONO = "Menlo, Consolas, 'DejaVu Sans Mono', monospace"
 L, C, RT = "start", "middle", "end"
@@ -264,13 +275,15 @@ def tokens(s, x, y, parts, size=15, h=0.46):
     return mids, x
 
 
-def stein(s, x, y, w, h, kind, t, tag=None, size=13):
-    """Ein Baustein: Noppen oben, Farbe je Datentyp; NA ist leer und gestrichelt."""
-    fill, ink = STEIN[kind]
+def stein(s, x, y, w, h, kind, t, tag=None, size=13, blass=False):
+    """Ein Baustein: Noppen oben, Farbe je Datentyp; NA ist leer und gestrichelt.
+    blass=True: ein Wert, den R wiederholt (hellere Farbe des Datentyps, Kante in der vollen Farbe)."""
+    fill, ink = STEIN_BLASS[kind] if blass else STEIN[kind]
+    kante = STEIN[kind][0] if blass else ink
     n = max(2, round(w / 0.42))
     for i in range(n):
         rect(s, x + (i + 0.5) * w / n - 0.09, y - 0.06, 0.18, 0.07, fill, ink if kind == "na" else None, 0.5)
-    rect(s, x, y, w, h, fill, ink, 0.75, dash=(kind == "na"))
+    rect(s, x, y, w, h, fill, kante, 0.75, dash=(kind == "na"))
     if t != "":
         tw = w - 0.08 - (0.6 if tag else 0)          # mit Aufkleber: Wert links davon
         text(s, x + 0.04, y, tw, h, [P(R(t, font=MONO, size=size, bold=True, color=ink), align=C)], anchor="middle")
@@ -288,6 +301,39 @@ def turm(s, x, base, w, h, kind, werte):
     for i, t in enumerate(werte):
         k = kind(i) if callable(kind) else kind
         stein(s, x, base - (i + 1) * (h + 0.07), w, h, k, t)
+
+
+def kiste(s, x, y, faecher, h, name=None, size=10.5, kopf=0.34):
+    """Liste als Kiste mit Fächern (k03-liste, k08-ergebnisobjekt): ein dunkel umrandeter Rahmen, darin
+    lückenlos nebeneinander die Fächer, jedes oben mit seinem Namen ($name). faecher: [(name, breite)].
+    h: Höhe der Kiste; name: Objektname als dunkles Schild über der Kiste (die Kiste beginnt dann 0,48 tiefer).
+    Gibt je Fach (x, oben, breite, boden) der Inhaltsfläche zurück; Inhalte stellt der Aufrufer auf den Boden."""
+    if name:
+        schild(s, x, y, name, w=max(1.0, text_width(name, MONO, 12.5, True) + 0.3))
+        y += 0.48
+    breite = sum(b for _, b in faecher)
+    rect(s, x, y, breite, h, CARD, INK, 1.5)
+    out, fx = [], x
+    for i, (n, b) in enumerate(faecher):
+        if i:
+            vline(s, fx, y, y + h, color=INK, width=1.0)
+        text(s, fx, y, b, kopf, [P(R("$" + n, font=MONO, size=size, bold=True, color=INK), align=C)], anchor="middle")
+        hline(s, fx, y + kopf, b, color=CARDLINE, width=0.75)
+        out.append((fx, y + kopf, b, y + h))
+        fx += b
+    return out
+
+
+def referenz(s, x, ym, size=10.5, h=0.28):
+    """Markiert die Referenzkategorie eines Faktors (k03-faktor, k09-dummy): weißes Schild „Referenz“
+    mit dunkler Kante und Spitze nach links; die Spitze liegt bei (x, ym). Gibt die rechte Kante zurück."""
+    sp = 0.1
+    tw = text_width("Referenz", SANS, size, True) + 0.16
+    pts = [(x, ym), (x + sp, ym - h / 2), (x + sp + tw, ym - h / 2), (x + sp + tw, ym + h / 2), (x + sp, ym + h / 2)]
+    s.add('<polygon points="' + " ".join(f"{_u(a)},{_u(b)}" for a, b in pts) + f'" fill="{WHITE}" '
+          f'stroke="{INK}" stroke-width="{1.0 * PT:.2f}"/>')
+    text(s, x + sp, ym - h / 2, tw, h, [P(R("Referenz", size=size, bold=True, color=INK), align=C)], anchor="middle")
+    return x + sp + tw
 
 
 # --- Pakete (1.6.2) ----------------------------------------------------------------------------

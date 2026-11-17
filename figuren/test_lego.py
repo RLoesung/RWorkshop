@@ -113,6 +113,69 @@ class TestBausteine(unittest.TestCase):
         self.assertFalse([e for e in els if e.tag == NS + "text"])
         self.assertEqual(len([e for e in els if e.tag == NS + "rect"]), 3)
 
+    def test_stein_blass(self):
+        """Blasser Stein (ein Wert, den R wiederholt): Farbe des Datentyps, aber heller; weder grau noch gestrichelt."""
+        def hell(farbe):
+            return sum(int(farbe[i:i + 2], 16) for i in (1, 3, 5))
+
+        for kind in ("num", "txt", "log"):
+            s = L.Canvas(2, 1)
+            L.stein(s, 0.2, 0.3, 1, 0.4, kind, "2", blass=True)
+            svg = s.svg()
+            self.assertNotIn("stroke-dasharray", svg)
+            els = alle_elemente(svg)
+            fills = {e.get("fill") for e in els if e.tag == NS + "rect"}
+            fuellung, schrift = L.STEIN_BLASS[kind]
+            self.assertEqual(fills, {fuellung})                              # Körper und Noppen
+            self.assertNotIn(fuellung, (L.STEIN[kind][0], L.STEIN["dim"][0], L.STEIN["na"][0]))
+            self.assertGreater(hell(fuellung), hell(L.STEIN[kind][0]))
+            kanal = lambda f: max(range(3), key=lambda i: int(f[1 + 2 * i:3 + 2 * i], 16))   # noqa: E731
+            self.assertEqual(kanal(fuellung), kanal(L.STEIN[kind][0]))     # gleicher Farbton
+            koerper = [e for e in els if e.tag == NS + "rect" and e.get("stroke")]
+            self.assertEqual([e.get("stroke") for e in koerper], [L.STEIN[kind][0]])
+            wert = [e for e in els if e.tag == NS + "text" and "".join(e.itertext()) == "2"]
+            self.assertEqual([e.get("fill") for e in wert], [schrift])
+
+    def test_kiste(self):
+        """Kiste mit Fächern (Liste): Fächer nebeneinander in Listenreihenfolge, je mit $-Namen, in einem Rahmen."""
+        s = L.Canvas(5, 3)
+        faecher = L.kiste(s, 0.2, 0.2, [("a", 1.0), ("bb", 1.5), ("c", 0.8)], h=1.4, name="liste")
+        els = alle_elemente(s.svg())
+        texte = [e for e in els if e.tag == NS + "text"]
+        self.assertEqual(["".join(e.itertext()) for e in texte], ["liste", "$a", "$bb", "$c"])
+        self.assertEqual(len(faecher), 3)
+        rahmen = [e for e in els if e.tag == NS + "rect" and e.get("fill") == L.CARD and e.get("stroke") == L.INK]
+        self.assertEqual(len(rahmen), 1)
+        rx, ry = float(rahmen[0].get("x")) / L.DPI, float(rahmen[0].get("y")) / L.DPI
+        rw, rh = float(rahmen[0].get("width")) / L.DPI, float(rahmen[0].get("height")) / L.DPI
+        self.assertAlmostEqual(rw, 3.3, places=2)
+        links = rx
+        for (x, oben, b, boden), soll, label in zip(faecher, [1.0, 1.5, 0.8], texte[1:]):
+            self.assertAlmostEqual(x, links, places=6)                     # lückenlos nebeneinander
+            self.assertAlmostEqual(b, soll, places=6)
+            self.assertGreater(oben, ry)
+            self.assertAlmostEqual(boden, ry + rh, places=6)
+            self.assertLess(float(label.get("y")) / L.DPI, oben)            # Name über der Inhaltsfläche
+            self.assertAlmostEqual(float(label.get("x")) / L.DPI, x + b / 2, places=2)
+            links += b
+        schild_y = float(texte[0].get("y")) / L.DPI
+        self.assertLess(schild_y, ry)                                       # Schild über der Kiste
+
+    def test_referenz(self):
+        """Markierung der Referenzkategorie: Schild mit Spitze nach links, Spitze an der angegebenen Stelle."""
+        s = L.Canvas(3, 1)
+        rechts = L.referenz(s, 1.0, 0.5)
+        els = alle_elemente(s.svg())
+        self.assertEqual(["".join(e.itertext()) for e in els if e.tag == NS + "text"], ["Referenz"])
+        poly = [e for e in els if e.tag == NS + "polygon"]
+        self.assertEqual(len(poly), 1)
+        punkte = [tuple(float(v) / L.DPI for v in p.split(",")) for p in poly[0].get("points").split()]
+        spitze = min(punkte)
+        self.assertAlmostEqual(spitze[0], 1.0, places=2)
+        self.assertAlmostEqual(spitze[1], 0.5, places=2)
+        self.assertAlmostEqual(rechts, max(p[0] for p in punkte), places=2)
+        self.assertGreater(rechts - 1.0, L.text_width("Referenz", L.SANS, 10.5, True))
+
 
 class TestText(unittest.TestCase):
     def test_text_wraps(self):
@@ -176,7 +239,97 @@ ERWARTET_KAP03 = {
                         '  rec(mm05, rules = "rev", suffix = "r") |>', "  mutate(",
                         "    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
                         "min_valid = 5)", "Datensatz einlesen", "mm02", "mm05", "umpolen", "Skala bilden"],
+    "k03-vergleich": ["alter", "22", "45", "67", "18", "33", "alter >= 18", "alter <= 65", "&", "TRUE", "FALSE",
+                      "alter >= 18 & alter <= 65", "[1]  TRUE  TRUE FALSE  TRUE  TRUE"],
+    "k03-index": ["zahlen", "10", "20", "30", "40", "50", "zahlen > 25", "TRUE", "FALSE", "zahlen[zahlen > 25]",
+                  "[1] FALSE FALSE  TRUE  TRUE  TRUE", "[1] 30 40 50"],
+    "k03-recycling": ["zahlen * 2", "c(1, 2, 3, 4) + c(10, 20)", "*", "+", "10", "50", "2", "100", "11", "22", "13",
+                      "24", "[1]  20  40  60  80 100", "[1] 11 22 13 24"],
+    "k03-faktor": ["geschlecht", "Mann", "Frau", "Divers", "1", "2", "3", "intern", "levels(geschlecht)",
+                   '[1] "Mann"   "Frau"   "Divers"', "Referenz",
+                   'geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),',
+                   'levels = c("Mann", "Frau", "Divers"))'],
+    "k03-liste": ["ergebnis", "$koeffizient", "$p_wert", "$konfidenz", "$modell", "0.42", "0.001", "0.31", "0.53",
+                  '"lm"', "[1]", "ergebnis$konfidenz[1]", "[1] 0.31"],
 }
+
+
+def texte_pos(svg):
+    """(Text, x, y, Farbe) je <text>, in Zoll; x ist bei zentrierten Steinwerten die Mitte."""
+    return [("".join(e.itertext()), float(e.get("x")) / L.DPI, float(e.get("y")) / L.DPI, e.get("fill"))
+            for e in ET.fromstring(svg).iter(NS + "text")]
+
+
+def spalten(svg, werte):
+    """Gruppiert Texte aus `werte` nach x (Spalten von links nach rechts), je Spalte von oben nach unten."""
+    sp = {}
+    for t, x, y, _ in texte_pos(svg):
+        if t in werte:
+            sp.setdefault(round(x, 2), []).append((y, t))
+    return [[t for _, t in sorted(v)] for _, v in sorted(sp.items())]
+
+
+class TestKap03Bilder(unittest.TestCase):
+    def test_vergleich_stein_fuer_stein(self):
+        """`&` verknüpft die beiden Wahrheitstürme Reihe für Reihe; die Reihe mit 67 ist markiert."""
+        import kap03
+        svg = kap03.vergleich().svg()
+        self.assertEqual(spalten(svg, {"22", "45", "67", "18", "33"}), [["22", "45", "67", "18", "33"]])
+        self.assertEqual(spalten(svg, {"TRUE", "FALSE"}),
+                         [["TRUE"] * 5, ["TRUE", "TRUE", "FALSE", "TRUE", "TRUE"], ["TRUE", "TRUE", "FALSE", "TRUE", "TRUE"]])
+        self.assertEqual(len([t for t in texte_pos(svg) if t[0] == "&"]), 5)
+        y67 = [y for t, _, y, _ in texte_pos(svg) if t == "67"][0]
+        rahmen = [r for r in ET.fromstring(svg).iter(NS + "rect") if r.get("stroke") == L.ORANGE]
+        self.assertEqual(len(rahmen), 1)
+        oben = float(rahmen[0].get("y")) / L.DPI
+        self.assertTrue(oben < y67 < oben + float(rahmen[0].get("height")) / L.DPI)
+
+    def test_index_schablone(self):
+        """Neben FALSE werden die Steine grau (fallen weg), rechts bleibt der Turm 30, 40, 50."""
+        import kap03
+        svg = kap03.index_fig().svg()
+        grau = [t for t, _, _, f in texte_pos(svg) if f == L.STEIN["dim"][1]]
+        self.assertEqual(grau, ["10", "20"])
+        self.assertEqual(spalten(svg, {"10", "20", "30", "40", "50"}),
+                         [["10", "20", "30", "40", "50"], ["30", "40", "50"]])
+        self.assertEqual(spalten(svg, {"TRUE", "FALSE"}), [["FALSE", "FALSE", "TRUE", "TRUE", "TRUE"]])
+
+    def test_recycling_blass(self):
+        """Blass sind genau die Werte, die R wiederholt: viermal die 2, einmal 10 und 20."""
+        import kap03
+        svg = kap03.recycling().svg()
+        blass = [t for t, _, _, f in texte_pos(svg) if f == L.STEIN_BLASS["num"][1]]
+        self.assertEqual(blass, ["2", "2", "2", "2", "10", "20"])
+        voll_links = [t for t, x, _, f in texte_pos(svg) if f == L.STEIN["num"][1] and x < 3.65]   # zahlen * 2
+        self.assertEqual(voll_links.count("2"), 1)
+        self.assertIn(["20", "40", "60", "80", "100"], spalten(svg, {"20", "40", "60", "80", "100"}))
+        self.assertEqual(spalten(svg, {"11", "22", "13", "24"}), [["11", "22", "13", "24"]])
+
+    def test_faktor_stufen(self):
+        """Intern 1 2 1 3 neben Mann, Frau, Mann, Divers; die Stufenleiste 1–3 mit Mann als Referenz."""
+        import kap03
+        svg = kap03.faktor_fig().svg()
+        self.assertEqual(spalten(svg, {"Mann", "Frau", "Divers"}),
+                         [["Mann", "Frau", "Mann", "Divers"], ["Mann", "Frau", "Divers"]])
+        self.assertEqual(spalten(svg, {"1", "2", "3"}), [["1", "2", "1", "3"], ["1", "2", "3"]])
+        pos = texte_pos(svg)
+        ref = [y for t, _, y, _ in pos if t == "Referenz"]
+        mann_leiter = max((x, y) for t, x, y, _ in pos if t == "Mann")
+        self.assertEqual(len(ref), 1)
+        self.assertAlmostEqual(ref[0], mann_leiter[1], delta=0.05)
+
+    def test_liste_kiste(self):
+        """Vier Fächer in Listenreihenfolge; im Fach konfidenz steht 0.31 über 0.53; Ergebnis 0.31 ganz rechts."""
+        import kap03
+        svg = kap03.liste_fig().svg()
+        pos = texte_pos(svg)
+        namen = [t for t, *_ in pos if t.startswith("$")]
+        self.assertEqual(namen, ["$koeffizient", "$p_wert", "$konfidenz", "$modell", "$konfidenz"])  # Fächer, Schritt 1
+        self.assertEqual(spalten(svg, {"0.31", "0.53"})[0], ["0.31", "0.53"])
+        x_fach = [x for t, x, *_ in pos if t == "$konfidenz"][0]
+        x_031 = sorted(x for t, x, *_ in pos if t == "0.31")
+        self.assertAlmostEqual(x_031[0], x_fach, delta=0.05)
+        self.assertEqual(len(x_031), 3)                                       # in der Kiste, Turm, Ergebnis
 
 
 class TestKap03(unittest.TestCase):

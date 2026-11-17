@@ -1,7 +1,7 @@
 """Abbildungen für Kap. 3 „Programmiersprache R“ (BILDER.md §6). Werte aus den Buch-Chunks."""
 from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, tok, tokens, stein, schild, turm, arrow,
-                  outline, numdot, codebox, hline, text_width, INK, GRAY, GREEN, ORANGE, CARDLINE, DARKORANGE,
-                  WHITE, MONO, C, RT)
+                  outline, numdot, codebox, hline, vline, kiste, referenz, text_width, INK, GRAY, GREEN, ORANGE,
+                  CARDLINE, DARKORANGE, WHITE, MONO, C, RT)
 
 
 def mono(t, size=11, color=INK, bold=True, align=C):
@@ -344,6 +344,169 @@ def analyseplan():
     return s
 
 
+# Gemeinsam für die Bilder 3.4.3 und 3.5.1: Türme von oben nach unten, Operator zwischen den Steinen einer Reihe
+STEP = 0.39                     # Steinhöhe 0.32 plus Fuge 0.07
+
+
+def saeule(s, x, top, w, werte, kinds, h=0.32, size=12, blass=None):
+    """Turm von oben nach unten (erster Wert oben); gibt die Grundlinie unter dem untersten Stein zurück."""
+    for i, t in enumerate(werte):
+        k = kinds[i] if isinstance(kinds, (list, tuple)) else kinds
+        stein(s, x, top + i * STEP, w, h, k, t, size=size, blass=bool(blass and blass[i]))
+    return top + len(werte) * STEP - 0.07
+
+
+def zeichen(s, mitte, top, n, t, h=0.32, size=13):
+    """Ein Operator zwischen den Steinen jeder Reihe (Stein für Stein)."""
+    for i in range(n):
+        text(s, mitte - 0.2, top + i * STEP, 0.4, h, mono(t, size=size), anchor="middle")
+
+
+def pfeile(s, x, top, n, w=0.34, h=0.32):
+    for i in range(n):
+        arrow(s, x, top + i * STEP + h / 2 - 0.09, w=w, h=0.18)
+
+
+def kopfzeile(s, mitte, y, t, w=1.6, size=11):
+    text(s, mitte - w / 2, y, w, 0.28, mono(t, size=size))
+
+
+# 3.4.3 Vergleich und & aus dem Chunk `operators-demo` (dritte Zeile) ----------------------------
+def vergleich():
+    s = Canvas(6.2, 3.25)
+    alter = ["22", "45", "67", "18", "33"]
+    ab18 = ["TRUE" if int(a) >= 18 else "FALSE" for a in alter]
+    bis65 = ["TRUE" if int(a) <= 65 else "FALSE" for a in alter]
+    beide = ["TRUE" if a == b == "TRUE" else "FALSE" for a, b in zip(ab18, bis65)]
+    top, w = 0.7, 0.85
+    xa, x1, x2, xe = 0.3, 1.6, 3.1, 4.95
+    schild(s, xa - 0.05, top - 0.52, "alter", w=0.85)
+    base = saeule(s, xa, top, 0.75, alter, "num")
+    platte(s, xa - 0.1, base + 0.07, 0.95)
+    for x, werte, kopf in [(x1, ab18, "alter >= 18"), (x2, bis65, "alter <= 65")]:
+        kopfzeile(s, x + w / 2, top - 0.5, kopf)
+        saeule(s, x, top, w, werte, ["log"] * 5)
+        platte(s, x - 0.1, base + 0.07, w + 0.2)
+    zeichen(s, (x1 + w + x2) / 2, top, 5, "&")
+    pfeile(s, x2 + w + 0.2, top, 5, w=0.45)
+    saeule(s, xe, top, w, beide, ["log"] * 5)
+    platte(s, xe - 0.1, base + 0.07, w + 0.2)
+    outline(s, xa - 0.1, top + 2 * STEP - 0.1, xe + w + 0.1 - (xa - 0.1), 0.32 + 0.16, color=ORANGE, lw=1.75)
+    text(s, xa - 0.1, base + 0.22, 5.8, 0.28, mono("alter >= 18 & alter <= 65", size=11, align="start"))
+    text(s, xa - 0.1, base + 0.5, 5.8, 0.28, mono("[1]  TRUE  TRUE FALSE  TRUE  TRUE", size=11, color=GREEN,
+                                                    align="start"))
+    return s
+
+
+# 3.5.1 Boolesche Indizierung aus dem Chunk `boolean-indexing` --------------------------------
+def index_fig():
+    s = Canvas(5.9, 3.35)
+    zahlen = ["10", "20", "30", "40", "50"]
+    maske = ["TRUE" if int(z) > 25 else "FALSE" for z in zahlen]
+    top, xz, xm, xe = 0.7, 0.3, 1.4, 3.75
+    schild(s, xz - 0.05, top - 0.52, "zahlen", w=0.9)
+    base = saeule(s, xz, top, 0.8, zahlen, ["num" if m == "TRUE" else "dim" for m in maske])
+    kopfzeile(s, xm + 0.45, top - 0.5, "zahlen > 25", w=1.3)
+    saeule(s, xm, top, 0.9, maske, "log")
+    platte(s, xz - 0.1, base + 0.07, xm + 0.9 + 0.1 - (xz - 0.1))
+    bleibt = [z for z, m in zip(zahlen, maske) if m == "TRUE"]
+    oben = base + 0.07 - len(bleibt) * STEP
+    arrow(s, 2.65, oben + (base - oben) / 2 - 0.14, w=0.75, h=0.28, color=GREEN)
+    saeule(s, xe, oben, 0.8, bleibt, "num")
+    platte(s, xe - 0.1, base + 0.07, 1.0)
+    for k, (code, aus) in enumerate([("zahlen > 25", "[1] FALSE FALSE  TRUE  TRUE  TRUE"),
+                                     ("zahlen[zahlen > 25]", "[1] 30 40 50")]):
+        y = base + 0.22 + k * 0.28
+        text(s, xz - 0.1, y, 2.1, 0.28, mono(code, size=11, align="start"))
+        text(s, 2.3, y, 3.5, 0.28, mono(aus, size=11, color=GREEN, align="start"))
+    return s
+
+
+# 3.5.1 Recycling (Kasten „Vektorisierung“, Chunk `recycling`; zahlen aus `boolean-indexing`) -----
+def recycling():
+    s = Canvas(7.3, 3.1)
+    top5 = 0.62
+    base = top5 + 5 * STEP - 0.07
+    beispiele = [(0.15, "zahlen * 2", "*", ["10", "20", "30", "40", "50"], ["2"] * 5,
+                  [False, True, True, True, True], "[1]  20  40  60  80 100", 0.8),
+                 (3.85, "c(1, 2, 3, 4) + c(10, 20)", "+", ["1", "2", "3", "4"], ["10", "20", "10", "20"],
+                  [False, False, True, True], "[1] 11 22 13 24", 0.7)]
+    for x0, code, op, links, rechts, blass, aus, we in beispiele:
+        n = len(links)
+        top = base + 0.07 - n * STEP
+        ergebnis = [str(int(a) * int(b)) if op == "*" else str(int(a) + int(b)) for a, b in zip(links, rechts)]
+        text(s, x0, 0.12, 3.3, 0.28, mono(code, size=11, align="start"))
+        xl, xr = x0 + 0.1, x0 + 1.15
+        saeule(s, xl, top, 0.7, links, "num")
+        zeichen(s, xl + 0.7 + (xr - xl - 0.7) / 2, top, n, op)
+        saeule(s, xr, top, 0.7, rechts, "num", blass=blass)
+        pfeile(s, xr + 0.85, top, n, w=0.4)
+        saeule(s, xr + 1.4, top, we, ergebnis, "num")
+        platte(s, x0, base + 0.07, xr + 1.4 + we + 0.1 - x0)
+        text(s, x0, base + 0.22, 3.4, 0.28, mono(aus, size=11, color=GREEN, align="start"))
+    vline(s, 3.65, 0.15, base + 0.5, color=CARDLINE, width=0.75)
+    return s
+
+
+# 3.5.2 Faktor aus dem Chunk `factors` ---------------------------------------------------------
+def faktor_fig():
+    s = Canvas(6.4, 3.15)
+    werte, stufen = ["Mann", "Frau", "Mann", "Divers"], ["Mann", "Frau", "Divers"]
+    codes = [str(stufen.index(w) + 1) for w in werte]
+    top = 0.7
+    schild(s, 0.25, top - 0.52, "geschlecht", w=1.35)
+    base = saeule(s, 0.3, top, 1.1, werte, "txt")
+    text(s, 1.55, top - 0.47, 0.8, 0.25, notiz("intern", size=10.5))
+    saeule(s, 1.7, top, 0.5, codes, "num")
+    platte(s, 0.2, base + 0.07, 2.1)
+    cx, cw = 2.75, 3.5
+    card(s, cx, 0.12, cw, base + 0.15 - 0.12)
+    text(s, cx + 0.15, 0.2, cw - 0.3, 0.28, mono("levels(geschlecht)", size=11, align="start"))
+    for i, st in enumerate(stufen):
+        y = 0.62 + i * 0.47
+        stein(s, cx + 0.2, y, 0.5, 0.32, "num", str(i + 1), size=12)
+        stein(s, cx + 0.85, y, 1.1, 0.32, "txt", st, size=12)
+        if i == 0:
+            referenz(s, cx + 2.05, y + 0.16)
+    text(s, cx + 0.15, 0.62 + 3 * 0.47 - 0.05, cw - 0.3, 0.28,
+         mono('[1] "Mann"   "Frau"   "Divers"', size=11, color=GREEN, align="start"))
+    for k, zeile in enumerate(['geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),',
+                               '                     levels = c("Mann", "Frau", "Divers"))']):
+        text(s, 0.15, base + 0.3 + k * 0.27, 6.2, 0.27, mono(zeile, size=10.5, align="start"))
+    return s
+
+
+# 3.5.4 Liste aus dem Chunk `list` ------------------------------------------------------------
+def liste_fig():
+    s = Canvas(7.7, 2.6)
+    h = 0.32
+    faecher = kiste(s, 0.15, 0.12, [("koeffizient", 1.17), ("p_wert", 0.85), ("konfidenz", 1.0), ("modell", 0.8)],
+                    h=1.42, name="ergebnis")
+    boden = faecher[0][3] - 0.1
+    inhalte = [(["0.42"], "num"), (["0.001"], "num"), (["0.31", "0.53"], "num"), (['"lm"'], "txt")]
+    for (fx, _, fb, _), (werte, kind) in zip(faecher, inhalte):
+        w = 0.78 if kind == "num" else 0.65
+        saeule(s, fx + (fb - w) / 2, boden - len(werte) * STEP + 0.07, w, werte, kind)
+    fx, _, fb, _ = faecher[2]
+    oben = boden - 2 * STEP + 0.07
+    outline(s, fx + (fb - 0.78) / 2 - 0.07, oben - 0.12, 0.78 + 0.14, boden - oben + 0.17, color=GREEN, lw=1.75)
+    rechts = faecher[-1][0] + faecher[-1][2]
+    mitte = boden - STEP
+    xt = 5.4                                                   # herausgenommener Turm
+    for k, (x, w, t) in enumerate([(rechts + 0.15, xt - 0.15 - rechts - 0.15, "$konfidenz"), (6.33, 0.4, "[1]")]):
+        arrow(s, x, mitte - 0.14, w=w, h=0.28, color=GREEN)
+        tw = text_width(t, MONO, 11, True)
+        lx = x + w / 2 - (tw + 0.32) / 2
+        numdot(s, lx, mitte - 0.5, k + 1, fill=GREEN, d=0.26, size=10)
+        text(s, lx + 0.32, mitte - 0.51, tw + 0.05, 0.28, mono(t, size=11, color=GREEN, align="start"))
+    saeule(s, xt, oben, 0.78, ["0.31", "0.53"], "num")
+    platte(s, xt - 0.1, boden + 0.07, 0.98)
+    stein(s, 6.85, boden - h, 0.75, h, "num", "0.31", size=12)
+    text(s, 0.15, boden + 0.3, 3.0, 0.28, mono("ergebnis$konfidenz[1]", size=11, align="start"))
+    text(s, 2.4, boden + 0.3, 2.0, 0.28, mono("[1] 0.31", size=11, color=GREEN, align="start"))
+    return s
+
+
 FIGUREN = {
     "k03-legende": legende,
     "k03-turm": turm_fig,
@@ -356,4 +519,9 @@ FIGUREN = {
     "k03-argumente": argumente,
     "k03-na": na_fig,
     "k03-analyseplan": analyseplan,
+    "k03-vergleich": vergleich,
+    "k03-index": index_fig,
+    "k03-recycling": recycling,
+    "k03-faktor": faktor_fig,
+    "k03-liste": liste_fig,
 }

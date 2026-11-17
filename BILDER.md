@@ -85,6 +85,11 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 | Regal / Werkbank mit Paket-Kacheln | Paket installiert / mit `library()` geladen (1.6.2, 2.6.1) |
 | Ordner mit Reiter und Datei-Kacheln | Projektordner, Arbeitsverzeichnis (1.4.4) |
 | graue Balken auf einer Seite | Fließtext, der nicht wiedergegeben ist (1.7) |
+| Operator zwischen den Steinen jeder Reihe | R rechnet oder vergleicht Stein für Stein (3.4.3, 3.5.1) |
+| rosa Turm neben einem Turm | Wahrheitsturm als Schablone für `[ ]`: Steine neben `FALSE` werden grau und fallen weg (3.5.1) |
+| blasser Stein (Farbe des Datentyps, heller, Kante in der vollen Farbe) | ein Wert, den R wiederholt (Recycling, 3.5.1); anders als ein grauer Stein geht er in die Rechnung ein (`lego.stein(…, blass=True)`) |
+| weißes Schild „Referenz“ mit Spitze zum Stein | Referenzkategorie eines Faktors, die erste Stufe (3.5.2; `lego.referenz()`) |
+| Kiste mit Fächern, oben je ein `$`-Name | Liste: Jedes Fach ist ein Element, die Inhalte können sich in Typ und Länge unterscheiden (3.5.4, auch für Ergebnisobjekte; `lego.kiste()`) |
 
 ### 5.3 Werkzeug
 
