@@ -165,7 +165,7 @@ Quelle: T1 = `ReadingWeek_Folien.pptx` (Tag 1), T2 = `Tag2_Folien.pptx` (Tag 2),
 | 33 | `k05-polung` | 5.7.3 | T2 32 | falsch gepolte Skala misst das Gegenteil | |
 | 34 | `k05-pomps` | 5.8 | T2 33 | zwei Skalen auf 0–100 umgerechnet | |
 | 35 | `k05-pipeline` | 5.9 | T2 34, 27 | sechs Schritte der Pipeline mit ihren Abschnitten; `R/prep.R` und der Setup-Chunk von Kap. 6 bis 9 | |
-| 36 | `k07-gewichtung` | 7.2 | T2 36 | Gewicht als Breite des Steins, ungewichtet und gewichtet; Ost etwa 0,5, West etwa 1,2 | |
+| 36 | `k07-gewichtung` | 7.2 | T2 36 | Gewicht als Breite des Steins, ungewichtet und gewichtet; Ost etwa 0.5, West etwa 1.2 | |
 | 37 | `k07-zeilenprozente` | 7.5.1 | T2 41 | jede Zeile ein 100-%-Balken | |
 
 Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), RStudio-Bereiche (T1 14, Kap. 1 hat Screenshots), Testwahl (T2 40, Text statt Bild), t-Test-Glocken und Korrelationswolken (T2 42, 43, Kap. 7 hat Simulationen), Ratespiele ohne Grafik.

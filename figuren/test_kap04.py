@@ -22,7 +22,7 @@ ERWARTET_KAP04 = {
     "k04-select": ["allbus", "5,246 × 579", "respid", "mm01", "mm02", "mm03", "mm04", "5,246 × 3",
                    "allbus |> select(mm01, mm02, mm03)", "5", "3", "4", "2"],
     "k04-dollar-select": ["allbus$age |> head(5)", "allbus |> select(age) |> head(5)", "[1] 50 51 69 72 18",
-                          "# A tibble: 5 × 1", "age", "<dbl+lbl>", "50", "51", "69", "72", "18"],
+                          "5 × 1", "age", "<dbl+lbl>", "50", "51", "69", "72", "18"],
     "k04-filter": ["allbus", "sex", "age", "educ", "MANN", "FRAU", "50", "51", "69", "72", "18", "45", "3", "4", "5",
                    "sex == 2", "2,672 × 3", "allbus |> filter(sex == 2) |> select(sex, age, educ)"],
     "k04-dbl-lbl": ["1", "MANN", "double", "haven_labelled", "<dbl+lbl>", "dbl", "lbl", "class(allbus$sex)",
@@ -51,6 +51,19 @@ class TestKap04(unittest.TestCase):
             texte = alle_texte(svg)
             for wert in ERWARTET_KAP04[name]:
                 self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_dollar_select_bauplatte(self):
+        """Links ein Turm auf kurzem Sockel, rechts eine breite Bauplatte mit den Maßen darüber."""
+        import kap04
+        from lego import GRAY, DPI
+        root = ET.fromstring(kap04.dollar_select().svg())
+        platten = sorted(float(r.get("width")) for r in root.iter(NS + "rect")
+                         if r.get("fill") == GRAY and r.get("height") == "6.72")
+        turm = 0.8 * DPI
+        self.assertEqual(len(platten), 2)
+        self.assertLessEqual(platten[0], 1.5 * turm)        # Sockel unter dem Vektor
+        self.assertGreaterEqual(platten[1], 3 * turm)       # Platte mit Platz für weitere Türme
+        self.assertIn("5 × 1", ["".join(e.itertext()) for e in root.iter(NS + "text")])
 
 
 if __name__ == "__main__":

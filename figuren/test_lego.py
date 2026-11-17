@@ -128,7 +128,7 @@ def alle_texte(svg):
 
 
 ERWARTET_KAP03 = {
-    "k03-legende": ["numeric", "character", "logical", "NA", "Objekt", "Funktion", "Argument"],
+    "k03-legende": ["numeric", "character", "logical", "NA", "Name", "Objekt", "Funktion", "Argument"],
     "k03-turm": ["zahlen", "namen", "flags", '"Anna"', '"Boris"', '"Carla"', "TRUE", "FALSE", "NA", "5"],
     "k03-rangfolge": ["c(1, TRUE, FALSE)", 'c(1, "Anna", TRUE)', "[1] 1 1 0", '[1] "1" "Anna" "TRUE"',
                       "logical", "numeric", "character"],

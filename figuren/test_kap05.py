@@ -26,7 +26,7 @@ ERWARTET_KAP05 = {
                       '.default = "unter 18"', "50", "51", "69", "72", "18"],
     "k05-summarise": ["eastwest", "age", "ALTE BUNDESLAENDER", "NEUE BUNDESLAENDER", "50", "51", "69", "72",
                       "44", "60", "durchschnitt_alter", "51.7", "54.3", "3567", "1679", "mean()",
-                      "group_by(eastwest) |> summarise(durchschnitt_alter = mean(age, na.rm = TRUE))"],
+                      "group_by(eastwest) |> summarise(…, durchschnitt_alter = mean(age, na.rm = TRUE))"],
     "k05-rec": ["educ", "1", "2", "3", "4", "5", "6", "7", "OHNE ABSCHLUSS", "VOLKS-,HAUPTSCHULE", "MITTLERE REIFE",
                 "FACHHOCHSCHULREIFE", "HOCHSCHULREIFE", "ANDERER ABSCHLUSS", "NOCH SCHUELER", "1:2=1 [niedrig]",
                 "3=2 [mittel]", "4:5=3 [hoch]", "else=NA", "niedrig", "mittel", "hoch", "982", "1639", "2472", "153",

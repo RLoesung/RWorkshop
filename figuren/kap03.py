@@ -30,7 +30,8 @@ def legende():
         text(s, 1.5, y + 0.2, 1.7, 0.22, mono(typ, size=10, color=GRAY, bold=False, align="start"))
 
     eyebrow(s, 3.3, 0.12, 1.6, "VEKTOR = TURM")
-    schild(s, 3.35, 0.5, "zahlen", w=1.0)
+    schild(s, 3.35, 0.45, "zahlen", w=1.0)
+    text(s, 3.05, 0.85, 1.6, 0.25, notiz("Name", size=10.5))
     turm(s, 3.35, 2.45, 1.0, 0.34, "num", ["3", "2", "1"])
     platte(s, 3.25, 2.45, 1.2)
     text(s, 3.05, 2.6, 1.6, 0.25, notiz("ein Datentyp", size=10.5))

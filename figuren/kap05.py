@@ -120,7 +120,7 @@ def case_when_fig():
 def summarise_fig():
     s = Canvas(7.6, 3.85)
     text(s, 0.15, 0.12, 7.4, 0.28,
-         codezeile("group_by(eastwest) |> summarise(durchschnitt_alter = mean(age, na.rm = TRUE))", size=10.5))
+         codezeile("group_by(eastwest) |> summarise(…, durchschnitt_alter = mean(age, na.rm = TRUE))", size=10.5))
     h, gap = 0.28, 0.06
     gruppen = [("1", "ALTE BUNDESLAENDER", ["50", "51", "69"], "3567", "51.7"),
                ("2", "NEUE BUNDESLAENDER", ["72", "44", "60"], "1679", "54.3")]

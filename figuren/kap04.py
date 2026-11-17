@@ -155,23 +155,24 @@ def select_fig():
 
 # 4.5.1 $ und select() im Vergleich (neuer Chunk `dollar-select`) --------------------------------
 def dollar_select():
-    s = Canvas(7.6, 3.3)
+    s = Canvas(7.6, 3.6)
     werte = ["50", "51", "69", "72", "18"]
-    w, h, top = 0.8, 0.3, 1.05
+    w, h, top = 0.8, 0.3, 1.33
     # links: $ gibt einen Turm allein
     text(s, 0.15, 0.15, 3.5, 0.28, codezeile("allbus$age |> head(5)", size=11))
     unten = saeule(s, 0.45, top, w, h, "num", werte, size=12)
     platte(s, 0.35, unten + 0.07, w + 0.2)
     text(s, 1.5, top + 0.75, 2.2, 0.3, mono("[1] 50 51 69 72 18", size=10.5, color=GREEN, align="start"))
     text(s, 0.15, unten + 0.17, 1.4, 0.25, notiz("Vektor", size=10.5))
-    vline(s, 3.8, 0.15, 3.15, color=CARDLINE, width=0.75)
-    # rechts: select() gibt eine Bauplatte mit einem Turm
+    vline(s, 3.8, 0.15, unten + 0.4, color=CARDLINE, width=0.75)
+    # rechts: select() gibt eine Bauplatte mit einem Turm; die Platte hat Platz für weitere Türme
     text(s, 3.95, 0.15, 3.6, 0.28, codezeile("allbus |> select(age) |> head(5)", size=11))
-    kopf(s, 4.35, w, 0.55, "age", "<dbl+lbl>")
-    saeule(s, 4.35, top, w, h, "num", werte, size=12)
-    platte(s, 4.05, unten + 0.07, 1.4)
-    text(s, 5.55, top + 0.75, 2.0, 0.3, mono("# A tibble: 5 × 1", size=10.5, color=GREEN, align="start"))
-    text(s, 4.05, unten + 0.17, 1.4, 0.25, notiz("Tibble", size=10.5))
+    px, pw = 4.1, 2.9
+    text(s, px + 0.05, 0.5, 1.5, 0.3, mono("5 × 1", size=11, color=GRAY, align="start"))
+    kopf(s, px + 0.15, w, 0.8, "age", "<dbl+lbl>")
+    saeule(s, px + 0.15, top, w, h, "num", werte, size=12)
+    platte(s, px, unten + 0.07, pw)
+    text(s, px, unten + 0.17, pw, 0.25, notiz("Tibble", size=10.5))
     return s
 
 
