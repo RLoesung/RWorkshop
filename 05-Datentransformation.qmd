@@ -84,6 +84,26 @@ allbus |>
   head(3)
 ```
 
+`mutate()` rechnet die neue Spalte Reihe für Reihe aus: für die erste befragte Person 2023 − 50 = 1973, für die zweite 2023 − 51 = 1972 (@fig-mutate). Der neue Turm `geburtsjahr` ist eine Zahl ohne Wertelabels (`<dbl>`).
+
+![`mutate()` berechnet aus `age` den neuen Turm `geburtsjahr`, für jede Reihe einzeln. Gezeigt sind die ersten drei Reihen.](Bilder/figuren/k05-mutate.svg){#fig-mutate .lightbox fig-alt="Oben der Code allbus |> select(age) |> mutate(geburtsjahr = 2023 - age) |> head(3). Darunter eine Bauplatte mit zwei Türmen: links age, dbl+lbl, mit den Steinen 50, 51 und 69, rechts der grün umrandete Turm geburtsjahr, dbl, mit 1973, 1972 und 1954, beschriftet neuer Turm. Zwischen den Türmen steht in jeder Reihe die Rechnung 2023 - 50, 2023 - 51 und 2023 - 69 mit einem Pfeil zum Ergebnis."}
+
+Im Chunk oben steht kein `allbus <-`. R zeigt das Ergebnis mit `geburtsjahr` an, `allbus` selbst behält seine 579 Spalten (@fig-zuweisung). Erst mit `allbus <- allbus |> mutate(...)` wird der neue Turm in `allbus` gespeichert; dann hat der Datensatz 580 Spalten.
+
+![Ohne Zuweisung zeigt R den neuen Turm nur an (grau), `allbus` bleibt bei 579 Spalten. Mit `allbus <-` wird der Turm in `allbus` gespeichert.](Bilder/figuren/k05-zuweisung.svg){#fig-zuweisung .lightbox fig-alt="Zwei Hälften. Links unter OHNE <- der Code allbus |> mutate(geburtsjahr = 2023 - age), darunter die Bauplatte allbus, 5,246 × 579, mit dem Turm age mit 50, 51 und 69, Auslassungspunkten und einem grauen Turm geburtsjahr mit 1973, 1972 und 1954, beschriftet nur angezeigt. Rechts unter MIT <- der Code allbus <- allbus |> mutate(geburtsjahr = 2023 - age), darunter dieselbe Bauplatte mit 5,246 × 580; der Turm geburtsjahr ist blau, grün umrandet und beschriftet gespeichert."}
+
+**Kurz überlegen.** Du schreibst `allbus_neu <- allbus |> mutate(geburtsjahr = 2023 - age)`. Wie viele Spalten haben danach `allbus` und `allbus_neu`?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r zuweisung-loesung}
+allbus_neu <- allbus |> mutate(geburtsjahr = 2023 - age)
+ncol(allbus)
+ncol(allbus_neu)
+```
+
+R speichert das Ergebnis unter dem Namen links vom Pfeil. `allbus_neu` hat den neuen Turm und damit 580 Spalten, `allbus` bleibt bei 579. So behältst du einen Zwischenstand, ohne das Original zu überschreiben.
+:::
+
 Soll dieselbe Transformation auf *mehrere* Variablen wirken, hilft `across()`:
 
 ```{r mutate-across, eval=FALSE}
@@ -131,6 +151,10 @@ case_when(
 Beim Debuggen einer komischen Rekodierung: zuerst die Reihenfolge der Bedingungen prüfen.
 :::
 
+@fig-case-when spielt beide Reihenfolgen aus dem Kasten mit den ersten fünf Befragten durch. In der falschen Reihenfolge bleiben alle fünf schon an der ersten Bedingung `age >= 18` hängen, auch die Befragten mit 69 und 72 Jahren. In der richtigen Reihenfolge prüft `case_when()` zuerst `age >= 65`; nur wer dort nicht hängen bleibt, kommt zur nächsten Zeile.
+
+![Die ersten fünf Werte von `age` mit beiden Reihenfolgen aus dem Kasten. Jeder Wert bleibt an der ersten Bedingung hängen, die für ihn zutrifft.](Bilder/figuren/k05-case-when.svg){#fig-case-when .lightbox fig-alt="Zwei Teile, FALSCH und RICHTIG. Oben jeweils fünf blaue Steine age: 50, 51, 69, 72 und 18. Darunter drei Zeilen mit den Bedingungen von oben nach unten; eine gestrichelte Linie führt von jedem Stein zu der Zeile, an der er hängen bleibt, dort liegt ein lila Stein mit dem Ergebnis. FALSCH: zuerst age >= 18 ~ „erwachsen“, dann age >= 65 ~ „senior“, dann .default = „unter 18“. Alle fünf Steine werden in der ersten Zeile zu erwachsen, in der Zeile senior steht: „senior“ wird nie erreicht. RICHTIG: zuerst age >= 65 ~ „senior“. 69 und 72 werden dort zu senior, 50, 51 und 18 laufen weiter und werden in der zweiten Zeile zu erwachsen. Die Zeile .default bleibt in beiden Teilen leer."}
+
 Bei nur **zwei** Ausprägungen ist `if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)` knapper:
 
 ```{r if-else-demo}
@@ -165,6 +189,10 @@ allbus |>
 ```
 
 `n()` zählt alle Fälle in der Gruppe, `n_distinct()` zählt **einzigartige** Werte einer Variablen.
+
+`summarise()` macht aus jeder Gruppe eine Reihe (@fig-summarise): Aus den 3.567 Befragten im Westen wird eine Reihe mit dem Durchschnittsalter 51,7 Jahre, aus den 1.679 im Osten eine mit 54,3 Jahren.
+
+![Die beiden Gruppen von `eastwest`, gezeigt mit den ersten drei Befragten aus West und Ost. `summarise()` fasst alle Reihen einer Gruppe zu einer Reihe mit dem Mittelwert zusammen.](Bilder/figuren/k05-summarise.svg){#fig-summarise .lightbox fig-alt="Oben der Code group_by(eastwest) |> summarise(durchschnitt_alter = mean(age, na.rm = TRUE)). Links eine Bauplatte mit den Türmen eastwest und age in zwei Blöcken: drei Reihen mit 1 und dem Aufkleber ALTE BUNDESLAENDER und dem Alter 50, 51 und 69, darunter 3567 Fälle; drei Reihen mit 2 und dem Aufkleber NEUE BUNDESLAENDER und dem Alter 72, 44 und 60, darunter 1679 Fälle. Ein grüner Pfeil mean() führt zu einer Bauplatte mit zwei Reihen und den Spalten eastwest und durchschnitt_alter: 1 ALTE BUNDESLAENDER mit 51.7 und 2 NEUE BUNDESLAENDER mit 54.3."}
 
 ::: {.callout-tip}
 **`.by` als Alternative.** Seit dplyr 1.1 kannst du die Gruppierung auch direkt im Aufruf von `summarise()` oder `mutate()` setzen, ohne `group_by()` davor:
@@ -246,6 +274,10 @@ allbus |>
 
 Mit `as_factor = TRUE` wird die rekodierte Variable direkt ein Faktor; die `[…]`-Notation in den Regeln vergibt die Wertelabels in einem Aufwasch. Die 153 `NA` setzen sich aus den 44 Befragten mit Code 6 oder 7 und den 109 Missings aus dem Import zusammen (DATENFEHLER, NICHT BESTIMMBAR, KEINE ANGABE) — im Ergebnis sind alle 153 einfache `NA`.
 
+@fig-rec zerlegt die Regel in ihre Teile. Jeder Teil nimmt die Codes, die er nennt: `1:2=1 [niedrig]` fasst 1 und 2 zur Stufe niedrig zusammen, `else=NA` nimmt alles Übrige, auch die fehlenden Werte aus dem Import.
+
+![Die Regel von `rec()` in ihren Teilen. Jeder Teil macht aus einem oder mehreren Codes von `educ` eine Stufe des neuen Faktors.](Bilder/figuren/k05-rec.svg){#fig-rec .lightbox fig-alt="Oben der Code rec(educ, rules = „1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA“, as_factor = TRUE). Links der Turm educ, dbl+lbl, mit sieben blauen Steinen und ihren Aufklebern: 1 OHNE ABSCHLUSS, 2 VOLKS-,HAUPTSCHULE, 3 MITTLERE REIFE, 4 FACHHOCHSCHULREIFE, 5 HOCHSCHULREIFE, 6 ANDERER ABSCHLUSS, 7 NOCH SCHUELER, darunter ein leerer gestrichelter Stein. Klammern fassen die Steine zu Gruppen zusammen. Jede Gruppe führt über einen Teil der Regel und einen grünen Pfeil zu einem Stein des Faktors educ, fct, daneben die Zahl n: 1 und 2 über 1:2=1 [niedrig] zu niedrig, 982; 3 über 3=2 [mittel] zu mittel, 1639; 4 und 5 über 4:5=3 [hoch] zu hoch, 2472; 6, 7 und der leere Stein über else=NA zu einem leeren Stein, 153."}
+
 ### Spezial-Modi: Dichotomisieren und Quartile
 
 Statt eine Regel-Kette zu schreiben, kannst du eine Variable in einem Aufruf am Median, an einem festen Cut-Punkt, am Mittelwert oder in Quartile zerlegen:
@@ -257,6 +289,10 @@ allbus |>
 ```
 
 Hier wird `age_d` zu 0 für alle bis einschließlich 50 Jahre und zu 1 für alle über 50 — der Cut-Punkt selbst gehört also zur unteren Gruppe. Mit `suffix = "_d"` bekommt die neue Variable einen klaren Namen — das Original bleibt unangetastet.
+
+In @fig-dicho liegt der Schnitt zwischen 51 und 50. Die 23 Befragten ohne gültige Altersangabe (NICHT GENERIERBAR) bleiben auch in `age_d` fehlend.
+
+![`dicho(50)` teilt `age` in zwei Gruppen. Gezeigt sind die ersten fünf Werte, nach Größe sortiert; die 50 landet in der Gruppe 0.](Bilder/figuren/k05-dicho.svg){#fig-dicho .lightbox fig-alt="Oben der Code allbus |> rec(age, rules = „dicho(50)“, suffix = „_d“) |> count(age_d). Darunter zwei Türme, age und age_d. Die Steine von age, 72, 69, 51, 50 und 18, führen mit Pfeilen zu 1, 1, 1, 0 und 0. Eine orange gestrichelte Linie mit der Beschriftung dicho(50) trennt 51 und 50. Rechts eine Klammer um die drei Einsen mit n 2942 und über 50, eine Klammer um die zwei Nullen mit n 2281 und bis 50. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber NICHT GENERIERBAR, n 23."}
 
 ```{r rec-quart}
 allbus |>
@@ -301,6 +337,22 @@ Mit `suffix = "r"` erzeugt mariposa zwei neue Variablen `mm02r` und `mm05r`; die
 ```{r reverse-check}
 allbus |> count(mm02, mm02r)
 ```
+
+In @fig-umpolen ist jede Zeile der Kreuztabelle ein Paar aus altem und neuem Wert. Der Turm `mm02r` ist `mm02` auf dem Kopf, und die Aufkleber wandern mit: STIMME GAR NICHT ZU klebt jetzt an der 7. Die letzte Zeile fasst alle 1.842 fehlenden Werte zusammen; sie bleiben fehlend.
+
+![Die Kreuztabelle aus `count(mm02, mm02r)` als Steine: Aus 1 wird 7, aus 2 wird 6, die 4 bleibt. Die Wertelabels wandern mit.](Bilder/figuren/k05-umpolen.svg){#fig-umpolen .lightbox fig-alt="Oben der Code rec(mm02, rules = „rev“, suffix = „r“). Darunter zwei Türme, mm02 und mm02r, beide dbl+lbl, dazwischen grüne Pfeile mit der Beschriftung 8 - x. Links stehen von oben 1 bis 7, rechts 7 bis 1. Die 1 links und die 7 rechts tragen den Aufkleber STIMME GAR NICHT ZU, die 7 links und die 1 rechts den Aufkleber STIMME VOLL+GANZ ZU. Ganz unten in beiden Türmen ein leerer gestrichelter Stein mit dem Aufkleber TNZ: SPLIT. Rechts die Spalte n mit 954, 515, 494, 629, 350, 235, 227 und 1842. Darunter der Code allbus |> count(mm02, mm02r)."}
+
+**Kurz überlegen.** Die `pa`-Items, die du in @sec-skalen umpolst, haben die Werte 1 bis 5. Was macht `rules = "rev"` dort aus einer 2?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r umpolen-loesung}
+allbus |>
+  rec(pa29, rules = "rev", suffix = "r") |>
+  count(pa29, pa29r)
+```
+
+Aus der 2 wird eine 4. `"rev"` rechnet `hi + lo - x`; mit den Grenzen 1 und 5 ist das `6 - x`, also 6 − 2 = 4. Auch hier wandern die Wertelabels mit: STIMME EHER ZU steht danach bei der 4.
+:::
 
 ::: {.callout-warning}
 **Vorsicht: Skalengrenzen aus Labels, nicht aus Daten.** Dass `"rev"` die Grenzen aus den Wertelabels liest, schützt dich vor einer subtilen Falle: Hätte niemand bei einem Item den Extremwert 7 angekreuzt, würde ein Umpolen anhand des *beobachteten* Maximums (6) die Skala verschieben (`7 - x` statt `8 - x`). Hat eine Variable *keine* Wertelabels (etwa nach einem Import aus Excel), greift mariposa auf das beobachtete Minimum und Maximum zurück und sagt dir das in einer Meldung. Dann gibst du die theoretischen Grenzen besser selbst an: `rules = "rev(1, 7)"`.
@@ -531,6 +583,24 @@ allbus <- allbus |>
   )
 ```
 
+`row_means()` rechnet für jede Person den Mittelwert der Items, die sie beantwortet hat (@fig-skala). Bei sechs gültigen Antworten sind das alle sechs, bei fünf die fünf vorhandenen. Wer nur vier gültige Antworten hat, bekommt mit `min_valid = 5` keinen Skalenwert.
+
+![Drei Befragte aus dem ALLBUS: die erste Person mit sechs, die erste mit fünf und die erste mit vier gültigen Antworten. Leere Steine sind fehlende Antworten.](Bilder/figuren/k05-skala.svg){#fig-skala .lightbox fig-alt="Sechs Türme mm01, mm02r, mm03, mm04, mm05r und mm06 mit drei Reihen, links die respid 1, 53 und 120. Reihe 1: 5, 5, 4, 2, 2, 2. Reihe 53: 1, ein leerer Stein, 4, 6, 1, 5. Reihe 120: 3, 4, ein leerer Stein, 4, 5, ein leerer Stein. Ein grüner Pfeil row_means() mit min_valid = 5 führt zum Turm islamophobie: 3.33 mit der Notiz 6 gültig, 3.4 mit 5 gültig und ein leerer Stein mit 4 gültig in Orange."}
+
+**Kurz überlegen.** Welchen Skalenwert bekäme die Person mit der `respid` 120 aus @fig-skala, wenn du `min_valid = 4` setzt?
+
+::: {.callout-tip title="Auflösung" collapse="true"}
+```{r skala-loesung}
+allbus |>
+  mutate(skala_4 = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),
+                             min_valid = 4)) |>
+  filter(respid == 120) |>
+  select(respid, islamophobie, skala_4)
+```
+
+Mit `min_valid = 4` reichen ihre vier gültigen Antworten: (3 + 4 + 4 + 5) / 4 = 4. Mit `min_valid = 5` bleibt der Wert fehlend. Eine niedrigere Schwelle bringt mehr Befragte in die Skala, dafür stützt sich ihr Wert auf weniger Items.
+:::
+
 Schnelle Prüfung, ob die Skala plausibel ist:
 
 ```{r scale-check}
@@ -587,6 +657,10 @@ allbus <- allbus |>
 allbus |> describe(populismus)
 ```
 
+@fig-polung stellt die Wertelabels nebeneinander. Bei `mm01` steht die Zustimmung beim höchsten Wert, bei `pa29` beim niedrigsten. Nach dem Umpolen steht sie auch bei `pa29r` beim höchsten Wert. Ohne diesen Schritt würde `populismus` das Gegenteil messen: Hohe Werte stünden für Ablehnung populistischer Aussagen.
+
+![Die Wertelabels von `mm01`, `pa29` und `pa29r`. Bei `pa29` steht die Zustimmung beim niedrigsten Wert; `rec()` mit `"rev"` dreht die Skala um.](Bilder/figuren/k05-polung.svg){#fig-polung .lightbox fig-alt="Drei Türme mit Wertelabels, die 1 jeweils oben. mm01: 1 STIMME GAR NICHT ZU, 2 bis 6 ohne Aufkleber, 7 STIMME VOLL+GANZ ZU, darunter hoch = islamophob. pa29: 1 STIMME VOLL ZU, 2 STIMME EHER ZU, 3 TEILS/TEILS, 4 LEHNE EHER AB, 5 LEHNE GANZ AB, darunter in Orange niedrig = populistisch. Ein grüner Pfeil mit 6 - x führt zu pa29r: 1 LEHNE GANZ AB, 2 LEHNE EHER AB, 3 TEILS/TEILS, 4 STIMME EHER ZU, 5 STIMME VOLL ZU, darunter in Grün hoch = populistisch. Unter den beiden pa-Türmen der Code rec(pa29, rules = „rev“, suffix = „r“)."}
+
 ::: {.callout-important}
 **mariposa-Tipp: Mehrere Variablen in einem `rec()`-Aufruf.** Wir schreiben die sieben Umpolungen hier bewusst einzeln untereinander — so ist jeder Schritt der Pipeline sichtbar. `rec()` nimmt aber beliebig viele Variablen auf einmal, auch mit tidyselect-Helfern. Diese eine Zeile ist gleichwertig zu den sieben `rec()`-Zeilen oben und erzeugt ebenfalls `pa29r` bis `pa35r`:
 
@@ -637,6 +711,10 @@ allbus |>
 
 Jetzt liest du den Vergleich direkt: liegt der POMPS-Mittelwert für Islamfeindlichkeit höher als der für Populismus, ist die durchschnittliche Bevölkerung in *relativer Intensität* stärker islamophob als populistisch — oder umgekehrt.
 
+Auf den eigenen Skalen liegen die Mittelwerte bei 4,11 von 7 und 3,4 von 5, auf der gemeinsamen Skala von 0 bis 100 bei 51,9 und 60,0 (@fig-pomps).
+
+![Die Mittelwerte beider Skalen auf ihren eigenen Linealen und nach `pomps()` auf einem gemeinsamen Lineal von 0 bis 100.](Bilder/figuren/k05-pomps.svg){#fig-pomps .lightbox fig-alt="Drei Lineale untereinander. Oben islamophobie von 1 bis 7 mit einem orangen Pfeil bei 4.11. Darunter das kürzere Lineal populismus von 1 bis 5 mit einem grünen Pfeil bei 3.4. Gestrichelte Linien führen von den Enden beider Lineale zu einem gemeinsamen Lineal von 0 bis 100, links beschriftet mit einem grünen Kasten pomps() und den Namen islamophobie_p und populismus_p. Darauf zeigt der orange Pfeil auf 51.9, der grüne auf 60.0."}
+
 ::: {.callout-warning}
 **Vorsicht: `scale_min` und `scale_max` immer angeben.** Ohne diese Argumente nutzt `pomps()` den *beobachteten* Wertebereich (`min(x)`, `max(x)`) — bei einer 1–7-Skala, in der niemand den Wert 1 angekreuzt hat, würde der Wert 2 zur „neuen Null", was die Skala verzerrt und Ergebnisse zwischen Stichproben unvergleichbar macht. Gib bei Likert-Items **immer** den theoretischen Wertebereich an.
 :::
@@ -678,7 +756,9 @@ allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
 5. Skala **Populismus** als Mittelwert der sieben umgepolten `pa`-Items — mindestens 6 von 7 müssen valide sein.
 6. **POMPS-Versionen** beider Skalen auf 0–100 für direkten Vergleich (optional; die Original-Skalen bleiben erhalten).
 
-Mit dieser Pipeline ist der Datensatz fertig für die Analyse.
+Mit dieser Pipeline ist der Datensatz fertig für die Analyse. @fig-pipeline ordnet die sechs Schritte den Abschnitten zu, in denen du sie kennengelernt hast. Zusammen stehen sie in `R/prep.R`; der Setup-Chunk jedes folgenden Kapitels liest das Skript mit `source("R/prep.R")` ein.
+
+![Die sechs Schritte der Pipeline mit den Abschnitten, in denen sie eingeführt werden. `R/prep.R` fasst sie zusammen, die Setup-Chunks von Kap. 6 bis 9 lesen das Skript ein.](Bilder/figuren/k05-pipeline.svg){#fig-pipeline .lightbox fig-alt="Eine Zeitleiste mit sechs grünen Nummernpunkten: 1 einlesen, read_spss(), 4.3; 2 mm02, mm05 umpolen, rec(), 5.3.3; 3 pa29 bis pa35 umpolen, rec(), 5.7.3; 4 Skala islamophobie, row_means(), 5.7.1; 5 Skala populismus, row_means(), 5.7.3; 6 POMPS-Versionen, pomps(), 5.8. Eine Linie fasst alle Schritte zusammen, ein grüner Pfeil führt zur Datei R/prep.R, beschriftet Skript im Projektordner. Ein Pfeil führt weiter zu einem Code-Kasten mit library(tidyverse), library(mariposa), source(„R/_common.R“) und source(„R/prep.R“), beschriftet Setup-Chunk in Kap. 6 bis 9."}
 
 ::: {.callout-note}
 **Reviewer-Hinweis.** In einem Methodenbericht würdest du genau diese Schritte dokumentieren: Welche Items? Welche umgepolt — warum? Welche Mindest-Validität? Welche Skalenrichtung? Wer das transparent macht, gibt Reviewer:innen das Werkzeug in die Hand, die Operationalisierung zu beurteilen. Wer nur `cronbachs α = 0.87` berichtet, hat seine Pflicht *nicht* erfüllt.
