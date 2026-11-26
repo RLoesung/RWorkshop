@@ -14,10 +14,10 @@ source("R/_common_en.R")
 
 In Chapter 1 you set up RStudio, and in Chapter 2 you built your first Quarto document. Now you turn to the language in which you write everything in this book: R. Variables, functions, data types and the pipe operator are the building blocks you use in the following chapters to import, transform, analyse and visualise datasets.
 
-SPSS syntax is essentially a command language with a fixed vocabulary. In R, you write functions yourself, build values into vectors and combine vectors into datasets. This takes a little effort at the start, and it pays off later: you use the same building blocks from your first steps through to your final thesis.
+SPSS syntax is essentially a command language with a fixed vocabulary. In R, you write functions yourself, combine values into vectors and vectors into datasets. This takes a little effort at the start, and it pays off later: you use the same building blocks from your first steps through to your final thesis.
 
 ::: {.callout-note}
-**Research journal: Where are you in your mini study?** You set up the IDE in @sec-rstudio and learned the reporting workflow in @sec-quarto. Now you learn the elements of the language that you will soon use to recode survey items, build scales and fit models. The examples in this chapter come from the social and political sciences on purpose. From @sec-datenimport onwards you apply the same operations to real variables from the German General Social Survey (ALLBUS).
+**Research journal: Where are you in your mini study?** You set up the IDE in @sec-rstudio and learned the reporting workflow in @sec-quarto. Now you learn the elements of the language that you will soon use to recode survey items, build scales and fit models. The examples in this chapter are deliberately taken from the social and political sciences. From @sec-datenimport onwards you apply the same operations to real variables from the German General Social Survey (ALLBUS).
 :::
 
 ## What you will be able to do after this chapter {-}
@@ -82,7 +82,7 @@ a <- a * 2
 a
 ```
 
-`a` is 3 at first, 4 after the second line and 8 after the third. To the right of the arrow, R calculates with the value that `a` has at that moment; on the left, it stores the result under the same name and so replaces the old value.
+`a` is 3 at first, 4 after the second line and 8 after the third. To the right of the arrow, R uses the value that `a` has at that moment; on the left, it stores the result under the same name and so replaces the old value.
 :::
 
 ### Variable names
@@ -326,7 +326,7 @@ Both values become text, `"TRUE"` and `"yes"`. The vector is character, because 
 
 ### Factors with `factor()`, `levels()` and `fct_relevel()`
 
-A **factor** is a vector with a fixed set of categories, its **levels** (`levels`). You use factors for categorical variables such as gender or education. Why not simply use a character vector? There are three reasons:
+A **factor** is a vector with a fixed set of categories, its **levels**, set with the argument `levels`. You use factors for categorical variables such as gender or education. Why not simply use a character vector? There are three reasons:
 
 1. Fixed order: for an education variable, you want *“low”* to come before *“high”*, even though alphabetically it is the other way round. Factors let you enforce the order.
 2. Reference category for models: regressions need a *comparison category*, and factors provide it automatically (the first level).
@@ -343,7 +343,7 @@ levels(gender)
 
 ![The factor `gender`: internally, R stores the numbers 1 to 3, and `levels` assigns the categories to them in a fixed order. The first level is the reference.](Bilder/figuren/en/k03-faktor.svg){#fig-faktor .lightbox fig-alt="On the left the name tag gender above a purple tower of male, female, male and non-binary; next to it, labelled internal, a blue tower of 1, 2, 1 and 3. On the right a box levels(gender) with three rows: 1 male, 2 female, 3 non-binary; next to male a tag Reference. At the bottom of the box the output [1] “male” “female” “non-binary”. Below, the code gender <- factor(c(“male”, “female”, “male”, “non-binary”), levels = c(“male”, “female”, “non-binary”))."}
 
-**Stop and think.** In which order are the levels of `factor(c("low", "high", "medium"))` if you leave out `levels`?
+**Stop and think.** How does R order the levels of `factor(c("low", "high", "medium"))` if you leave out `levels`?
 
 ::: {.callout-tip title="Answer" collapse="true"}
 ```{r faktor-loesung}
@@ -353,7 +353,7 @@ factor(c("low", "high", "medium"))
 Without `levels`, R sorts the levels alphabetically: `high`, `low`, `medium`. The reference category would then be `high`. You set the substantive order with `levels = c("low", "medium", "high")`.
 :::
 
-With `relevel()` (base R) or `forcats::fct_relevel()` (tidyverse) you change the order afterwards. `forcats` is part of the tidyverse and provides a whole set of tools for factors (`fct_recode()`, `fct_lump()`, `fct_reorder()`); you will need them for the graphics in Chapter 6 at the latest.
+With `relevel()` (base R) or `forcats::fct_relevel()` (tidyverse) you change the order afterwards. `forcats` is part of the tidyverse and provides a whole set of tools for factors (`fct_recode()`, `fct_lump()`, `fct_reorder()`); you will use them for the graphics in Chapter 6.
 
 ::: {.callout-note collapse="true"}
 ## Background: `haven_labelled` vs. factor
@@ -390,7 +390,7 @@ respondents[1, "age"]   # first row, column "age"
 - `$age` is more compact and ideal for the interactive console and for scripts.
 - `[["age"]]` accepts the column name as a *string*. You need this when the column name is stored in a variable (`column <- "age"; respondents[[column]]`).
 
-In practice, you import ready-made datasets from SPSS, Stata or Excel files (see Chapter 4). You need tibbles that you build yourself almost only for small demonstrations.
+In practice, you import ready-made datasets from SPSS, Stata or Excel files (see Chapter 4). You will rarely build a tibble yourself, except for small demonstrations.
 
 ### Lists with `list()`
 
@@ -424,7 +424,7 @@ is.na(x)              # which elements are NA?
 ::: {.callout-note collapse="true"}
 ## Background: Several kinds of missing values
 
-SPSS distinguishes *system-missing* (an empty field) from *user-missing* (for example “no answer” as the code `-9`). By default, R has only a generic `NA`. When you import an SPSS file, however, mariposa keeps the *user-missing* codes as tagged NA, so you can look up the reason a value is missing at any time. Chapter 4 has more on this.
+SPSS distinguishes *system-missing* (an empty field) from *user-missing* (for example “no answer” as the code `-9`). By default, R has only a generic `NA`. When you import an SPSS file, however, mariposa keeps the *user-missing* codes as tagged NA, so you can look up the reason a value is missing at any time. The English edition of the ALLBUS does not declare these codes in the file, so you declare them with `set_na()` when you read it in (@sec-datenimport).
 :::
 
 Calculations with `NA` give `NA`. This is intended: the mean of “1, 2, ?, 4, 5” is in fact unknown.
@@ -441,7 +441,7 @@ mean(x, na.rm = TRUE)
 sum(x, na.rm = TRUE)
 ```
 
-@fig-na shows the two calls to `mean()`. With the empty brick in the tower, `mean(x)` itself returns `NA`. With `na.rm = TRUE`, `mean()` leaves out the missing value and calculates with the remaining four: (1 + 2 + 4 + 5) / 4 = 3.
+@fig-na shows the two calls to `mean()`. With the empty brick in the tower, `mean(x)` itself returns `NA`. With `na.rm = TRUE`, `mean()` leaves out the missing value and averages the remaining four: (1 + 2 + 4 + 5) / 4 = 3.
 
 ![The vector `x` with one missing value. `mean(x)` gives `NA`, `mean(x, na.rm = TRUE)` gives the mean of the four values that are present.](Bilder/figuren/en/k03-na.svg){#fig-na .lightbox fig-alt="On the left the tower x of five bricks: blue 1 and 2, an empty dashed brick NA, blue 4 and 5. An arrow leads to mean(x); the result is an empty brick NA with the output [1] NA. A second arrow leads to mean(x, na.rm = TRUE), with na.rm = TRUE marked in orange; the result is a blue brick 3 with the output [1] 3."}
 
@@ -464,7 +464,7 @@ R lets you nest functions inside each other, so that the output of one function 
 head(round(c(1.11, 1.22, 1.33, 1.44, 1.55), digits = 1), n = 3)
 ```
 
-This works, but the more steps you nest, the harder the code is to read. You have to read it from the *inside out*, against the usual reading direction. The **pipe operator** solves this problem. A pipe chains function calls one after the other instead of nesting them. R has two variants; this book uses the *native* pipe `|>`.
+This works, but the more steps you nest, the harder the code is to read. You have to read it from the *inside out*, the opposite of the way you normally read. The **pipe operator** solves this problem. A pipe chains function calls one after the other instead of nesting them. R has two variants; this book uses the *native* pipe `|>`.
 
 ### Native pipe `|>`
 
@@ -548,7 +548,7 @@ allbus <- read_spss("ALLBUS2023.sav") |>
   )
 ```
 
-The pipe reads: read in the dataset → set the missing-value codes to `NA` → reverse-code `mm02` and `mm05` → build the scale. Without the pipe, this would be a nested expression that is hard to follow because you have to read it backwards.
+In words: read in the dataset → set the missing-value codes to `NA` → reverse-code `mm02` and `mm05` → build the scale. Without the pipe, this would be a nested expression that is hard to follow because you have to read it backwards.
 
 In @fig-analyseplan, each step stands next to the lines of code that carry it out. From the second step onwards, each function receives the dataset from the step before through `|>`.
 
@@ -614,7 +614,7 @@ levels(education)
 :::
 
 ::: {.callout-note title="Exercise 4 · Operators and NA with typical survey data · Transfer"}
-Imagine you have run a small survey on *trust in the Bundestag*, the German federal parliament (0 = no trust, 10 = complete trust), with seven respondents: `trust <- c(3, 8, NA, 7, 5, NA, 9)`. (NA = “no answer”.) Determine (a) the mean without missing values, (b) how many respondents reported high trust (> 5), (c) whether at least one person skipped the question.
+Imagine you have asked seven respondents in a small survey how much they trust the Bundestag, the German federal parliament, on a scale from 0 (no trust) to 10 (complete trust): `trust <- c(3, 8, NA, 7, 5, NA, 9)`. (NA = “no answer”.) Determine (a) the mean without missing values, (b) how many respondents reported high trust (> 5), (c) whether at least one person skipped the question.
 :::
 
 ::: {.callout-tip title="Solution" collapse="true"}
