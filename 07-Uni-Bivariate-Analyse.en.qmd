@@ -26,7 +26,7 @@ You built the data preparation pipeline in @sec-datentransformation and learned 
 > *What does the distribution of Islamophobia in Germany in 2023 look like? Do East and West differ? Is Islamophobia related to populism?*
 
 ::: {.callout-note}
-**Research journal: Where are you in your mini study?** You have the scales and you can use ggplot2. Now come the first hypothesis tests. At the end of this chapter you know how Islamophobia is distributed, where differences in means between groups are statistically (and substantively) meaningful, and which variables are related *bivariately* to your target variable. This is the groundwork on which the multivariate modelling in @sec-erklaerung builds.
+**Research journal: Where are you in your mini study?** You have the scales and you can use ggplot2. Now come the first hypothesis tests. By the end of this chapter you will know how Islamophobia is distributed, where differences in means between groups are statistically (and substantively) meaningful, and which variables are related *bivariately* to your target variable. This is the groundwork on which the multivariate modelling in @sec-erklaerung builds.
 :::
 
 ## What this chapter is about
@@ -40,8 +40,8 @@ Statistics calls these first steps **univariate** and **bivariate** analysis. Th
 
 In bivariate analysis there are two questions that are methodologically similar but conceptually different, and you should not confuse them:
 
-- *Relationship*: do two variables vary together? (Correlation for metric variables, chi-squared for categorical ones.)
-- *Difference*: do groups differ in a variable? (t-test, ANOVA for metric variables by group.)
+- *Relationship*: do two variables vary together? (Correlation for continuous variables, chi-squared for categorical ones.)
+- *Difference*: do groups differ in a variable? (t-test, ANOVA for continuous variables by group.)
 
 Both questions address the same methodological core: is there a statistically robust relationship between two variables? The tools and the reporting formats, however, differ.
 
@@ -54,10 +54,10 @@ This chapter takes you through the mariposa functions for each standard test (fr
 - Test univariate frequencies against a theoretical distribution (binomial test, χ² goodness-of-fit test).
 - Read crosstabs with the chi-squared test, Fisher's exact test, McNemar's test, adjusted residuals and effect sizes.
 - Calculate and interpret Pearson, Spearman and Kendall correlations, and control for third variables with a partial correlation.
-- Compare the means of two groups with a t-test, including the check of assumptions (normal distribution, Levene's test).
+- Compare the means of two groups with a t-test, including checking the assumptions (normal distribution, Levene's test).
 - Compare the means of several groups with a one-way ANOVA and choose between four post-hoc procedures.
 - Apply non-parametric alternatives when assumptions are violated.
-- Classify effect sizes: when a significant test is substantively small, medium or large.
+- Judge whether a significant effect is substantively small, medium or large.
 - Read the three basic concepts of statistical inference correctly: p-value, standard error and confidence interval.
 
 ## Weighting: the argument `weights =`
@@ -87,7 +87,7 @@ Before you run the first test, you need three concepts that appear in *every* te
 
 ### What is a p-value?
 
-Imagine you toss a coin 100 times and get heads 60 times. Is the coin loaded, or can a result of 60:40 simply happen with a fair coin?
+Imagine you toss a coin 100 times and get heads 60 times. Is the coin biased, or can a result of 60:40 simply happen with a fair coin?
 
 The **p-value** answers exactly this question. It tells you *how likely* the observed result (or an even more extreme one) would be if nothing were going on in reality, that is, if the *null hypothesis* were true. For the coin, the null hypothesis is “the coin is fair, the probability of heads is 0.5”. A p-value of 0.057 means: *if the coin were fair, you would see 60 or more heads in 5.7% of all repeated experiments*.
 
@@ -143,7 +143,7 @@ The SE is *not* the same as the standard deviation (SD):
 
 The SE is always smaller than the SD and shrinks as the sample grows (formula: SE = SD / √N). The larger N, the more precise the estimate. This is why large samples have smaller SEs, and with them narrower confidence intervals and smaller p-values.
 
-You can *simulate* this. The code draws a random subsample (N = 500 each time) from the ALLBUS 1000 times and calculates the mean each time. The spread of these 1000 means *is* the standard error, made visible:
+You can *simulate* this. The code draws 1000 random subsamples of 500 respondents from the ALLBUS and calculates the mean of each. The spread of these 1000 means *is* the standard error, made visible:
 
 ```{r se-simulation, fig.height=3.4}
 set.seed(42)
@@ -207,11 +207,11 @@ sim_cis |>
                      name = NULL) +
   labs(x = "Mean with 95% CI (black line = true value)",
        y = "Hypothetical study",
-       title = "100 hypothetical studies, 100 confidence intervals",
-       caption = "About 5 of 100 CIs miss the true value, in line with the 5% error probability.")
+       title = "Confidence intervals from 100 hypothetical studies",
+       caption = "About 5 of 100 CIs miss the true value, matching the 5% error rate.")
 ```
 
-**Interpretation.** You can see straight away what “95% confidence” really means: about 95 of 100 intervals include the true value, and about 5 miss it (red point ranges). For a *single* study you do not know whether it belongs to the 95 or to the 5, but *on average* the procedure is right in 95% of cases.
+**Interpretation.** You can see straight away what “95% confidence” really means: about 95 of 100 intervals include the true value, and about 5 miss it (red intervals). For a *single* study you do not know whether it belongs to the 95 or to the 5, but *on average* the procedure is right in 95% of cases.
 
 ### Effect sizes vs. significance: two separate questions
 
@@ -236,7 +236,7 @@ In the test outputs that follow, you see these building blocks again and again: 
 allbus |> frequency(eastwest, weights = wghtpew)
 ```
 
-**Interpretation.** The weighted frequencies reflect the actual ratio of East to West in the German population: about 83% West and 17% East. You already know this table from the section on weighting, where it stood next to the unweighted one with 32.01% East (@fig-gewichtung).
+**Interpretation.** The weighted frequencies reflect the actual ratio of East to West in the German population: about 83% West and 17% East. You already know this table from the section on weighting, where it appeared next to the unweighted table with 32.01% East (@fig-gewichtung).
 
 For a whole item battery, you combine `frequency()` with `tidyselect` helpers:
 
@@ -304,7 +304,7 @@ tibble(
   scale_fill_manual(values = c("#2ca02c", "#1f77b4", "#d62728")) +
   theme(legend.position = "none") +
   labs(x = NULL, y = "Frequency",
-       title = "Three distribution shapes, three skewness values",
+       title = "Three distributions with different skewness",
        caption = "left: skewness < 0 · middle: ≈ 0 · right: > 0")
 ```
 
@@ -344,7 +344,7 @@ allbus |>
   )
 ```
 
-Here `n` counts only the respondents who have a scale score and therefore enter the mean. A plain `n()` would count all respondents in the region (3567 in the West, 1679 in the East), including the many without a scale score, for example because of the split module. Note also that `n` is an unweighted case count. With `weights =`, `t_test()` and `describe()` report the sum of the weights, which turns out differently because the East is over-represented.
+Here `n` counts only the respondents who have a scale score and therefore enter the mean. A plain `n()` would count all respondents in the region (3567 in the West, 1679 in the East), including the many without a scale score, for example because of the split module. Note also that `n` is an unweighted case count. With `weights =`, `t_test()` and `describe()` report the sum of the weights, which differs from `n` because the East is over-represented.
 
 This is the R version of SPSS `AGGREGATE` with `WEIGHT BY`, all in *one* block and one pipe.
 
@@ -379,9 +379,9 @@ Before you start on the tests, an overview helps. Which procedure you need depen
 | Variable 1                  | Variable 2                  | Test (mariposa)                                  | Effect size            |
 | :-------------------------- | :-------------------------- | :----------------------------------------------- | :--------------------- |
 | categorical                 | categorical                 | `chi_square()`                                   | Cramér's V / phi       |
-| categorical (2 groups)      | metric                      | `t_test()`                                       | Hedges' g              |
-| categorical (≥ 3 groups)    | metric                      | `oneway_anova()`                                 | η²                     |
-| metric                      | metric                      | `pearson_cor()`                                  | r (itself the effect)  |
+| categorical (2 groups)      | continuous                  | `t_test()`                                       | Hedges' g              |
+| categorical (≥ 3 groups)    | continuous                  | `oneway_anova()`                                 | η²                     |
+| continuous                  | continuous                  | `pearson_cor()`                                  | r (is the effect size) |
 | ordinal                     | ordinal                     | `spearman_rho()` / `kendall_tau()`               | ρ / τ                  |
 
 If you lose track, come back to this table.
@@ -395,13 +395,13 @@ The last column names the effect size that belongs to each test. As described in
 | Hedges' *g* (t-test)        | ≥ 0.20 | ≥ 0.50 | ≥ 0.80 |
 | η² (ANOVA)                  | ≥ 0.01 | ≥ 0.06 | ≥ 0.14 |
 
-The mariposa tests return effect sizes automatically; you only need to read and classify them.
+The mariposa tests return effect sizes automatically; you only need to read and interpret them.
 
 ### Crosstabs with `crosstab()`
 
 With *two categorical* variables, for example education × region, you cannot compare means, and you cannot calculate a correlation in the classic sense. The right presentation is a **crosstab** (cross-tabulation): rows for one variable, columns for the other, and cells with the frequencies. From the table you can read directly whether certain combinations occur more often than others. This is the standard starting point of any analysis of categorical variables.
 
-`crosstab()` from mariposa produces this table, including row, column and total percentages. The default is row percentages: each row is scaled to 100 percent. This lets you read *conditional probabilities*: “What proportion of West Germans have high education, compared with the proportion of East Germans?”
+`crosstab()` from mariposa produces this table, including row, column and total percentages. The default is row percentages: each row is scaled to 100%. This lets you read *conditional probabilities*: “What proportion of West Germans have a high level of education, compared with the proportion of East Germans?”
 
 **Question:** Is education distributed differently in East and West?
 
@@ -410,7 +410,7 @@ allbus |>
   crosstab(eastwest, educ_cat, weights = wghtpew)
 ```
 
-**Interpretation.** In the West, just over half (50.3%) have high education, in the East 44.9%. The clearest difference, however, lies in the middle: 41.8% of East Germans have medium education (INTERMEDIARY LEVEL, the German *Mittlere Reife*), but only 27.6% of West Germans. Low education, on the other hand, is less common in the East (13.3% compared with 22.2%). The cell frequencies are weighted; mariposa rounds them to whole numbers, as SPSS does (`/COUNT ROUND CELL`), before it calculates the margins and percentages.
+**Interpretation.** In the West, just over half (50.3%) have a high level of education, in the East 44.9%. The clearest difference, however, lies in the middle: 41.8% of East Germans have a medium level of education (INTERMEDIARY LEVEL, the German *Mittlere Reife*), but only 27.6% of West Germans. A low level of education, on the other hand, is less common in the East (13.3% compared with 22.2%). The cell frequencies are weighted; mariposa rounds them to whole numbers, as SPSS does (`/COUNT ROUND CELL`), before it calculates the margins and percentages.
 
 The percentages in each row add up to 100% (@fig-zeilenprozente). This is why you compare the shares of an education level between the rows, for example medium education in the West and in the East.
 
@@ -454,7 +454,7 @@ Imagine a small 2 × 2 table: region (East/West) × education (low/high), with 1
 
 If region and education were *independent*, the frequency in each cell would have to equal the product of the marginal shares. Example West × high: 800/1000 × 520/1000 × 1000 = 416 would be *expected*. But 450 are *observed*. For each cell, this difference (450 − 416 = 34) is the building block of the χ² value. The larger all the differences together, the larger χ², and the less likely independence is.
 
-This comparison (“observed vs. expected under independence”) is what `chi_square()` does internally. You do not have to calculate it by hand, but if you understand it, you also know *why* the test becomes unstable with small expected frequencies (< 5): individual large differences then carry relatively much weight.
+This comparison (“observed vs. expected under independence”) is what `chi_square()` does internally. You do not have to calculate it by hand, but if you understand it, you also know *why* the test becomes unstable with small expected frequencies (< 5): a few large differences then carry a lot of weight.
 :::
 
 Instead of first producing a crosstab and *then* running the χ² test, mariposa gives you the test together with the effect sizes in one line. The effect sizes are particularly important here: as with the t-test, χ² almost always becomes significant with a large N; only Cramér's *V* tells you whether the relationship is substantively large.
@@ -465,7 +465,7 @@ Instead of first producing a crosstab and *then* running the χ² test, mariposa
 allbus |> chi_square(eastwest, educ_cat, weights = wghtpew)
 ```
 
-**Interpretation.** The compact output shows χ² with degrees of freedom, the *p*-value, Cramér's *V* with its classification, and N. The relationship is highly significant, but with *V* ≈ 0.13 it is *small*: East and West differ in their educational structure, although the difference is modest. `summary()` adds the observed and expected frequencies and the effect sizes in detail: Cramér's *V* (universal, 0–1) and phi (signed for 2×2 tables). mariposa reports Goodman and Kruskal's gamma only if *both* variables are ordinal (ordered factor or numeric); for the unordered region `eastwest`, a rank correlation makes no sense.
+**Interpretation.** The compact output shows χ² with degrees of freedom, the *p*-value, Cramér's *V* with its verbal label, and N. The relationship is highly significant, but with *V* ≈ 0.13 it is *small*: East and West differ in their educational structure, although the difference is modest. `summary()` adds the observed and expected frequencies and the effect sizes in detail: Cramér's *V* (universal, 0–1) and phi (signed for 2×2 tables). mariposa reports Goodman and Kruskal's gamma only if *both* variables are ordinal (ordered factor or numeric); for the unordered region `eastwest`, a rank correlation makes no sense.
 
 #### Single effect sizes with `cramers_v()`, `phi()` and `goodman_gamma()`
 
@@ -483,7 +483,7 @@ Besides `chi_square()`, there are three related tests for frequencies and crosst
 
 A **correlation** is the simplest answer to the question *“Do two variables move together?”* Do people with high values on one scale also have high values on the other? Or is it exactly the opposite? Or is there no relationship?
 
-The best-known index for this is **Pearson's r**. Mathematically, it is the *standardised covariance*: the joint variation of two variables, divided by their individual spreads:
+The best-known measure for this is **Pearson's r**. Mathematically, it is the *standardised covariance*: the joint variation of two variables, divided by their individual spreads:
 
 $$r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}$$
 
@@ -521,7 +521,7 @@ Three different correlation coefficients are available, and all of them accept t
 
 | Function          | Level of measurement         | When useful                                             |
 |-------------------|------------------------------|---------------------------------------------------------|
-| `pearson_cor()`   | interval, normally distributed | classic linear relationship                           |
+| `pearson_cor()`   | continuous, normally distributed | classic linear relationship                         |
 | `spearman_rho()`  | ordinal or skewed            | when linearity or normality is doubtful                 |
 | `kendall_tau()`   | ordinal, small N             | robust variant, good with ties                          |
 
@@ -541,7 +541,7 @@ You get a whole correlation matrix by passing several variables or a `tidyselect
 allbus |> pearson_cor(mm01:mm06, weights = wghtpew)
 ```
 
-**Interpretation.** With several variables, the compact output lists the pairs of variables with *r* and *p* (with many variables, only the ten strongest); `summary()` shows the classic square matrix with *r*, *p* and *N* in each cell. In terms of content, the pattern of signs stands out: `mm02` and `mm05` correlate *negatively* with all the other items but positively with each other. This is the signature of the two positively worded items from @sec-rekodierung, and it is the reason why you reverse-code them before building the scale. In @sec-korrelationsmatrix you calculate the same matrix with `mm02r` and `mm05r`; then all correlations are positive.
+**Interpretation.** With several variables, the compact output lists the pairs of variables with *r* and *p* (with many variables, only the ten strongest); `summary()` shows the classic square matrix with *r*, *p* and *N* in each cell. The pattern of signs stands out: `mm02` and `mm05` correlate *negatively* with all the other items but positively with each other. This is the signature of the two positively worded items from @sec-rekodierung, and it is the reason why you reverse-code them before building the scale. In @sec-korrelationsmatrix you calculate the same matrix with `mm02r` and `mm05r`; then all correlations are positive.
 
 ::: {.callout-warning}
 **Caution: tidyselect helpers select more than you think.** `pearson_cor(starts_with("mm0"))` would be the obvious choice. After the data preparation, however, the pattern also matches the reverse-coded copies `mm02r` and `mm05r` (and `mm07`, an item from a different question block), and the output would then contain meaningless pairs such as `mm02 × mm02r` with *r* = −1. When you use patterns, always check with `allbus |> select(starts_with("mm0")) |> names()` which columns you actually get.
@@ -576,9 +576,9 @@ Before you run a t-test, an ANOVA or a correlation, you should know what the pro
 | Test                 | Level of DV       | Distribution             | Other assumption             | With N > 100            |
 | :------------------- | :---------------- | :----------------------- | :--------------------------- | :---------------------- |
 | `chi_square()`       | categorical       | —                        | expected frequency ≥ 5       | not critical            |
-| `pearson_cor()`      | metric            | bivariate normal         | linear relationship          | robust                  |
-| `t_test()` (Welch)   | metric (in groups) | approximately normal    | Welch variant covers unequal variances | robust        |
-| `oneway_anova()`     | metric (in groups) | approximately normal    | homogeneity of variance      | robust                  |
+| `pearson_cor()`      | continuous        | bivariate normal         | linear relationship          | robust                  |
+| `t_test()` (Welch)   | continuous (in groups) | approximately normal    | Welch variant covers unequal variances | robust        |
+| `oneway_anova()`     | continuous (in groups) | approximately normal    | homogeneity of variance      | robust                  |
 
 With clearly skewed distributions or N < 30 per group, you use the non-parametric alternatives (`mann_whitney()`, `kruskal_wallis()`, `spearman_rho()`).
 
@@ -592,7 +592,7 @@ allbus |> normality_test(islamophobia)
 
 ### t-test with `t_test()` and `levene_test()`
 
-The **t-test** is one of the oldest tools of inferential statistics (William Gosset published it in 1908 under the pseudonym “Student”, because his employer, Guinness, was worried about its brewing secrets). The question it answers is very concrete: *“You see two groups that appear to have different means. Could this difference also have arisen by pure chance in a sample, or is it large enough for you to assume that there really is a difference in the population?”*
+The **t-test** is one of the oldest tools of inferential statistics (William Gosset published it in 1908 under the pseudonym “Student”, because his employer, Guinness, did not want its brewing secrets to get out). The question it answers is very concrete: *“You see two groups that appear to have different means. Could this difference also have arisen by pure chance in a sample, or is it large enough for you to assume that there really is a difference in the population?”*
 
 The t-test gives you three answers in one call: the *size* of the difference (difference in means), the *probability* of a chance finding (*p*-value) and the *effect size* (Hedges' *g*), that is, how large the difference is in substantive terms, independent of the sample size. The last number is the most important: with N = 5000, *almost every* difference is statistically significant. Only the effect size tells you whether it is also substantively relevant.
 
@@ -641,7 +641,7 @@ allbus |>
 ::: {.callout-note collapse="true"}
 ## Background: The East–West comparison as a methodological classic
 
-The comparison of eastern and western Germany is one of the oldest axes of comparison in German political sociology. It is robust and easy to interpret, and in research on prejudice it is contested. An East–West difference in Islamophobia can be *structural* (contact hypothesis: a smaller Muslim population in the East leads to more prejudice), *historical* (effects of socialisation in the GDR, status anxieties caused by the transformation after 1990) or *cohort-specific* (different age structures). The t-test tells you *that* a difference exists; it does not tell you *why*. The multiple regression in @sec-erklaerung tries to disentangle these explanations.
+The comparison of eastern and western Germany is one of the oldest axes of comparison in German political sociology. It is robust and easy to interpret, but in research on prejudice it is contested. An East–West difference in Islamophobia can be *structural* (contact hypothesis: a smaller Muslim population in the East leads to more prejudice), *historical* (effects of socialisation in the GDR, status anxieties caused by the transformation after 1990) or *cohort-specific* (different age structures). The t-test tells you *that* a difference exists; it does not tell you *why*. The multiple regression in @sec-erklaerung tries to disentangle these explanations.
 :::
 
 By default, the compact output and the result object of `t_test()` are based on **Welch's t-test**, which allows unequal variances; like SPSS, `summary()` also shows the row for equal variances. If you want the classic Student's t-test as the main result, set `var.equal = TRUE`. In practice, Welch's test is almost always the safe choice.
@@ -654,7 +654,7 @@ allbus |>
   levene_test()
 ```
 
-If Levene's test is significant, the variances differ, and the Welch variant is the right choice. Since `t_test()` uses Welch's test anyway, the result serves more as a *justification* in the methods section than as an aid to a decision.
+If Levene's test is significant, the variances differ, and the Welch variant is the right choice. Since `t_test()` uses Welch's test anyway, the result serves more as a *justification* in the methods section than as a basis for choosing the test.
 
 In a publication, you report the following for the t-test: the weighted or unweighted *N* per group, the means and SDs per group, *t*, df, *p*, the effect size (Hedges' *g* or Cohen's *d*) and the 95% CI for the difference in means.
 
@@ -664,7 +664,7 @@ The t-test only works for *two* groups. As soon as you have three or more, for e
 
 The idea behind it is simple. Comparing every pair of groups separately would lead to many false-positive findings when there are many groups. Instead, ANOVA tests *a single* question: *Do the means vary between the groups more than you would expect from the variation within the groups?* If so, there is at least *one* difference between groups. ANOVA does not tell you which pair it is; the post-hoc tests that come later answer that.
 
-Besides the F value and the p-value, the most important measure in the ANOVA output is the effect size **η²** (eta squared): the proportion of the variance in the dependent variable that the grouping explains. An η² of 0.01 means that the groups explain 1 percent of the variance. With a large N this is often statistically significant, but substantively tiny. An η² of 0.10 or more is already a substantial effect.
+Besides the F value and the p-value, the most important measure in the ANOVA output is the effect size **η²** (eta squared): the proportion of the variance in the dependent variable that the grouping explains. An η² of 0.01 means that the groups explain 1% of the variance. With a large N this is often statistically significant, but substantively tiny. An η² of 0.10 or more is already a substantial effect.
 
 ANOVA splits the total variation into two components. The plot shows three groups with their means (diamonds) and individual cases (points):
 
@@ -699,13 +699,13 @@ anova_demo |>
   annotate("text", x = 1.35, y = 1.5,
            label = "WITHIN:\ncase – group",
            color = "#1f77b4", size = 3, hjust = 0) +
-  scale_x_discrete(expand = expansion(add = 0.6)) +
+  scale_x_discrete(expand = expansion(add = c(0.6, 1.2))) +
   labs(x = NULL, y = "Value",
        title = "The ANOVA question: variation between vs. within groups",
        caption = expression(paste("F = (between variance) / (within variance); large F values → groups differ clearly")))
 ```
 
-**Interpretation.** *Between* (red arrows): how far apart are the group means? *Within* (blue points around the diamonds): how widely do the individual cases spread *within* each group? The F value is the ratio of the two. Large between and small within means clearly separated groups, a high F value and a small p-value.
+**Interpretation.** *Between* (red arrows): how far apart are the group means? *Within* (blue points around the diamonds): how widely do the individual cases spread *within* each group? The F value is the ratio of the two. If the variation between the groups is large and the variation within them is small, the groups are clearly separated, F is high and the p-value is small.
 
 **Question:** Is Islamophobia related to education?
 
@@ -805,7 +805,7 @@ allbus |>
 :::
 
 ::: {.callout-note title="Exercise 3 · Three correlates · Transfer"}
-Calculate the weighted correlation between Islamophobia and (a) life satisfaction `ls01`, (b) trust in other people `st01`, (c) satisfaction with democracy `ps03`. Which relationship is the strongest? Classify it with the effect size rule of thumb.
+Calculate the weighted correlation between Islamophobia and (a) life satisfaction `ls01`, (b) trust in other people `st01`, (c) satisfaction with democracy `ps03`. Which relationship is the strongest? Judge its size with the effect size rule of thumb.
 :::
 
 ::: {.callout-tip title="Solution" collapse="true"}
@@ -849,7 +849,7 @@ Formulate your own bivariate hypothesis based on ALLBUS 2023, for example *“Wo
 - You test relationships between categorical variables with `chi_square()` and get single effect sizes with `cramers_v()`, `phi()` and `goodman_gamma()`.
 - You know related tests for crosstabs (`fisher_test()`, `mcnemar_test()`).
 - You choose between Pearson, Spearman and Kendall according to the level of measurement, and you control for third variables with `partial_cor()`.
-- You classify effect sizes substantively with rules of thumb (Cohen).
+- You judge the substantive size of effects with rules of thumb (Cohen).
 - You know that the compact output summarises the result and that `summary()` shows the full SPSS tables.
 - You compare group means with `t_test()` and `oneway_anova()`, check assumptions with `normality_test()` and `levene_test()`, and choose between four post-hoc procedures (`tukey_test`, `scheffe_test`, `dunn_test`, `pairwise_wilcoxon`).
 - You know non-parametric alternatives (`mann_whitney`, `kruskal_wallis`, `wilcoxon_test`, `friedman_test`).
