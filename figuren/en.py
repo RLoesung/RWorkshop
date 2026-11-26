@@ -245,6 +245,30 @@ EN = {
     "efa_vor$kmo$per_item": "efa_check$kmo$per_item",
     "Summe ohne": "Sum without",
     "nicht in der Summe": "not in the sum",
+    # Kap. 9: Abbildungen (Namen nach STYLE.md §13; Koeffizientennamen und Ausgaben wie R sie mit den englischen
+    # Labels druckt; "educ_kat", "islamophobie", "populismus", Stufen, ALLBUS-Labels und "Referenz", "intern" stehen
+    # schon oben)
+    "educ_katmittel": "educ_catmedium",
+    "educ_kathoch": "educ_cathigh",
+    "levels(allbus$educ_kat)": "levels(allbus$educ_cat)",
+    '[1] "niedrig" "mittel"  "hoch"': '[1] "low"    "medium" "high"',
+    "allbus_modell": "allbus_model",
+    "allbus_modell <- allbus |>": "allbus_model <- allbus |>",
+    "  drop_na(islamophobie, educ_kat, age, eastwest, sex, populismus)":
+        "  drop_na(islamophobia, educ_cat, age, eastwest, sex, populism)",
+    "ohne ": "without ",
+    "nur in ": "only in ",
+    "m_basis": "m_base",
+    "diagnose_df <- modell |> augment()": "diag_df <- model |> augment()",
+    "Mittelwerte": "means",
+    "Randmittel": "marginal means",
+    "P(islam_hoch = 1)": "P(islamophobia_high = 1)",
+    "bei educ_kat =": "at educ_cat =",
+    "hoch - niedrig": "high - low",
+    "gewichteter Mittelwert": "weighted mean",
+    "modell_log |> marginal_effects()": "model_log |> marginal_effects()",
+    "educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***":
+        "educ_cat: high vs. low: AME = -0.252, p < 0.001 ***",
     # Titelbild
     "Sozialwissenschaften": "Social Sciences",
     "Einführung in die statistische Datenanalyse mit tidyverse und mariposa":

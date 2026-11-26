@@ -9,6 +9,10 @@ from lego import (Canvas, R, P, text, card, stein, schild, arrow, outline, conne
 from kap03 import mono, notiz, platte
 from kap04 import kopf, punkte, codezeile
 from kap05 import code, klammer
+import sprache
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
 
 
 def nummer(s, x, y, w, h, t):
@@ -31,16 +35,16 @@ def dummy():
     s = Canvas(7.6, 2.55)
     h, pitch, top, ky = 0.32, 0.42, 0.85, 0.42
     fx, fw = 0.45, 0.9                                                  # Faktor-Turm
-    dummies = [("educ_katmittel", "mittel", 2.6), ("educ_kathoch", "hoch", 3.95)]   # (Name, Stufe, Mitte)
+    dummies = [(tr("educ_katmittel"), "mittel", 2.6), (tr("educ_kathoch"), "hoch", 3.95)]   # (Name, Stufe, Mitte)
     dw = 0.55
-    kopf(s, fx, fw, ky, "educ_kat", size=10.5)
+    kopf(s, fx, fw, ky, tr("educ_kat"), size=10.5)
     for name, _, mitte in dummies:
         kopf(s, mitte - dw / 2, dw, ky, name, size=10.5)
-    text(s, 2.65, 0.1, 1.25, 0.28, notiz("intern", size=10.5))
+    text(s, 2.65, 0.1, 1.25, 0.28, notiz(tr("intern"), size=10.5))
     ys = [top, top + pitch, top + 2 * pitch + 0.3]                       # Lücke für die Reihen 3 bis 7
     for (nr, stufe), y in zip(BILDUNG, ys):
         nummer(s, 0.0, y, 0.35, h, nr)
-        stein(s, fx, y, fw, h, "txt", stufe, size=11)
+        stein(s, fx, y, fw, h, "txt", tr(stufe), size=11)
         for _, d_stufe, mitte in dummies:
             stein(s, mitte - dw / 2, y, dw, h, "num", "1" if stufe == d_stufe else "0", size=11)
     pfeile_je_reihe(s, fx + fw + 0.15, ys, h, w=0.55)
@@ -53,14 +57,14 @@ def dummy():
     # Stufenleiste rechts wie in k03-faktor: die erste Stufe ist die Referenz
     cx, cw = 4.62, 2.88
     card(s, cx, 0.12, cw, unten + 0.17 - 0.12)
-    text(s, cx + 0.15, 0.2, cw - 0.3, 0.28, mono("levels(allbus$educ_kat)", size=10.5, align=L))
+    text(s, cx + 0.15, 0.2, cw - 0.3, 0.28, mono(tr("levels(allbus$educ_kat)"), size=10.5, align=L))
     for i, st in enumerate(STUFEN):
         y = 0.6 + i * 0.44
-        stein(s, cx + 0.2, y, 1.0, h, "txt", st, size=11)
+        stein(s, cx + 0.2, y, 1.0, h, "txt", tr(st), size=11)
         if i == 0:
-            referenz(s, cx + 1.3, y + h / 2)
+            referenz(s, cx + 1.3, y + h / 2, wort=tr("Referenz"))
     text(s, cx + 0.15, unten - 0.3, cw - 0.25, 0.28,
-         mono('[1] "niedrig" "mittel"  "hoch"', size=10, color=GREEN, align=L))
+         mono(tr('[1] "niedrig" "mittel"  "hoch"'), size=10, color=GREEN, align=L))
     return s
 
 
@@ -70,10 +74,14 @@ def dummy():
 ALT, NEU = "ALTE BUNDESLAENDER", "NEUE BUNDESLAENDER"
 SPALTEN = [("islamophobie", "num", 0.6), ("educ_kat", "txt", 0.78), ("age", "num", 0.42), ("eastwest", "txt", 1.64),
            ("sex", "txt", 0.6), ("populismus", "num", 0.6)]
+UEBERSETZT = {"islamophobie", "educ_kat", "populismus"}                 # Namen, die tr() kennt; age, eastwest, sex bleiben
 ACHT = [("3.33", "mittel", "50", ALT, "MANN", "2.29"), ("", "hoch", "51", ALT, "MANN", "3"),
         ("", "hoch", "69", ALT, "FRAU", "2.86"), ("", "mittel", "72", NEU, "MANN", "4.57"),
         ("4", "hoch", "18", ALT, "FRAU", ""), ("3.83", "hoch", "45", ALT, "FRAU", "3.71"),
         ("", "mittel", "26", ALT, "FRAU", ""), ("", "niedrig", "71", ALT, "FRAU", "4.14")]
+
+
+WERTE_UEBERSETZT = {"niedrig", "mittel", "hoch", ALT, NEU, "MANN", "FRAU"}
 
 
 def spalten_x(x0, spalten, size=10, gap=0.08):
@@ -101,20 +109,22 @@ def masse(s, x, y, name, dims):
 def fallset():
     s = Canvas(7.6, 4.85)
     h, pitch, top, ky = 0.28, 0.4, 1.1, 0.72
-    xs, rechts = spalten_x(0.5, SPALTEN)
+    spalten = [(tr(n) if n in UEBERSETZT else n, k, w) for n, k, w in SPALTEN]
+    xs, rechts = spalten_x(0.5, spalten)
     # oben: allbus → drop_na() → allbus_modell
     ende = masse(s, 0.15, 0.18, "allbus", "5,246 × 593")
     ax = ende + 0.2
     text(s, ax - 0.1, 0.03, 1.3, 0.22, mono("drop_na()", size=10.5, color=GREEN))
     arrow(s, ax, 0.26, w=1.1, h=0.2, color=GREEN)
-    masse(s, ax + 1.3, 0.18, "allbus_modell", "1,881 × 593")
-    for x, (name, _, w) in zip(xs, SPALTEN):
+    masse(s, ax + 1.3, 0.18, tr("allbus_modell"), "1,881 × 593")
+    for x, (name, _, w) in zip(xs, spalten):
         kopf(s, x, w, ky, name, size=10)
     for i, reihe in enumerate(ACHT):
         y = top + i * pitch
         bleibt = all(reihe)
         nummer(s, 0.0, y, 0.35, h, str(i + 1))
-        for x, (_, kind, w), v in zip(xs, SPALTEN, reihe):
+        for x, (_, kind, w), v in zip(xs, spalten, reihe):
+            v = tr(v) if v in WERTE_UEBERSETZT else v
             stein(s, x, y, w, h, (kind if bleibt else "dim") if v else "na", v, size=10 if len(v) > 8 else 11)
     unten = top + 7 * pitch + h
     platte(s, 0.4, unten + 0.08, rechts + 0.1 - 0.4)
@@ -122,14 +132,14 @@ def fallset():
     y5 = top + 4 * pitch
     outline(s, xs[0] - 0.08, y5 - 0.09, rechts + 0.08 - (xs[0] - 0.08), h + 0.13, color=ORANGE, lw=1.75)
     text(s, rechts + 0.14, y5 - 0.2, 7.58 - rechts - 0.14, h + 0.4,
-         [P(R("ohne ", size=10, italic=True, color=DARKORANGE), R("drop_na()", font=MONO, size=10, bold=True,
+         [P(R(tr("ohne "), size=10, italic=True, color=DARKORANGE), R("drop_na()", font=MONO, size=10, bold=True,
                                                                      color=DARKORANGE),
             R(":", size=10, italic=True, color=DARKORANGE), ls=1.05),
-          P(R("nur in ", size=10, italic=True, color=DARKORANGE), R("m_basis", font=MONO, size=10, bold=True,
+          P(R(tr("nur in "), size=10, italic=True, color=DARKORANGE), R(tr("m_basis"), font=MONO, size=10, bold=True,
                                                                        color=DARKORANGE), ls=1.05)],
          anchor="middle")
-    text(s, 0.15, unten + 0.27, 7.4, 0.45, code(["allbus_modell <- allbus |>",
-                                                 "  drop_na(islamophobie, educ_kat, age, eastwest, sex, populismus)"],
+    text(s, 0.15, unten + 0.27, 7.4, 0.45, code([tr("allbus_modell <- allbus |>"),
+                                                 tr("  drop_na(islamophobie, educ_kat, age, eastwest, sex, populismus)")],
                                                 size=10.5))
     return s
 
@@ -147,6 +157,21 @@ LUECKEN = [0.08, 0.08, 0.08, 0.08, 0.13, 0.13, 0.2, 0.13, 0.06]       # mehr Luf
 RECHNUNG = [[".fitted", "=", ("0.808", "(Intercept)"), "+", ("0.012 · 1", "educ_katmittel"), "+",
              ("0.024 · 50", "age"), "+", ("0.603 · 2.286", "populismus"), "≈", ("3.40", "")],
             [".resid", "=", ("3.333", "islamophobie"), "-", ("3.400", ".fitted"), "=", ("-0.067", "")]]
+
+
+def diagnose():
+    """DIAGNOSE mit den Namen und Stufen der aktuellen Sprache."""
+    namen = {"islamophobie", "educ_kat", "populismus"}
+    stufen = {"mittel", "hoch"}
+    return [(tr(n) if n in namen else n, k, w, None if v is None else [tr(x) if x in stufen else x for x in v])
+            for n, k, w, v in DIAGNOSE]
+
+
+def rechnung_zeilen():
+    """RECHNUNG mit den Koeffizientennamen der aktuellen Sprache (educ_katmittel, populismus)."""
+    namen = {"educ_katmittel", "populismus", "islamophobie"}
+    return [[(el[0], tr(el[1]) if el[1] in namen else el[1]) if isinstance(el, tuple) else el for el in zeile]
+            for zeile in RECHNUNG]
 
 
 def rechnung(s, x, y, zeile, size=11, lsize=10):
@@ -171,9 +196,10 @@ def rechnung(s, x, y, zeile, size=11, lsize=10):
 def augment():
     s = Canvas(7.6, 3.3)
     h, pitch, top, ky = 0.3, 0.42, 1.0, 0.6
-    text(s, 0.15, 0.12, 7.3, 0.28, codezeile("diagnose_df <- modell |> augment()", size=10.5))
-    xs, rechts = spalten_x(0.45, [(n, k, w) for n, k, w, _ in DIAGNOSE], gap=LUECKEN)
-    for j, (x, (name, kind, w, werte)) in enumerate(zip(xs, DIAGNOSE)):
+    text(s, 0.15, 0.12, 7.3, 0.28, codezeile(tr("diagnose_df <- modell |> augment()"), size=10.5))
+    diag = diagnose()
+    xs, rechts = spalten_x(0.45, [(n, k, w) for n, k, w, _ in diag], gap=LUECKEN)
+    for j, (x, (name, kind, w, werte)) in enumerate(zip(xs, diag)):
         if werte is None:                                          # weitere Türme, nicht gezeigt
             for i in range(2):
                 punkte(s, x, top + i * pitch - 0.05, w=w)
@@ -188,7 +214,7 @@ def augment():
     nummer(s, 0.0, top, 0.32, h, "1")
     nummer(s, 0.0, top + pitch, 0.32, h, "2")
     outline(s, 0.45, top - 0.1, rechts + 0.04 - 0.45, h + 0.15, color=ORANGE, lw=1.75)
-    for k, zeile in enumerate(RECHNUNG):
+    for k, zeile in enumerate(rechnung_zeilen()):
         rechnung(s, 0.15, unten + 0.4 + k * 0.62, zeile)
     return s
 
@@ -237,13 +263,13 @@ def randmittel():
             if t:
                 text(s, X(v) - 0.3, y + 0.1, 0.6, 0.25, mono(t, size=10, color=GRAY, bold=False))
         for gruppe, v in werte:
-            mittel_marke(s, X(v), y, f"{gruppe} {v:.2f}", rechts=(gruppe, k) not in LINKS,
+            mittel_marke(s, X(v), y, f"{tr(gruppe)} {v:.2f}", rechts=(gruppe, k) not in LINKS,
                          unten=(gruppe, k) in VON_UNTEN)
     text(s, 0.15, y1 - 0.3, 1.7, 0.28, mono("oneway_anova()", size=10.5, color=GREEN, align=L))
-    text(s, 0.15, y1 - 0.04, 1.7, 0.28, notiz("Mittelwerte", size=10.5, align=L))
+    text(s, 0.15, y1 - 0.04, 1.7, 0.28, notiz(tr("Mittelwerte"), size=10.5, align=L))
     text(s, 0.15, y2 - 0.3, 1.7, 0.28, mono("ancova()", size=10.5, color=GREEN, align=L))
     text(s, 0.15, y2 - 0.04, 1.7, 0.28, mono("covariate = age", size=10, color=GRAY, bold=False, align=L))
-    text(s, 0.15, y2 + 0.2, 1.7, 0.28, notiz("Randmittel", size=10.5, align=L))
+    text(s, 0.15, y2 + 0.2, 1.7, 0.28, notiz(tr("Randmittel"), size=10.5, align=L))
     return s
 
 
@@ -261,17 +287,19 @@ def ame():
     nx, hx, pw = 2.0, 2.95, 0.7                                        # vorhergesagt mit niedrig / hoch
     dx, dw = 4.45, 0.7                                                 # Differenz
     kopf(s, 0.12, 0.5, ky, "respid", size=10.5)
-    kopf(s, ex, ew, ky, "educ_kat", size=10.5)
+    kopf(s, ex, ew, ky, tr("educ_kat"), size=10.5)
     mitte_p = (nx + hx + pw) / 2                                         # über den Spalten niedrig und hoch
-    text(s, mitte_p - 0.9, 0.07, 1.8, 0.4, mono("P(islam_hoch = 1)", size=10, color=GRAY, bold=False)
-         + mono("bei educ_kat =", size=10, color=GRAY, bold=False))
-    kopf(s, nx, pw, ky, "niedrig", size=10.5)
-    kopf(s, hx, pw, ky, "hoch", size=10.5)
-    text(s, dx - 0.4, ky, dw + 0.8, 0.25, mono("hoch - niedrig", size=10.5))
+    kopf_p = tr("P(islam_hoch = 1)")
+    kw = max(1.8, text_width(kopf_p, MONO, 10, True) + 0.1)                # englischer Name ist länger
+    text(s, mitte_p - kw / 2, 0.07, kw, 0.4, mono(kopf_p, size=10, color=GRAY, bold=False)
+         + mono(tr("bei educ_kat ="), size=10, color=GRAY, bold=False))
+    kopf(s, nx, pw, ky, tr("niedrig"), size=10.5)
+    kopf(s, hx, pw, ky, tr("hoch"), size=10.5)
+    text(s, dx - 0.4, ky, dw + 0.8, 0.25, mono(tr("hoch - niedrig"), size=10.5))
     ys = [top + i * pitch for i in range(len(PERSONEN))]
     for y, (rid, bildung, p_n, p_h) in zip(ys, PERSONEN):
         nummer(s, 0.1, y, 0.5, h, rid)
-        stein(s, ex, y, ew, h, "txt", bildung, size=11)
+        stein(s, ex, y, ew, h, "txt", tr(bildung), size=11)
         stein(s, nx, y, pw, h, "num", p_n, size=11)
         stein(s, hx, y, pw, h, "num", p_h, size=11)
         stein(s, dx, y, dw, h, "num", f"{float(p_h) - float(p_n):.2f}", size=11)
@@ -286,11 +314,11 @@ def ame():
     klammer(s, dx + dw + 0.14, top, unten + 0.3, color=INK)
     ax = dx + dw + 0.42
     arrow(s, ax, mitte - 0.12, w=0.6, h=0.24, color=GREEN)
-    text(s, ax - 0.1, mitte - 0.48, 1.9, 0.28, notiz("gewichteter Mittelwert", size=10.5, align=L))
+    text(s, ax - 0.1, mitte - 0.48, 1.9, 0.28, notiz(tr("gewichteter Mittelwert"), size=10.5, align=L))
     stein(s, ax + 0.75, mitte - h / 2, 0.8, h, "num", "-0.252", size=11)
     text(s, ax + 0.65, mitte + 0.22, 1.0, 0.25, mono("AME", size=10.5))
-    text(s, 0.15, unten + 0.62, 7.4, 0.28, codezeile("modell_log |> marginal_effects()", size=10.5))
-    text(s, 0.15, unten + 0.9, 7.4, 0.28, mono("educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***", size=10.5,
+    text(s, 0.15, unten + 0.62, 7.4, 0.28, codezeile(tr("modell_log |> marginal_effects()"), size=10.5))
+    text(s, 0.15, unten + 0.9, 7.4, 0.28, mono(tr("educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***"), size=10.5,
                                                 color=GREEN, align=L))
     return s
 

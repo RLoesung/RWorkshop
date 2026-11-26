@@ -46,6 +46,33 @@ ERWARTET_KAP09 = {
                 "educ_kat: hoch vs. niedrig: AME = -0.252, p < 0.001 ***"],
 }
 
+STUFE_EN = {"niedrig": "low", "mittel": "medium", "hoch": "high"}
+ALT_EN, NEU_EN = "OLD FEDERAL STATES", "NEW FEDERAL STATES"
+ACHT_EN = [(a, STUFE_EN.get(b, b), c, {ALT: ALT_EN, NEU: NEU_EN}[d], {"MANN": "MALE", "FRAU": "FEMALE"}[e], f)
+           for a, b, c, d, e, f in ACHT]
+
+# Englische Fassung: Namen nach STYLE.md §13, Labels aus ZA8833, Koeffizientennamen wie R sie mit den englischen Labels
+# druckt (Setup mit R/_common_en.R und R/prep_en.R); Zahlen wie im Deutschen
+ERWARTET_KAP09_EN = {
+    "k09-dummy": ["educ_cat", "educ_catmedium", "educ_cathigh", "internal", "medium", "high", "low", "1", "0",
+                  "2", "8", "levels(allbus$educ_cat)", '[1] "low"    "medium" "high"', "Reference"],
+    "k09-fallset": ["allbus_model <- allbus |>", "drop_na(islamophobia, educ_cat, age, eastwest, sex, populism)",
+                    "islamophobia", "educ_cat", "age", "eastwest", "sex", "populism", "allbus", "allbus_model",
+                    "5,246 × 593", "1,881 × 593", "without drop_na():", "only in m_base", ALT_EN, NEU_EN, "MALE",
+                    "FEMALE", "low"]
+                   + [v for r in ACHT_EN for v in r if v],
+    "k09-augment": ["diag_df <- model |> augment()", "islamophobia", "educ_cat", "age", "…", "populism",
+                    "(weights)", ".fitted", ".resid", ".hat", "3.333", "3.833", "medium", "high", "50", "45", "2.286",
+                    "3.714", "1.252", "3.400", "3.829", "-0.067", "0.004", "0.005", "0.003", "0.808", "0.012 · 1",
+                    "0.024 · 50", "0.603 · 2.286", "3.40", "(Intercept)", "educ_catmedium"],
+    "k09-randmittel": ["oneway_anova()", "ancova()", "covariate = age", "3", "4", "5", "means", "marginal means",
+                       "low 4.68", "medium 4.45", "high 3.48", "low 4.41", "medium 4.43", "high 3.60"],
+    "k09-ame": ["respid", "1", "5", "6", "educ_cat", "medium", "high", "P(islamophobia_high = 1)", "at educ_cat =",
+                "low", "high - low", "0.584", "0.394", "0.581", "0.316", "0.177", "0.314", "-0.27",
+                "-0.22", "-0.252", "weighted mean", "model_log |> marginal_effects()",
+                "educ_cat: high vs. low: AME = -0.252, p < 0.001 ***"],
+}
+
 
 def alle_texte(svg):
     return "\n".join("".join(e.itertext()) for e in ET.fromstring(svg).iter(NS + "text"))
@@ -319,6 +346,59 @@ class TestKap09(unittest.TestCase):
             self.assertLessEqual(text_width(t, MONO, 10), rechts - links, t)
         y_spalten = min(y for t, x, y, _ in pos if t == "niedrig")
         self.assertLess(kopf[-1][0], y_spalten)
+
+    def test_en_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP09_EN), set(ERWARTET_KAP09))
+
+    def test_englische_texte(self):
+        import kap09
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap09.FIGUREN.items():
+                svg = fn().svg()
+                breite = float(ET.fromstring(svg).get("viewBox").split()[2])
+                self.assertLessEqual(breite, 768, name)
+                texte = alle_texte(svg)
+                for wert in ERWARTET_KAP09_EN[name]:
+                    self.assertIn(wert, texte, f"{name}: {wert}")
+        finally:
+            sprache.setze("de")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap09
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap09.FIGUREN.items():
+                self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+        finally:
+            sprache.setze("de")
+
+    def test_en_ohne_deutsche_namen(self):
+        """Keine deutschen Namen aus STYLE.md §13 in den englischen Abbildungen."""
+        import re
+        import kap09
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap09.FIGUREN.items():
+                texte = alle_texte(fn().svg())
+                for alt in ("educ_kat", "islamophobie", "populismus", "allbus_modell", "m_basis", "diagnose_df",
+                            "modell_log", "islam_hoch", "Referenz", "niedrig", "mittel", "hoch"):
+                    self.assertIsNone(re.search(rf"\b{alt}", texte), f"{name}: {alt}")
+        finally:
+            sprache.setze("de")
+
+    def test_deutsch_unveraendert(self):
+        import kap09
+        import sprache
+        sprache.setze("de")
+        for name, fn in kap09.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP09[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":
