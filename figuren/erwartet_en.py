@@ -20,6 +20,22 @@ ERWARTET = {
         ("Ausgabeblock 27 (allbus |>):",
          "gleiche Zahlen in anderer Zeilenreihenfolge (set_na()-Demo)"),
     ],
+    "05-Datentransformation": [
+        ("Ausgabeblock 4 (allbus |>):",
+         "gleiche Zahlen in anderer Zeilenreihenfolge: count() sortiert die englischen Kategorien "
+         "alphabetisch (high, low, medium statt hoch, mittel, niedrig)"),
+        ("The six `mm` items are established in German-language research",
+         "Autorennamen Decker & Brähler"),
+        ("- Schulz, A., Müller, P.",
+         "Autorenname Müller in der Literaturangabe"),
+        ("- Decker, O., & Brähler, E.",
+         "deutschsprachige Quelle: Autorenname und Originaltitel, englische Übersetzung in Klammern"),
+        ("deutsche Setup-Datei: Everything you have built step by step",
+         "R/prep.R ist der Dateiname im Projekt der Lesenden, wie in der Abbildung k05-pipeline und "
+         "nach STYLE.md §13 (Dateien im Buchprojekt behalten ihren Namen); der versteckte Setup lädt R/_common_en.R"),
+        ("deutsche Setup-Datei: With this pipeline, the dataset is ready",
+         "wie oben: source(\"R/prep.R\") im Fließtext, passend zur Abbildung k05-pipeline"),
+    ],
     "06-Grafiken-Grundlagen": [
         ("deutsche Setup-Datei: All plots in this book automatically use the theme",
          "theme_rworkshop() ist in beiden Fassungen in R/_common.R definiert (R/_common_en.R lädt sie); "
