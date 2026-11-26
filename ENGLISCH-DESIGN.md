@@ -82,6 +82,15 @@ Mit einem Testbuch (Quarto 1.8.25) geprüft:
 - `R/prep_en.R` ist die englische Fassung von `R/prep.R`. `R/_common.R` bleibt gemeinsam.
 - Kommentare im Code, Achsentitel, Legenden, Kategorien in `rec()`- und `labels = c(…)`-Aufrufen, Prompt-Vorlagen (Kap. 10) und YAML-Beispiele (Kap. 2, etwa `lang: en`) werden englisch.
 - Die Lesarten zitieren die tatsächlichen englischen Labels aus ZA8833, nicht eigene Übersetzungen der deutschen Labels.
+- ZA8833 erklärt keine Codes zu fehlenden Werten; ZA8831 erklärt alle negativen Codes dazu. Die Rohwerte sind in beiden Dateien identisch. Entscheidung Yannick (26.11.2026): Die englischen Kapitel deklarieren die fehlenden Werte sichtbar beim Einlesen:
+
+  ```r
+  allbus <- read_spss("ALLBUS2023.sav") |>
+    set_na(-56, -55, -54, -53, -51, -50, -42, -41,
+           -33, -32, -15, -11, -10, -9, -8, -7, -6)
+  ```
+
+  Das sind alle negativen Codes mit Label in ZA8833. Geprüft: Danach haben 575 von 577 numerischen Variablen dasselbe Muster fehlender Werte und dieselben gültigen Werte wie im deutschen Buch. Ausnahmen sind `za_nr` (Studiennummer) und `splt23_2`, bei dem -15 im Deutschen gültig ist; beide kommen im Buch nicht vor. Die Kennbuchstaben der Missing-Typen weichen ab, weil `set_na()` sie über alle Codes vergibt (bei `mm01` g, l, n, o statt a, b, c, d). Englische Texte und Abbildungen nennen die Buchstaben aus der englischen Ausgabe. Kap. 4 erklärt den Schritt beim Einlesen in zwei Sätzen; spätere Kapitel übernehmen ihn (in `R/prep_en.R`).
 
 ### 5.4 Prüfung der Zahlen
 

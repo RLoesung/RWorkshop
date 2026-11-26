@@ -146,7 +146,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten 
 **Interfaces:**
 - Consumes: `sprache.t()`, `build.py --en` (Task 4); englische Labels aus ZA8833 (Task 5).
 
-- [ ] **Step 1: Englische Labels holen.** Variablen- und Wertelabels der in `kap04.py` gezeigten Variablen (`sex`, `educ`, `mm01`, `mm06`, fehlende Codes −42, −11, −9, −8) aus `ALLBUS2023_en.sav` lesen (nur Labels, `n_max = 0`).
+- [ ] **Step 1: Englische Labels holen.** Variablen- und Wertelabels der in `kap04.py` gezeigten Variablen (`sex`, `educ`, `mm01`, `mm06`, fehlende Codes −42, −11, −9, −8) aus `ALLBUS2023_en.sav` lesen (nur Labels, `n_max = 0`). Kennbuchstaben der Missing-Typen (`tag`) aus der englischen Ausgabe nach `set_na()` (Design §5.3), bei `mm01` g, l, n, o. `k04-einlesen` zeigt weiter nur `read_spss()`.
 - [ ] **Step 2: Tests** in `test_kap04.py`: `ERWARTET_KAP04_EN` mit denselben Schlüsseln wie `ERWARTET_KAP04`; Zahlen, Code und Namen gleich, Beschriftungen englisch, Wertelabels exakt wie in ZA8833. Ein Test baut jede Kap.-4-Abbildung mit `setze("en")` und prüft die erwarteten Texte; ein zweiter prüft, dass keine deutsche Beschriftung übrig ist (`check_en.deutsch_reste` auf den SVG-Texten).
 - [ ] **Step 3: Tests laufen lassen.** Expected: FAIL.
 - [ ] **Step 4: Texte in `kap04.py` und `cover.py` durch `t()` führen**, Einträge in `en.EN` ergänzen. Cover: „R Workshop“, „Social Sciences“, „An introduction to statistical / data analysis with tidyverse and / mariposa“.
@@ -174,7 +174,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten 
 **Interfaces:**
 - Consumes: `R/_common_en.R` (Task 5), `Bilder/figuren/en/k04-*.svg` (Task 6), `STYLE.md` §12 (Task 7), `check_en.py` (Task 3).
 
-- [ ] **Step 1: Übersetzen** aus `04-Datenimport.qmd`: Setup-Chunk mit `source("R/_common_en.R")`; Abbildungspfade `Bilder/figuren/en/…`; Bildunterschriften und `fig-alt` englisch; Kommentare und Kategorien im Code englisch; alle IDs gleich; `output-file: 04-Datenimport.html`.
+- [ ] **Step 1: Übersetzen** aus `04-Datenimport.qmd`: Setup-Chunk mit `source("R/_common_en.R")`; Abbildungspfade `Bilder/figuren/en/…`; Bildunterschriften und `fig-alt` englisch; Kommentare und Kategorien im Code englisch; alle IDs gleich; `output-file: 04-Datenimport.html`. Der Einlese-Chunk deklariert die fehlenden Werte sichtbar mit `set_na()` und den 17 Codes aus Design §5.3, dazu zwei Sätze Erklärung; alle Stellen, die Kennbuchstaben (NA(a) usw.) nennen, folgen der englischen Ausgabe.
 - [ ] **Step 2: Kapitelliste** in `_quarto-en.yml`: `04-Datenimport.qmd` → `04-Datenimport.en.qmd`.
 - [ ] **Step 3: Rendern** `quarto render 04-Datenimport.en.qmd --profile en`.
 - [ ] **Step 4: Lesarten abgleichen.** Jede Lesart und jedes zitierte Label mit der gerenderten Ausgabe vergleichen; zitiert werden die englischen Labels aus ZA8833.
