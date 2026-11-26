@@ -5,6 +5,10 @@ Passende Meldungen zählen im Lauf von check_en.py nicht als Fehler und werden a
 Jede Meldung nennt die erste Codezeile ihrer Zelle; damit sind die Teilstrings eindeutig.
 """
 ERWARTET = {
+    "02-Quarto": [
+        ("deutsche Setup-Datei: - Shared code goes into `R/`.",
+         "advice for the reader's own project, not the book's setup"),
+    ],
     "04-Datenimport": [
         ("Ausgabeblock 1 (allbus):",
          "za_nr 8831/8833 und version 1.3.0/1.0.0 sind Dateieigenschaften; splt23_2 zeigt -15 "

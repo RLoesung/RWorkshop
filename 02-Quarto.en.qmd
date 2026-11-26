@@ -11,11 +11,11 @@ source("R/_common_en.R")
 
 ## What this chapter is about
 
-Research only counts as *science* if other people can follow it. If you publish an analysis, you should disclose the whole path from the data to the result, so that readers do not have to reconstruct intermediate steps or reformat tables from the output window.
+Research only counts as *science* if other people can follow it. If you publish an analysis, you should show every step from the data to the result, so that readers do not have to reconstruct intermediate steps or reformat tables from the output window.
 
-Quarto is a tool that puts this into practice. It combines R code and the written report in a single document: you write your term paper, seminar presentation or bachelor's thesis together with the code that produces the numbers. Quarto renders this into HTML, PDF or Word. If you change the data or a methodological decision, the whole document runs again from scratch the next time you render it, and the numbers, tables and graphics are up to date automatically.
+Quarto is a tool that puts this into practice. It combines R code and the written report in a single document: you write your term paper, seminar presentation or bachelor's thesis together with the code that produces the numbers. Quarto renders this into HTML, PDF or Word. If you change the data or a methodological decision, all the code in the document runs again the next time you render it, and the numbers, tables and graphics are up to date automatically.
 
-This chapter takes you from your first `.qmd` document to a reproducible project that meets the standards of open science. The book you are reading was itself built with Quarto, so you will find what is explained here throughout these pages.
+This chapter takes you from your first `.qmd` document to a reproducible project that meets the standards of open science. The book you are reading was built with Quarto, so these pages are themselves an example of what this chapter explains.
 
 ::: {.callout-note}
 **Research journal: Where are you in your mini study?** You set up the IDE in @sec-rstudio. Now you get to know the format in which you will *publish* your findings on Islamophobia at the end: a reproducible report that combines code, tables and graphics in one document. When you produce coefficient plots and regression tables from @sec-erklaerung onwards, you will want to bring them together in a Quarto document instead of copying them into Word.
@@ -28,7 +28,7 @@ This chapter takes you from your first `.qmd` document to a reproducible project
 - Control code chunks with YAML options (`echo`, `eval`, `fig-cap`, …).
 - Use inline R code for reproducible numbers in the text.
 - Include tables and graphics with captions and cross-references.
-- Cite literature with BibTeX and Zotero.
+- Cite sources with BibTeX and Zotero.
 - Apply open science principles (reproducibility, FAIR, OSF, preregistration) to your project.
 - Structure a project cleanly (`R/`, `output/`) and keep track of its versions with Git.
 
@@ -95,7 +95,7 @@ mean(c(1, 2, 3, 4, 5))
 ```
 ````
 
-The three parts are:
+In the example you can see:
 
 1. **YAML header** between the `---` lines: metadata and format configuration.
 2. Markdown text: see the cheat sheet above.
@@ -187,7 +187,7 @@ New in this stage:
 - `execute` sets default options for all code chunks: `echo: true` shows the code, and `warning: false` / `message: false` hide R's warnings and messages.
 
 ::: {.callout-warning}
-**Caution: YAML indentation.** YAML is sensitive to spaces. Nested fields are indented by *two spaces*; tabs or irregular indentation lead to render errors. If a Quarto render stops with “yaml parsing error”, check the indentation first.
+**Caution: YAML indentation.** YAML is sensitive to spaces. Nested fields are indented by *two spaces*; tabs or inconsistent indentation lead to render errors. If a Quarto render stops with “yaml parsing error”, check the indentation first.
 :::
 
 ## Code chunks in detail
@@ -208,8 +208,8 @@ The most important options:
 | `eval`                   | Run the code? (`FALSE` shows the code without running it)        |
 | `include`                | Code and output in the document? (`FALSE` hides both but still runs the code) |
 | `warning`, `message`     | Show warnings/messages?                                          |
-| `fig-cap`                | Caption for graphics                                             |
-| `fig-width`, `fig-height`| Size of the graphic in inches                                    |
+| `fig-cap`                | Figure caption                                                   |
+| `fig-width`, `fig-height`| Size of the figure in inches                                     |
 | `fig-align`              | `"left"`, `"center"`, `"right"`                                  |
 
 @fig-chunk-optionen shows the chunk with `mean(mtcars$mpg)` without an option and with three settings. With `eval=FALSE` the code appears in the report, but R does not run it; with `include=FALSE` R runs it, but none of it appears in the report.
@@ -224,7 +224,7 @@ Which option you need depends on what should appear in the report:
 - *Hide code and output but still run the code.* → `include: false` (for example a setup chunk that loads packages).
 - *Show code and output but suppress warnings.* → `warning: false, message: false`.
 
-**Chunk labels** (such as `my-chunk` above) must be *unique* within a document. They serve as cache keys and as anchors for cross-references to graphics.
+**Chunk labels** (such as `my-chunk` above) must be *unique* within a document. They serve as cache keys and as anchors for cross-references to figures.
 
 Since Quarto appeared, a second way of writing chunk options has become common: the **`#|` style**, inside the chunk instead of in the header:
 
@@ -232,7 +232,7 @@ Since Quarto appeared, a second way of writing chunk options has become common: 
 ```{{r my-chunk}}
 #| echo: true
 #| warning: false
-#| fig-cap: "Distribution of life satisfaction"
+#| fig-width: 6
 
 mean(mtcars$mpg)
 ```
@@ -256,7 +256,7 @@ allbus <- read_spss("ALLBUS2023.sav") |>
 
 All later chunks inherit this state. This is why the chapters of this book do not load `tidyverse` and `mariposa` again in every chunk: the setup chunk at the top has already made everything available.
 
-When you render, Quarto starts a new R session in which only base R is loaded. Anything you loaded or imported in the console beforehand does not exist there. Only the setup chunk puts tidyverse and mariposa on the workbench and `allbus` into the Environment (@fig-render-sitzung).
+When you render, Quarto starts a new R session in which only base R is loaded. Anything you loaded or imported in the console beforehand does not exist there. The setup chunk is what puts tidyverse and mariposa on the workbench and `allbus` into the Environment (@fig-render-sitzung).
 
 ![The R session during rendering, before and after the setup chunk.](Bilder/figuren/en/k02-render-sitzung.svg){#fig-render-sitzung .lightbox fig-alt="On the left a box NEW R SESSION with an empty workbench, labelled base R only, and an Environment labelled empty. A green arrow leads to the box AFTER THE SETUP CHUNK: tidyverse and mariposa lie on the workbench, and in the Environment the dark name tag allbus stands above a small baseplate. A green line leads from the arrow to the setup chunk below, with the header line r setup, include=FALSE and the lines library(tidyverse), library(mariposa), allbus <- read_spss(“ALLBUS2023.sav”) and |> set_na(-56, …, -6)."}
 
@@ -312,16 +312,16 @@ head(mtcars, 3) |>
 
 ### Graphics
 
-Every `ggplot2` object that a chunk returns appears as a graphic in the report. You control the caption and size with chunk options:
+Every `ggplot2` object that a chunk returns appears as a figure in the report. You control the caption and size with chunk options:
 
 ````markdown
-```{{r fig-mpg, fig.width=6, fig.height=4, fig-cap="Fuel economy by number of cylinders"}}
+```{{r fig-mpg, fig.width=6, fig.height=4, fig.cap="Fuel economy by number of cylinders"}}
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   geom_boxplot()
 ```
 ````
 
-The `fig-cap` option appears as the caption; with `number-sections: true` the graphic is numbered automatically, as “Figure 1.1” or similar. With a chunk label such as `fig-mpg` you can refer to it in the text with `@fig-mpg`.
+The `fig.cap` option (`fig-cap` in the `#|` style) appears as the caption; with `number-sections: true` the figure is numbered automatically, as “Figure 1.1” or similar. With a chunk label such as `fig-mpg` you can refer to it in the text with `@fig-mpg`.
 
 ## Citations with BibTeX and Zotero {#sec-literatur}
 
@@ -378,7 +378,7 @@ Most students manage their sources in Zotero. With the plugin [Better BibTeX for
 
 ## Open science: reproducibility as the standard
 
-Besides being convenient, Quarto provides the technical basis for a research practice that has become established as **open science** since around 2015. There are three concepts you should know.
+Quarto is also the technical basis of a research practice that has become established since around 2015 under the name **open science**. There are three concepts you should know.
 
 ### Reproducibility vs. replicability
 
@@ -404,7 +404,7 @@ For a term paper, one small step is enough: put your code and (if possible) your
 
 - [OSF (Open Science Framework)](https://osf.io/): a free platform for research projects. You store code, data and preregistrations there.
 - [Zenodo](https://zenodo.org/): assigns persistent DOIs to code releases (often linked to GitHub).
-- **Preregistration**: the research question, hypotheses and analysis plan are set down in writing *before* the data are collected or analysed. This protects against *p-hacking* and *HARKing* (Hypothesizing After the Results are Known). It is useful for confirmatory studies; exploratory research is labelled as such.
+- **Preregistration**: the research question, hypotheses and analysis plan are set down in writing *before* the data are collected or analysed. This protects against p-hacking and HARKing (Hypothesizing After the Results are Known). It is useful for confirmatory studies; exploratory research is labelled as such.
 
 ::: {.callout-note collapse="true"}
 ## Background: The replication crisis
@@ -433,13 +433,13 @@ Three rules that have proved useful:
 
 - Treat raw data as read-only. You never write back to `ALLBUS2023.sav`. Processed data stay in memory (during the analysis) or are saved as a derived file in `output/`.
 - Keep code, data and document together. Never use absolute paths (`/Users/anna/...`): they break as soon as you share the project. In RStudio projects, paths are automatically relative to the project folder.
-- Shared code goes into `R/`. If three `.qmd` files prepare the same data, the code belongs in `R/prep.R`, and each document reads it in with `source()`.
+- Shared code goes into `R/`. If three `.qmd` files prepare the same data, the code belongs in `R/prep.R`, and each document loads it with `source("R/prep.R")`.
 
 ### Version control with Git: where to start
 
 Git is software that saves every state of your project and lets you go back to any of them at any time. For a single term paper you do not need Git. As soon as *two people* work on the same script, Git becomes indispensable. RStudio has Git built in (the `Git` tab at the top right).
 
-This book does not cover Git in detail; it would fill a chapter of its own. If you want to get started, the best places to begin are Jenny Bryan's guide [Happy Git with R](https://happygitwithr.com/) and the [GitHub Student Developer Pack](https://education.github.com/pack) (free private repositories for students).
+This book does not cover Git in detail; it would fill a chapter of its own. If you want to get started, the best introductions are Jenny Bryan's guide [Happy Git with R](https://happygitwithr.com/) and the [GitHub Student Developer Pack](https://education.github.com/pack) (free private repositories).
 
 ## Publishing: HTML, PDF, Word
 
@@ -473,7 +473,7 @@ Quarto renders all three in the next run. With `quarto publish` you can publish 
 
 ## Exercises {-}
 
-::: {.callout-note title="Exercise 1 · Your first `.qmd` · Reproduction"}
+::: {.callout-note title="Exercise 1 · Your first .qmd · Reproduction"}
 Create a new Quarto document in your RStudio project, write a short introductory paragraph and add a code chunk with `summary(mtcars)`. Render the document as HTML.
 :::
 
@@ -525,7 +525,7 @@ Outline the structure of a reproducible research report in a `.qmd` file of your
 
 ## What you know now {-}
 
-- You explain how Quarto combines analysis and report in one document.
+- You can explain how Quarto combines analysis and report in one document.
 - You build a `.qmd` from a YAML header, text and code chunks.
 - You control chunk output with `echo`, `eval`, `include`, `warning`.
 - You use inline R code to give numbers in the text reproducibly.
