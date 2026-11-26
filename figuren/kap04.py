@@ -9,6 +9,8 @@ from lego import (Canvas, R, P, text, rect, label_box, tokens, stein, schild, ar
 from kap03 import mono, notiz, platte
 from sprache import t as tr
 
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
+
 
 def aufkleber(s, x, y, w, h, t, size=10):
     """Gelber Aufkleber (Wertelabel) mit beliebiger Breite."""

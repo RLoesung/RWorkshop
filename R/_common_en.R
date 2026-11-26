@@ -11,8 +11,8 @@ Sys.setLanguage("en")
 source("R/_common.R")
 
 read_spss <- function(path, ...) {
-  if (identical(path, "ALLBUS2023.sav")) {
-    path <- "ALLBUS2023_en.sav"
+  if (is.character(path) && length(path) == 1 && basename(path) == "ALLBUS2023.sav") {
+    path <- file.path(dirname(path), "ALLBUS2023_en.sav")
   }
   mariposa::read_spss(path, ...)
 }

@@ -52,6 +52,35 @@ class SpracheTest(unittest.TestCase):
         self.assertEqual(vorher, nachher)
         self.assertEqual(sprache.aktuell(), "de")
 
+    def test_build_en_baut_nur_sprachfaehige_module(self):
+        import kap04
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(build.main(["--en"], ziel=tmp), 0)
+            self.assertEqual(sorted(os.listdir(tmp)),
+                             sorted(f"{n}.svg" for n in kap04.FIGUREN))
+        self.assertTrue(kap04.SPRACHFAEHIG)
+        self.assertEqual(sprache.aktuell(), "de")
+
+    def test_unmarkierte_module_nicht_in_en(self):
+        namen = build.alle_figuren(nur_sprachfaehig=True)
+        import kap05
+        self.assertFalse(set(kap05.FIGUREN) & set(namen))
+
+    def test_englische_svgs_ohne_deutsche_reste(self):
+        import re
+        import check_en
+        ordner = os.path.join(os.path.dirname(HIER), "Bilder", "figuren", "en")
+        zeilen = []
+        for datei in sorted(os.listdir(ordner)):
+            if not datei.endswith(".svg"):
+                continue
+            with open(os.path.join(ordner, datei), encoding="utf-8") as f:
+                svg = f.read()
+            for m in re.finditer(r"<text[^>]*>(.*?)</text>", svg, re.S):
+                zeilen.append(re.sub(r"<[^>]+>", "", m.group(1)))
+        self.assertTrue(zeilen)
+        self.assertEqual(check_en.deutsch_reste("\n".join(zeilen)), [])
+
 
 if __name__ == "__main__":
     unittest.main()
