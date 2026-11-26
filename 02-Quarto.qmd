@@ -228,7 +228,7 @@ Seit Quarto setzt sich auch ein zweiter Schreibstil für Chunk-Optionen durch �
 ```{{r mein-chunk}}
 #| echo: true
 #| warning: false
-#| fig-cap: "Verteilung der Lebenszufriedenheit"
+#| fig-width: 6
 
 mean(mtcars$mpg)
 ```
@@ -277,8 +277,8 @@ Mit `eval=FALSE` überspringt R den Setup-Chunk. Die neue Sitzung bleibt leer, e
 Manchmal willst du nicht eine ganze Tabelle einbinden, sondern *eine Zahl* direkt im Satz nennen — den Stichprobenumfang, einen Mittelwert, einen p-Wert. Quarto erlaubt das über **Inline-R-Code** mit Backticks und einem vorangestellten `r`:
 
 ```markdown
-Die Stichprobe enthält `r nrow(mtcars)` Fahrzeuge.
-Der durchschnittliche Verbrauch liegt bei `r round(mean(mtcars$mpg), 1)` mpg.
+Die Stichprobe enthält `r knitr::inline_expr("nrow(mtcars)")` Fahrzeuge.
+Der durchschnittliche Verbrauch liegt bei `r knitr::inline_expr("round(mean(mtcars$mpg), 1)")` mpg.
 ```
 
 Beim Rendern wird daraus:
@@ -307,13 +307,13 @@ head(mtcars, 3) |>
 Jedes `ggplot2`-Objekt, das ein Chunk zurückgibt, landet als Grafik im Bericht. Mit Chunk-Optionen steuerst du Beschriftung und Größe:
 
 ````markdown
-```{{r fig-mpg, fig.width=6, fig.height=4, fig-cap="Verbrauch nach Zylinderzahl"}}
+```{{r fig-mpg, fig.width=6, fig.height=4, fig.cap="Verbrauch nach Zylinderzahl"}}
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   geom_boxplot()
 ```
 ````
 
-Die `fig-cap`-Option erscheint als Bildunterschrift; bei `number-sections: true` wird die Grafik automatisch als „Abbildung 1.1" o. ä. nummeriert. Mit einem Chunk-Label wie `fig-mpg` kannst du im Fließtext per `@fig-mpg` darauf verweisen.
+Die Option `fig.cap` (im `#|`-Stil `fig-cap`) erscheint als Bildunterschrift; bei `number-sections: true` wird die Grafik automatisch als „Abbildung 1.1" o. ä. nummeriert. Mit einem Chunk-Label wie `fig-mpg` kannst du im Fließtext per `@fig-mpg` darauf verweisen.
 
 ## Literaturverweise mit BibTeX und Zotero {#sec-literatur}
 
@@ -333,7 +333,7 @@ Die BibTeX-Datei `literatur.bib` liegt im Projektordner:
 }
 
 @book{Wickham2023,
-  author    = {Wickham, Hadley and Grolemund, Garrett},
+  author    = {Wickham, Hadley and Çetinkaya-Rundel, Mine and Grolemund, Garrett},
   title     = {R for Data Science},
   edition   = {2},
   year      = {2023},
@@ -364,7 +364,7 @@ Quarto formatiert die Zitationen automatisch und hängt am Ende eine Literaturli
 
 Aus `@Goodman2016` wird ein Zitat mit den Namen im Satz und dem Jahr in Klammern, aus `[@Wickham2023]` ein Zitat ganz in Klammern (@fig-zitieren). Ohne `csl`-Zeile nutzt Quarto den Stil *Chicago author-date*; mit `lang: de` stehen deutsche Wörter wie „und“ und „Aufl.“ in Zitat und Liste.
 
-![Die beiden Verweise aus dem Beispiel nach dem Rendern, im Standardstil und mit `lang: de`.](Bilder/figuren/k02-zitieren.svg){#fig-zitieren .lightbox fig-alt="Oben die zwei Zeilen aus analyse.qmd: Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch [@Wickham2023]. Links darunter literatur.bib mit den Schlüsseln Goodman2016 (article) und Wickham2023 (book), ihre Felder sind ausgelassen. Ein Pfeil Render führt zur gerenderten Seite: Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch (Wickham und Grolemund 2023). Darunter die Überschrift Literatur mit zwei Einträgen: Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. What does research reproducibility mean? Science Translational Medicine 8 (341): 341ps12. Und: Wickham, Hadley, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."}
+![Die beiden Verweise aus dem Beispiel nach dem Rendern, im Standardstil und mit `lang: de`.](Bilder/figuren/k02-zitieren.svg){#fig-zitieren .lightbox fig-alt="Oben die zwei Zeilen aus analyse.qmd: Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch [@Wickham2023]. Links darunter literatur.bib mit den Schlüsseln Goodman2016 (article) und Wickham2023 (book), ihre Felder sind ausgelassen. Ein Pfeil Render führt zur gerenderten Seite: Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch (Wickham, Çetinkaya-Rundel und Grolemund 2023). Darunter die Überschrift Literatur mit zwei Einträgen: Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. What does research reproducibility mean? Science Translational Medicine 8 (341): 341ps12. Und: Wickham, Hadley, Mine Çetinkaya-Rundel, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."}
 
 Die meisten Studierenden verwalten ihre Quellen in Zotero. Mit dem Plugin [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) exportierst du deine Sammlung als `.bib`-Datei und hältst sie automatisch synchron. Im Quarto Visual Editor in RStudio kannst du außerdem über `Insert` → `Citation` Zotero-Quellen direkt nachschlagen.
 
@@ -431,7 +431,7 @@ Drei Regeln, die sich bewährt haben:
 
 Git ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht — aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
 
-Dieses Buch behandelt Git nicht im Detail — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
+Dieses Buch behandelt Git nicht im Detail — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories) die besten Einstiege.
 
 ## Publizieren: HTML, PDF, Word
 
@@ -465,7 +465,7 @@ Quarto rendert beim nächsten Lauf alle drei. Über `quarto publish` kannst du H
 
 ## Übungen {-}
 
-::: {.callout-note title="Übung 1 · Dein erstes `.qmd` · Reproduktion"}
+::: {.callout-note title="Übung 1 · Dein erstes .qmd · Reproduktion"}
 Lege in deinem RStudio-Projekt ein neues Quarto-Dokument an, schreibe einen kurzen Einleitungs-Absatz und füge einen Code-Chunk mit `summary(mtcars)` ein. Render das Dokument als HTML.
 :::
 
@@ -479,9 +479,9 @@ Schreibe einen Methoden-Satz, der den Stichprobenumfang und den Mittelwert *eine
 
 ::: {.callout-tip title="Lösung" collapse="true"}
 ```markdown
-Die Stichprobe umfasst `r nrow(mtcars)` Fahrzeuge mit
+Die Stichprobe umfasst `r knitr::inline_expr("nrow(mtcars)")` Fahrzeuge mit
 einem durchschnittlichen Verbrauch von
-`r round(mean(mtcars$mpg), 1)` Meilen pro Gallone.
+`r knitr::inline_expr("round(mean(mtcars$mpg), 1)")` Meilen pro Gallone.
 ```
 :::
 
@@ -532,7 +532,7 @@ Im nächsten Kapitel kommst du zur Programmiersprache R selbst — Variablen, Fu
 ## Weiterführend {-}
 
 - Posit, [Quarto-Dokumentation](https://quarto.org/) — Referenz für alle Output-Formate, YAML-Optionen und Erweiterungen.
-- Garrett Grolemund & Hadley Wickham, [R for Data Science (2e), Kapitel „Quarto"](https://r4ds.hadley.nz/quarto.html) — kompakter Einstieg in den Workflow.
+- Hadley Wickham, Mine Çetinkaya-Rundel & Garrett Grolemund, [R for Data Science (2e), Kapitel „Quarto"](https://r4ds.hadley.nz/quarto.html) — kompakter Einstieg in den Workflow.
 - Kieran Healy, [The Plain Person's Guide to Plain Text Social Science](https://plain-text.co/) — wie sozialwissenschaftliche Forschung mit Plain-Text-Tools (Quarto, Git, BibTeX) durchgängig wird.
 - Steven Goodman, Daniele Fanelli & John Ioannidis, [„What Does Research Reproducibility Mean?"](https://www.science.org/doi/10.1126/scitranslmed.aaf5027) — Science Translational Medicine (2016) — die meistzitierte Definition.
 - Open Science Collaboration, [„Estimating the reproducibility of psychological science"](https://www.science.org/doi/10.1126/science.aac4716) — Science (2015) — die Studie, die die Replikationskrise ins Bewusstsein der Sozialwissenschaft brachte.

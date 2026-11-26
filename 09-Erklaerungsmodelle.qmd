@@ -86,7 +86,7 @@ gummi_demo |>
   geom_point(size = 4, color = "#1f77b4") +
   labs(x = "Prädiktor x", y = "Outcome y",
        title = "OLS: was genau wird minimiert?",
-       caption = "Schwarze Linie = Regressionsgerade · rote Striche = Residuen. OLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird.")
+       caption = "Schwarze Linie = Regressionsgerade · rote Striche = Residuen.\nOLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird.")
 ```
 
 **Lesart.** Jeder blaue Punkt zieht die Gerade ein Stück zu sich hin — wie ein Gummizug. Die Gerade ist die *eindeutige* Position, in der die Summe der quadrierten roten Striche so klein wie möglich wird. Würdest du die Gerade nur ein bisschen drehen oder verschieben, würde diese Summe sofort größer.
@@ -95,7 +95,7 @@ Die geschlossene Lösung für die Steigung sieht so aus:
 
 $$\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}$$
 
-Lies sie als: *„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut."* R rechnet das in Mikrosekunden aus; was du im Output unter `Estimate` siehst, ist genau diese Zahl.
+Lies sie als: *„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut."* R rechnet das in Mikrosekunden aus; was du im Output unter `B` siehst, ist genau diese Zahl.
 
 ### Modell rechnen mit `linear_regression()`
 
@@ -695,7 +695,7 @@ Die volle Tabelle mit Koeffizienten, Odds Ratios und Konfidenzintervallen wieder
 summary(modell_log)
 ```
 
-**Lesart.** Die Tabelle *Variables in the Equation* ist das Herzstück; die Odds Ratios stehen in der Spalte `Exp(B)`. Odds Ratios > 1 erhöhen, < 1 verringern die Chance auf das Outcome. Hohe Bildung drittelt die Chance auf hohe Islamfeindlichkeit gegenüber niedriger Bildung (OR = 0.34), Befragte aus den neuen Bundesländern haben eine fast doppelt so hohe Chance (OR = 1.89), und jedes Lebensjahr erhöht die Chance um knapp 3 % (OR = 1.028). Mittlere und niedrige Bildung unterscheiden sich wie in der linearen Regression nicht (*p* = .86). Ganz oben dokumentiert *Dependent Variable Encoding*, wie die abhängige Variable intern codiert ist — wichtig, wenn dein Outcome nicht als 0/1 vorliegt: `logistic_regression()` akzeptiert jede Variable mit genau zwei Werten (etwa 1/2-Codes, labelled, Faktor oder logisch) und modelliert — wie SPSS — die Wahrscheinlichkeit des höheren Werts (bei Faktoren: der zweiten Stufe, bei logischen Variablen: `TRUE`).
+**Lesart.** Die Tabelle *Variables in the Equation* ist das Herzstück; die Odds Ratios stehen in der Spalte `Exp(B)`. Odds Ratios > 1 erhöhen, < 1 verringern die Chance auf das Outcome. Hohe Bildung drittelt die Chance auf hohe Islamfeindlichkeit gegenüber niedriger Bildung (OR = 0.33), Befragte aus den neuen Bundesländern haben eine fast doppelt so hohe Chance (OR = 1.89), und jedes Lebensjahr erhöht die Chance um knapp 3 % (OR = 1.028). Mittlere und niedrige Bildung unterscheiden sich wie in der linearen Regression nicht (*p* = .86). Ganz oben dokumentiert *Dependent Variable Encoding*, wie die abhängige Variable intern codiert ist — wichtig, wenn dein Outcome nicht als 0/1 vorliegt: `logistic_regression()` akzeptiert jede Variable mit genau zwei Werten (etwa 1/2-Codes, labelled, Faktor oder logisch) und modelliert — wie SPSS — die Wahrscheinlichkeit des höheren Werts (bei Faktoren: der zweiten Stufe, bei logischen Variablen: `TRUE`).
 
 ::: {.callout-warning}
 **Vorsicht: Odds Ratio ≠ Wahrscheinlichkeits-Faktor.** Ein häufiges Missverständnis: ein OR von 2 *verdoppelt* die Wahrscheinlichkeit nicht. Ein konkretes Beispiel an einer 2 × 2-Tabelle macht das greifbar:
@@ -802,7 +802,7 @@ modell |>
   geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
   labs(x = "Koeffizient mit 95 %-KI", y = NULL,
        title = "Was erklärt Islamfeindlichkeit in Deutschland 2023?",
-       caption = "Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell)")
+       caption = "Multiple lineare Regression · ALLBUS 2023, gewichtet\nWerte aus broom::tidy(modell)")
 ```
 
 **Lesart.** Auf einen Blick siehst du *welcher* Prädiktor *wie stark* wirkt: Populismus hat den größten positiven Effekt, Bildung den größten negativen. Konfidenzintervalle, die die *gestrichelte Null-Linie überschneiden*, sind statistisch unsicher — der Effekt unterscheidet sich nicht klar von 0.

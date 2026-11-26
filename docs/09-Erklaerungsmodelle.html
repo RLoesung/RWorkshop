@@ -396,7 +396,7 @@ Hinweis
 <span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Prädiktor x"</span>, y <span class="op">=</span> <span class="st">"Outcome y"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"OLS: was genau wird minimiert?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Schwarze Linie = Regressionsgerade · rote Striche = Residuen. OLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>       caption <span class="op">=</span> <span class="st">"Schwarze Linie = Regressionsgerade · rote Striche = Residuen.\nOLS sucht die Gerade, bei der die Summe der QUADRIERTEN roten Striche minimal wird."</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/ols-gummizug-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
@@ -407,7 +407,7 @@ Hinweis
 <p><strong>Lesart.</strong> Jeder blaue Punkt zieht die Gerade ein Stück zu sich hin — wie ein Gummizug. Die Gerade ist die <em>eindeutige</em> Position, in der die Summe der quadrierten roten Striche so klein wie möglich wird. Würdest du die Gerade nur ein bisschen drehen oder verschieben, würde diese Summe sofort größer.</p>
 <p>Die geschlossene Lösung für die Steigung sieht so aus:</p>
 <p><span class="math display">\[\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}\]</span></p>
-<p>Lies sie als: <em>„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut.”</em> R rechnet das in Mikrosekunden aus; was du im Output unter <code>Estimate</code> siehst, ist genau diese Zahl.</p>
+<p>Lies sie als: <em>„wie stark schwingen x und y gemeinsam — relativ dazu, wie stark x für sich allein streut.”</em> R rechnet das in Mikrosekunden aus; was du im Output unter <code>B</code> siehst, ist genau diese Zahl.</p>
 </section><section id="modell-rechnen-mit-linear_regression" class="level3" data-number="9.2.2"><h3 data-number="9.2.2" class="anchored" data-anchor-id="modell-rechnen-mit-linear_regression">
 <span class="header-section-number">9.2.2</span> Modell rechnen mit <code>linear_regression()</code>
 </h3>
@@ -1509,7 +1509,7 @@ Weighted Logistic Regression Results
 Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05</code></pre>
 </div>
 </div>
-<p><strong>Lesart.</strong> Die Tabelle <em>Variables in the Equation</em> ist das Herzstück; die Odds Ratios stehen in der Spalte <code>Exp(B)</code>. Odds Ratios &gt; 1 erhöhen, &lt; 1 verringern die Chance auf das Outcome. Hohe Bildung drittelt die Chance auf hohe Islamfeindlichkeit gegenüber niedriger Bildung (OR = 0.34), Befragte aus den neuen Bundesländern haben eine fast doppelt so hohe Chance (OR = 1.89), und jedes Lebensjahr erhöht die Chance um knapp 3 % (OR = 1.028). Mittlere und niedrige Bildung unterscheiden sich wie in der linearen Regression nicht (<em>p</em> = .86). Ganz oben dokumentiert <em>Dependent Variable Encoding</em>, wie die abhängige Variable intern codiert ist — wichtig, wenn dein Outcome nicht als 0/1 vorliegt: <code>logistic_regression()</code> akzeptiert jede Variable mit genau zwei Werten (etwa 1/2-Codes, labelled, Faktor oder logisch) und modelliert — wie SPSS — die Wahrscheinlichkeit des höheren Werts (bei Faktoren: der zweiten Stufe, bei logischen Variablen: <code>TRUE</code>).</p>
+<p><strong>Lesart.</strong> Die Tabelle <em>Variables in the Equation</em> ist das Herzstück; die Odds Ratios stehen in der Spalte <code>Exp(B)</code>. Odds Ratios &gt; 1 erhöhen, &lt; 1 verringern die Chance auf das Outcome. Hohe Bildung drittelt die Chance auf hohe Islamfeindlichkeit gegenüber niedriger Bildung (OR = 0.33), Befragte aus den neuen Bundesländern haben eine fast doppelt so hohe Chance (OR = 1.89), und jedes Lebensjahr erhöht die Chance um knapp 3 % (OR = 1.028). Mittlere und niedrige Bildung unterscheiden sich wie in der linearen Regression nicht (<em>p</em> = .86). Ganz oben dokumentiert <em>Dependent Variable Encoding</em>, wie die abhängige Variable intern codiert ist — wichtig, wenn dein Outcome nicht als 0/1 vorliegt: <code>logistic_regression()</code> akzeptiert jede Variable mit genau zwei Werten (etwa 1/2-Codes, labelled, Faktor oder logisch) und modelliert — wie SPSS — die Wahrscheinlichkeit des höheren Werts (bei Faktoren: der zweiten Stufe, bei logischen Variablen: <code>TRUE</code>).</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1669,7 +1669,7 @@ Abbildung&nbsp;9.5: Die ersten drei Personen im Modell: <code>educ_kat</code> wi
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Koeffizient mit 95 %-KI"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Was erklärt Islamfeindlichkeit in Deutschland 2023?"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression · ALLBUS 2023, gewichtet · Werte aus broom::tidy(modell)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>       caption <span class="op">=</span> <span class="st">"Multiple lineare Regression · ALLBUS 2023, gewichtet\nWerte aus broom::tidy(modell)"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="09-Erklaerungsmodelle_files/figure-html/coef-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>

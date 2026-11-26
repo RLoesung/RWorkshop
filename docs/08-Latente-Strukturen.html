@@ -476,7 +476,8 @@ Use summary() for detailed output.</code></pre>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="st">"r"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Inter-Item-Korrelationen der sechs Islamfeindlichkeits-Items"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, gewichtet mit wghtpew"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">coord_fixed</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
+<span>  <span class="fu">coord_fixed</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="08-Latente-Strukturen_files/figure-html/cor-heatmap-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
@@ -723,8 +724,8 @@ $p_value
 <p>Mathematisch ist die Ladung in der Einfaktor-Lösung <em>gleich der Korrelation</em> zwischen Item und Faktor — sie geht von <span class="math inline">\(-1\)</span> bis <span class="math inline">\(+1\)</span>, mit den gewohnten Schwellen:</p>
 <table class="caption-top table">
 <thead><tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: left;">Ladung</th>
+<th style="text-align: left;">|Ladung|</th>
+<th style="text-align: left;">Lesart</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -1244,6 +1245,7 @@ Abbildung&nbsp;8.3: Die korrigierte Item-Total-Korrelation von <code>mm05r</code
 <span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, y <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>           label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Gesamt-α = %.2f"</span>, <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span><span class="op">)</span>,</span>
 <span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">expand_limits</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"α nach Streichen dieses Items"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Welches Item trägt die Skala — welches belastet sie?"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Gestrichelte Linie: Cronbachs α der vollständigen Skala"</span><span class="op">)</span></span></code></pre></div><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1360,9 +1362,10 @@ Warnung
 <span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, size <span class="op">=</span> <span class="fl">3.2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
 <span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"#16a34a"</span>, `FALSE` <span class="op">=</span> <span class="st">"#d62728"</span><span class="op">)</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"verfehlt"</span>, <span class="st">"Schwelle erfüllt"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`FALSE` <span class="op">=</span> <span class="st">"verfehlt"</span>, `TRUE` <span class="op">=</span> <span class="st">"Schwelle erfüllt"</span><span class="op">)</span>,</span>
 <span>    name <span class="op">=</span> <span class="cn">NULL</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">richtung</span>, scales <span class="op">=</span> <span class="st">"free_x"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Wert"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Fit-Indizes als Ampel-Diagnose"</span>,</span>

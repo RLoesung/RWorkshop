@@ -109,7 +109,8 @@ cor_obj$matrices[[1]]$correlations |>
   labs(x = NULL, y = NULL, fill = "r",
        title = "Inter-Item-Korrelationen der sechs Islamfeindlichkeits-Items",
        caption = "ALLBUS 2023, gewichtet mit wghtpew") +
-  coord_fixed()
+  coord_fixed() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 **Lesart.** Die Diagonale ist trivialerweise 1.0 (jedes Item korreliert perfekt mit sich selbst). Spannend sind die Off-Diagonal-Felder: alle sechs Items zeigen Werte deutlich über 0.3 — der Spaziergangs-Reporter aus dem Bild oben gibt's hier nicht, alle messen offensichtlich dieselbe Richtung. Damit ist der Vorab-Check bestanden; die EFA kann starten.
@@ -284,7 +285,7 @@ Stell dir einen unsichtbaren *Faktor* als einen Drehknopf. Wer den Knopf nach ob
 
 Mathematisch ist die Ladung in der Einfaktor-Lösung *gleich der Korrelation* zwischen Item und Faktor — sie geht von $-1$ bis $+1$, mit den gewohnten Schwellen:
 
-| |Ladung|  | Lesart                          |
+| \|Ladung\| | Lesart                          |
 | :--------- | :------------------------------ |
 | < 0.30     | irrelevant                      |
 | 0.30 – 0.50 | mäßig                          |
@@ -515,6 +516,7 @@ rel_obj$item_total |>
   annotate("text", x = rel_obj$alpha, y = 0.6,
            label = sprintf("Gesamt-α = %.2f", rel_obj$alpha),
            color = "grey30", size = 3, hjust = -0.05) +
+  expand_limits(x = 1) +
   labs(x = "α nach Streichen dieses Items", y = NULL,
        title = "Welches Item trägt die Skala — welches belastet sie?",
        caption = "Gestrichelte Linie: Cronbachs α der vollständigen Skala")
@@ -591,9 +593,10 @@ tibble(
   geom_text(aes(label = label), hjust = -0.2, size = 3.2) +
   scale_fill_manual(
     values = c(`TRUE` = "#16a34a", `FALSE` = "#d62728"),
-    labels = c("verfehlt", "Schwelle erfüllt"),
+    labels = c(`FALSE` = "verfehlt", `TRUE` = "Schwelle erfüllt"),
     name = NULL
   ) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.2))) +
   facet_wrap(~ richtung, scales = "free_x", ncol = 2) +
   labs(x = "Wert", y = NULL,
        title = "Fit-Indizes als Ampel-Diagnose",
