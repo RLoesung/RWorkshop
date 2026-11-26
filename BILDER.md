@@ -116,6 +116,7 @@ Wenn Folie und Buch verschiedene Beispiele nutzen, passt sich die Abbildung dem 
 - Ausgabe: `Bilder/figuren/<kapitel>-<name>.svg`, z. B. `Bilder/figuren/k03-pipe.svg`. Die SVG-Dateien werden committet; zum Rendern des Buchs braucht man Python nicht.
 - Die Bibliothek ist eine eigenständige Kopie im Repository und importiert nichts aus dem Methoden-Ib-Ordner.
 - Prüfen: `python3 -m unittest discover figuren` (Werte und Grenzen jeder Abbildung), `python3 figuren/check_qmd.py` (Einbindung in den Kapiteln) und `python3 figuren/check_sections.py` (keine verschobenen Abschnittsnummern).
+- Englische Fassungen derselben Abbildungen entstehen mit `python3 figuren/build.py --en` in `Bilder/figuren/en/` (Abschnitt 10).
 
 ### 5.4 Aussehen
 
@@ -259,3 +260,17 @@ Bewusst nicht übernommen: Zeitleiste (T1 13, Anekdoten), Testwahl (T2 40, Text 
 - Wortlaut von Bildunterschriften, Alternativtexten und Einordnungssätzen.
 - Interne Struktur von `lego.py`, solange die Funktionsnamen der Folien-Helfer erhalten bleiben.
 - Messung von Textbreiten (Näherung reicht, mit Spielraum für Ausweichschriften).
+
+## 10 — Englische Fassungen
+
+Für die englische Fassung des Buchs (`STYLE.md` §13, `ENGLISCH-DESIGN.md`) gibt es jede Abbildung ein zweites Mal. Die Werte bleiben gleich, die Anordnung in der Regel auch; Texte und eigene Namen werden englisch. Beide Fassungen entstehen aus demselben Skript `figuren/kapNN.py`.
+
+- **Ablage.** `Bilder/figuren/en/<kapitel>-<name>.svg`, unter demselben Dateinamen wie im Deutschen. Die `.en.qmd`-Dateien binden die Abbildungen mit diesem Pfad ein; Bildunterschrift und `fig-alt` stehen dort englisch.
+- **Texte über `t()`.** Jeder deutsche Text, den man im Bild liest (Beschriftungen, Überschriften, Notizen, Wertelabels, Spaltenköpfe), läuft über `sprache.t()`. Ist der Name `t` im Modul schon vergeben, wird die Funktion als `tr` importiert: `from sprache import t as tr`. Im deutschen Build gibt `t()` den Text unverändert zurück, die deutschen SVGs bleiben byte-gleich (prüfen mit `git status --short Bilder/figuren`).
+- **Übersetzungen in `en.EN`.** Die englischen Texte stehen in `figuren/en.py` im Dict `EN` (deutscher Text → englischer Text), nach Kapiteln gruppiert. Fehlt ein Eintrag, bricht der englische Build mit `KeyError` ab; so bleibt kein deutscher Text unbemerkt im Bild.
+- **Was bleibt.** Zahlen, Funktions- und ALLBUS-Variablennamen und die Form von Code und R-Ausgaben bleiben, wie sie sind. Eigene Namen und Stufen (`islamophobie`, `educ_kat`, `niedrig`) folgen der Tabelle „Namen im Code“ in `STYLE.md` §13; sie laufen ebenfalls über `t()`, als einzelnes Token oder als ganze Codezeile.
+- **Wertelabels aus ZA8833.** ALLBUS-Labels kommen wörtlich aus der englischen Datei, mit ihren Abkürzungen (`EXERCISE OF MUSLIM FAITH SHLD BE LIMITED`, `OTHER SCHOOL CERTIF.`), und werden nie selbst übersetzt. Gelesen werden nur die Labels, keine Datenzeilen: `haven::read_sav("ALLBUS2023_en.sav", n_max = 0)`. Die Kennbuchstaben fehlender Werte (`NA(g)`, `NA(l)` …) und alles, was eine Abbildung aus einer R-Ausgabe nachbildet, stammen aus der englischen Ausgabe nach dem `set_na()`-Schritt (`ENGLISCH-DESIGN.md` §5.3).
+- **Abweichende Anordnung nur im Englischen.** Wo das englische Bild mehr zeigt, etwa den `set_na()`-Schritt in den Einlese-Abbildungen (`k04-einlesen`, `k02-render-sitzung`, `k03-analyseplan`, `k05-pipeline`), verzweigt die Funktion mit `sprache.aktuell() == "en"`. Läuft ein englischer Text über, hilft zuerst ein kürzeres Wort, erst dann ein anderes Maß; die deutschen Maße bleiben.
+- **`SPRACHFAEHIG`.** Ein Modul, dessen Texte alle über `t()` laufen, setzt die Modulkonstante `SPRACHFAEHIG = True`. `python3 figuren/build.py --en` baut nur solche Module, ohne Namen alle ihre Abbildungen, mit Namen nur diese: `python3 figuren/build.py --en k04-einlesen k04-labels`.
+- **Tests.** In `figuren/test_kapNN.py` steht neben `ERWARTET_KAPNN` ein `ERWARTET_KAPNN_EN` mit denselben Schlüsseln und den englischen Texten, dazu ein Test, der jede Abbildung des Moduls auf Englisch baut. `figuren/test_sprache.py` prüft alle SVGs in `Bilder/figuren/en/` mit `check_en.deutsch_reste` auf deutsche Wörter. Am Ende läuft `python3 -m unittest discover figuren` ohne Fehler.
+- **Ansehen.** Jede englische SVG wird als Bild angesehen, bevor sie ins Kapitel kommt: `qlmanage -t -s 900 -o <tmp> Bilder/figuren/en/NAME.svg` legt `NAME.svg.png` in `<tmp>` ab. Zu prüfen ist vor allem Text, der über Steine, Kästen oder den Rand hinausläuft.

@@ -222,7 +222,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 
 - ALLBUS heißt beim ersten Auftreten „German General Social Survey (ALLBUS)“, danach „ALLBUS“ oder „ALLBUS 2023“.
 - Die Anleitung zum Herunterladen nennt die englische Ausgabe bei GESIS: Studiennummer ZA8833, „German General Social Survey – ALLBUScompact 2023“ (<https://search.gesis.org/research_data/ZA8833>). Gespeichert wird die Datei wie im Deutschen als `ALLBUS2023.sav`, und der sichtbare Code zeigt `read_spss("ALLBUS2023.sav")`. Im Buchprojekt liegt die englische Datei als `ALLBUS2023_en.sav`; ein unsichtbarer Setup-Schritt in den englischen Kapiteln leitet darauf um.
-- Eigene Variablen- und Objektnamen werden englisch: `islamophobie` → `islamophobia`, `populismus` → `populism`, `islamophobie_p` → `islamophobia_p`, `populismus_p` → `populism_p`, und so weiter für alle im Buch gebildeten Variablen und Objekte. ALLBUS-Variablennamen (`mm01`, `ls01`, `eastwest`, `wghtpew` …), `allbus`, Funktions- und Dateinamen bleiben.
+- Eigene Variablen- und Objektnamen werden englisch: `islamophobie` → `islamophobia`, `populismus` → `populism`, `islamophobie_p` → `islamophobia_p`, `populismus_p` → `populism_p`, und so weiter für alle im Buch gebildeten Variablen und Objekte. Verbindlich ist die Tabelle „Namen im Code“ am Ende dieses Abschnitts. ALLBUS-Variablennamen (`mm01`, `ls01`, `eastwest`, `wghtpew` …), `allbus`, Funktions- und Dateinamen bleiben.
 - Englisch werden Kommentare im Code, Achsentitel, Legenden, Kategorien in `rec()`- und `labels = c(…)`-Aufrufen, Prompt-Vorlagen (Kap. 10) und YAML-Beispiele (Kap. 2).
 - Die Lesarten zitieren die tatsächlichen englischen Labels aus ZA8833, keine eigenen Übersetzungen der deutschen Labels.
 
@@ -278,3 +278,153 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 | Umsteiger:innen aus SPSS | people switching from SPSS |
 
 **Kapiteltitel** (Vorschlag, so in den Kapitelkarten des englischen Vorworts): 1 RStudio · 2 Quarto and reproducible research · 3 The R programming language · 4 Data import and inspection · 5 Transforming data and building scales · 6 Visualisation basics · 7 Univariate and bivariate analysis · 8 Latent structures · 9 Explanatory models · 10 Working with AI assistants.
+
+### Namen im Code (verbindlich)
+
+Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code selbst benennt: Variablen, Objekte, Spalten, Listenelemente, Modelle, Faktorstufen und Labels. Sie gilt für die `.en.qmd`-Dateien, für `R/prep_en.R` und für die englischen Abbildungen (`figuren/en.py`). Ein Name, der in mehreren Kapiteln vorkommt (etwa `educ_cat` in Kap. 6, 7 und 9), heißt überall gleich. Fehlt ein Name, trägst du ihn im selben Commit hier nach, nach diesen Regeln:
+
+- snake_case, kurz, ohne Umlaute, mit derselben Bedeutung wie im Deutschen.
+- Ein mit `<-` angelegtes Objekt heißt nicht wie eine Funktion aus base R oder dem tidyverse (deshalb `first_names`, nicht `names`); `data` bleibt Platzhalter wie in Kap. 4. Als Spaltenname ist ein Funktionsname erlaubt (`mean`, `factor`), so wie im Deutschen `sd`.
+- Fiele der englische Name mit einem ALLBUS-Namen zusammen, bekommt er einen Zusatz (`rename(age_years = age)` in Kap. 5).
+
+| Deutsch | Englisch | Kapitel |
+|---|---|---|
+| `islamophobie` | `islamophobia` | `R/prep.R`, Vorwort, 3–9 |
+| `populismus` | `populism` | `R/prep.R`, 4–7, 9 |
+| `islamophobie_p` | `islamophobia_p` | `R/prep.R`, 5, 7 |
+| `populismus_p` | `populism_p` | `R/prep.R`, 5, 7 |
+| `islam_hoch` | `islamophobia_high` | 4, 9 |
+| `educ_kat` | `educ_cat` | 6, 7, 9 |
+| `ergebnis` (Zuweisung in Kap. 1, Liste in Kap. 3, Verweis in Kap. 8) | `result` | 1, 3, 8 |
+| `mein-chunk` (Chunk-Label im Beispiel) | `my-chunk` | 2 |
+| `mittelwert_alter`, `mittelwertAlter`, `Mittelwert.alter`, `mittelwertAlter_neu`, `mittelwert alter` (Beispiele für Namenskonventionen) | `mean_age`, `meanAge`, `Mean.age`, `meanAge_new`, `mean age` | 3 |
+| `faktor_skala`, `islamophobie_skala` | `factor_scale`, `islamophobia_scale` | 3 |
+| `n_befragte` | `n_respondents` | 3 |
+| `funktionsname(arg1 = wert1, arg2 = wert2, ...)` | `function_name(arg1 = value1, arg2 = value2, ...)` | 3 |
+| `zahlen` | `numbers` | 3 |
+| `alter` (Vektor und Spalte von `befragte`) | `age` | 3 |
+| `namen` | `first_names` | 3 |
+| `geschlecht` (Faktor und Spalte von `befragte`; in Kap. 5 `rename(geschlecht = sex)`) | `gender` | 3, 5 |
+| `befragte` | `respondents` | 3 |
+| `spalte` | `column` | 3 |
+| `koeffizient`, `p_wert`, `konfidenz`, `modell` (Elemente der Liste `ergebnis`) | `coefficient`, `p_value`, `conf_int`, `model` | 3 |
+| `daten` (`daten$age`) | `data` | 3 |
+| `wert` (Spalte in `demo` und in den Hilfstabellen für Grafiken) | `value` | 3, 7, 8, 9 |
+| `bildung` (Faktor in Kap. 3, `case_when()` in Kap. 5) | `education` | 3, 5 |
+| `vertrauen` | `trust` | 3 |
+| `analyse` | `analysis` | 4 |
+| `geburtsjahr` | `birth_year` | 5 |
+| `allbus_neu` | `allbus_new` | 5 |
+| `if_else(bedingung, wert_wenn_wahr, wert_wenn_falsch)` | `if_else(condition, value_if_true, value_if_false)` | 5 |
+| `jung` | `young` | 5 |
+| `n_faelle`, `n_einz_bildung`, `durchschnitt_alter` | `n_cases`, `n_distinct_educ`, `mean_age` | 5 |
+| `alter` in `rename(alter = age)` | `age_years` | 5 |
+| `neu`, `alt` (Platzhalter in `mutate(neu = rec(alt, …))` und in der Tabelle der Regel-Syntax: `alt=neu`, `lo:hi=neu`, `NA=neu` …) | `new`, `old` | 5 |
+| `Wortlaut`, `Polung` (Spalten der Item-Tabelle; `Item` bleibt) | `Wording`, `Direction` | 5 |
+| `kontext_bl` | `region_context` | 5 |
+| `muslim_anteil`, `bip_pro_kopf` | `muslim_share`, `gdp_per_capita` | 5 |
+| `allbus_mit_kontext` | `allbus_with_context` | 5 |
+| `antwort` | `response` | 5 |
+| `mittelwerte_long` | `means_long` | 5 |
+| `mw` (Spalte oder Einzelwert „Mittelwert“) | `m` | 5, 7, 9 |
+| `skala_4` | `scale_4` | 5 |
+| `n_extrem` | `n_extreme` | 5 |
+| `polit_effizienz` | `pol_efficacy` | 5 |
+| `vier` | `four` | 6 |
+| `farben` | `colors` (wie `color` im Code des Buchs) | 6 |
+| `sim_mw` | `sim_means` | 7 |
+| `ziehung` | `draw` | 7 |
+| `mittelwert` (Spalte) | `mean` | 7 |
+| `wahrer_wert` | `true_value` | 7 |
+| `sim_kis` | `sim_cis` | 7 |
+| `studie` | `study` | 7 |
+| `enthaelt` | `covers` | 7 |
+| `linksschief`, `symmetrisch`, `rechtsschief` (Spalten, danach Stufen von `form`) | `left_skewed`, `symmetric`, `right_skewed` | 7 |
+| `form` | `shape` | 7 |
+| `gruppe` | `group` | 7, 9 |
+| `efa_vor` | `efa_check` | 8 |
+| `gemeinsam`, `partiell` (Spalten, danach Werte von `anteil`) | `shared`, `partial` | 8 |
+| `anteil` | `share` | 8, 9 |
+| `faktor` (Spalte im Scree-Plot) | `factor` | 8 |
+| `eigenwert` | `eigenvalue` | 8 |
+| `faktor_radial` | `factor_radial` | 8 |
+| `ladung` | `loading` | 8 |
+| `winkel` | `angle` | 8 |
+| `modell_cfa` | `model_cfa` | 8 |
+| `schwelle`, `richtung`, `erfuellt` | `threshold`, `direction`, `met` | 8 |
+| `modell` (lavaan-Modell in Kap. 8, Regressionsmodell in Kap. 9) | `model` | 8, 9 |
+| `gummi_demo`, `m_gummi` | `rubber_demo`, `m_rubber` | 9 |
+| `m_einfach` | `m_simple` | 9 |
+| `allbus_modell` | `allbus_model` | 9 |
+| `m_basis`, `m_voll` | `m_base`, `m_full` | 9 |
+| `hilfsmodell` | `aux_model` | 9 |
+| `vif_populismus` | `vif_populism` | 9 |
+| `diagnose_df` | `diag_df` | 9 |
+| `wahrscheinlichkeit` | `probability` | 9 |
+| `modell_log` | `model_log` | 9 |
+| `hilfs_age` | `aux_age` | 9 |
+| `demo_zufrieden` | `demo_satisfied` | 9 |
+| `educ_katniedrig`, `educ_katmittel`, `educ_kathoch` (Koeffizientennamen, die R aus Variable und Stufe bildet) | `educ_catlow`, `educ_catmedium`, `educ_cathigh` | 9 |
+| `beispiel` | `example` | 10 |
+| `mittel` (Spalte in `summarise()`) | `mean` | 10 |
+| `ost` | `east` | 10 |
+
+Die Dummies von `sex` (`sexFRAU`, `sexDIVERS` in Kap. 9) übersetzt du nicht selbst; sie heißen so, wie R sie aus den ZA8833-Labels bildet, und werden aus der englischen Ausgabe abgeschrieben.
+
+**Stufen, Kategorien und Labels im Code.** Englische Stufen sind klein, wie die deutschen Adjektive (`low`, `medium`, `high`); auch Substantive werden klein (`male`, `men`). Groß bleiben Himmelsrichtungen als Regionsnamen (`West`, `East`), Bezeichnungen mit Kennbuchstaben (`Group A`) und die ALLBUS-Labels aus ZA8833 (`MALE`, `OLD FEDERAL STATES`), die nie selbst übersetzt werden.
+
+| Deutsch | Englisch | Kapitel |
+|---|---|---|
+| `[niedrig]`, `[mittel]`, `[hoch]` in `rec()` (`educ_kat`, `educ`, `isced97`) | `[low]`, `[medium]`, `[high]` | 5, 6, 7, 9 |
+| `"niedrig"`, `"mittel"`, `"hoch"` (Faktor `bildung` in Kap. 3, `case_when()` in Kap. 5, `fct_relevel(educ_kat, "mittel")` in Kap. 9) | `"low"`, `"medium"`, `"high"` | 3, 5, 9 |
+| `c("niedrig" = 0, "hoch" = 1)` in `val_labels()` | `c("low" = 0, "high" = 1)` | 4 |
+| `"stimme gar nicht zu"`, `"stimme voll zu"` in `val_labels()` | `"completely disagree"`, `"completely agree"` | 4 |
+| `"Mann"`, `"Frau"`, `"Divers"` | `"male"`, `"female"`, `"non-binary"` | 3 |
+| `"ja"` | `"yes"` | 3 |
+| `"hoch = islamophob"`, `"hoch = TOLERANT — umpolen"` (Item-Tabelle) | `"high = Islamophobic"`, `"high = TOLERANT, reverse-code"` | 5 |
+| `"erwachsen"`, `"senior"`, `"unter 18"` | `"adult"`, `"senior"`, `"under 18"` | 5 |
+| `"jung"`, `"30+"` | `"young"`, `"30+"` | 5 |
+| `"West"`, `"Ost"` | `"West"`, `"East"` | 5, 10 |
+| `"KI verfehlt wahren Wert"`, `"KI enthält wahren Wert"` | `"CI misses true value"`, `"CI contains true value"` | 7 |
+| `` `Gruppe A (M = 2)` ``, `` `Gruppe B (M = 4)` `` | `` `Group A (M = 2)` ``, `` `Group B (M = 4)` `` | 7 |
+| `"Gruppe A"`, `"Gruppe B"`, `"Gruppe C"` | `"Group A"`, `"Group B"`, `"Group C"` | 7 |
+| `"gemeinsame Varianz (MSA)"`, `"partielle Varianz"` | `"shared variance (MSA)"`, `"partial variance"` | 8 |
+| `"höher = besser"`, `"niedriger = besser"` | `"higher = better"`, `"lower = better"` | 8 |
+| `"verfehlt"`, `"Schwelle erfüllt"` | `"missed"`, `"threshold met"` | 8 |
+| `"erklärt durch Modell (R²)"`, `"unerklärt (Residuen)"` | `"explained by model (R²)"`, `"unexplained (residuals)"` | 9 |
+| `"Männer"`, `"Frauen"` | `"men"`, `"women"` | 9 |
+
+Wo R Stufen alphabetisch ordnet (`factor()` ohne `levels` in Kap. 3), ändert sich mit den englischen Wörtern die Reihenfolge: `high`, `low`, `medium` statt `hoch`, `mittel`, `niedrig`, und `female`, `male`, `non-binary` statt `Divers`, `Frau`, `Mann`. Text und Lesart folgen dann der englischen Ausgabe.
+
+**Beispielnamen für Dateien.** Dateien, die es im Buchprojekt gibt oder die auf den RStudio-Bildschirmfotos stehen, behalten ihren Namen: `ALLBUS2023.sav`, `R/prep.R`, `R/_common.R`, die Kapiteldateien, `01-erste_schritte.qmd` und der Projektordner `R-Workshop` (`ENGLISCH-DESIGN.md` §5.7). Namen für Dateien, die die Lesenden in einem Beispiel selbst anlegen, werden englisch:
+
+| Deutsch | Englisch | Kapitel |
+|---|---|---|
+| `mein-projekt/`, `mein-projekt.Rproj` | `my-project/`, `my-project.Rproj` | 2 |
+| `analyse.qmd` | `analysis.qmd` | 2 |
+| `literatur.bib` | `references.bib` | 2 |
+| `befunde_mini_studie.png` | `mini_study_findings.png` | 9 |
+
+**Bleiben unverändert** und stehen deshalb nicht in der Tabelle:
+
+- ALLBUS-Variablennamen, `allbus` und Namen, die aus ALLBUS-Namen mit einem Kürzel entstehen: `mm02r`, `mm05r`, `pa29r` … `pa35r`, `pe05r`, `pe07r`, `age_d`, `age_q`, `age_z`, `age_c`, `allbus_mm`, `allbus_long`, `allbus_dummy`.
+- Namen, die schon englisch oder sprachneutral sind: `var1`, `var2`, `x`, `y`, `a`, `n`, `d`, `z`, `r`, `se`, `sd`, `flags`, `demo`, `id`, `item`, `Item`, `Item1`, `Item2`, `MSA`, `index`, `label`, `region`, `outcome`, `logit`, `intercept`, `slope`, `r2`, `r2_age`, `y_hat`, `lower`, `upper`, `g`, `g_base`, `p`, `p1` … `p3`, `p_rf`, `p_qq`, `p_sl`, `p_rl`, `p_data`, `t_data`, `sim_cor`, `r_label`, `anova_demo`, `means`, `grand_mean`, `cor_obj`, `efa_obj`, `efa_1`, `rel_obj`, `items_unrot`, `items_rot`, `F1`, `F2`, `baseplot`, `ttl`, `sub`, `fit`.
+- Die Kurzformen `islam_orig`, `islam_p`, `pop_orig`, `pop_p`, `islam` und `pop` (Kap. 5) und der latente Faktor `islam` im lavaan-Modell (Kap. 8). Er bleibt wie im Deutschen kürzer als die gemessene Skala `islamophobia`, damit beide nicht verwechselt werden.
+- Personennamen in Beispielen (`"Anna"`, `"Boris"`, `"Carla"`, Anna Schmidt, Boris Müller, `/Users/anna/…`), Funktionsnamen wie `theme_rworkshop()` und das Beispiel der R-Hilfe in Kap. 1 (`xm <- mean(x)`).
+
+### Ein Kapitel übersetzen
+
+Die Schritte für jedes Kapitel `NN-Name.qmd` → `NN-Name.en.qmd`. Vorbilder sind `index.en.qmd` und `04-Datenimport.en.qmd`.
+
+1. **Abbildungen zuerst.** Die englischen SVGs des Kapitels entstehen vor dem Text: Texte in `figuren/kapNN.py` laufen über `sprache.t()`, die englischen Einträge stehen in `figuren/en.py`, das Modul setzt `SPRACHFAEHIG = True`, gebaut wird mit `python3 figuren/build.py --en NAME …` (`BILDER.md` §10). Eigene Namen im Bild nach der Tabelle oben.
+2. **Kopf und Setup.** Im Kopf `output-file: NN-Name.html`. Der versteckte Setup-Chunk (Kap. 1 hat keinen) lädt `source("R/_common_en.R")` statt `source("R/_common.R")`; wo das deutsche Kapitel `source("R/prep.R")` lädt, steht `source("R/prep_en.R")`. Kapitelspezifische Ergänzungen im Setup (etwa `educ_cat` mit `[low]`, `[medium]`, `[high]`) folgen der Tabelle.
+3. **Einlesen mit `set_na()`.** Wo der Code den ALLBUS einliest, sichtbar oder im versteckten Setup, steht `read_spss("ALLBUS2023.sav") |> set_na(-56, -55, -54, -53, -51, -50, -42, -41, -33, -32, -15, -11, -10, -9, -8, -7, -6)` (`ENGLISCH-DESIGN.md` §5.3). Abbildungen, die das Einlesen zeigen, nehmen den Schritt auf, bei Platzmangel als `|> set_na(-56, …, -6)`.
+4. **Text und Code.** Übertragen nach den Regeln dieses Abschnitts: alle IDs und Chunk-Labels gleich, gleicher Aufbau, Kommentare, Achsentitel, Legenden und Kategorien englisch, eigene Namen nach der Tabelle, feste Wörter für Kästen und Karten wie oben.
+5. **Abbildungspfade.** Jede Abbildung wird aus `Bilder/figuren/en/` eingebunden (`![…](Bilder/figuren/en/kNN-name.svg){#fig-… .lightbox fig-alt="…"}`), mit englischer Bildunterschrift und englischem `fig-alt`.
+6. **Kapitelliste.** In `_quarto-en.yml` den Eintrag `NN-Name.qmd` durch `NN-Name.en.qmd` ersetzen.
+7. **Rendern.** Einzeln und nur ein Render gleichzeitig: `quarto render NN-Name.en.qmd --profile en` (Quarto liegt unter `/Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto`).
+8. **Lesarten abgleichen.** Jede Zahl und jedes zitierte Label gegen die gerenderte englische Ausgabe prüfen; ALLBUS-Labels in Großbuchstaben, wie ZA8833 sie druckt.
+9. **Prüfen.** `python3 figuren/check_en.py NN-Name` muss 0 Meldungen ergeben. Bekannte, begründete Abweichungen (etwa andere Treffer von `find_var()`, andere Zeilenreihenfolge, Studiennummer und Version, `splt23_2` als `NA`) stehen mit einem Teilstring der Meldung und der Begründung in `figuren/erwartet_en.py`. Weicht eine Zahl ohne Grund in der Übersetzung ab: anhalten und melden.
+10. **Tests.** `Rscript R/test_common_en.R` ergibt „ok“; bei Kapiteln mit `R/prep_en.R` auch `Rscript R/test_prep_en.R`.
+11. **Im Browser ansehen.** `/RWorkshop/en/NN-Name.html`: Kästen, Übungen und Lösungen, Abbildungen, Querverweise, Sprachumschalter, Konsole ohne Fehler.
+12. **Commit.** `git commit -m "Englische Fassung: Kap. N" -- NN-Name.en.qmd _quarto-en.yml _freeze/NN-Name.en/` und gegebenenfalls `figuren/erwartet_en.py` und `STYLE.md`; nie `git add -A` oder `git commit -a`.
