@@ -20,4 +20,9 @@ ERWARTET = {
         ("Ausgabeblock 27 (allbus |>):",
          "gleiche Zahlen in anderer Zeilenreihenfolge (set_na()-Demo)"),
     ],
+    "06-Grafiken-Grundlagen": [
+        ("deutsche Setup-Datei: All plots in this book automatically use the theme",
+         "theme_rworkshop() ist in beiden Fassungen in R/_common.R definiert (R/_common_en.R lädt sie); "
+         "source(\"R/_common.R\") ist ein Rat für das eigene Projekt der Lesenden"),
+    ],
 }
