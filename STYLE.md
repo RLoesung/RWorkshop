@@ -194,3 +194,86 @@ Der gesamte Daten- und Methodenteil (Kap. 4–9) wird durch **eine** Forschungsf
 ## 12 — Abbildungen
 
 Erklärgrafiken in der Bausteine-Bildsprache (Stein = Wert, Turm = Vektor, Bauplatte = Datensatz, Aufkleber = Label) regelt `BILDER.md`: Werkzeug, Aussehen, Einbindung und Liste. Kurz: Die Bilder entstehen mit `python3 figuren/build.py` als SVG in `Bilder/figuren/`, zeigen die Werte des Chunks, neben dem sie stehen, und werden mit `{#fig-… .lightbox fig-alt="…"}` eingebunden und im Text mit `@fig-…` angesprochen.
+
+---
+
+## 13 — Englische Fassung
+
+Die englische Fassung (`*.en.qmd` neben den deutschen Dateien, gerendert nach `docs/en/`) ist für ein englischsprachiges Publikum gedacht, etwa für Teilnehmende der Summer Schools in Essex und Lugano, die das Buch als Nachschlagewerk nutzen. Die deutsche Fassung bleibt die Quelle: Wer ein deutsches Kapitel ändert, ändert die englische Fassung im selben Commit mit. Hintergrund und Entscheidungen stehen in `ENGLISCH-DESIGN.md`.
+
+Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den Pilot (Vorwort und Kap. 4) und korrigiert Ton und Begriffe; seine Korrekturen kommen hierher und gelten dann für alle weiteren Kapitel.
+
+**Sprache.**
+
+- Britisches Englisch im Fließtext (*colour*, *analyse*, *visualisation*, *organisation*, *licence* als Nomen). Code und Funktionsargumente folgen den Paketen.
+- Du-Form als *you*. Schlicht und sachlich: direkt sagen, was eine Funktion tut oder was zu sehen ist.
+- Die Abschnitte 3 und 10 gelten auch im Englischen: aktiv vor passiv, keine Wir-Inflation, kein Werbeton. Fett nur Fachbegriffe beim ersten Auftreten, die Marken und die Einstiege der Kästen. Kursiv sparsam; die Regel „englische Originalbegriffe kursiv“ entfällt.
+- Geschlechtsneutral ohne Sonderzeichen: neutrale Wörter (*people switching from SPSS*, *users*, *participants*), wo nötig singular *they*. Das ersetzt `:innen`.
+- Anführungszeichen typografisch doppelt “…”, innen einfach ‘…’.
+- Zahlen im Text wie in den Ausgaben: Dezimalpunkt, keine Tausendertrennung, wo die Ausgabe keine hat (5246). Datumsangaben ausgeschrieben (26 November 2026).
+- Kapitelverweise im Fließtext als „Chapter 4“, „Chapters 4–5“; „Ch. 4“ nur, wo der Platz knapp ist (Grafiken, Tabellen).
+- Tasten unter Windows mit englischer Beschriftung: `ctrl` statt `strg`.
+
+**Anti-Ziele** (`ENGLISCH-DESIGN.md` §2). Der englische Text darf nicht nach Maschinenübersetzung oder nach KI klingen. Also keine Slogans und Paarformeln (*Three findings, three sentences*), keine Pointen mit Gedankenstrich (*– and nobody notices*), keine „not X, but Y“-Figuren (auch kein „not only … but also“ als Effekt), keine Dreierfiguren als Effekt, keine Meta-Sätze über das Material (*The five green signs …*), keine verspielten Etiketten. Bilder aus der Bausteine-Sprache (§12) sind erwünscht, Wortspiele darum herum nicht. Gedankenstriche aus dem Deutschen werden meist zu Komma, Doppelpunkt, Semikolon oder einem neuen Satz. Ebenfalls ein Fehlschlag: Zahlen in den Lesarten passen nicht zu den Ausgaben, oder ein Kapitel ist halb deutsch (übersehene Labels, Kästen, Bildunterschriften, Alt-Texte).
+
+**Übertragen, nicht umschreiben.** Inhalt, Reihenfolge und Umfang bleiben wie im Deutschen; nichts kommt dazu, nichts fällt weg. Wo der deutsche Text ein deutsches Publikum voraussetzt (SPSS-Gewohnheiten an deutschen Unis, deutsche Studiengänge, „Seminararbeit“, Datum- und Zahlenformate, deutsche Tastaturbeschriftung), passt die englische Fassung das an.
+
+**Daten und Code** (`ENGLISCH-DESIGN.md` §5.3).
+
+- ALLBUS heißt beim ersten Auftreten „German General Social Survey (ALLBUS)“, danach „ALLBUS“ oder „ALLBUS 2023“.
+- Die Anleitung zum Herunterladen nennt die englische Ausgabe bei GESIS: Studiennummer ZA8833, „German General Social Survey – ALLBUScompact 2023“ (<https://search.gesis.org/research_data/ZA8833>). Gespeichert wird die Datei wie im Deutschen als `ALLBUS2023.sav`, und der sichtbare Code zeigt `read_spss("ALLBUS2023.sav")`. Im Buchprojekt liegt die englische Datei als `ALLBUS2023_en.sav`; ein unsichtbarer Setup-Schritt in den englischen Kapiteln leitet darauf um.
+- Eigene Variablen- und Objektnamen werden englisch: `islamophobie` → `islamophobia`, `populismus` → `populism`, `islamophobie_p` → `islamophobia_p`, `populismus_p` → `populism_p`, und so weiter für alle im Buch gebildeten Variablen und Objekte. ALLBUS-Variablennamen (`mm01`, `ls01`, `eastwest`, `wghtpew` …), `allbus`, Funktions- und Dateinamen bleiben.
+- Englisch werden Kommentare im Code, Achsentitel, Legenden, Kategorien in `rec()`- und `labels = c(…)`-Aufrufen, Prompt-Vorlagen (Kap. 10) und YAML-Beispiele (Kap. 2).
+- Die Lesarten zitieren die tatsächlichen englischen Labels aus ZA8833, keine eigenen Übersetzungen der deutschen Labels.
+
+**Aufbau und IDs.**
+
+- Jede `.en.qmd` setzt `output-file: <deutscher Dateiname>.html` im Kopf.
+- Gleicher Aufbau wie im Deutschen: dieselben Überschriften auf denselben Ebenen, dieselbe Zahl an Chunks, Kästen derselben Klassen, dieselben Abbildungen und Übungen.
+- Alle IDs bleiben gleich: `{#sec-…}`, `{#fig-…}`, Chunk-Labels. Überschriften ohne eigene ID bekommen ihren Anker aus dem englischen Text; das ist so gewollt.
+- Prüfen mit `python3 figuren/check_en.py <name>` (Aufbau, Zahlen in den Ausgaben, deutsche Reste), rendern einzeln mit `quarto render <name>.en.qmd --profile en`.
+
+**Feste Wörter für Kästen und Karten.** `seite.html` erkennt genau diese Wörter (§4, `ENGLISCH-DESIGN.md` §5.5). Sie werden wörtlich so geschrieben.
+
+| Deutsch | Englisch | Wo |
+|---|---|---|
+| **Frage:** | **Question:** | Marke (§1) |
+| **Lesart.** | **Interpretation.** | Marke (§1) |
+| Hintergrund: | Background: | zugeklappt, `## Background: …` |
+| Vorsicht: | Caution: | offen, `**Caution: Title.** …` |
+| mariposa-Tipp: | mariposa tip: | zugeklappt, `## mariposa tip: …` |
+| SPSS → R | SPSS → R | offen, `**SPSS → R.** …` |
+| Forschungsjournal: | Research journal: | offen, Kapitelanfang und -ende |
+| Übung *n* · *Thema* · *Typ* | Exercise *n* · *Topic* · *Type* | Titel der Übung |
+| Lösung | Solution | Titel der Lösung |
+| **Kurz überlegen.** | **Stop and think.** | fetter Absatzeinstieg |
+| Auflösung | Answer | Titel des eingeklappten Kastens darunter |
+| Was du nach diesem Kapitel kannst | What you will be able to do after this chapter | H2 (im Vorwort: … after this book) |
+| Was du jetzt weißt | What you know now | H2 |
+| Weiterführend | Further reading | H2 |
+| Reproduktion | Reproduction | Übungstyp (§7) |
+| Transfer | Transfer | Übungstyp (§7) |
+| Mini-Forschungsfrage | Mini research question | Übungstyp (§7) |
+
+**Weitere Begriffe** (Vorschläge, der Pilot ändert sie noch).
+
+| Deutsch | Englisch |
+|---|---|
+| Mini-Studie | mini study |
+| Forschungsjournal, Übung, Lösung, Mini-Forschungsfrage im Fließtext | research journal, exercise, solution, mini research question |
+| Musterlösung | model solution |
+| Kasten | box |
+| Methoden-Kapitel | methods chapter |
+| Worum es geht | What this chapter is about |
+| Übungen (H2) | Exercises |
+| Datensatz | dataset |
+| Variablenlabel, Wertelabel | variable label, value label |
+| fehlende Werte | missing values |
+| umpolen | reverse-code (*reverse coding* als Begriff) |
+| Gewichtung | weighting |
+| Islamfeindlichkeit, islamfeindlich | Islamophobia, Islamophobic |
+| Stein, Turm, Bauplatte, Aufkleber | brick, tower, baseplate, sticker |
+| Begleitfigur | companion figure |
+| Umsteiger:innen aus SPSS | people switching from SPSS |
+
+**Kapiteltitel** (Vorschlag, so in den Kapitelkarten des englischen Vorworts): 1 RStudio · 2 Quarto and reproducible research · 3 The R programming language · 4 Data import and inspection · 5 Transforming data and building scales · 6 Visualisation basics · 7 Univariate and bivariate analysis · 8 Latent structures · 9 Explanatory models · 10 Working with AI assistants.
