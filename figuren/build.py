@@ -1,7 +1,8 @@
 """Erzeugt die Bausteine-Abbildungen nach Bilder/figuren/ (Vertrag: BILDER.md).
 
 Jedes Modul figuren/kapNN.py hat ein Dict FIGUREN {dateiname: funktion → Canvas}.
-Aufruf: python3 figuren/build.py [NAME …]   (ohne Namen: alle)
+Aufruf: python3 figuren/build.py [--en] [NAME …]   (ohne Namen: alle)
+Mit --en entstehen die englischen Fassungen in Bilder/figuren/en/.
 """
 import glob
 import importlib
@@ -12,6 +13,8 @@ HIER = os.path.dirname(os.path.abspath(__file__))
 ZIEL = os.path.join(os.path.dirname(HIER), "Bilder", "figuren")
 sys.path.insert(0, HIER)
 
+import sprache  # noqa: E402
+
 
 def alle_figuren():
     figs = {}
@@ -20,16 +23,24 @@ def alle_figuren():
     return figs
 
 
-def main(argv=None):
+def main(argv=None, ziel=None):
     namen = list(sys.argv[1:] if argv is None else argv)
-    os.makedirs(ZIEL, exist_ok=True)
+    englisch = "--en" in namen
+    namen = [n for n in namen if n != "--en"]
+    if ziel is None:
+        ziel = os.path.join(ZIEL, "en") if englisch else ZIEL
+    os.makedirs(ziel, exist_ok=True)
     figs = alle_figuren()
-    for name, fn in figs.items():
-        if namen and name not in namen:
-            continue
-        pfad = os.path.join(ZIEL, f"{name}.svg")
-        fn().save(pfad)
-        print(f"{os.path.relpath(pfad, os.path.dirname(HIER))}")
+    sprache.setze("en" if englisch else "de")
+    try:
+        for name, fn in figs.items():
+            if namen and name not in namen:
+                continue
+            pfad = os.path.join(ziel, f"{name}.svg")
+            fn().save(pfad)
+            print(f"{os.path.relpath(pfad, os.path.dirname(HIER))}")
+    finally:
+        sprache.setze("de")
     return 0
 
 
