@@ -89,5 +89,21 @@ class TestDeutschReste(unittest.TestCase):
         self.assertEqual(len(check_en.deutsch_reste("Line one\nGröße here\n")), 1)
 
 
+class TestPruefe(unittest.TestCase):
+    def test_fehlende_englische_datei(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "x.qmd"), "w", encoding="utf-8") as f:
+                f.write("## A\n")
+            self.assertEqual(check_en.pruefe("x", d), ["x: x.en.qmd fehlt"])
+            self.assertEqual(check_en.main(["x"], root=d), 1)
+
+    def test_fehlende_deutsche_datei(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(check_en.pruefe("y", d), ["y: y.qmd fehlt"])
+            self.assertEqual(check_en.main(["y"], root=d), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

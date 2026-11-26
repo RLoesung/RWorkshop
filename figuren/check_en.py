@@ -139,6 +139,8 @@ def pruefe(name, root):
     meldungen = []
     if not os.path.exists(de):
         return [f"{name}: {name}.qmd fehlt"]
+    if not os.path.exists(en):
+        return [f"{name}: {name}.en.qmd fehlt"]
     with open(de, encoding="utf-8") as f:
         text_de = f.read()
     with open(en, encoding="utf-8") as f:
@@ -152,9 +154,9 @@ def pruefe(name, root):
     return [f"{name}: {m}" for m in meldungen]
 
 
-def main(argv=None):
+def main(argv=None, root=None):
     args = list(sys.argv[1:] if argv is None else argv)
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root = root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if not args:
         args = [os.path.basename(p)[:-len(".en.qmd")]
                 for p in sorted(glob.glob(os.path.join(root, "*.en.qmd")))]
