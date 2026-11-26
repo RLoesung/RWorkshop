@@ -21,7 +21,7 @@
 - `docs/en/` bleibt bis zur Veröffentlichung in `.gitignore` (Design §5.9). Deutsche `docs/` und `_freeze/` werden wie bisher mit committet.
 - Commits auf `modernisierung-2026`, Nachrichten im Stil „Englische Fassung: …“. Nichts pushen.
 - Daten: keine ALLBUS-Datenzeilen in Ausgaben von Skripten oder Tests. Kopf, Variablennamen und Labels sind erlaubt. Tests arbeiten mit erfundenen Daten.
-- Text: britisches Englisch, *you*, schlicht; keine Slogans, keine Pointen mit Gedankenstrich, keine „not X, but Y“-Figuren, keine Meta-Sätze über das Material (Design §5.8, `STYLE.md`). Wer übersetzt (auch ein Subagent), bekommt diese Regeln und `STYLE.md` §12 ausdrücklich mit.
+- Text: britisches Englisch, *you*, schlicht; keine Slogans, keine Pointen mit Gedankenstrich, keine „not X, but Y“-Figuren, keine Meta-Sätze über das Material (Design §5.8, `STYLE.md`). Wer übersetzt (auch ein Subagent), bekommt diese Regeln und `STYLE.md` §13 ausdrücklich mit.
 - Noch nicht übersetzte Kapitel stehen im englischen Profil mit ihrer deutschen `.qmd` in der Kapitelliste, damit die Nummerierung stimmt. Jede übersetzte Datei ersetzt dort ihre deutsche.
 
 ## Review Focus
@@ -159,7 +159,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten 
 **Files:**
 - Modify: `STYLE.md` (neuer Abschnitt „12 — Englische Fassung“), `index.en.qmd`
 
-- [ ] **Step 1: `STYLE.md` §12** mit den Regeln aus Design §5.8 und den Anti-Zielen aus §2, der Begriffsliste (Question:/Interpretation., mini study, research journal, exercise, solution, mini research question, Kastennamen aus §5.5) und dem Hinweis, dass der Pilot diese Liste noch ändert.
+- [ ] **Step 1: `STYLE.md` §13** mit den Regeln aus Design §5.8 und den Anti-Zielen aus §2, der Begriffsliste (Question:/Interpretation., mini study, research journal, exercise, solution, mini research question, Kastennamen aus §5.5) und dem Hinweis, dass der Pilot diese Liste noch ändert.
 - [ ] **Step 2: `index.en.qmd` übersetzen** aus `index.qmd`: alle IDs und Chunk-Labels gleich; Roadmap-Chunk mit englischen Beschriftungen; ALLBUS als „German General Social Survey (ALLBUS)“ einführen; Download-Anleitung für ZA8833, Datei als `ALLBUS2023.sav` speichern; Codebeispiele mit `islamophobia` statt `islamophobie`.
 - [ ] **Step 3: Prüfen.** Run: `python3 figuren/check_en.py index`. Expected: keine Meldung.
 - [ ] **Step 4: Rendern** `quarto render index.en.qmd --profile en`; im Browser `/RWorkshop/en/index.html` ansehen: Titelblock, Cover, Roadmap, Umschalter.
@@ -172,7 +172,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten 
 - Modify: `_quarto-en.yml` (Kapitelliste)
 
 **Interfaces:**
-- Consumes: `R/_common_en.R` (Task 5), `Bilder/figuren/en/k04-*.svg` (Task 6), `STYLE.md` §12 (Task 7), `check_en.py` (Task 3).
+- Consumes: `R/_common_en.R` (Task 5), `Bilder/figuren/en/k04-*.svg` (Task 6), `STYLE.md` §13 (Task 7), `check_en.py` (Task 3).
 
 - [ ] **Step 1: Übersetzen** aus `04-Datenimport.qmd`: Setup-Chunk mit `source("R/_common_en.R")`; Abbildungspfade `Bilder/figuren/en/…`; Bildunterschriften und `fig-alt` englisch; Kommentare und Kategorien im Code englisch; alle IDs gleich; `output-file: 04-Datenimport.html`. Der Einlese-Chunk deklariert die fehlenden Werte sichtbar mit `set_na()` und den 17 Codes aus Design §5.3, dazu zwei Sätze Erklärung; alle Stellen, die Kennbuchstaben (NA(a) usw.) nennen, folgen der englischen Ausgabe.
 - [ ] **Step 2: Kapitelliste** in `_quarto-en.yml`: `04-Datenimport.qmd` → `04-Datenimport.en.qmd`.
@@ -185,7 +185,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten 
 ### Task 9: Pilot übergeben
 
 - [ ] **Step 1:** `./render.sh`, dann `python3 figuren/check_en.py` und `python3 -m unittest discover figuren`. Expected: alles ohne Meldung.
-- [ ] **Step 2:** Lokalen Server aus Task 2 starten, Yannick Vorwort und Kap. 4 zeigen und um Durchsicht von Ton und Begriffen bitten. Seine Korrekturen gehen in `STYLE.md` §12 und in die beiden Seiten; erst danach beginnt der Plan für die übrigen neun Seiten.
+- [ ] **Step 2:** Lokalen Server aus Task 2 starten, Yannick Vorwort und Kap. 4 zeigen und um Durchsicht von Ton und Begriffen bitten. Seine Korrekturen gehen in `STYLE.md` §13 und in die beiden Seiten; erst danach beginnt der Plan für die übrigen neun Seiten.
 
 ## Nicht in diesem Plan
 

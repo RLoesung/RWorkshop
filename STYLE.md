@@ -243,7 +243,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 | Forschungshintergrund: | Research background: | wie Hintergrund; derzeit in keinem Kapitel, `seite.html` kennt das englische Wort noch nicht |
 | Vorsicht: | Caution: | offen, `**Caution: Title.** …` |
 | mariposa-Tipp: | mariposa tip: | zugeklappt, `## mariposa tip: …` |
-| SPSS → R | SPSS → R | offen, `**SPSS → R.** …` |
+| SPSS → R | SPSS → R | offen, `**SPSS → R.** …` oder `**SPSS → R: Title.** …` |
 | Forschungsjournal: | Research journal: | offen, Kapitelanfang und -ende |
 | Übung *n* · *Thema* · *Typ* | Exercise *n* · *Topic* · *Type* | Titel der Übung |
 | Lösung | Solution | Titel der Lösung |

@@ -90,7 +90,7 @@ Mit einem Testbuch (Quarto 1.8.25) geprüft:
            -33, -32, -15, -11, -10, -9, -8, -7, -6)
   ```
 
-  Das sind alle negativen Codes mit Label in ZA8833. Geprüft: Danach haben 575 von 577 numerischen Variablen dasselbe Muster fehlender Werte und dieselben gültigen Werte wie im deutschen Buch. Ausnahmen sind `za_nr` (Studiennummer) und `splt23_2`, bei dem -15 im Deutschen gültig ist; beide kommen im Buch nicht vor. Die Kennbuchstaben der Missing-Typen weichen ab, weil `set_na()` sie über alle Codes vergibt (bei `mm01` g, l, n, o statt a, b, c, d). Englische Texte und Abbildungen nennen die Buchstaben aus der englischen Ausgabe. Kap. 4 erklärt den Schritt beim Einlesen in zwei Sätzen; spätere Kapitel übernehmen ihn (in `R/prep_en.R`).
+  Das sind alle negativen Codes mit Label in ZA8833. Geprüft: Danach haben 575 von 577 numerischen Variablen dasselbe Muster fehlender Werte und dieselben gültigen Werte wie im deutschen Buch. Ausnahmen sind `za_nr` (Studiennummer) und `splt23_2`, bei dem -15 im Deutschen gültig ist; beide erscheinen in Kap. 4 im ersten Tibble-Ausdruck (`read-show`): Die englische Ausgabe zeigt dort `za_nr` 8833, `version` 1.0.0 und `splt23_2` als NA(k) [NAP: MODE] statt -15. Das ist so akzeptiert, es folgt aus dem `set_na()`-Schritt; Hinweis an den Autor. Die Kennbuchstaben der Missing-Typen weichen ab, weil `set_na()` sie über alle Codes vergibt (bei `mm01` g, l, n, o statt a, b, c, d). Englische Texte und Abbildungen nennen die Buchstaben aus der englischen Ausgabe. Kap. 4 erklärt den Schritt beim Einlesen in zwei Sätzen; spätere Kapitel übernehmen ihn (in `R/prep_en.R`).
 
 ### 5.4 Prüfung der Zahlen
 
