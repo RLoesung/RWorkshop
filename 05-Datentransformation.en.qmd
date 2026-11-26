@@ -25,7 +25,7 @@ In @sec-datenimport you imported the dataset, found variables and declared missi
 
 If you ask someone directly, *“Are you Islamophobic?”*, you will almost always get a no, even from people who say in election surveys that they vote for right-wing populist parties and who make clearly exclusionary statements in discussions. There are two reasons for this. First, nobody wants to describe themselves publicly as “Islamophobic”, because the term has negative connotations. Second, attitudes are not as clear-cut as a yes or a no. Someone can find *some* aspects of a religion problematic and others not, and is therefore *a little* sceptical of Islam without accepting the whole label.
 
-Social research solves this problem with an old trick: instead of asking about the construct directly, it asks about several concrete statements that capture the construct indirectly. In place of “Are you Islamophobic?”, it asks for agreement with statements such as:
+Social research solves this problem with an old trick: instead of asking about the construct directly, it asks about several concrete statements that capture the construct indirectly. A survey therefore asks for agreement with statements such as:
 
 > *“I think the practice of Islam in Germany should be restricted.”*
 
@@ -39,7 +39,7 @@ and
 
 Together, six such **items** give a picture of how a person views the Muslim population in Germany. From the answers you calculate a single scale score that is more robust and more nuanced than any single answer.
 
-Quantitative social research calls this step from an abstract construct to a measurable variable operationalisation. It is the methodological core of every empirical study: you can only test a theory against data once you have translated it into measurable quantities.
+This step from an abstract construct to a measurable variable is what quantitative social research calls operationalisation. It is the methodological core of every empirical study: you can only test a theory against data once you have translated it into measurable quantities.
 
 This chapter takes you from the six raw items to the finished scale in five steps:
 
@@ -81,7 +81,7 @@ A handful of functions from `dplyr` covers most data transformations:
 
 ### New variables with `mutate()` and `across()`
 
-`mutate()` is the R counterpart of `COMPUTE` in SPSS. You give the tibble one or more assignments of the form *“new column name = expression”*, and mariposa/dplyr adds the new column(s) to the tibble. Note that `mutate()` returns the *whole* tibble, so you need to assign the result (`allbus <- allbus |> mutate(...)`) if the new column is to be kept. Without an assignment, the change is printed once and then disappears.
+`mutate()` is the R counterpart of `COMPUTE` in SPSS. You pass `mutate()` one or more assignments of the form *“new column name = expression”*, and dplyr adds the new column(s) to the tibble. Note that `mutate()` returns the *whole* tibble, so you need to assign the result (`allbus <- allbus |> mutate(...)`) if the new column is to be kept. Without an assignment, the change is printed once and then disappears.
 
 ```{r mutate}
 allbus |>
@@ -110,7 +110,7 @@ ncol(allbus_new)
 R saves the result under the name to the left of the arrow. `allbus_new` has the new tower and therefore 580 columns; `allbus` stays at 579. This way you keep an intermediate result without overwriting the original.
 :::
 
-If the same transformation is to apply to *several* variables, use `across()`:
+To apply the same transformation to *several* variables, use `across()`:
 
 ```{r mutate-across, eval=FALSE}
 allbus |>
@@ -273,7 +273,7 @@ The rule syntax at a glance:
 | `"mean"`            | Dichotomise at the mean                 | `rules = "mean"`                        |
 | `"quart"`           | Split into four quartile groups         | `rules = "quart"`                       |
 
-Rules are checked in order; the first matching rule wins. Valid values that *no* rule matches become `NA`; mariposa then warns you and names the values concerned. With `else=copy` you keep them; with `else=NA` you confirm explicitly that they are dropped. Missing values declared on import (the tagged NAs that `set_na()` created) keep their missing type when you recode, unless an `NA=` or `else=` rule covers them. `else=NA` therefore also turns “no answer” or “cannot be coded” into a plain `NA`, and the distinction between the missing types is gone. If you want to keep it, name the codes to drop explicitly (for example `6:7=NA`) and leave out the `else` rule or write `else=copy`.
+Rules are checked in order; the first matching rule wins. Valid values that *no* rule matches become `NA`; mariposa then warns you and names the values concerned. With `else=copy` you keep them; with `else=NA` you confirm explicitly that they are dropped. Missing values declared on import (the tagged NAs that `set_na()` created) keep their missing type when you recode, unless an `NA=` or `else=` rule covers them. `else=NA` therefore also turns NO ANSWER or CANNOT BE CODED into a plain `NA`, and the distinction between the missing types is gone. If you want to keep it, name the codes to drop explicitly (for example `6:7=NA`) and leave out the `else` rule or write `else=copy`.
 
 ### Example: categorising education
 
@@ -302,7 +302,7 @@ allbus |>
   count(age_d)
 ```
 
-Here `age_d` becomes 0 for everyone up to and including 50 years and 1 for everyone over 50, so the cut point itself belongs to the lower group. The name `age_d` to the left of the `=` creates a new variable; the original `age` is kept.
+Here `age_d` becomes 0 for everyone aged 50 or under and 1 for everyone over 50, so the cut point itself belongs to the lower group. The name `age_d` to the left of the `=` creates a new variable; the original `age` is kept.
 
 In @fig-dicho the cut lies between 51 and 50. The 23 respondents without a valid age (CANNOT BE GENERATED) also stay missing in `age_d`.
 
@@ -320,7 +320,7 @@ allbus |>
 
 What happens if you combine six items into a scale when four of them are worded in the same direction and two in the *opposite* direction? You get rubbish. The positively worded items pull the mean in one direction, the negative ones in the other, and in the end effects that should add up cancel each other out.
 
-This is exactly the case with our Islamophobia scale. The researchers deliberately worded the six items in mixed directions: four negatively (“restrict Islam”), two positively (“Islam fits into society”). It is a way of countering a classic survey bias called **acquiescence**: the tendency of some respondents to agree with statements across the board, whatever they are about. If all six items pointed in the same direction, this tendency would distort the result. Mixing the directions cancels it out.
+This is exactly the case with the Islamophobia scale of the mini study. The researchers deliberately worded the six items in mixed directions: four negatively (“restrict Islam”), two positively (“Islam fits into society”). It is a way of countering a classic survey bias called **acquiescence**: the tendency of some respondents to agree with statements across the board, whatever they are about. If all six items pointed in the same direction, this tendency would distort the result. Mixing the directions cancels it out.
 
 For *you*, this means that before you combine the items into a scale, you need to **reverse-code** the two positively worded items, that is, recode them so that in the end all six point in the same direction.
 
@@ -453,7 +453,7 @@ For each row of `allbus`, `left_join()` looks for the row in `region_context` wi
 ![`left_join()` attaches to each row of `allbus` the values from the row of `region_context` with the same key `eastwest`. All rows stay, and two towers are added; the first four rows are shown.](Bilder/figuren/en/k05-join.svg){#fig-join .lightbox fig-alt="Top right the name tag region_context and a baseplate with the towers eastwest, muslim_share and gdp_per_capita and two rows: 1, 7.2, 45000 and 2, 1.4, 32000; the second row is outlined in orange. On the left the baseplate allbus with eastwest 1, 1, 1, 2, age 50, 51, 69, 72 and an ellipsis. A green arrow left_join() leads to the result with eastwest, age, an ellipsis and the new towers, outlined in green: muslim_share with 7.2, 7.2, 7.2, 1.4 and gdp_per_capita with 45000, 45000, 45000, 32000. Green arrows lead from region_context into these towers; the fourth row of the result is outlined in orange. Below, the code allbus_with_context <- allbus |> left_join(region_context, by = “eastwest”)."}
 
 ::: {.callout-tip}
-**SPSS → R: Merging datasets.** In SPSS this is `MATCH FILES /TABLE = ... /BY = eastwest.`. In R it is exactly `left_join()`. The concept and the arguments translate directly; only the syntax is more compact.
+**SPSS → R: Merging datasets.** In SPSS this is `MATCH FILES /TABLE = ... /BY = eastwest.`. In R, the equivalent is `left_join()`. The concept and the arguments translate directly; only the syntax is more compact.
 :::
 
 dplyr has four join verbs. They differ only in *which rows* remain at the end:
@@ -469,7 +469,7 @@ For two small tables `x` (key `id` 1, 2, 3) and `y` (`id` 1, 2, 4), @fig-join-fa
 
 ![Three joins with the same tables `x` and `y`, linked by `id`. `left_join()` keeps all rows of `x`, `inner_join()` only the keys that occur in both tables, `full_join()` all keys.](Bilder/figuren/en/k05-join-familie.svg){#fig-join-familie .lightbox fig-alt="On the left two small baseplates: x with id 1, 2, 3 and a 10, 20, 30; y with id 1, 2, 4 and the purple bricks b A, B, D. On the right three results with the towers id, a and b. left_join(x, y): id 1, 2, 3, a 10, 20, 30, b A, B and an empty brick. inner_join(x, y): id 1 and 2, a 10 and 20, b A and B. full_join(x, y): id 1, 2, 3, 4, a 10, 20, 30 and an empty brick, b A, B, an empty brick and D."}
 
-In 90 % of social research, `left_join()` is what you need: individual data on the left, context data on the right.
+In 90% of social research, `left_join()` is what you need: individual data on the left, context data on the right.
 
 ::: {.callout-warning}
 **Caution: Keys must be *unique* in the right table.** If the right table has several rows per key, *every* match is duplicated, and 5246 cases suddenly become 10000. Before every join, check `region_context |> count(eastwest)`: each key value should occur only once.
@@ -482,11 +482,11 @@ Data can come in two fundamentally different formats, and the choice matters: so
 - **Wide format**: one row per respondent, one column per variable. This is how ALLBUS comes by default: `mm01` to `mm06` are six columns side by side.
 - **Long format**: one row per *observation*, that is, per respondent × item. Instead of six columns there are two: one for *“which item?”* and one for *“which value?”*. 5246 rows with 6 item columns become 5246 × 6 = 31476 rows with 2 columns.
 
-Why this matters at all: ggplot2 usually expects long format (one aesthetic = one column), while statistical functions often need wide format (one variable = one column). Two functions from `tidyr` do the reshaping:
+This matters because ggplot2 usually expects long format (one aesthetic = one column), while statistical functions often need wide format (one variable = one column). Two functions from `tidyr` do the reshaping:
 
 ### `pivot_longer()`: wide → long
 
-**Question:** You want to show all six `mm` items together in one ggplot2 graphic, for example as a boxplot per item. For this you need long format.
+**Question:** You want to show all six `mm` items together in one ggplot2 plot, for example as a boxplot per item. For this you need long format.
 
 First a look at the wide format, the way ALLBUS comes by default, with one column per item and one row per person:
 
@@ -534,7 +534,7 @@ allbus_long |>
 
 ### `pivot_wider()`: long → wide
 
-You need the reverse when aggregated data from a `summarise()` (which typically comes out in long format) is to go into a report as a wide comparison table.
+You need the reverse when aggregated data from a `summarise()` (which typically comes out in long format) should go into a report as a wide comparison table.
 
 First the intermediate result in long format, the means per region × item:
 
@@ -587,9 +587,9 @@ In SPSS this would be a short `COMPUTE` statement. In R you use `row_means()` fr
 | `row_sums(data, ..., min_valid = N)`    | Sum per case                                         |
 | `row_count(data, ..., count = value)`   | How often a particular value occurs in the row       |
 
-The argument `min_valid` sets *how many valid answers* there must be at least for the mean to be computed. Otherwise the scale score stays `NA`. As a rule of thumb, use at least 80 % of the items: `min_valid = 5` for 6 items, `min_valid = 6` for 7 items.
+The argument `min_valid` sets *how many valid answers* there must be at least for the mean to be computed. Otherwise the scale score stays `NA`. As a rule of thumb, use at least 80% of the items: `min_valid = 5` for 6 items, `min_valid = 6` for 7 items.
 
-Why this threshold? For someone who answered 3 of 6 items, the scale score would rest half on what they said and half on what is missing, and this shifts the mean systematically. With `min_valid = 5` you only lose the cases with *many* missing answers and gain a more robust measure in return. The trade-off is always the same: too strict a `min_valid` leaves few cases, too lenient a one gives unreliable values. 80 % is the methodological consensus.
+Why this threshold? For someone who answered 3 of 6 items, the scale score would rest half on what they said and half on what is missing, and this shifts the mean systematically. With `min_valid = 5` you only lose the cases with *many* missing answers and gain a more robust measure in return. The trade-off is always the same: too strict a `min_valid` leaves few cases, and too lenient a threshold gives unreliable values. 80% is the methodological consensus.
 
 Note that `row_means()` (and its siblings) return a numeric vector, so they belong inside a `mutate()` call, with `pick()` to select the variables. This is idiomatic tidyverse code and makes it clear that a new column is created.
 
@@ -650,7 +650,7 @@ allbus |>
 
 ![`row_count(count = 7)` counts the sevens in each row (blue); the other values do not count (grey). A row without answers gives 0.](Bilder/figuren/en/k05-row-count.svg){#fig-row-count .lightbox fig-alt="Six towers mm01 to mm06 with three rows, on the left the respid 1, 2 and 95. Row 1: 5, 3, 4, 2, 6, 2, all grey. Row 2: six empty bricks. Row 95: 7, 1, 6, 7, 4, 7; the three sevens are blue, the other bricks grey. A green arrow row_count() with count = 7 leads to the tower n_extreme (int) with 0, 0 and 3, next to them no 7, no answer and three 7s."}
 
-Most respondents show *no* such pattern; those who answer all six items with 7 are a small minority. Read the row `0` with care, though. It also contains the roughly 1650 respondents who were not shown the items at all because of the split design, since missing values never count as hits. `row_count()` is generally useful for data quality checks: how many “don't know” answers, how many extreme answers, how many answers in the middle? You can count several values at once with `count = c(1, 7)`; *both* extremes then go into the sum.
+Most respondents show *no* such pattern; those who answer all six items with 7 are a small minority. Read the row `0` with care, though. It also contains the roughly 1650 respondents who were not shown the items because of the split design; missing values never count as hits. `row_count()` is generally useful for data quality checks: how many “don't know” answers, how many extreme answers, how many answers in the middle? You can count several values at once with `count = c(1, 7)`; *both* extremes then go into the sum.
 
 ### Populism scale
 
@@ -660,7 +660,7 @@ Most respondents show *no* such pattern; those who answer all six items with 7 a
 The seven `pa` items are based on a scale by Schulz et al. (2017) and cover three classic dimensions of populism: anti-elitism, people-centrism and Manichaeism (the people versus a corrupt elite). High values indicate populist attitude patterns. Such an *attitude* can occur across the whole party spectrum and is *not* the same as a preference for populist parties.
 :::
 
-Here a second direction trap is waiting, and it is the reason why you look at the codebook before building any scale. First look at the value labels of a `pa` item:
+Here a second trap with the coding direction is waiting, and it is the reason why you look at the codebook before building any scale. First look at the value labels of a `pa` item:
 
 ```{r pa-labels}
 val_labels(allbus$pa29)
@@ -795,7 +795,7 @@ With this pipeline, the dataset is ready for analysis. @fig-pipeline assigns the
 ::: {.callout-note collapse="true"}
 ## Background: What belongs in the methods report?
 
-In a methods report you would document exactly these steps: Which items? Which were reverse-coded, and why? What minimum number of valid answers? Which direction does the scale run in? If you make this transparent, you give reviewers the means to assess the operationalisation. Reporting only `Cronbach's α = 0.87` does *not* fulfil that obligation.
+In a methods report you would document exactly these steps: Which items? Which were reverse-coded, and why? What minimum number of valid answers? Which direction does the scale run in? If you make this transparent, you give reviewers the means to assess the operationalisation. Reporting only `Cronbach's α = 0.87` is *not* enough.
 :::
 
 ## Exercises {-}
