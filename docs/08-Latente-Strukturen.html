@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-82443109d096e9951f1ccbbd29bb67fd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a8577efeac225dfa3e7fa2ecdd5ff0e4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-63fa115f489f88f52ad5dfa535c016f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
@@ -1634,6 +1634,29 @@ Hinweis
   var main = document.querySelector("main.content");
   if (!main) return;
 
+  // Sprache der Seite (aus <html lang>, Quarto-Profile de/en); alle Wörter, die das Skript erkennt oder setzt
+  var lang = document.documentElement.lang === "en" ? "en" : "de";
+  var WORT = {
+    de: {
+      typen: [["Hintergrund", "hintergrund"], ["Forschungshintergrund", "hintergrund"], ["Konzept", "hintergrund"],
+        ["Forschungsjournal", "journal"], ["Reviewer-Hinweis", "reviewer"], ["SPSS → R", "spss"],
+        ["mariposa-Tipp", "mariposa"], ["Vorsicht", "vorsicht"], ["Tipp", "tipp"], ["Faustregel", "tipp"]],
+      uebung: "Übung", loesung: "Lösung",
+      nachdenken: "Kurz überlegen", aufloesung: "Auflösung",
+      lernziele: "Was du nach diesem (Kapitel|Buch) kannst", selbstcheck: "Was du jetzt weißt", weiter: "Weiterführend",
+      kapitel: "Kapitel", umschalter: "English", umschalterTitel: "Read this page in English"
+    },
+    en: {
+      typen: [["Background", "hintergrund"], ["Caution", "vorsicht"], ["mariposa tip", "mariposa"],
+        ["SPSS → R", "spss"], ["Research journal", "journal"]],
+      uebung: "Exercise", loesung: "Solution",
+      nachdenken: "Stop and think", aufloesung: "Answer",
+      lernziele: "What you will be able to do after this (chapter|book)", selbstcheck: "What you know now", weiter: "Further reading",
+      kapitel: "Chapters", umschalter: "Deutsch", umschalterTitel: "Diese Seite auf Deutsch lesen"
+    }
+  }[lang];
+  function regexWort(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
   // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
   var num = main.querySelector("h1 .chapter-number");
   var kap = num ? num.textContent.trim() : "0";
@@ -1699,7 +1722,7 @@ Hinweis
     var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
     var nav = document.createElement("nav");
     nav.className = "leiste";
-    nav.setAttribute("aria-label", "Kapitel");
+    nav.setAttribute("aria-label", WORT.kapitel);
     links.forEach(function (a, i) {
       var b = document.createElement("a");
       b.href = a.getAttribute("href");
@@ -1713,25 +1736,16 @@ Hinweis
   }
 
   // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
-  var TYPEN = [
-    [/^Hintergrund\b/, "hintergrund", "Hintergrund"],
-    [/^Forschungshintergrund\b/, "hintergrund", "Forschungshintergrund"],
-    [/^Konzept\b/, "hintergrund", "Konzept"],
-    [/^Forschungsjournal\b/, "journal", "Forschungsjournal"],
-    [/^Reviewer-Hinweis\b/, "reviewer", "Reviewer-Hinweis"],
-    [/^SPSS → R\b/, "spss", "SPSS → R"],
-    [/^mariposa-Tipp\b/, "mariposa", "mariposa-Tipp"],
-    [/^Vorsicht\b/, "vorsicht", "Vorsicht"],
-    [/^Tipp\b/, "tipp", "Tipp"],
-    [/^Faustregel\b/, "tipp", "Faustregel"]
-  ];
+  var TYPEN = WORT.typen.map(function (t) {
+    return [new RegExp("^" + regexWort(t[0]) + "\\b"), t[1], t[0]];
+  });
   function führendeLeerzeichenWeg(p) {
     if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
   }
   main.querySelectorAll(".callout").forEach(function (c) {
     var titel = c.getAttribute("title") || "";
     var kopf = c.querySelector(".callout-title-container");
-    if (/^Übung/.test(titel)) {
+    if (new RegExp("^" + WORT.uebung).test(titel)) {
       var teile = titel.split(" · ");
       var nr = (teile[0].match(/\d+/) || [""])[0];
       c.classList.add("kasten", "uebung");
@@ -1739,7 +1753,7 @@ Hinweis
         (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
       return;
     }
-    if (/^Lösung/.test(titel)) {
+    if (new RegExp("^" + WORT.loesung).test(titel)) {
       c.classList.add("loesung");
       var vor = c.previousElementSibling;
       if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
@@ -1781,18 +1795,18 @@ Hinweis
 
   // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
   main.querySelectorAll("p > strong:first-child").forEach(function (st) {
-    if (st.textContent.trim() !== "Kurz überlegen.") return;
+    if (st.textContent.trim() !== WORT.nachdenken + ".") return;
     var p = st.parentElement;
     if (p.firstChild !== st) return;
     var nach = p.nextElementSibling;
     var karte = document.createElement("div");
     karte.className = "denkpause";
-    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">Kurz überlegen</span></div>';
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">' + WORT.nachdenken + '</span></div>';
     p.parentNode.insertBefore(karte, p);
     st.remove();
     führendeLeerzeichenWeg(p);
     karte.appendChild(p);
-    if (nach && nach.classList.contains("callout") && /^Auflösung/.test(nach.getAttribute("title") || "")) {
+    if (nach && nach.classList.contains("callout") && new RegExp("^" + WORT.aufloesung).test(nach.getAttribute("title") || "")) {
       nach.classList.add("aufloesung");
       karte.appendChild(nach);
     }
@@ -1802,9 +1816,9 @@ Hinweis
   main.querySelectorAll("section.level2 > h2").forEach(function (h) {
     var t = h.textContent.trim();
     var s = h.parentElement;
-    if (/^Was du nach diesem (Kapitel|Buch) kannst/.test(t)) s.classList.add("karte", "lernziele");
-    else if (/^Was du jetzt weißt/.test(t)) s.classList.add("karte", "selbstcheck");
-    else if (/^Weiterführend/.test(t)) s.classList.add("karte", "weiter");
+    if (new RegExp("^" + WORT.lernziele).test(t)) s.classList.add("karte", "lernziele");
+    else if (new RegExp("^" + regexWort(WORT.selbstcheck)).test(t)) s.classList.add("karte", "selbstcheck");
+    else if (new RegExp("^" + regexWort(WORT.weiter)).test(t)) s.classList.add("karte", "weiter");
   });
 
   // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
@@ -1835,6 +1849,37 @@ Hinweis
   }
   window.addEventListener("scroll", fortschritt, { passive: true });
   fortschritt();
+
+  // Sprachumschalter: dieselbe Seite in der anderen Sprache (…/X.html ↔ …/en/X.html, …/ ↔ …/en/).
+  // Knopf und <link rel="alternate"> entstehen erst, wenn die Gegenseite antwortet.
+  function gegenstueck(pfad, sprache) {
+    if (sprache === "en") {
+      var k = pfad.lastIndexOf("/en/");
+      return k < 0 ? null : pfad.slice(0, k) + "/" + pfad.slice(k + 4);
+    }
+    var l = pfad.lastIndexOf("/");
+    return pfad.slice(0, l + 1) + "en/" + pfad.slice(l + 1);
+  }
+  var ziel = gegenstueck(location.pathname, lang);
+  if (ziel && window.fetch) {
+    var andere = lang === "en" ? "de" : "en";
+    fetch(ziel, { method: "HEAD" }).then(function (r) {
+      if (!r.ok) return;
+      var alt = document.createElement("link");
+      alt.rel = "alternate";
+      alt.hreflang = andere;
+      alt.href = ziel;
+      document.head.appendChild(alt);
+      var a = document.createElement("a");
+      a.className = "sprachwahl";
+      a.href = ziel + location.search;
+      a.hreflang = andere;
+      a.lang = andere;
+      a.title = WORT.umschalterTitel;
+      a.textContent = WORT.umschalter;
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
 })();
 </script><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
