@@ -9,6 +9,12 @@ from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, stein, sch
                   WHITE, PALE, STEIN, MONO, C, RT)
 from kap03 import mono, notiz, platte
 from kap04 import lstein, lstein_breite, saeule, kopf, punkte, codezeile
+import sprache
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
+# en.EN ist ein Wörterbuch für alle Kapitel. Kap. 3 bildet "alter" auf "age" ab; Kap. 5 braucht diesen Schlüssel nicht,
+# denn rename(alter = age) kommt in keiner Abbildung vor. Alle Schlüssel dieses Kapitels sind eigene Wörter.
 
 
 def code(zeilen, size=10.5, color=INK):
@@ -32,11 +38,11 @@ def code(zeilen, size=10.5, color=INK):
 def mutate_fig():
     s = Canvas(6.6, 2.75)
     text(s, 0.15, 0.12, 6.4, 0.28,
-         codezeile("allbus |> select(age) |> mutate(geburtsjahr = 2023 - age) |> head(3)", size=10.5))
+         codezeile(tr("allbus |> select(age) |> mutate(geburtsjahr = 2023 - age) |> head(3)"), size=10.5))
     h, top, gap = 0.36, 1.05, 0.07
     ax, aw, gx, gw = 0.45, 0.8, 3.05, 1.0
     kopf(s, ax, aw, 0.5, "age", "<dbl+lbl>")
-    kopf(s, gx, gw, 0.5, "geburtsjahr", "<dbl>")
+    kopf(s, gx, gw, 0.5, tr("geburtsjahr"), "<dbl>")
     alter, jahr = ["50", "51", "69"], ["1973", "1972", "1954"]
     unten = saeule(s, ax, top, aw, h, "num", alter, size=12)
     saeule(s, gx, top, gw, h, "num", jahr, size=12)
@@ -46,7 +52,7 @@ def mutate_fig():
         arrow(s, ax + aw + 1.17, y + h / 2 - 0.09, w=0.38, h=0.18, color=GRAY)
     platte(s, 0.3, unten + 0.07, gx + gw + 0.15 - 0.3)
     outline(s, gx - 0.07, top - 0.11, gw + 0.14, 3 * (h + gap) + 0.08, color=GREEN, lw=1.75)
-    text(s, gx + gw + 0.25, top + h + gap - 0.02, 1.7, 0.4, notiz("neuer Turm", size=10.5, color=GREEN, align="start"),
+    text(s, gx + gw + 0.25, top + h + gap - 0.02, 1.7, 0.4, notiz(tr("neuer Turm"), size=10.5, color=GREEN, align="start"),
          anchor="middle")
     return s
 
@@ -56,8 +62,8 @@ def zuweisung():
     s = Canvas(7.6, 3.45)
     h, top, gap = 0.3, 1.95, 0.07
     for x0, titel, zeilen, gespeichert in [
-            (0.15, "OHNE <-", ["allbus |>", "  mutate(geburtsjahr = 2023 - age)"], False),
-            (3.95, "MIT <-", ["allbus <- allbus |>", "  mutate(geburtsjahr = 2023 - age)"], True)]:
+            (0.15, tr("OHNE <-"), ["allbus |>", tr("  mutate(geburtsjahr = 2023 - age)")], False),
+            (3.95, tr("MIT <-"), ["allbus <- allbus |>", tr("  mutate(geburtsjahr = 2023 - age)")], True)]:
         eyebrow(s, x0, 0.12, 3.4, titel, color=GREEN if gespeichert else GRAY)
         text(s, x0, 0.42, 3.5, 0.5, code(zeilen, size=10.5))
         schild(s, x0, 1.05, "allbus", w=1.0)
@@ -65,7 +71,7 @@ def zuweisung():
                                                 color=GRAY, align="start"))
         ax, gx = x0 + 0.2, x0 + 1.6
         kopf(s, ax, 0.7, 1.5, "age")
-        kopf(s, gx, 0.9, 1.5, "geburtsjahr")
+        kopf(s, gx, 0.9, 1.5, tr("geburtsjahr"))
         unten = saeule(s, ax, top, 0.7, h, "num", ["50", "51", "69"], size=11)
         punkte(s, ax + 0.77, top + h + gap - 0.03, w=0.5)
         saeule(s, gx, top, 0.9, h, "num" if gespeichert else "dim", ["1973", "1972", "1954"], size=11)
@@ -73,7 +79,7 @@ def zuweisung():
         if gespeichert:
             outline(s, gx - 0.07, top - 0.11, 1.04, 3 * (h + gap) + 0.08, color=GREEN, lw=1.75)
         text(s, gx + 1.05, top + h + gap - 0.05, 1.0, h + 0.1,
-             notiz("gespeichert" if gespeichert else "nur angezeigt", size=10.5,
+             notiz(tr("gespeichert") if gespeichert else tr("nur angezeigt"), size=10.5,
                    color=GREEN if gespeichert else GRAY, align="start"), anchor="middle")
     vline(s, 3.8, 0.15, 3.3, color=CARDLINE, width=0.75)
     return s
@@ -84,10 +90,12 @@ def case_when_fig():
     s = Canvas(7.6, 4.35)
     alter = ["50", "51", "69", "72", "18"]
     cx, cw, sw, sh = 2.7, 0.95, 0.88, 0.3
-    faelle = [("FALSCH", DARKORANGE, ['age >= 18 ~ "erwachsen"', 'age >= 65 ~ "senior"', '.default = "unter 18"'],
-               ["erwachsen", "senior", "unter 18"], lambda a: 0),
-              ("RICHTIG", GREEN, ['age >= 65 ~ "senior"', 'age >= 18 ~ "erwachsen"', '.default = "unter 18"'],
-               ["senior", "erwachsen", "unter 18"], lambda a: 0 if a >= 65 else 1)]
+    faelle = [(tr("FALSCH"), DARKORANGE, [tr('age >= 18 ~ "erwachsen"'), 'age >= 65 ~ "senior"',
+                                          tr('.default = "unter 18"')],
+               [tr("erwachsen"), "senior", tr("unter 18")], lambda a: 0),
+              (tr("RICHTIG"), GREEN, ['age >= 65 ~ "senior"', tr('age >= 18 ~ "erwachsen"'),
+                                      tr('.default = "unter 18"')],
+               ["senior", tr("erwachsen"), tr("unter 18")], lambda a: 0 if a >= 65 else 1)]
     for p, (titel, farbe, bedingungen, werte, tor) in enumerate(faelle):
         py = 0.12 + p * 2.18
         if p:
@@ -109,8 +117,8 @@ def case_when_fig():
         for j, ks in treffer.items():
             for k in ks:
                 stein(s, cx + k * cw, zeilen[j] + 0.05, sw, sh, "txt", werte[j], size=10)
-        if titel == "FALSCH":
-            text(s, cx, zeilen[1], 4.7, 0.4, notiz('"senior" wird nie erreicht', size=10.5, color=DARKORANGE),
+        if farbe == DARKORANGE:
+            text(s, cx, zeilen[1], 4.7, 0.4, notiz(tr('"senior" wird nie erreicht'), size=10.5, color=DARKORANGE),
                  anchor="middle")
     return s
 
@@ -120,11 +128,11 @@ def case_when_fig():
 def summarise_fig():
     s = Canvas(7.6, 3.85)
     text(s, 0.15, 0.12, 7.4, 0.28,
-         codezeile("group_by(eastwest) |> summarise(…, durchschnitt_alter = mean(age, na.rm = TRUE))", size=10.5))
+         codezeile(tr("group_by(eastwest) |> summarise(…, durchschnitt_alter = mean(age, na.rm = TRUE))"), size=10.5))
     h, gap = 0.28, 0.06
-    gruppen = [("1", "ALTE BUNDESLAENDER", ["50", "51", "69"], "3567", "51.7"),
-               ("2", "NEUE BUNDESLAENDER", ["72", "44", "60"], "1679", "54.3")]
-    lw = lstein_breite("NEUE BUNDESLAENDER")
+    gruppen = [("1", tr("ALTE BUNDESLAENDER"), ["50", "51", "69"], "3567", "51.7"),
+               ("2", tr("NEUE BUNDESLAENDER"), ["72", "44", "60"], "1679", "54.3")]
+    lw = lstein_breite(tr("NEUE BUNDESLAENDER"))
     ex, axx, aw = 0.25, 0.25 + lw + 0.1, 0.6
     kopf(s, ex, lw, 0.5, "eastwest")
     kopf(s, axx, aw, 0.5, "age")
@@ -136,7 +144,7 @@ def summarise_fig():
             stein(s, axx, y, aw, h, "num", a, size=11)
         unten = top + 3 * (h + gap) - gap
         punkte(s, axx - 0.1, unten - 0.02, w=aw + 0.2)
-        text(s, ex, unten + 0.02, lw, 0.25, notiz(f"{n} Fälle", size=10.5, align=RT))
+        text(s, ex, unten + 0.02, lw, 0.25, notiz(f"{n} {tr('Fälle')}", size=10.5, align=RT))
         top = unten + 0.42
     basis = top - 0.42 + 0.27
     platte(s, 0.15, basis, axx + aw + 0.1 - 0.15)
@@ -147,7 +155,7 @@ def summarise_fig():
     text(s, 3.3, mitte - 0.45, 0.9, 0.28, mono("mean()", size=10.5, color=GREEN))
     arrow(s, 3.4, mitte - 0.14, w=0.7, h=0.28, color=GREEN)
     text(s, rx, ry - 0.42, 1.0, 0.25, mono("eastwest", size=10.5, align="start"))
-    text(s, 7.5 - 1.8, ry - 0.42, 1.8, 0.25, mono("durchschnitt_alter", size=10.5, align=RT))
+    text(s, 7.5 - 1.8, ry - 0.42, 1.8, 0.25, mono(tr("durchschnitt_alter"), size=10.5, align=RT))
     for g, (code_, label, _, _, mw) in enumerate(gruppen):
         y = ry + g * (h + 0.08)
         lstein(s, rx, y, lw, h + 0.02, "num", code_, label, size=11)
@@ -165,16 +173,19 @@ def klammer(s, x, y0, y1, color=GRAY, w=0.1):
 
 # 5.3.1 rec() aus dem Chunk `rec-bildung` ----------------------------------------------------
 def rec_fig():
-    zeilen = ["mutate(", '  educ = rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",',
+    en = sprache.aktuell() == "en"
+    zeilen = ["mutate(", tr('  educ = rec(educ, rules = "1:2=1 [niedrig]; 3=2 [mittel]; 4:5=3 [hoch]; else=NA",'),
               "             as_factor = TRUE)", ")"]
     dy = 0.4                                     # Platz für die zwei zusätzlichen Code-Zeilen
     s = Canvas(7.3, 4.3 + dy)
     text(s, 0.15, 0.12, 7.1, 0.9, code(zeilen, size=10))
-    codes = [("1", "OHNE ABSCHLUSS"), ("2", "VOLKS-,HAUPTSCHULE"), ("3", "MITTLERE REIFE"), ("4", "FACHHOCHSCHULREIFE"),
-             ("5", "HOCHSCHULREIFE"), ("6", "ANDERER ABSCHLUSS"), ("7", "NOCH SCHUELER"), ("", "")]
-    gruppen = [((0, 1), "1:2=1 [niedrig]", "niedrig", "982"), ((2, 2), "3=2 [mittel]", "mittel", "1639"),
-               ((3, 4), "4:5=3 [hoch]", "hoch", "2472"), ((5, 7), "else=NA", "", "153")]
-    lw = lstein_breite("FACHHOCHSCHULREIFE")
+    codes = [("1", tr("OHNE ABSCHLUSS")), ("2", tr("VOLKS-,HAUPTSCHULE")), ("3", tr("MITTLERE REIFE")),
+             ("4", tr("FACHHOCHSCHULREIFE")), ("5", tr("HOCHSCHULREIFE")), ("6", tr("ANDERER ABSCHLUSS")),
+             ("7", tr("NOCH SCHUELER")), ("", "")]
+    gruppen = [((0, 1), tr("1:2=1 [niedrig]"), tr("niedrig"), "982"), ((2, 2), tr("3=2 [mittel]"), tr("mittel"), "1639"),
+               ((3, 4), tr("4:5=3 [hoch]"), tr("hoch"), "2472"), ((5, 7), "else=NA", "", "153")]
+    lw = max(lstein_breite(label) for _, label in codes if label)
+    rx0 = max(2.62, 0.15 + lw + 0.45) if en else 2.62        # englische Labels sind länger: Regeln weiter rechts
     h, pitch, top = 0.28, 0.35, 1.35 + dy
     kopf(s, 0.15, lw, 0.78 + dy, "educ", "<dbl+lbl>")
     ox, ow, nx = 4.85, 0.95, 6.0
@@ -191,8 +202,8 @@ def rec_fig():
         mitte = (y0 + y1) / 2
         klammer(s, 0.15 + lw + 0.08, y0, y1)
         tw = text_width(regel, MONO, 10.5) + 0.14
-        label_box(s, 2.62, mitte - 0.16, tw, 0.32, regel, PALE, color=INK, size=10.5, rounded=False, margin=0)
-        arrow(s, 2.62 + tw + 0.1, mitte - 0.1, w=ox - 0.1 - (2.62 + tw + 0.1), h=0.2, color=GREEN)
+        label_box(s, rx0, mitte - 0.16, tw, 0.32, regel, PALE, color=INK, size=10.5, rounded=False, margin=0)
+        arrow(s, rx0 + tw + 0.1, mitte - 0.1, w=ox - 0.1 - (rx0 + tw + 0.1), h=0.2, color=GREEN)
         stein(s, ox, mitte - 0.16, ow, 0.32, "txt" if neu_ else "na", neu_, size=10.5)
         text(s, nx, mitte - 0.16, 0.6, 0.32, mono(n, size=11, align=RT), anchor="middle")
     return s
@@ -200,10 +211,10 @@ def rec_fig():
 
 # 5.3.2 dicho(50) aus dem Chunk `rec-dicho`; die ersten fünf Werte von age, nach Größe sortiert ----
 def dicho_fig():
-    s = Canvas(7.0, 3.7)
+    s = Canvas(7.45 if sprache.aktuell() == "en" else 7.0, 3.7)
     text(s, 0.15, 0.12, 6.8, 0.28,
          codezeile('allbus |> mutate(age_d = rec(age, rules = "dicho(50)")) |> count(age_d)', size=10.5))
-    w = lstein_breite("NICHT GENERIERBAR", wert=False)
+    w = lstein_breite(tr("NICHT GENERIERBAR"), wert=False)
     ax, dx = 1.15, 1.15 + w + 0.55
     h, pitch, top, extra = 0.3, 0.37, 1.08, 0.16
     zy = lambda i: top + i * pitch + (extra if i >= 3 else 0)       # Lücke am Schnittpunkt
@@ -216,15 +227,15 @@ def dicho_fig():
         arrow(s, ax + w + 0.12, y + h / 2 - 0.08, w=0.31, h=0.16, color=GRAY)
         stein(s, dx, y, w, h, "num", d, size=11)
     y = zy(5)
-    lstein(s, ax, y, w, h, "na", "", "NICHT GENERIERBAR")
+    lstein(s, ax, y, w, h, "na", "", tr("NICHT GENERIERBAR"))
     arrow(s, ax + w + 0.12, y + h / 2 - 0.08, w=0.31, h=0.16, color=GRAY)
-    lstein(s, dx, y, w, h, "na", "", "NICHT GENERIERBAR")
+    lstein(s, dx, y, w, h, "na", "", tr("NICHT GENERIERBAR"))
     platte(s, ax - 0.1, y + h + 0.07, dx + w + 0.1 - (ax - 0.1))
     schnitt = zy(2) + h + (pitch - h + extra) / 2 - 0.03
     connector(s, 0.15, schnitt, dx + w + 0.15, schnitt, color=ORANGE, width=2.0, dash=True)
     text(s, 0.1, schnitt - 0.32, 1.0, 0.28, mono("dicho(50)", size=10.5, color=DARKORANGE, align="start"))
     gx = dx + w + 0.25
-    for (a, b), wort, n in [((0, 2), "über 50", "2942"), ((3, 4), "bis 50", "2281"), ((5, 5), "", "23")]:
+    for (a, b), wort, n in [((0, 2), tr("über 50"), "2942"), ((3, 4), tr("bis 50"), "2281"), ((5, 5), "", "23")]:
         y0, y1 = zy(a), zy(b) + h
         if b > a:
             klammer(s, dx + w + 0.06, y0, y1)
@@ -239,14 +250,14 @@ def dicho_fig():
 def umpolen():
     s = Canvas(6.7, 4.35)
     text(s, 0.15, 0.12, 6.4, 0.28, code(['mutate(mm02r = rec(mm02, rules = "rev"))'], size=10.5))
-    lw = lstein_breite("STIMME GAR NICHT ZU")
+    lw = lstein_breite(tr("STIMME GAR NICHT ZU"))
     lx, rx, nx = 0.15, 0.15 + lw + 0.85, 0.15 + 2 * lw + 0.95
     h, pitch, top = 0.27, 0.33, 1.12
     kopf(s, lx, lw, 0.58, "mm02", "<dbl+lbl>")
     kopf(s, rx, lw, 0.58, "mm02r", "<dbl+lbl>")
     text(s, lx + lw, 0.62, 0.85, 0.3, mono("8 - x", size=11, color=GREEN))
     text(s, nx, 0.58, 0.6, 0.25, mono("n", size=11, align=RT))
-    labels = {1: "STIMME GAR NICHT ZU", 7: "STIMME VOLL+GANZ ZU"}
+    labels = {1: tr("STIMME GAR NICHT ZU"), 7: tr("STIMME VOLL+GANZ ZU")}
     anzahl = ["954", "515", "494", "629", "350", "235", "227"]
     for i in range(7):
         alt_, neu_ = i + 1, 7 - i
@@ -261,7 +272,7 @@ def umpolen():
         text(s, nx, y, 0.6, h, mono(anzahl[i], size=10.5, align=RT), anchor="middle")
     y = top + 7 * pitch
     for x in (lx, rx):
-        lstein(s, x, y, lw, h, "na", "", "TNZ: SPLIT")
+        lstein(s, x, y, lw, h, "na", "", tr("TNZ: SPLIT"))
     arrow(s, lx + lw + 0.2, y + h / 2 - 0.08, w=0.45, h=0.16, color=GRAY)
     text(s, nx, y, 0.6, h, mono("1842", size=10.5, align=RT), anchor="middle")
     platte(s, lx - 0.05, y + h + 0.07, rx + lw + 0.05 - (lx - 0.05))
@@ -274,15 +285,15 @@ def umpolen():
 def skala():
     s = Canvas(7.7, 2.15)
     items = ["mm01", "mm02r", "mm03", "mm04", "mm05r", "mm06"]
-    reihen = [("1", ["5", "5", "4", "2", "2", "2"], "3.33", "6 gültig"),
-              ("53", ["1", "", "4", "6", "1", "5"], "3.4", "5 gültig"),
-              ("120", ["3", "4", "", "4", "5", ""], "", "4 gültig")]
+    reihen = [("1", ["5", "5", "4", "2", "2", "2"], "3.33", tr("6 gültig")),
+              ("53", ["1", "", "4", "6", "1", "5"], "3.4", tr("5 gültig")),
+              ("120", ["3", "4", "", "4", "5", ""], "", tr("4 gültig"))]
     h, pitch, top, w, step, ix = 0.32, 0.4, 0.62, 0.52, 0.62, 1.0
     kopf(s, 0.15, 0.6, 0.15, "respid")
     for j, it in enumerate(items):
         kopf(s, ix + j * step, w, 0.15, it, size=10.5)
     rx, rw = 6.1, 0.75
-    kopf(s, rx, rw, 0.15, "islamophobie", size=10.5)
+    kopf(s, rx, rw, 0.15, tr("islamophobie"), size=10.5)
     for i, (rid, werte, ergebnis, notiz_) in enumerate(reihen):
         y = top + i * pitch
         text(s, 0.15, y, 0.6, h, mono(rid, size=10.5, color=GRAY, align=RT), anchor="middle")
@@ -302,14 +313,14 @@ def skala():
     return s
 
 
-def skalenturm(s, x, top, labels, h=0.28, pitch=0.34):
+def skalenturm(s, x, top, labels, h=0.28, pitch=0.34, lsize=10, nw=0.42):
     """Werte 1 bis n untereinander, 1 oben; labels[k] ist das Wertelabel von k + 1 (None: ohne).
     Gibt Breite und Unterkante zurück."""
-    w = max(lstein_breite(lab) for lab in labels if lab)
+    w = max(lstein_breite(lab, lsize=lsize, nw=nw) for lab in labels if lab)
     for k, label in enumerate(labels):
         y = top + k * pitch
         if label:
-            lstein(s, x, y, w, h, "num", str(k + 1), label, size=11)
+            lstein(s, x, y, w, h, "num", str(k + 1), label, size=11, lsize=lsize, nw=nw)
         else:
             stein(s, x, y, w, h, "num", str(k + 1), size=11)
     unten = top + (len(labels) - 1) * pitch + h
@@ -319,23 +330,33 @@ def skalenturm(s, x, top, labels, h=0.28, pitch=0.34):
 
 # 5.7.3 Polung aus dem Chunk `pa-labels` (mm01: Wertelabels aus Kap. 4.7) und `scale-pop` ----------
 def polung():
-    s = Canvas(7.5, 3.35)
+    en = sprache.aktuell() == "en"           # englisch: längere Labels, schmalere Wertspalte, Türme rücken
     top = 0.55
-    pa = ["STIMME VOLL ZU", "STIMME EHER ZU", "TEILS/TEILS", "LEHNE EHER AB", "LEHNE GANZ AB"]
-    tuerme = [(0.15, "mm01", ["STIMME GAR NICHT ZU", None, None, None, None, None, "STIMME VOLL+GANZ ZU"],
-               "hoch = islamophob", GRAY),
-              (2.85, "pa29", pa, "niedrig = populistisch", DARKORANGE),
-              (5.45, "pa29r", pa[::-1], "hoch = populistisch", GREEN)]
+    pa = [tr("STIMME VOLL ZU"), tr("STIMME EHER ZU"), tr("TEILS/TEILS"), tr("LEHNE EHER AB"), tr("LEHNE GANZ AB")]
+    ls = dict(nw=0.3) if en else {}
+    if en:
+        w1 = lstein_breite(tr("STIMME GAR NICHT ZU"), **ls)
+        w2 = max(lstein_breite(lab, **ls) for lab in pa)
+        x2 = 0.15 + w1 + 0.3
+        x3 = x2 + w2 + 0.75
+        s = Canvas(x3 + w2 + 0.15, 3.35)
+    else:
+        x2, x3 = 2.85, 5.45
+        s = Canvas(7.5, 3.35)
+    tuerme = [(0.15, "mm01", [tr("STIMME GAR NICHT ZU"), None, None, None, None, None, tr("STIMME VOLL+GANZ ZU")],
+               tr("hoch = islamophob"), GRAY),
+              (x2, "pa29", pa, tr("niedrig = populistisch"), DARKORANGE),
+              (x3, "pa29r", pa[::-1], tr("hoch = populistisch"), GREEN)]
     for x, name, labels, lesart, farbe in tuerme:
-        w, unten = skalenturm(s, x, top, labels)
+        w, unten = skalenturm(s, x, top, labels, **ls)
         kopf(s, x, w, 0.15, name)
         text(s, x - 0.1, unten + 0.17, w + 0.2, 0.25, notiz(lesart, size=10.5, color=farbe))
-    vline(s, 2.62, 0.15, 3.2, color=CARDLINE, width=0.75)
-    ax = 2.85 + lstein_breite("STIMME VOLL ZU") + 0.1
+    vline(s, x2 - 0.23, 0.15, 3.2, color=CARDLINE, width=0.75)
+    ax = x2 + max(lstein_breite(lab, **ls) for lab in pa) + 0.1
     mitte = top + 2 * 0.34 + 0.14
-    text(s, ax - 0.1, mitte - 0.42, 5.45 - ax, 0.28, mono("6 - x", size=10.5, color=GREEN))
-    arrow(s, ax, mitte - 0.13, w=5.45 - ax - 0.1, h=0.26, color=GREEN)
-    text(s, 2.85, 2.9, 4.6, 0.28, mono('mutate(pa29r = rec(pa29, rules = "rev"))', size=10.5, color=INK))
+    text(s, ax - 0.1, mitte - 0.42, x3 - ax, 0.28, mono("6 - x", size=10.5, color=GREEN))
+    arrow(s, ax, mitte - 0.13, w=x3 - ax - 0.1, h=0.26, color=GREEN)
+    text(s, x2, 2.9, 4.6, 0.28, mono('mutate(pa29r = rec(pa29, rules = "rev"))', size=10.5, color=INK))
     return s
 
 def lineal(s, x0, y, laenge, lo, hi, step=1, color=INK):
@@ -362,10 +383,10 @@ def pomps_fig():
     x0, u = 2.0, 0.8
     ia, pb = DARKORANGE, GREEN
     ya, yb, yc = 0.62, 1.47, 2.62
-    text(s, 0.15, ya - 0.14, 1.75, 0.28, mono("islamophobie", size=10.5, color=ia, align="start"))
+    text(s, 0.15, ya - 0.14, 1.75, 0.28, mono(tr("islamophobie"), size=10.5, color=ia, align="start"))
     lineal(s, x0, ya, 6 * u, 1, 7)
     marke(s, x0 + (4.11 - 1) * u, ya, "4.11", ia)
-    text(s, 0.15, yb - 0.14, 1.75, 0.28, mono("populismus", size=10.5, color=pb, align="start"))
+    text(s, 0.15, yb - 0.14, 1.75, 0.28, mono(tr("populismus"), size=10.5, color=pb, align="start"))
     lineal(s, x0, yb, 4 * u, 1, 5)
     marke(s, x0 + (3.4 - 1) * u, yb, "3.4", pb)
     # Hilfslinien von den Enden beider Lineale zu 0 und 100: 1 → 0 senkrecht, 7 → 100 senkrecht, 5 → 100 schräg
@@ -373,8 +394,8 @@ def pomps_fig():
         connector(s, xa, y0_, xa, y1_, color=CARDLINE, width=1.0, dash=True)
     connector(s, x0 + 4 * u, yb + 0.38, x0 + 6 * u, yc - 0.12, color=CARDLINE, width=1.0, dash=True)
     label_box(s, 0.15, yb + 0.32, 0.95, 0.3, "pomps()", GREEN, size=10.5)
-    text(s, 0.15, yc - 0.36, 1.85, 0.28, mono("islamophobie_p", size=10.5, color=ia, align="start"))
-    text(s, 0.15, yc - 0.12, 1.85, 0.28, mono("populismus_p", size=10.5, color=pb, align="start"))
+    text(s, 0.15, yc - 0.36, 1.85, 0.28, mono(tr("islamophobie_p"), size=10.5, color=ia, align="start"))
+    text(s, 0.15, yc - 0.12, 1.85, 0.28, mono(tr("populismus_p"), size=10.5, color=pb, align="start"))
     lineal(s, x0, yc, 6 * u, 0, 100, step=25)
     marke(s, x0 + 0.519 * 6 * u, yc, "51.9", ia, rechts=False)
     marke(s, x0 + 0.600 * 6 * u, yc, "60.0", pb)
@@ -383,10 +404,12 @@ def pomps_fig():
 
 # 5.9 Pipeline aus dem Chunk `full-pipeline` (Nummern wie dort) und R/prep.R ----------------------
 def pipeline():
-    s = Canvas(7.6, 3.55)
-    schritte = [("einlesen", "read_spss()", "4.3"), ("mm02, mm05 umpolen", "rec()", "5.3.3"),
-                ("pa29 bis pa35 umpolen", "rec()", "5.7.3"), ("Skala islamophobie", "row_means()", "5.7.1"),
-                ("Skala populismus", "row_means()", "5.7.3"), ("POMPS-Versionen", "pomps()", "5.8")]
+    en = sprache.aktuell() == "en"           # englisch: set_na() als zweite Funktion unter Schritt 1
+    ex = 0.2 if en else 0                    # Platz für die zweite Funktion
+    s = Canvas(7.6, 3.55 + ex)
+    schritte = [(tr("einlesen"), "read_spss()", "4.3"), (tr("mm02, mm05 umpolen"), "rec()", "5.3.3"),
+                (tr("pa29 bis pa35 umpolen"), "rec()", "5.7.3"), (tr("Skala islamophobie"), "row_means()", "5.7.1"),
+                (tr("Skala populismus"), "row_means()", "5.7.3"), (tr("POMPS-Versionen"), "pomps()", "5.8")]
     ly, x0, dx = 0.3, 0.72, 1.2
     mitte = x0 + 2.5 * dx
     connector(s, x0, ly, x0 + 5 * dx, ly, color=INK, width=2.0)
@@ -395,22 +418,24 @@ def pipeline():
         numdot(s, cx - 0.16, ly - 0.16, k + 1, fill=GREEN, d=0.32, size=11)
         text(s, cx - 0.6, ly + 0.25, 1.2, 0.45, [P(R(was, size=11, bold=True), align=C, ls=1.0)])
         text(s, cx - 0.6, ly + 0.72, 1.2, 0.25, mono(fn, size=10, color=GREEN))
-        text(s, cx - 0.6, ly + 0.95, 1.2, 0.25, mono(abschnitt, size=10, color=GRAY, bold=False))
-    hl = ly + 1.32
+        if en and k == 0:
+            text(s, cx - 0.6, ly + 0.92, 1.2, 0.25, mono("set_na()", size=10, color=GREEN))
+        text(s, cx - 0.6, ly + 0.95 + ex, 1.2, 0.25, mono(abschnitt, size=10, color=GRAY, bold=False))
+    hl = ly + 1.32 + ex
     connector(s, x0, hl, x0 + 5 * dx, hl, color=CARDLINE, width=1.25)
     for k in range(6):
         connector(s, x0 + k * dx, hl - 0.08, x0 + k * dx, hl, color=CARDLINE, width=1.25)
-    tw, ty = 1.3, 2.3
+    tw, ty = 1.3, 2.3 + ex
     tx = mitte - tw / 2
     down_arrow(s, mitte - 0.13, hl + 0.05, w=0.26, h=ty - hl - 0.12, color=GREEN)
     rect(s, tx, ty, tw, 0.5, WHITE, CARDLINE, 0.75)
     text(s, tx, ty, tw, 0.5, mono("R/prep.R", size=11), anchor="middle")
-    text(s, tx - 0.4, ty + 0.58, tw + 0.8, 0.25, notiz("Skript im Projektordner", size=10.5))
+    text(s, tx - 0.4, ty + 0.58, tw + 0.8, 0.25, notiz(tr("Skript im Projektordner"), size=10.5))
     bx = tx + tw + 0.75
     arrow(s, tx + tw + 0.15, ty + 0.11, w=0.45, h=0.28, color=GRAY)
     bh = codebox(s, bx, ty - 0.27, 7.5 - bx, ["library(tidyverse)", "library(mariposa)", 'source("R/_common.R")',
                                               'source("R/prep.R")'], size=10)
-    text(s, bx - 0.2, ty - 0.27 + bh + 0.08, 7.5 - bx + 0.4, 0.25, notiz("Setup-Chunk in Kap. 6 bis 9", size=10.5))
+    text(s, bx - 0.2, ty - 0.27 + bh + 0.08, 7.5 - bx + 0.4, 0.25, notiz(tr("Setup-Chunk in Kap. 6 bis 9"), size=10.5))
     return s
 
 # 5.4 std() und center() aus den Chunks `std-center` und `center` (eval=FALSE): die erste und die dritte Person der
@@ -445,7 +470,7 @@ def std_fig():
             text(s, X(a) - 1.02, y - 0.4, 0.9, 0.28, mono(werte[k], size=11, color=tinte, align=RT))
     # Mittelwert und SD auf dem ersten Lineal
     down_arrow(s, X(mw) - 0.09, y1 - 0.33, w=0.18, h=0.28, color=DARKORANGE)
-    text(s, X(mw) + 0.12, y1 - 0.4, 1.6, 0.28, [P(R("Mittelwert ", size=10.5, italic=True, color=DARKORANGE),
+    text(s, X(mw) + 0.12, y1 - 0.4, 1.6, 0.28, [P(R(tr("Mittelwert "), size=10.5, italic=True, color=DARKORANGE),
                                                   R("52.51", font=MONO, size=11, bold=True, color=DARKORANGE))])
     yb = y1 + 0.47
     connector(s, X(mw), yb, X(mw + sd), yb, color=GRAY, width=1.25)
@@ -486,8 +511,8 @@ def join_fig():
     ex, ax, mx, bx = 3.05, 3.7, 5.2, 6.55
     mwid, bwid = 0.75, 0.9
     top = 2.0
-    for x, w, name in [(ex, 0.55, "eastwest"), (ax, 0.55, "age"), (mx, mwid, "muslim_anteil"),
-                       (bx, bwid, "bip_pro_kopf")]:
+    for x, w, name in [(ex, 0.55, "eastwest"), (ax, 0.55, "age"), (mx, mwid, tr("muslim_anteil")),
+                       (bx, bwid, tr("bip_pro_kopf"))]:
         kopf(s, x, w, top - 0.33, name, size=10.5)
     for i, (e, a) in enumerate(reihen):
         y = top + i * pitch
@@ -507,8 +532,8 @@ def join_fig():
     # kontext_bl oben rechts
     kx, ktop = 4.15, 0.45
     kopf(s, kx, 0.55, 0.12, "eastwest", size=10.5)
-    kopf(s, mx, mwid, 0.12, "muslim_anteil", size=10.5)
-    kopf(s, bx, bwid, 0.12, "bip_pro_kopf", size=10.5)
+    kopf(s, mx, mwid, 0.12, tr("muslim_anteil"), size=10.5)
+    kopf(s, bx, bwid, 0.12, tr("bip_pro_kopf"), size=10.5)
     for i, (e, (m, b)) in enumerate([("1", west), ("2", ost)]):
         y = ktop + i * pitch
         stein(s, kx, y, 0.55, h, "num", e, size=11)
@@ -517,7 +542,10 @@ def join_fig():
     kunten = ktop + pitch + h
     platte(s, kx - 0.1, kunten + 0.1, bx + bwid + 0.1 - (kx - 0.1))
     outline(s, kx - 0.1, ktop + pitch - 0.09, bx + bwid + 0.1 - (kx - 0.1), h + 0.13, color=ORANGE, lw=1.75)
-    schild(s, kx - 1.5, ktop + pitch / 2 - 0.04, "kontext_bl", w=1.25)
+    if sprache.aktuell() == "en":                           # längerer Name: Schild breiter, weiter links
+        schild(s, kx - 1.95, ktop + pitch / 2 - 0.04, tr("kontext_bl"), w=1.7)
+    else:
+        schild(s, kx - 1.5, ktop + pitch / 2 - 0.04, "kontext_bl", w=1.25)
     for x, w in [(mx, mwid), (bx, bwid)]:
         down_arrow(s, x + w / 2 - 0.11, kunten + 0.25, w=0.22, h=top - 0.36 - (kunten + 0.25), color=GREEN)
     # allbus links, Reihen auf derselben Höhe wie im Ergebnis
@@ -533,7 +561,7 @@ def join_fig():
     arrow(s, 2.0, mitte - 0.14, w=0.8, h=0.28, color=GREEN)
     text(s, 1.8, mitte - 0.45, 1.2, 0.28, mono("left_join()", size=10.5, color=GREEN))
     text(s, 0.15, base + 0.2, 7.3, 0.28,
-         codezeile('allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = "eastwest")', size=10.5))
+         codezeile(tr('allbus_mit_kontext <- allbus |> left_join(kontext_bl, by = "eastwest")'), size=10.5))
     return s
 
 
@@ -592,7 +620,7 @@ def pivot_longer_fig():
     ax = lx + iw + 0.12
     ltop = 0.62
     kopf(s, lx, iw, 0.08, "item", "<chr>", size=10.5)
-    kopf(s, ax, aw, 0.08, "antwort", "<dbl>", size=10.5)
+    kopf(s, ax, aw, 0.08, tr("antwort"), "<dbl>", size=10.5)
     werte = person1 + ["", ""]
     ly = [ltop + i * pitch + (fuge if i >= 6 else 0) for i in range(8)]
     for i, y in enumerate(ly):
@@ -608,7 +636,7 @@ def pivot_longer_fig():
     text(s, pa - 0.1, mitte + 0.2, lx - 0.25 - pa + 0.2, 0.28, mono("pivot_longer()", size=10.5, color=GREEN))
     text(s, 0.15, 2.0, 5.0, 0.9, code(["pivot_longer(cols = everything(),",
                                        '             names_to = "item",',
-                                       '             values_to = "antwort")'], size=10.5))
+                                       tr('             values_to = "antwort")')], size=10.5))
     return s
 
 
@@ -616,7 +644,7 @@ def pivot_longer_fig():
 def pivot_wider_fig():
     s = Canvas(7.8, 3.7)
     h, pitch = 0.28, 0.34
-    alt, neu = "ALTE BUNDESLAENDER", "NEUE BUNDESLAENDER"
+    alt, neu = tr("ALTE BUNDESLAENDER"), tr("NEUE BUNDESLAENDER")
     mw = {(alt, "mm01"): "3.19", (alt, "mm03"): "3.97", (alt, "mm06"): "4.14",
           (neu, "mm01"): "4.01", (neu, "mm03"): "4.63", (neu, "mm06"): "4.58"}
     items = ["mm01", "mm03", "mm06"]
@@ -627,7 +655,7 @@ def pivot_wider_fig():
     top = 0.72
     kopf(s, ex, ew, 0.12, "eastwest", "<fct>", size=10.5)
     kopf(s, ix, w, 0.12, "item", "<chr>", size=10.5)
-    kopf(s, mx, w, 0.12, "mw", "<dbl>", size=10.5)
+    kopf(s, mx, w, 0.12, tr("mw"), "<dbl>", size=10.5)
     for i, (r, it, m) in enumerate(lang):
         y = top + i * pitch
         stein(s, ex, y, ew, h, "txt", r, size=10)
@@ -659,7 +687,7 @@ def pivot_wider_fig():
     platte(s, wx - 0.06, wbase, sx[1] + ew + 0.06 - (wx - 0.06))
     mitte = wtop + pitch + h / 2
     arrow(s, pa, mitte - 0.14, w=0.5, h=0.28, color=GREEN)
-    text(s, 0.12, base + 0.57, 7.5, 0.28, code(["pivot_wider(names_from = eastwest, values_from = mw)"], size=10.5))
+    text(s, 0.12, base + 0.57, 7.5, 0.28, code([tr("pivot_wider(names_from = eastwest, values_from = mw)")], size=10.5))
     return s
 
 
@@ -668,15 +696,15 @@ def pivot_wider_fig():
 def row_count_fig():
     s = Canvas(7.75, 2.15)
     items = ["mm01", "mm02", "mm03", "mm04", "mm05", "mm06"]
-    reihen = [("1", ["5", "3", "4", "2", "6", "2"], "0", "keine 7"),
-              ("2", ["", "", "", "", "", ""], "0", "keine Antwort"),
-              ("95", ["7", "1", "6", "7", "4", "7"], "3", "dreimal 7")]
+    reihen = [("1", ["5", "3", "4", "2", "6", "2"], "0", tr("keine 7")),
+              ("2", ["", "", "", "", "", ""], "0", tr("keine Antwort")),
+              ("95", ["7", "1", "6", "7", "4", "7"], "3", tr("dreimal 7"))]
     h, pitch, top, w, step, ix = 0.32, 0.4, 0.62, 0.52, 0.62, 1.0
     kopf(s, 0.15, 0.6, 0.15, "respid")
     for j, it in enumerate(items):
         kopf(s, ix + j * step, w, 0.15, it, size=10.5)
     rx, rw = 5.95, 0.6
-    kopf(s, rx, rw, 0.08, "n_extrem", "<int>", size=10.5)
+    kopf(s, rx, rw, 0.08, tr("n_extrem"), "<int>", size=10.5)
     for i, (rid, werte, n, notiz_) in enumerate(reihen):
         y = top + i * pitch
         text(s, 0.15, y, 0.6, h, mono(rid, size=10.5, color=GRAY, align=RT), anchor="middle")

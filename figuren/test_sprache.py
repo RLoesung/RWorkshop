@@ -57,18 +57,14 @@ class SpracheTest(unittest.TestCase):
         import kap02
         import kap03
         import kap04
-        namen = {**kap01.FIGUREN, **kap02.FIGUREN, **kap03.FIGUREN, **kap04.FIGUREN}     # sprachfähige Module
+        import kap05
+        namen = {**kap01.FIGUREN, **kap02.FIGUREN, **kap03.FIGUREN, **kap04.FIGUREN, **kap05.FIGUREN}     # sprachfähige Module
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(build.main(["--en"], ziel=tmp), 0)
             self.assertEqual(sorted(os.listdir(tmp)), sorted(f"{n}.svg" for n in namen))
-        for modul in (kap01, kap02, kap03, kap04):
+        for modul in (kap01, kap02, kap03, kap04, kap05):
             self.assertTrue(modul.SPRACHFAEHIG)
         self.assertEqual(sprache.aktuell(), "de")
-
-    def test_unmarkierte_module_nicht_in_en(self):
-        namen = build.alle_figuren(nur_sprachfaehig=True)
-        import kap05
-        self.assertFalse(set(kap05.FIGUREN) & set(namen))
 
     def test_englische_svgs_ohne_deutsche_reste(self):
         import re

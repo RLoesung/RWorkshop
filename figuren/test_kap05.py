@@ -1,5 +1,6 @@
 """Tests für die Abbildungen von Kap. 5 „Daten transformieren und Skalen bilden“ (BILDER.md §6)."""
 import os
+import re
 import sys
 import unittest
 import xml.etree.ElementTree as ET
@@ -65,6 +66,63 @@ ERWARTET_KAP05 = {
                         "values_from"],
     "k05-row-count": ["respid", "1", "2", "95", "mm01", "mm02", "mm03", "mm04", "mm05", "mm06", "n_extrem", "<int>",
                       "0", "3", "7", "row_count()", "count = 7"],
+}
+
+
+# Englische Fassung: gleiche Schlüssel; Zahlen, Code und Funktionsnamen gleich, eigene Namen nach STYLE.md §13,
+# Wertelabels aus ZA8833 (ALLBUS2023_en.sav), Missing-Label von dicho() aus der englischen Ausgabe
+ERWARTET_KAP05_EN = {
+    "k05-mutate": ["age", "<dbl+lbl>", "birth_year", "<dbl>", "50", "51", "69", "1973", "1972", "1954",
+                   "2023 - 50", "2023 - 51", "2023 - 69", "mutate", "birth_year = 2023 - age", "new tower",
+                   "allbus |> select(age) |> mutate(birth_year = 2023 - age) |> head(3)"],
+    "k05-zuweisung": ["WITHOUT <-", "WITH <-", "allbus |>", "allbus <- allbus |>",
+                      "mutate(birth_year = 2023 - age)", "allbus", "5,246 × 579", "5,246 × 580", "age",
+                      "birth_year", "50", "51", "69", "1973", "1972", "1954", "shown only", "saved"],
+    "k05-case-when": ["WRONG", "RIGHT", 'age >= 18 ~ "adult"', 'age >= 65 ~ "senior"', '.default = "under 18"',
+                      '"senior" is never reached', "50", "51", "69", "72", "18", "adult", "senior", "under 18"],
+    "k05-summarise": ["eastwest", "age", "OLD FEDERAL STATES", "NEW FEDERAL STATES", "50", "51", "69", "72",
+                      "44", "60", "mean_age", "51.7", "54.3", "3567 cases", "1679 cases", "mean()",
+                      "group_by(eastwest) |> summarise(…, mean_age = mean(age, na.rm = TRUE))"],
+    "k05-rec": ["educ", "1", "2", "3", "4", "5", "6", "7", "NO CERTIFICATE", "LOWEST LEVEL", "INTERMEDIARY LEVEL",
+                "QUALI.UNIV.APPL.SCI.", "QUALI.FOR UNIVERSITY", "OTHER SCHOOL CERTIF.", "STILL AT SCHOOL",
+                "1:2=1 [low]", "3=2 [medium]", "4:5=3 [high]", "else=NA", "low", "medium", "high", "982", "1639",
+                "2472", "153", "<fct>", "mutate(",
+                '  educ = rec(educ, rules = "1:2=1 [low]; 3=2 [medium]; 4:5=3 [high]; else=NA",',
+                "             as_factor = TRUE)"],
+    "k05-dicho": ["age", "age_d", "72", "69", "51", "50", "18", "1", "0", "dicho(50)", "2942", "2281",
+                  "CANNOT BE GENERATED", "23", "up to 50", "above 50",
+                  'allbus |> mutate(age_d = rec(age, rules = "dicho(50)")) |> count(age_d)'],
+    "k05-umpolen": ["mm02", "mm02r", "1", "2", "3", "4", "5", "6", "7", "COMPLETELY DISAGREE", "COMPLETELY AGREE",
+                    "NAP: SPLIT", "954", "515", "494", "629", "350", "235", "227", "1842", "8 - x",
+                    'mutate(mm02r = rec(mm02, rules = "rev"))', "allbus |> count(mm02, mm02r)"],
+    "k05-skala": ["respid", "mm01", "mm02r", "mm03", "mm04", "mm05r", "mm06", "islamophobia", "1", "53", "120",
+                  "5", "4", "2", "6", "3", "3.33", "3.4", "min_valid = 5", "6 valid", "5 valid", "4 valid"],
+    "k05-polung": ["mm01", "pa29", "pa29r", "COMPLETELY DISAGREE", "COMPLETELY AGREE", "TEND TO AGREE",
+                   "A BIT OF BOTH", "TEND TO DISAGREE", "1", "5", "7", "high = Islamophobic", "low = populist",
+                   "high = populist", 'mutate(pa29r = rec(pa29, rules = "rev"))'],
+    "k05-pomps": ["islamophobia", "populism", "islamophobia_p", "populism_p", "4.11", "3.4", "51.9", "60.0",
+                  "0", "25", "50", "75", "100", "1", "5", "7", "pomps()"],
+    "k05-pipeline": ["1", "2", "3", "4", "5", "6", "R/prep.R", 'source("R/prep.R")', "4.3", "5.3.3", "5.7.1",
+                     "5.7.3", "5.8", "read_spss()", "set_na()", "row_means()", "pomps()", "read in",
+                     "reverse-code", "mm02, mm05", "pa29 to pa35", "islamophobia", "scale",
+                     "populism scale", "POMP versions", "Script in the project folder",
+                     "Setup chunk in Ch. 6 to 9"],
+    "k05-std": ["age", "age_c", "age_z", "center()", "std()", "50", "69", "52.51", "18.25", "-2.51", "16.49",
+                "-0.138", "0.903", "30", "40", "60", "70", "-20", "-10", "0", "10", "20", "-1", "1",
+                "- 52.51", "/ 18.25", "Mean "],
+    "k05-join": ["allbus", "region_context", "allbus_with_context", "eastwest", "age", "muslim_share",
+                 "gdp_per_capita", "1", "2", "50", "51", "69", "72", "7.2", "1.4", "45000", "32000", "left_join()",
+                 'allbus_with_context <- allbus |> left_join(region_context, by = "eastwest")'],
+    "k05-join-familie": ERWARTET_KAP05["k05-join-familie"],
+    "k05-pivot-longer": ["mm01", "mm02r", "mm03", "mm04", "mm05r", "mm06", "item", "response", "<chr>", "<dbl>",
+                         "5", "4", "2", "pivot_longer()", "5,246 × 6", "31,476 × 2",
+                         "pivot_longer(cols = everything(),", 'names_to = "item",', 'values_to = "response")'],
+    "k05-pivot-wider": ["eastwest", "item", "m", "<fct>", "<chr>", "<dbl>", "OLD FEDERAL STATES",
+                        "NEW FEDERAL STATES", "mm01", "mm03", "mm06", "3.19", "3.97", "4.14", "4.01", "4.63", "4.58",
+                        "pivot_wider()", "pivot_wider(names_from = eastwest, values_from = m)", "names_from",
+                        "values_from"],
+    "k05-row-count": ["respid", "1", "2", "95", "mm01", "mm02", "mm03", "mm04", "mm05", "mm06", "n_extreme",
+                      "<int>", "0", "3", "7", "row_count()", "count = 7", "no 7", "no answer", "three 7s"],
 }
 
 
@@ -201,6 +259,63 @@ class TestKap05(unittest.TestCase):
         self.assertEqual(grau, sorted(["5", "3", "4", "2", "6", "2", "1", "6", "4"]))
         self.assertEqual(sorted(t for t, _, _, f in pos if f == STEIN["num"][1]), ["0", "0", "3", "7", "7", "7"])
         self.assertEqual(leere_steine(svg), 6)
+
+    def test_en_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP05_EN), set(ERWARTET_KAP05))
+
+    def test_englische_texte(self):
+        import kap05
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap05.FIGUREN.items():
+                svg = fn().svg()
+                breite = float(ET.fromstring(svg).get("viewBox").split()[2])
+                self.assertLessEqual(breite, 768, name)
+                texte = alle_texte(svg)
+                for wert in ERWARTET_KAP05_EN[name]:
+                    self.assertIn(wert, texte, f"{name}: {wert}")
+        finally:
+            sprache.setze("de")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap05
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap05.FIGUREN.items():
+                self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+        finally:
+            sprache.setze("de")
+
+    def test_en_ohne_deutsche_namen(self):
+        """Keine deutschen Namen aus STYLE.md §13 in den englischen Abbildungen."""
+        import kap05
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap05.FIGUREN.items():
+                texte = alle_texte(fn().svg())
+                for alt in ("geburtsjahr", "durchschnitt_alter", "kontext_bl", "muslim_anteil", "bip_pro_kopf",
+                            "allbus_mit_kontext", "antwort", "islamophobie", "populismus", "n_extrem", "niedrig"):
+                    self.assertIsNone(re.search(rf"\b{alt}\b", texte), f"{name}: {alt}")
+        finally:
+            sprache.setze("de")
+
+    def test_en_schluessel_alter_unveraendert(self):
+        """Kap. 3 und Kap. 5 teilen en.EN; Kap. 5 darf den Eintrag alter -> age nicht anfassen."""
+        import en
+        self.assertEqual(en.EN["alter"], "age")
+
+    def test_deutsch_unveraendert(self):
+        import kap05
+        import sprache
+        sprache.setze("de")
+        for name, fn in kap05.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP05[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":

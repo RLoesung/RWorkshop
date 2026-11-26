@@ -328,6 +328,7 @@ Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code se
 | `mittelwerte_long` | `means_long` | 5 |
 | `mw` (Spalte oder Einzelwert „Mittelwert“) | `m` | 5, 7, 9 |
 | `skala_4` | `scale_4` | 5 |
+| `n_extrem` (Spalte in der Abbildung zu `row_count()`) | `n_extreme` | 5 |
 | `n_extrem` | `n_extreme` | 5 |
 | `polit_effizienz` | `pol_efficacy` | 5 |
 | `vier` | `four` | 6 |
@@ -398,10 +399,11 @@ Die Dummies von `sex` (`sexFRAU`, `sexDIVERS` in Kap. 9) übersetzt du nicht sel
 
 Wo R Stufen alphabetisch ordnet (`factor()` ohne `levels` in Kap. 3), ändert sich mit den englischen Wörtern die Reihenfolge: `high`, `low`, `medium` statt `hoch`, `mittel`, `niedrig`, und `female`, `male`, `non-binary` statt `Divers`, `Frau`, `Mann`. Text und Lesart folgen dann der englischen Ausgabe.
 
-**Beispielnamen für Dateien.** Dateien, die es im Buchprojekt gibt oder die auf den RStudio-Bildschirmfotos stehen, behalten ihren Namen: `ALLBUS2023.sav`, `R/prep.R`, `R/_common.R`, die Kapiteldateien, `01-erste_schritte.qmd` und der Projektordner `R-Workshop` (`ENGLISCH-DESIGN.md` §5.7). Namen für Dateien, die die Lesenden in einem Beispiel selbst anlegen, werden englisch:
+**Beispielnamen für Dateien.** Dateien, die es im Buchprojekt gibt oder die auf den RStudio-Bildschirmfotos stehen, behalten ihren Namen: `ALLBUS2023.sav`, `R/prep.R`, `R/_common.R`, die Kapiteldateien und der Projektordner `R-Workshop` (`ENGLISCH-DESIGN.md` §5.7). Namen für Dateien, die die Lesenden in einem Beispiel selbst anlegen, werden englisch:
 
 | Deutsch | Englisch | Kapitel |
 |---|---|---|
+| `01-erste_schritte.qmd` | `01-first_steps.qmd` in Text und Abbildungen; die RStudio-Bildschirmfotos behalten den deutschen Namen, Kap. 1 sagt das in einem Satz | 1 |
 | `mein-projekt/`, `mein-projekt.Rproj` | `my-project/`, `my-project.Rproj` | 2 |
 | `analyse.qmd` | `analysis.qmd` | 2 |
 | `literatur.bib` | `references.bib` | 2 |
