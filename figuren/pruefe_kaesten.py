@@ -22,6 +22,14 @@ from collections import Counter
 BASIS = "9267f80"
 OFFEN = {"Vorsicht": "warning", "SPSS → R": "tip", "Forschungsjournal": "note"}
 ZU = {"Hintergrund": "note", "mariposa-Tipp": "important"}
+# Englische Kastenwörter (STYLE.md §13), gleiche Klassen wie die deutschen
+OFFEN_EN = {"Caution": "warning", "SPSS → R": "tip", "Research journal": "note"}
+ZU_EN = {"Background": "note", "mariposa tip": "important"}
+LEHRFREI = {"de": r'title="(Übung|Lösung|Auflösung)', "en": r'title="(Exercise|Solution|Answer)'}
+
+
+def sprache(pfad):
+    return "en" if pfad.endswith(".en.qmd") else "de"
 
 
 def zerlege(text):
@@ -82,33 +90,36 @@ def fett(text):
 
 def main(pfad):
     text = open(pfad, encoding="utf-8").read()
-    alt = subprocess.run(["git", "show", f"{BASIS}:{pfad}"], capture_output=True, text=True).stdout
+    sp = sprache(pfad)
+    offen, zu, frei = (OFFEN_EN, ZU_EN, LEHRFREI["en"]) if sp == "en" else (OFFEN, ZU, LEHRFREI["de"])
+    # Die englische Fassung hat keinen Stand vor dem Umbau: nur die Kastenregeln prüfen
+    alt = "" if sp == "en" else subprocess.run(["git", "show", f"{BASIS}:{pfad}"], capture_output=True, text=True).stdout
     zeilen, kaesten, chunks, ueb = zerlege(text)
     _, kaesten_alt, chunks_alt, ueb_alt = zerlege(alt)
     fehler = []
     lehr = []
     for k in kaesten:
-        if re.search(r'title="(Übung|Lösung|Auflösung)', k["attr"]):
+        if re.search(frei, k["attr"]):
             continue
         lehr.append(k)
         erste = next((z for z in k["innen"] if z.strip()), "")
         zeile = k["start"] + 1
         if 'collapse="true"' in k["attr"]:
-            m = re.match(r"^## (Hintergrund|mariposa-Tipp): \S", erste)
+            m = re.match(r"^## (" + "|".join(map(re.escape, zu)) + r"): \S", erste)
             if not m:
                 fehler.append(f"Z.{zeile}: zugeklappter Kasten braucht als erste Zeile '## Hintergrund: …' oder '## mariposa-Tipp: …', ist: {erste[:60]!r}")
-            elif ZU[m.group(1)] != k["klasse"]:
-                fehler.append(f"Z.{zeile}: {m.group(1)} gehört in .callout-{ZU[m.group(1)]}, ist .callout-{k['klasse']}")
+            elif zu[m.group(1)] != k["klasse"]:
+                fehler.append(f"Z.{zeile}: {m.group(1)} gehört in .callout-{zu[m.group(1)]}, ist .callout-{k['klasse']}")
             k["typ"] = m.group(1) if m else "?"
         else:
-            m = re.match(r"^\*\*(Vorsicht|SPSS → R|Forschungsjournal)[:.]", erste)
+            m = re.match(r"^\*\*(" + "|".join(map(re.escape, offen)) + r")[:.]", erste)
             if not m:
                 fehler.append(f"Z.{zeile}: offener Kasten muss mit **Vorsicht: …**, **SPSS → R: …** oder **Forschungsjournal: …** beginnen, ist: {erste[:70]!r}")
                 k["typ"] = "?"
             else:
                 k["typ"] = m.group(1)
-                if OFFEN[m.group(1)] != k["klasse"]:
-                    fehler.append(f"Z.{zeile}: {m.group(1)} gehört in .callout-{OFFEN[m.group(1)]}, ist .callout-{k['klasse']}")
+                if offen[m.group(1)] != k["klasse"]:
+                    fehler.append(f"Z.{zeile}: {m.group(1)} gehört in .callout-{offen[m.group(1)]}, ist .callout-{k['klasse']}")
     for a, b in zip(lehr, lehr[1:]):
         if not "\n".join(zeilen[a["ende"] + 1:b["start"]]).strip():
             fehler.append(f"Z.{a['start'] + 1} und Z.{b['start'] + 1}: zwei Lehrkästen direkt untereinander ({a.get('typ')} / {b.get('typ')})")
@@ -122,7 +133,7 @@ def main(pfad):
         fehler.append(f"Code-Chunks geändert. Fehlen: {[c.splitlines()[0] + ' …' + c.splitlines()[1][:40] if len(c.splitlines()) > 1 else c for c in weg]} | neu: {[c.splitlines()[0] for c in neu]}")
     typen = Counter(k.get("typ") for k in lehr)
     zu = sum(1 for k in lehr if 'collapse="true"' in k["attr"])
-    lehr_alt = [k for k in kaesten_alt if not re.search(r'title="(Übung|Lösung|Auflösung)', k["attr"])]
+    lehr_alt = [k for k in kaesten_alt if not re.search(frei, k["attr"])]
     print(f"{pfad}: Lehrkästen {len(lehr_alt)} -> {len(lehr)} (offen {len(lehr) - zu}, zu {zu}) | Typen {dict(typen)} | fett {len(fett(alt))} -> {len(fett(text))}")
     for f in fehler:
         print("  FEHLER", f)

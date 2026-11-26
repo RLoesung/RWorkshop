@@ -329,7 +329,6 @@ Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code se
 | `mw` (Spalte oder Einzelwert „Mittelwert“) | `m` | 5, 7, 9 |
 | `skala_4` | `scale_4` | 5 |
 | `n_extrem` (Spalte in der Abbildung zu `row_count()`) | `n_extreme` | 5 |
-| `n_extrem` | `n_extreme` | 5 |
 | `polit_effizienz` | `pol_efficacy` | 5 |
 | `vier` | `four` | 6 |
 | `farben` | `color_values` | 6 |
