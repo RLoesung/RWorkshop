@@ -24,6 +24,7 @@ Durch alle Kapitel zieht sich eine Mini-Studie mit dem **ALLBUS 2023**:
 | 7 | Uni- und bivariate Analyse | Gewichtung, Inferenz, Kreuztabellen, Korrelation, t-Test, ANOVA |
 | 8 | Latente Strukturen | KMO, EFA, Cronbachs α und McDonalds ω, CFA-Ausblick |
 | 9 | Erklärungsmodelle | lineare und logistische Regression, VIF, Residuen, ANCOVA, AME |
+| 10 | Mit KI-Assistenten arbeiten | Kontext für Assistenten, Antworten prüfen, Datenschutz nach den GESIS-Bedingungen |
 
 Jedes Kapitel folgt dem Dreischritt **Frage → Code → Lesart** und endet mit Übungen (Lösungen zum Aufklappen) und einer Mini-Forschungsfrage.
 
@@ -39,7 +40,7 @@ Jedes Kapitel folgt dem Dreischritt **Frage → Code → Lesart** und endet mit 
   ```
 
   Das Buch ist auf **mariposa ≥ 0.7.4** abgestimmt. Ältere Versionen liefern an einigen Stellen andere Ausgaben oder brechen ab.
-- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Er liegt **nicht** im Repository, denn wir geben die Daten nicht weiter. Du lädst sie selbst aus dem [GESIS-Datenbestandskatalog, Studiennummer ZA8901](https://search.gesis.org/research_data/ZA8901) herunter. Dafür brauchst du einen kostenlosen GESIS-Account. `.gitignore` schließt `.sav`- und `.dta`-Dateien aus, damit sie nicht versehentlich committet werden.
+- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Er liegt **nicht** im Repository, denn wir geben die Daten nicht weiter. Du lädst sie selbst aus dem [GESIS-Datenbestandskatalog, Studiennummer ZA8830](https://search.gesis.org/research_data/ZA8830) herunter. Dafür brauchst du einen kostenlosen GESIS-Account. `.gitignore` schließt `.sav`- und `.dta`-Dateien aus, damit sie nicht versehentlich committet werden.
 
 **Rendern**
 
@@ -56,7 +57,7 @@ Die Online-Fassung liefert GitHub Pages direkt aus `docs/` auf `main` aus. Nach 
 
 ```
 ├── index.qmd                 Vorwort (Kap. 0)
-├── 01-RStudio.qmd … 09-Erklaerungsmodelle.qmd   Kapitel
+├── 01-RStudio.qmd … 10-KI-Assistenten.qmd   Kapitel
 ├── R/
 │   ├── _common.R             gemeinsames ggplot-Theme (theme_rworkshop)
 │   └── prep.R                Datenpräp-Pipeline der Mini-Studie (Kap. 5)

@@ -10,8 +10,8 @@ import re
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 # Steinfarben je Kapitel, wie in theme.scss (body[data-kapitel])
-FARBEN = ["#FFE7A3", "#BFE3F7", "#CDEFD9", "#DCD6F8", "#FFD2BC", "#F7C9DA", "#C6ECE8", "#FFE7A3", "#E6D3F2", "#D8EBC4"]
-FARBEN2 = ["#EFC867", "#86B9DE", "#8FCBA6", "#A79FE2", "#F0A27E", "#E39AB6", "#86CBC3", "#EFC867", "#BE9EDB", "#A8CC85"]
+FARBEN = ["#FFE7A3", "#BFE3F7", "#CDEFD9", "#DCD6F8", "#FFD2BC", "#F7C9DA", "#C6ECE8", "#FFE7A3", "#E6D3F2", "#D8EBC4", "#FFC9C2"]
+FARBEN2 = ["#EFC867", "#86B9DE", "#8FCBA6", "#A79FE2", "#F0A27E", "#E39AB6", "#86CBC3", "#EFC867", "#BE9EDB", "#A8CC85", "#EC9286"]
 KOPF = "## Die Kapitel im Überblick {-}"
 DANACH = "## Wie liest du dieses Buch? {-}"
 
@@ -24,7 +24,7 @@ def _inline(t):
 
 def karten():
     out = []
-    for i, f in enumerate(sorted(glob.glob(os.path.join(ROOT, "0[1-9]-*.qmd"))), start=1):
+    for i, f in enumerate(sorted(glob.glob(os.path.join(ROOT, "[0-9][0-9]-*.qmd"))), start=1):
         zeilen = open(f, encoding="utf-8").read().splitlines()
         titel = re.sub(r"\s*\{#.*\}\s*$", "", zeilen[0].lstrip("# ")).strip()
         ziele, drin = [], False

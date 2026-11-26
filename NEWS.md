@@ -2,6 +2,13 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 26. November 2026 — Neues Kap. 10: Mit KI-Assistenten arbeiten
+
+- Neues Kapitel 10 über das Arbeiten mit KI-Assistenten, unabhängig von einem bestimmten Programm: warum Assistenten bei mariposa Funktionen erfinden, welchen Kontext eine Anfrage braucht (Versionen, die `llms.txt` von mariposa, Variablen, Fehlermeldung), eine Vorlage für Anfragen mit den Regeln des Buchs, wie man Antworten prüft und wie man Probleme mit erfundenen Beispieldaten nachstellt. Dazu vier Übungen.
+- Das Kapitel erklärt, dass die Datennutzungsbedingungen von GESIS (gültig ab 4. Februar 2026) die Verarbeitung von ALLBUS-Daten mit KI-Systemen verbieten, und was man einem Assistenten deshalb zeigen darf. Es rechnet selbst nur mit erfundenen Beispieldaten.
+- Das Vorwort nennt Kap. 10 in der Roadmap, in den Kapitelkarten und in der Liste der Etappen. Die Kapitelkarten zeigen die Lernziele jetzt ohne Fettdruck, wie in den Kapiteln.
+- Korrigiert: Die Studiennummer des ALLBUS 2023 ist ZA8830. Vorwort, Kap. 4 und README verwiesen auf ZA8901, ein Flash Eurobarometer.
+
 ## 26. November 2026 — Weniger Kästen, weniger Fettdruck
 
 - Das Buch hat weniger Kästen: statt 144 noch 92. Es gibt vier Arten (Hintergrund, Vorsicht, SPSS → R, mariposa-Tipp) und das Forschungsjournal am Kapitelanfang und -ende. Vorsicht und SPSS → R stehen offen; Hintergrund und mariposa-Tipp sind zugeklappt und zeigen nur eine farbige Zeile, die sich mit einem Klick öffnet. Zwei Kästen stehen nie mehr direkt untereinander.
