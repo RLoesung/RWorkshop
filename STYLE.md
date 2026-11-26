@@ -302,7 +302,7 @@ Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code se
 | `n_befragte` | `n_respondents` | 3 |
 | `funktionsname(arg1 = wert1, arg2 = wert2, ...)` | `function_name(arg1 = value1, arg2 = value2, ...)` | 3 |
 | `zahlen` | `numbers` | 3 |
-| `alter` (Vektor und Spalte von `befragte`) | `age` | 3 |
+| `alter` (Vektor und Spalte von `befragte`; bewusste Ausnahme von der Zusatz-Regel, weil der ALLBUS in Kap. 3 nicht geladen ist) | `age` | 3 |
 | `namen` | `first_names` | 3 |
 | `geschlecht` (Faktor und Spalte von `befragte`; in Kap. 5 `rename(geschlecht = sex)`) | `gender` | 3, 5 |
 | `befragte` | `respondents` | 3 |
@@ -331,7 +331,7 @@ Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code se
 | `n_extrem` | `n_extreme` | 5 |
 | `polit_effizienz` | `pol_efficacy` | 5 |
 | `vier` | `four` | 6 |
-| `farben` | `colors` (wie `color` im Code des Buchs) | 6 |
+| `farben` | `color_values` | 6 |
 | `sim_mw` | `sim_means` | 7 |
 | `ziehung` | `draw` | 7 |
 | `mittelwert` (Spalte) | `mean` | 7 |
@@ -365,9 +365,11 @@ Diese Tabelle legt die englischen Namen für alles fest, was das Buch im Code se
 | `hilfs_age` | `aux_age` | 9 |
 | `demo_zufrieden` | `demo_satisfied` | 9 |
 | `educ_katniedrig`, `educ_katmittel`, `educ_kathoch` (Koeffizientennamen, die R aus Variable und Stufe bildet) | `educ_catlow`, `educ_catmedium`, `educ_cathigh` | 9 |
-| `beispiel` | `example` | 10 |
+| `beispiel` | `example_data` | 10 |
 | `mittel` (Spalte in `summarise()`) | `mean` | 10 |
 | `ost` | `east` | 10 |
+
+`mean_age` (Kap. 3, 5), `mean` (Kap. 7, 10) und `model` (Kap. 3, 8, 9) kommen mehrfach vor, jeweils als Name, der nur im eigenen Kapitel gilt.
 
 Die Dummies von `sex` (`sexFRAU`, `sexDIVERS` in Kap. 9) übersetzt du nicht selbst; sie heißen so, wie R sie aus den ZA8833-Labels bildet, und werden aus der englischen Ausgabe abgeschrieben.
 
@@ -409,7 +411,7 @@ Wo R Stufen alphabetisch ordnet (`factor()` ohne `levels` in Kap. 3), ändert si
 
 - ALLBUS-Variablennamen, `allbus` und Namen, die aus ALLBUS-Namen mit einem Kürzel entstehen: `mm02r`, `mm05r`, `pa29r` … `pa35r`, `pe05r`, `pe07r`, `age_d`, `age_q`, `age_z`, `age_c`, `allbus_mm`, `allbus_long`, `allbus_dummy`.
 - Namen, die schon englisch oder sprachneutral sind: `var1`, `var2`, `x`, `y`, `a`, `n`, `d`, `z`, `r`, `se`, `sd`, `flags`, `demo`, `id`, `item`, `Item`, `Item1`, `Item2`, `MSA`, `index`, `label`, `region`, `outcome`, `logit`, `intercept`, `slope`, `r2`, `r2_age`, `y_hat`, `lower`, `upper`, `g`, `g_base`, `p`, `p1` … `p3`, `p_rf`, `p_qq`, `p_sl`, `p_rl`, `p_data`, `t_data`, `sim_cor`, `r_label`, `anova_demo`, `means`, `grand_mean`, `cor_obj`, `efa_obj`, `efa_1`, `rel_obj`, `items_unrot`, `items_rot`, `F1`, `F2`, `baseplot`, `ttl`, `sub`, `fit`.
-- Die Kurzformen `islam_orig`, `islam_p`, `pop_orig`, `pop_p`, `islam` und `pop` (Kap. 5) und der latente Faktor `islam` im lavaan-Modell (Kap. 8). Er bleibt wie im Deutschen kürzer als die gemessene Skala `islamophobia`, damit beide nicht verwechselt werden.
+- Die Kurzformen `islam_orig`, `islam_p`, `pop_orig`, `pop_p`, `islam` und `pop` (Kap. 5) und der latente Faktor `islam` im lavaan-Modell (Kap. 8). Die Kurzformen halten die Übersichtstabellen in Kap. 5 schmal; der latente Faktor bleibt wie im Deutschen kürzer als die gemessene Skala `islamophobia`, damit beide nicht verwechselt werden.
 - Personennamen in Beispielen (`"Anna"`, `"Boris"`, `"Carla"`, Anna Schmidt, Boris Müller, `/Users/anna/…`), Funktionsnamen wie `theme_rworkshop()` und das Beispiel der R-Hilfe in Kap. 1 (`xm <- mean(x)`).
 
 ### Ein Kapitel übersetzen
