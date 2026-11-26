@@ -6,21 +6,21 @@ output-file: 01-RStudio.html
 
 ## What this chapter is about
 
-R itself is only an interpreter: a programming language that takes commands and returns answers. To work with R comfortably, you need an **integrated development environment (IDE)**: an editor, a console, a file browser and a variable inspector in one window. RStudio is this environment. In SPSS you reach everything through point-and-click dialogs; in RStudio you write your steps as code in a Quarto document. You can reproduce this code, add comments to it and keep track of its versions.
+R itself is only an interpreter: a programming language that takes commands and returns answers. To work with R comfortably, you need an **integrated development environment (IDE)**: an editor, a console, a file browser and a variable inspector in one window. RStudio provides this environment. In SPSS you reach everything through point-and-click dialogs; in RStudio you write your steps as code in a Quarto document. Your steps are then reproducible, you can comment them, and you can keep them under version control.
 
-If you have not yet installed R and RStudio, you do so in the first two sections. Then open RStudio and work through the following sections alongside the text. By the end, you can find your way around RStudio, install additional packages and create your first project.
+If you have not yet installed R and RStudio, the first two sections show you how. Then open RStudio and follow the remaining sections in it. By the end, you will be able to find your way around RStudio, install additional packages and create your first project.
 
 ::: {.callout-note}
-**Research journal: Where are you in your mini study?** You are just starting. In Chapters 1–3 you set up your tools. From @sec-datenimport onwards you load the 2023 German General Social Survey (ALLBUS), from @sec-datentransformation you build a scale of Islamophobia from six survey items, from @sec-univbivar you test hypotheses, and from @sec-erklaerung you model *which* social and political characteristics best explain Islamophobia. This is the first stage: setting up the workshop.
+**Research journal: Where are you in your mini study?** You are just starting. In Chapters 1–3 you set up your tools. From @sec-datenimport onwards you load the 2023 German General Social Survey (ALLBUS), from @sec-datentransformation you build a scale of Islamophobia from six survey items, from @sec-univbivar you test hypotheses, and from @sec-erklaerung you model *which* social and political characteristics best explain Islamophobia. This is the first stage, in which you set up your workspace.
 :::
 
 ## What you will be able to do after this chapter {-}
 
 - Install R and RStudio in the right order.
 - Use the RStudio interface with confidence.
-- Create a project and work cleanly in it.
+- Create a project and keep your work organised in it.
 - Explain the difference between the console and a Quarto document.
-- Explain what the working directory is and check it with `getwd()`.
+- Understand what the working directory is and check it with `getwd()`.
 - Install, activate and update packages, in particular tidyverse and mariposa.
 - Open the help pages and package vignettes you need.
 - Use the most important keyboard shortcuts.
@@ -57,7 +57,7 @@ The IDE is still called RStudio; the company behind it was renamed Posit in 2022
 
 ## The user interface
 
-The RStudio user interface (graphical user interface, GUI) is divided into four panes (@fig-oberflaeche). As long as no document is open, the console takes up the whole left half. The editor at the top left appears as soon as you open a document (@sec-quarto-dokument).
+RStudio's graphical user interface (GUI) is divided into four panes (@fig-oberflaeche). As long as no document is open, the console takes up the whole left half. The editor at the top left appears as soon as you open a document (@sec-quarto-dokument).
 
 ![The four panes of RStudio. The chunk in the Quarto document `01-first_steps.qmd` creates `var1`. The result appears below the chunk and in the console, and the new object appears in the Environment.](Bilder/figuren/en/k01-oberflaeche.svg){#fig-oberflaeche .lightbox fig-alt="Diagram of an RStudio window with the project R-Workshop, divided into four numbered panes. 1 at the top left, Write and save code: the tab 01-first_steps.qmd with a Run button, containing a grey chunk with the lines var1 <- 2 + 3 and var1 and, below it in green, the result [1] 5. 2 at the bottom left, Try out code, view output: the tabs Console, Terminal and Background Jobs, containing > var1 <- 2 + 3, > var1 and in green [1] 5. 3 at the top right, Objects and command history: the tabs Environment, History, Connections and Tutorial; under Global Environment and Values is var1 with the value 5. 4 at the bottom right, Files, plots, packages, help: the tabs Files, Plots, Packages, Help and Viewer, showing the folder Home > Documents > R-Workshop with the files 01-first_steps.qmd, ALLBUS2023.sav and R-Workshop.Rproj."}
 
@@ -68,7 +68,7 @@ The RStudio user interface (graphical user interface, GUI) is divided into four 
 | 3 top right          | Environment, History, Connections, Tutorial     | Seeing objects, command history, databases  |
 | 4 bottom right       | Files, Plots, Packages, Help, Viewer            | File browser, plots, help, packages         |
 
-The following sections go through the panes one by one. The green number at the top right of each screenshot shows which pane it comes from. The screenshots were taken for the German edition of this book, so the example document in them is called `01-erste_schritte.qmd` instead of `01-first_steps.qmd`.
+The following sections go through the panes one by one. The green number at the top right of each screenshot shows which pane it comes from. The screenshots come from the German edition, so the example document in them is called `01-erste_schritte.qmd`, not `01-first_steps.qmd`.
 
 ### Options for reproducible work
 
@@ -101,7 +101,7 @@ What you type in the console, however, is not saved anywhere permanently. As soo
 
 ### Environment and History
 
-In the `Environment` tab you find the **Global Environment** (drop-down menu). R stores all the objects you have created here: variables, datasets and functions.
+In the `Environment` tab you find the **Global Environment** (drop-down menu). This is where R stores all the objects you have created: variables, datasets and functions.
 
 ```{r, echo=FALSE, fig.align='center', out.width="575px", fig.alt="The Environment tab showing the Global Environment. Under Values is var1 with the value 5. At the top right the green number 3."}
 knitr::include_graphics("Bilder/rstudio/environment.png")
@@ -118,7 +118,7 @@ getwd()
 # [1] "/Users/anna/Documents/R-Workshop"
 ```
 
-You can set the working directory by hand with `setwd("…")`. In practice you *hardly ever* need this if you work with a project (see @sec-projects). Whenever you open a project, the working directory is automatically the project folder. This is the basis for portable documents: there are no absolute paths anywhere, and every file is addressed relative to the project.
+You can set the working directory by hand with `setwd("…")`. In practice you *hardly ever* need this if you work with a project (see @sec-projects). Whenever you open a project, the working directory is automatically the project folder. This is the basis for portable documents: there are no absolute paths anywhere, and every file path is relative to the project folder.
 
 ```{r, echo=FALSE, fig.align='center', out.width="575px", fig.alt="The Files tab in the folder Home, Documents, R-Workshop with the files 01-erste_schritte.qmd, ALLBUS2023.sav and R-Workshop.Rproj. At the top right the green number 4."}
 knitr::include_graphics("Bilder/rstudio/files.png")
@@ -134,7 +134,7 @@ The file name alone is enough because R looks for it in the working directory, a
 
 ## Working with RStudio
 
-Now for the practical part. Three ideas are central here: the project as a container, the Quarto document as the place where you work, and keyboard shortcuts to speed things up.
+The rest of the chapter is practical. Three ideas are central here: the project as a container, the Quarto document as the place where you work, and keyboard shortcuts to speed things up.
 
 ### Creating a project {#sec-projects}
 
@@ -146,7 +146,7 @@ knitr::include_graphics("Bilder/rstudio/projekt.png")
 
 What a project gives you:
 
-- When you open the project (by double-clicking the `.Rproj` file), all files that were open are opened again.
+- When you open the project (by double-clicking the `.Rproj` file), RStudio reopens all the files you had open.
 - You can open as many projects as you like at the same time and switch between them.
 - The working directory is automatically the project folder, so you no longer have to type full paths.
 
@@ -154,9 +154,9 @@ Move your datasets (for example `ALLBUS2023.sav`, once you have it) into the pro
 
 ### Quarto documents: your main working file {#sec-quarto-dokument}
 
-A **Quarto document** is a text file with the extension `.qmd`. It contains text, and in between there are **code chunks** with R code. When you run a chunk, the result appears directly below it. @sec-quarto shows how a Quarto document is structured and how it becomes a finished report.
+A **Quarto document** is a text file with the extension `.qmd`. It contains text with **code chunks** of R code in between. When you run a chunk, the result appears directly below it. @sec-quarto shows how a Quarto document is structured and how it becomes a finished report.
 
-To create a new document, choose `File` → `New File` → `Quarto Document…`. In the dialog, enter a title, leave HTML as the format and untick *Use visual markdown editor*. You then see the source text in the same form as in this book. Delete the example text below the header (everything after the second `---` line) and save the document in the project folder with `cmd`/`ctrl` + `S`, for example as `01-first_steps.qmd`.
+To create a new document, choose `File` → `New File` → `Quarto Document…`. In the dialog, enter a title, leave HTML as the format and untick *Use visual markdown editor*. You then see the source as it is shown in this book. Delete the example text below the header (everything after the second `---` line) and save the document in the project folder with `cmd`/`ctrl` + `S`, for example as `01-first_steps.qmd`.
 
 ::: {.callout-tip}
 **SPSS → R: Syntax file and Quarto document.** The Quarto document plays the role of the SPSS syntax file. You still work *in syntax*, only in a different language, and the text and results sit right next to the code. Most SPSS workflows can be transferred step by step, often in fewer lines.
@@ -187,7 +187,7 @@ knitr::include_graphics("Bilder/rstudio/editor.png")
 `var1` is now visible in the `Environment` with the value `5`. Chapter 3 explains what exactly a variable is, how you call functions and which data types R knows.
 
 ::: {.callout-warning}
-**Caution: Assignment operator.** Use `<-` for assignments. `=` also works in many cases, but in more complex contexts (function arguments) it leads to subtle bugs. Make `<-` a habit.
+**Caution: Assignment operator.** Use `<-` for assignments, not `=`. `=` also works in many cases, but in more complex contexts (function arguments) it leads to subtle bugs. Make `<-` a habit.
 :::
 
 Console or document? Everything you want to keep goes into the Quarto document. You use the console for trying things out, for example for a quick calculation or to find out what an error message means. You also type `install.packages()` in the console, because you install a package only once per computer. `library()`, however, belongs in the first chunk of the document, because every new R session needs it again (@sec-library).
@@ -196,7 +196,7 @@ In other books and tutorials you will often come across **R scripts**. An R scri
 
 ### Tab completion and the package prefix `::`
 
-RStudio has a very useful feature: tab completion. While you type, a drop-down list with suggestions for completing your input appears. From the third character onwards it appears by itself; otherwise you call it up with the `Tab` key. If you type `w_m`, for example, RStudio suggests the mariposa functions `w_mean()`, `w_median()` and `w_modus()`, with the help for the highlighted function next to them.
+RStudio offers tab completion. While you type, a drop-down list appears with suggestions for completing your input. From the third character onwards it appears by itself; otherwise you call it up with the `Tab` key. If you type `w_m`, for example, RStudio suggests the mariposa functions `w_mean()`, `w_median()` and `w_modus()`, with the help for the highlighted function next to them.
 
 ```{r, echo=FALSE, fig.align='center', out.width="703px", fig.alt="In the chunk, line 9 contains w_m. Below it is a list with w_mean, w_median and w_modus, each followed by mariposa; w_mean is highlighted. To the right, a yellow box with the call w_mean(data, ..., weights = NULL, na.rm = TRUE), the title Calculate Population-Representative Averages and a short description. At the top right the green number 1."}
 knitr::include_graphics("Bilder/rstudio/vorschlaege.png")
@@ -241,7 +241,7 @@ Since version 2021.09, RStudio has offered the native pipe `|>` (available from 
 
 ## Packages
 
-R already comes with a good number of useful functions, known as base R. For many analysis steps, however, they are too low-level, so we use additional **packages** that extend the set of functions available. In this book we deliberately work only with the tidyverse ecosystem for data manipulation and visualisation and the mariposa package for statistical analysis.
+R already comes with a good number of useful functions, known as base R. For many analysis steps, however, they are too abstract, so we use additional **packages** that extend the set of functions available. In this book we deliberately work only with the tidyverse ecosystem for data manipulation and visualisation and the mariposa package for statistical analysis.
 
 Functions such as `read_spss()` and `w_mean()` are contained in a package, in this case mariposa. The tidyverse brings together several packages, such as dplyr and ggplot2, that follow the same rules and that you install together with one command (@fig-oekosystem).
 
@@ -252,7 +252,7 @@ You work with a package in two steps:
 - Install it with `install.packages("name")`, *once per computer*. Imagine buying a tool at the hardware shop and putting it on your tool shelf.
 - Activate it with `library(name)`, *once per R session*. You take the tool off the shelf and put it on the workbench.
 
-Installing a package without calling `library()` is like leaving a tool unused on the shelf. The other way round, if you call `library(forcats)` without having installed the package, you get an error.
+Installing a package without calling `library()` is like leaving a tool unused on the shelf. Conversely, if you call `library(forcats)` without having installed the package, you get an error.
 
 ### Installing with `install.packages()`
 
@@ -282,7 +282,7 @@ install.packages("patchwork")
 R packages are kept in two different places:
 
 - CRAN (Comprehensive R Archive Network) is the official package archive, comparable to an app store. Every package is checked automatically before it is accepted (Does it build on all platforms? Is the documentation complete? Do the tests pass?). Updates are stable but arrive later.
-- GitHub is the platform for developers. This is where you find the *current state of development*: the newest functions and the latest bug fixes, but also less checking. Many packages appear there earlier than on CRAN.
+- GitHub is the platform for developers. This is where you find the *current state of development*: the newest functions and the latest bug fixes, but with less checking. Many packages appear there earlier than on CRAN.
 
 In this book you install both packages from CRAN, which is the stable option. If you need the development version of mariposa, you get it from GitHub with the helper package `remotes` (`remotes::install_github("YannickDiehl/mariposa")`); you do not need it for this book.
 :::
@@ -326,13 +326,13 @@ If you use mariposa for the calculations in your coursework, cite the package. `
 
 ## Finding help with `?`, `vignette()` and `browseVignettes()`
 
-Even people who work with R every day cannot remember every function. R therefore gives you a complete function reference in the `Help` tab. Some entries seem awkward at first, but once you are used to them they are the most reliable source.
+Even people who work with R every day cannot remember every function. R therefore gives you a complete function reference in the `Help` tab. Some entries are hard going at first, but once you are used to them they are the most reliable source.
 
 ```{r, echo=FALSE, fig.align='center', out.width="714px", fig.alt="The start page of the Help tab with the sections R Resources, RStudio, Manuals and Reference. Under Reference are the links Packages and Search Engine & Keywords. At the top right the green number 4."}
 knitr::include_graphics("Bilder/rstudio/help.png")
 ```
 
-If you have a particular function in mind, the quickest way is through the console: a question mark in front of the function name is enough. Here, for example, for the mean function from base R:
+If you have a particular function in mind, the quickest way is through the console: a question mark in front of the function name is enough. For example, for the mean function from base R:
 
 ```{r, eval=FALSE}
 ?mean
@@ -374,7 +374,7 @@ Create a new project called `R-Workshop`. If you already have the ALLBUS, move `
 :::
 
 ::: {.callout-note title="Exercise 2 · First Quarto document · Reproduction"}
-Create a new Quarto document (`File` → `New File` → `Quarto Document…`), insert a chunk and write three lines in it: a calculation, an assignment and a line that calls the assigned variable. Run them one after the other with `cmd`/`ctrl` + `Enter`.
+Create a new Quarto document (`File` → `New File` → `Quarto Document…`), insert a chunk and write three lines in it: a calculation, an assignment and a line that prints the assigned variable. Run them one after the other with `cmd`/`ctrl` + `Enter`.
 :::
 
 ::: {.callout-tip title="Solution" collapse="true"}
@@ -395,13 +395,13 @@ install.packages("tidyverse")
 install.packages("mariposa")
 library(tidyverse)
 library(mariposa)
-mariposa::   # after the :: the list of functions appears
+mariposa::   # the list of functions appears after the ::
 ```
 :::
 
 ::: {.callout-note title="Exercise 4 · Setup for your own research · Mini research question"}
 Imagine you want to start a small empirical study, for example on voting behaviour, attitudes to climate change or political trust in Germany. Which steps would you take in RStudio *now* to make a clean start?
-Write down the ideal start-up sequence for yourself in 4–5 bullet points: creating a project, loading packages, naming the documents, storing the data, writing a README. Apply it to your own workshop folder.
+Write down your ideal sequence of first steps in 4–5 bullet points: creating a project, loading packages, naming the documents, storing the data, writing a README. Apply it to your own workshop folder.
 
 *No model solution: the point is to work with your own research interests from the start.*
 :::
@@ -413,9 +413,9 @@ Write down the ideal start-up sequence for yourself in 4–5 bullet points: crea
 - You write your code in Quarto documents and use the console for trying things out.
 - You install, activate and update packages, in particular tidyverse and mariposa.
 - You find help through `?function_name`, package websites and vignettes.
-- You use the most important keyboard shortcuts as a matter of routine.
+- You use the most important keyboard shortcuts with ease.
 
-In the next chapter you get to know Quarto in more detail: how a Quarto document is structured and how your code and text become a report in HTML, PDF or Word format.
+In the next chapter you will get to know Quarto in more detail: how a Quarto document is structured and how your code and text become a report in HTML, PDF or Word format.
 
 ## Further reading {-}
 
