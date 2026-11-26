@@ -7,6 +7,7 @@ from lego import (Canvas, R, P, text, rect, label_box, tokens, stein, schild, ar
                   connector, vline, codebox, text_width, INK, GRAY, GREEN, ORANGE, CARDLINE, DARKORANGE, WHITE,
                   STICKER, STEIN, MONO, C, L, RT)
 from kap03 import mono, notiz, platte
+import sprache
 from sprache import t as tr
 
 SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
@@ -80,7 +81,8 @@ def codezeile(t, size=10.5):
 
 # 4.3 Einlesen aus den Chunks `read-allbus` und `read-show` -----------------------------------
 def einlesen():
-    s = Canvas(7.6, 2.85)
+    en = sprache.aktuell() == "en"          # englisch: zweite Codezeile mit set_na()
+    s = Canvas(7.6, 3.27 if en else 2.85)
     cy = 1.25
     rect(s, 0.15, cy - 0.3, 1.75, 0.6, WHITE, CARDLINE, 0.75)
     text(s, 0.15, cy - 0.3, 1.75, 0.6, mono("ALLBUS2023.sav", size=11), anchor="middle")
@@ -97,6 +99,9 @@ def einlesen():
         text(s, mitte - 1.1, 1.98, 2.2, 0.25, notiz(tr(txt), size=10.5))
     tokens(s, 0.15, 2.42, [("allbus", "obj"), ("<-", "sym"), ("read_spss", "fun"), ("(", "sym"),
                            ('"ALLBUS2023.sav"', "arg"), (")", "sym")], size=12, h=0.36)
+    if en:
+        tokens(s, 0.15, 2.84, [("|>", "sym"), ("set_na", "fun"), ("(", "sym"), ("-56, …, -6", "arg"), (")", "sym")],
+               size=12, h=0.36)
     return s
 
 

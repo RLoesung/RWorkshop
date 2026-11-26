@@ -40,7 +40,7 @@ Jedes Kapitel folgt dem Dreischritt **Frage → Code → Lesart** und endet mit 
   ```
 
   Das Buch ist auf **mariposa ≥ 0.7.4** abgestimmt. Ältere Versionen liefern an einigen Stellen andere Ausgaben oder brechen ab.
-- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Er liegt **nicht** im Repository, denn wir geben die Daten nicht weiter. Du lädst sie selbst aus dem [GESIS-Datenbestandskatalog, Studiennummer ZA8830](https://search.gesis.org/research_data/ZA8830) herunter. Dafür brauchst du einen kostenlosen GESIS-Account. `.gitignore` schließt `.sav`- und `.dta`-Dateien aus, damit sie nicht versehentlich committet werden.
+- Der Datensatz **ALLBUS 2023** als `ALLBUS2023.sav` im Projektordner. Er liegt **nicht** im Repository, denn wir geben die Daten nicht weiter. Du lädst sie selbst aus dem [GESIS-Datenbestandskatalog, Studiennummer ZA8831](https://search.gesis.org/research_data/ZA8831) („ALLBUScompact 2023“) herunter. Dafür brauchst du einen kostenlosen GESIS-Account. `.gitignore` schließt `.sav`- und `.dta`-Dateien aus, damit sie nicht versehentlich committet werden.
 
 **Rendern**
 

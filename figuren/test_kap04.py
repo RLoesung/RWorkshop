@@ -47,7 +47,8 @@ ERWARTET_KAP04 = {
 # (ALLBUS2023_en.sav; fehlende Codes nach set_na(), Kennbuchstaben g, l, n, o bei mm01)
 ERWARTET_KAP04_EN = {
     "k04-einlesen": ["ALLBUS2023.sav", "read_spss()", "allbus", "5,246 × 579", "<-", "read_spss",
-                     '"ALLBUS2023.sav"', "File in the project folder", "Function from mariposa", "Object in R"],
+                     '"ALLBUS2023.sav"', "File in the project folder", "Function from mariposa", "Object in R",
+                     "|>", "set_na", "-56, …, -6"],
     "k04-platte": ["allbus", "respid", "age", "mm01", "1", "5", "50", "51", "69", "72", "18", "2",
                    "nrow(allbus)", "[1] 5246", "ncol(allbus)", "[1] 579", "A row is a case:",
                    "A tower is a variable:", "An empty brick is a missing value."],

@@ -1,6 +1,6 @@
 # Mini-Studie — Roter Faden durch den RWorkshop
 
-**Datensatz.** ALLBUS 2023 (`ALLBUS2023.sav`, N = 5246, 579 Variablen), GESIS-Studiennummer ZA8901.
+**Datensatz.** ALLBUS 2023 (`ALLBUS2023.sav`, N = 5246, 579 Variablen), GESIS-Studiennummer ZA8831 („ALLBUScompact 2023“).
 
 **Skala.** Sechs Items zur Einstellung gegenüber Muslimen / dem Islam in Deutschland. In der deutschsprachigen Forschung etabliert unter dem Begriff **Muslimfeindlichkeit / Islamfeindlichkeit** (vgl. Decker & Brähler; Pickel/Pickel). Wir verwenden im Lehrbuch durchgängig den Skalennamen `islamophobie` aus pragmatischen Gründen (kurz, international anschlussfähig).
 
