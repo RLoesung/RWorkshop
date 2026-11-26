@@ -10,6 +10,10 @@ from lego import (Canvas, R, P, text, rect, label_box, stein, schild, arrow, out
 from kap03 import mono, notiz, platte, _maschine, _pfeil_pipe
 from kap04 import kopf, punkte
 from kap05 import code
+import sprache
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
 
 # Farben aus layer_data(): Standardpalette (scales::hue_pal()) bei zwei und drei Stufen, NA, Farben aus den Chunks
 HUE2 = ("#F8766D", "#00BFC4")
@@ -58,10 +62,10 @@ VIER = [("1", "mittel", "3.33", "MANN", 10 / 3), ("5", "hoch", "4", "FRAU", 4.0)
 
 def grammatik():
     s = Canvas(7.7, 3.7)
-    text(s, 0.15, 0.12, 7.3, 0.45, code(["vier |> ggplot(aes(x = educ_kat, y = islamophobie, color = sex)) +",
+    text(s, 0.15, 0.12, 7.3, 0.45, code([tr("vier |> ggplot(aes(x = educ_kat, y = islamophobie, color = sex)) +"),
                                          "  geom_point(size = 3)"], size=10.5))
     h, pitch, top, ky, ty = 0.3, 0.42, 1.42, 0.82, 3.3
-    spalten = [(0.85, 0.8, "educ_kat", "<fct>", "txt", "x"), (1.85, 0.8, "islamophobie", "<dbl>", "num", "y"),
+    spalten = [(0.85, 0.8, tr("educ_kat"), "<fct>", "txt", "x"), (1.85, 0.8, tr("islamophobie"), "<dbl>", "num", "y"),
                (2.85, 0.75, "sex", "<fct>", "txt", "color")]
     kopf(s, 0.15, 0.55, ky, "respid", size=10.5)
     for x, w, name, typ, _, aes_ in spalten:
@@ -71,7 +75,7 @@ def grammatik():
         y = top + i * pitch
         text(s, 0.15, y, 0.55, h, mono(rid, size=10.5, color=GRAY, align=RT), anchor="middle")
         for (x, w, _, _, kind, _), t in zip(spalten, (bildung, wert, geschlecht)):
-            stein(s, x, y, w, h, kind, t, size=11)
+            stein(s, x, y, w, h, kind, tr(t) if t in ("mittel", "hoch", "MANN", "FRAU") else t, size=11)
     unten = top + 3 * pitch + h
     platte(s, 0.75, unten + 0.07, 2.95)
     outline(s, 0.77, top - 0.09, 2.91, h + 0.13, color=ORANGE, lw=1.75)
@@ -87,7 +91,7 @@ def grammatik():
     for b, t in brueche:
         achsentext(s, t, px - 0.08, Y(b), 0.5, align=RT)
     for i, t in ((1, "mittel"), (2, "hoch")):
-        achsentext(s, t, X(i), py + ph + 0.15, 0.8)
+        achsentext(s, tr(t), X(i), py + ph + 0.15, 0.8)
     etikett(s, px + pw / 2, ty, "x")
     etikett(s, px - 0.25, py - 0.4, "y")
     for rid, bildung, _, geschlecht, v in VIER:
@@ -105,7 +109,7 @@ def grammatik():
     for k, (t, farbe) in enumerate(zip(("MANN", "FRAU"), HUE2)):
         y = py + 0.82 + k * 0.3
         kreis(s, lx, y, 0.05, farbe)
-        text(s, lx + 0.1, y - 0.11, 0.6, 0.22, [P(R(t, size=10.5, color=INK))], anchor="middle")
+        text(s, lx + 0.1, y - 0.11, 0.6, 0.22, [P(R(tr(t), size=10.5, color=INK))], anchor="middle")
     return s
 
 
@@ -119,8 +123,8 @@ def aes_konstante():
     s = Canvas(7.6, 4.4)
     einheit = 0.85 / 61                        # Zoll je Person; der höchste Balken (22 Jahre, 61 Personen) 0.85 Zoll
     bx0, bw, bstep = 2.55, 0.3, 0.38
-    teile = [(0.12, "INNERHALB aes()", "ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()", True),
-             (2.32, "AUSSERHALB aes()", 'ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")', False)]
+    teile = [(0.12, tr("INNERHALB aes()"), "ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()", True),
+             (2.32, tr("AUSSERHALB aes()"), 'ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")', False)]
     for y0, titel, zeile, innen in teile:
         eyebrow(s, 0.15, y0, 1.7, titel)
         text(s, 1.85, y0 - 0.01, 5.7, 0.28, mono(zeile, size=10.5, align="start"))
@@ -129,7 +133,7 @@ def aes_konstante():
         if innen:
             kopf(s, 0.3, 0.8, y0 + 0.38, "sex", "<fct>", size=10.5)
             for i, t in enumerate(["MANN", "MANN", "FRAU"]):
-                stein(s, 0.3, y0 + 0.84 + i * 0.33, 0.8, 0.25, "txt", t, size=10.5)
+                stein(s, 0.3, y0 + 0.84 + i * 0.33, 0.8, 0.25, "txt", tr(t), size=10.5)
             punkte(s, 0.55, y0 + 1.7, w=0.3)
             quelle = 1.2
         else:
@@ -157,9 +161,9 @@ def aes_konstante():
             for k, (t, farbe) in enumerate(zip(("MANN", "FRAU", "DIVERS", "NA"), HUE3 + (GREY50,))):
                 y = y0 + 0.86 + k * 0.27
                 rect(s, lx, y, 0.16, 0.16, farbe)
-                text(s, lx + 0.25, y - 0.03, 1.0, 0.22, [P(R(t, size=10.5, color=INK))], anchor="middle")
+                text(s, lx + 0.25, y - 0.03, 1.0, 0.22, [P(R(tr(t) if t != "NA" else t, size=10.5, color=INK))], anchor="middle")
         else:
-            text(s, lx - 0.05, mitte - 0.14, 1.6, 0.28, notiz("keine Legende", size=10.5, align="start"),
+            text(s, lx - 0.05, mitte - 0.14, 1.6, 0.28, notiz(tr("keine Legende"), size=10.5, align="start"),
                  anchor="middle")
     connector(s, 0.1, 2.2, 7.5, 2.2, color=CARDLINE, width=0.75)
     return s
@@ -234,7 +238,7 @@ def ebenen():
         for v in ys:
             achsentext(s, str(v), px - 0.06, Y(v), 0.3, align=RT)
         for i, t in enumerate(("niedrig", "mittel", "hoch")):
-            achsentext(s, t, X(i + 1), yb + ph + 0.15, 0.6)
+            achsentext(s, tr(t), X(i + 1), yb + ph + 0.15, 0.6)
     X, Y = _skala(ex, yb, pw, ph)
     _violinen(s, X, Y)
     _boxen(s, X, Y)
@@ -264,17 +268,17 @@ SUMME = 5084.858
 
 def bar_zaehlt():
     s = Canvas(7.6, 4.35)
-    text(s, 0.15, 0.12, 7.3, 0.45, code(["ggplot(aes(x = educ_kat, weight = wghtpew)) +",
+    text(s, 0.15, 0.12, 7.3, 0.45, code([tr("ggplot(aes(x = educ_kat, weight = wghtpew)) +"),
                                          '  geom_bar(aes(y = after_stat(prop), group = 1), fill = "steelblue")'],
                                         size=10.5))
     h, pitch, gtop, gstep = 0.25, 0.33, 1.3, 0.83
     ex, ew, wx, ww = 0.15, 0.8, 1.05, 0.65
-    kopf(s, ex, ew, 0.78, "educ_kat", "<fct>", size=10.5)
+    kopf(s, ex, ew, 0.78, tr("educ_kat"), "<fct>", size=10.5)
     kopf(s, wx, ww, 0.78, "wghtpew", "<dbl+lbl>", size=10.5)
     for g, (stufe, gewichte) in enumerate(GRUPPEN):
         top = gtop + g * gstep
         for i, gw in enumerate(gewichte):
-            stein(s, ex, top + i * pitch, ew, h, "txt", stufe, size=10.5)
+            stein(s, ex, top + i * pitch, ew, h, "txt", tr(stufe), size=10.5)
             stein(s, wx, top + i * pitch, ww, h, "num", gw, size=10.5)
         punkte(s, 0.75, top + pitch + h - 0.03, w=0.4)
     unten = gtop + 2 * gstep + pitch + h + 0.25
@@ -286,7 +290,7 @@ def bar_zaehlt():
     mitte = (gtop + unten) / 2
     arrow(s, 1.97, mitte - 0.14, w=0.55, h=0.28, color=GREEN)
     text(s, 1.79, mitte - 0.46, 0.91, 0.28, mono("geom_bar()", size=10, color=GREEN))
-    tx, tw = 2.72, [("educ_kat", 0.78, "txt"), ("count", 0.68, "num"), ("prop", 0.58, "num")]
+    tx, tw = 2.72, [(tr("educ_kat"), 0.78, "txt"), ("count", 0.68, "num"), ("prop", 0.58, "num")]
     th, tpitch = 0.28, 0.36
     ttop = mitte - (2 * tpitch + th) / 2
     x = tx
@@ -297,7 +301,7 @@ def bar_zaehlt():
         x += w + 0.07
     for i, (stufe, n, p, _) in enumerate(ZAEHLUNG):
         y = ttop + i * tpitch
-        for (name, w, kind), sx, t in zip(tw, spalten_x, (stufe, n, p)):
+        for (name, w, kind), sx, t in zip(tw, spalten_x, (tr(stufe), n, p)):
             stein(s, sx, y, w, th, kind, t, size=10.5)
     tunten = ttop + 2 * tpitch + th
     platte(s, tx - 0.08, tunten + 0.07, x - 0.07 + 0.08 - (tx - 0.08))
@@ -314,7 +318,7 @@ def bar_zaehlt():
         achsentext(s, t, cx - 0.06, Y(b), 0.45, align=RT)
     for i, (stufe, _, _, n) in enumerate(ZAEHLUNG):
         rect(s, X(i + 0.55), Y(n / SUMME), X(i + 1.45) - X(i + 0.55), Y(0) - Y(n / SUMME), STEELBLUE)
-        achsentext(s, stufe, X(i + 1), cy + ch + 0.15, 0.6)
+        achsentext(s, tr(stufe), X(i + 1), cy + ch + 0.15, 0.6)
     etikett(s, cx + cw / 2, ty, "x")
     t = "y = after_stat(prop)"
     etikett(s, cx - 0.45 + (text_width(t, MONO, 10.5, True) + 0.16) / 2, cy - 0.45, t)

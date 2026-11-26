@@ -30,6 +30,17 @@ ERWARTET_KAP08 = {
                        "21"] + ITEMS,
 }
 
+ERWARTET_KAP08_EN = {
+    "k08-latenter-faktor": ["Islamophobia", "not measured", "measured", "respid"] + ITEMS,
+    "k08-ergebnisobjekt": ["efa_check", "$loadings", "$eigenvalues", "$kmo", "$bartlett", "$overall", "$per_item",
+                           "$chi_sq", "$df", "$p_value", "PC1", "0.811", "0.664", "0.753", "0.769", "0.657",
+                           "3.281", "0.833", "0.555", "0.479", "0.439", "0.412", "0.862", "0.857", "0.876",
+                           "0.874", "0.849", "0.851", "0.867", "6532.633", "15", "0", "…",
+                           "efa_check$kmo$per_item"],
+    "k08-item-total": ["respid", "Sum without", "not in the sum", "Corrected Item-Total", "0.520", "18", "19",
+                       "21"] + ITEMS,
+}
+
 
 def alle_texte(svg):
     return "\n".join("".join(e.itertext()) for e in ET.fromstring(svg).iter(NS + "text"))
@@ -164,6 +175,58 @@ class TestKap08(unittest.TestCase):
         y_wert = [y for t, x, y, _ in pos if t == "0.520"][0]
         y_steine = max(y for t, x, y, _ in pos if t in zahlen)
         self.assertGreater(y_wert, y_steine)
+
+    def test_en_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP08_EN), set(ERWARTET_KAP08))
+
+    def test_englische_texte(self):
+        import kap08
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap08.FIGUREN.items():
+                svg = fn().svg()
+                breite = float(ET.fromstring(svg).get("viewBox").split()[2])
+                self.assertLessEqual(breite, 768, name)
+                texte = alle_texte(svg)
+                for wert in ERWARTET_KAP08_EN[name]:
+                    self.assertIn(wert, texte, f"{name}: {wert}")
+        finally:
+            sprache.setze("de")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap08
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap08.FIGUREN.items():
+                self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+        finally:
+            sprache.setze("de")
+
+    def test_en_ohne_deutsche_namen(self):
+        """Keine deutschen Namen aus STYLE.md §13 in den englischen Abbildungen."""
+        import re
+        import kap08
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap08.FIGUREN.items():
+                texte = alle_texte(fn().svg())
+                for alt in ("efa_vor", "Islamfeindlichkeit", "Summe"):
+                    self.assertIsNone(re.search(rf"\b{alt}\b", texte), f"{name}: {alt}")
+        finally:
+            sprache.setze("de")
+
+    def test_deutsch_unveraendert(self):
+        import kap08
+        import sprache
+        sprache.setze("de")
+        for name, fn in kap08.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP08[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":

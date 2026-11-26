@@ -9,6 +9,10 @@ from lego import (Canvas, R, P, text, rect, stein, eyebrow, connector, vline, IN
 from kap03 import mono, notiz, platte
 from kap04 import codezeile, kopf
 from kap05 import klammer
+import sprache
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
 
 
 # 7.2 Gewichtung aus dem neuen Chunk `gewichtung-eastwest`. Die Steine sind die ersten sechs Befragten aus dem
@@ -27,9 +31,9 @@ def gewichtung():
     unten = tops[-1] + h
     gruppen = [("ALTE BUNDESLAENDER", tops[0], tops[5] + h), ("NEUE BUNDESLAENDER", tops[6], unten)]
     for name, y0, y1 in gruppen:
-        text(s, 0.1, y0, 1.7, y1 - y0, mono(name, size=10, align=RT), anchor="middle")
-    spalten = [(1.95, "UNGEWICHTET", "frequency(eastwest)", ["1"] * 9, [("3567", "67.99 %"), ("1679", "32.01 %")]),
-               (4.55, "GEWICHTET", "frequency(eastwest, weights = wghtpew)", WEST + OST,
+        text(s, 0.1, y0, 1.7, y1 - y0, mono(tr(name), size=10, align=RT), anchor="middle")
+    spalten = [(1.95, tr("UNGEWICHTET"), "frequency(eastwest)", ["1"] * 9, [("3567", "67.99 %"), ("1679", "32.01 %")]),
+               (4.55, tr("GEWICHTET"), "frequency(eastwest, weights = wghtpew)", WEST + OST,
                 [("4363", "83.16 %"), ("883", "16.84 %")])]
     for x, titel, code, werte, ergebnis in spalten:
         eyebrow(s, x, 0.12, 3.3, titel, size=10.5)
@@ -55,18 +59,18 @@ ZEILEN = [("ALTE BUNDESLAENDER", [22.2, 27.6, 50.3]), ("NEUE BUNDESLAENDER", [13
 
 def zeilenprozente():
     s = Canvas(7.6, 2.85)
-    text(s, 0.15, 0.12, 7.4, 0.28, codezeile("allbus |> crosstab(eastwest, educ_kat, weights = wghtpew)", size=10.5))
+    text(s, 0.15, 0.12, 7.4, 0.28, codezeile(tr("allbus |> crosstab(eastwest, educ_kat, weights = wghtpew)"), size=10.5))
     bx, bw, bh = 1.95, 4.6, 0.42
     lx = bx
     for name, farbe in STUFEN:
         rect(s, lx, 0.62, 0.22, 0.2, farbe, INK, 0.5)
-        text(s, lx + 0.3, 0.57, 1.0, 0.3, [P(R(name, size=11))], anchor="middle")
+        text(s, lx + 0.3, 0.57, 1.0, 0.3, [P(R(tr(name), size=11))], anchor="middle")
         lx += 1.2
     for k, (name, prozente) in enumerate(ZEILEN):
         y = 1.0 + k * 0.6 + (0.12 if name == "Total" else 0)
         if name == "Total":
             connector(s, 0.15, y - 0.15, 7.45, y - 0.15, color=CARDLINE, width=0.75)
-        text(s, 0.1, y, 1.75, bh, mono(name, size=10, align=RT), anchor="middle")
+        text(s, 0.1, y, 1.75, bh, mono(tr(name) if name != "Total" else name, size=10, align=RT), anchor="middle")
         x = bx
         for (stufe, farbe), p in zip(STUFEN, prozente):
             w = bw * p / 100
@@ -101,7 +105,7 @@ def haeufigkeit():
                (3.7, "GÜLTIGE PROZENT", "Valid % = 31.66",
                 [("Total valid", "3401", ys[0], unten_gueltig, INK), ("Total missing", "1845", ys[6], unten, GRAY)])]
     for x0, titel, prozent, klammern in spalten:
-        eyebrow(s, x0, 0.5, 3.3, titel, size=10.5)
+        eyebrow(s, x0, 0.5, 3.3, tr(titel), size=10.5)
         tx = x0 + 1.65
         kopf(s, tx, w, 0.8, "mm01")
         for y, v in zip(ys, MM01):
@@ -115,7 +119,7 @@ def haeufigkeit():
             klammer(s, tx + w + 0.1, y0, y1, color=farbe)
             zeilen = [P(R(name, font=MONO, size=10, color=GRAY)), P(R(n, font=MONO, size=11, bold=True, color=farbe))]
             if name == "Total missing":
-                zeilen.append(P(R("zählen nicht mit", size=10.5, italic=True, color=GRAY), sb=2))
+                zeilen.append(P(R(tr("zählen nicht mit"), size=10.5, italic=True, color=GRAY), sb=2))
             text(s, tx + w + 0.32, y0, 1.6, y1 - y0, zeilen, anchor="middle")
     vline(s, 3.55, 0.5, unten + 0.1, color=CARDLINE, width=0.75)
     return s

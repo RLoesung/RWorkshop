@@ -48,6 +48,26 @@ ERWARTET_KAP06 = {
                        "weight = wghtpew", "y = after_stat(prop)", "0%", "10%", "20%", "30%", "40%", "50%"],
 }
 
+ERWARTET_KAP06_EN = {
+    "k06-grammatik": ["four |> ggplot(aes(x = educ_cat, y = islamophobia, color = sex)) +", "geom_point(size = 3)",
+                      "respid", "educ_cat", "islamophobia", "sex", "<fct>", "<dbl>", "medium", "high", "3.33", "4",
+                      "3.83", "1.5", "MALE", "FEMALE", "x", "y", "color", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0",
+                      "1", "5", "6", "9"],
+    "k06-aes-konstante": ["INSIDE aes()", "OUTSIDE aes()",
+                          "ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()",
+                          'ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")', "sex", "<fct>", "MALE",
+                          "FEMALE", "NON-BINARY", "NA", '"steelblue"', "fill", "18", "19", "20", "21", "22", "23",
+                          "24", "no legend"],
+    "k06-ebenen": ["g_base", "<-", "allbus", "|>", "filter(", ", …)", "ggplot(", ", aes(…))", "geom_violin(",
+                   "alpha = 0.4)", "geom_boxplot(", "width = 0.1,", 'fill = "white")', "low", "medium", "high",
+                   "2", "4", "6", "+", "="],
+    "k06-bar-zaehlt": ["ggplot(aes(x = educ_cat, weight = wghtpew)) +",
+                       'geom_bar(aes(y = after_stat(prop), group = 1), fill = "steelblue")', "educ_cat",
+                       "wghtpew", "<fct>", "<dbl+lbl>", "low", "medium", "high", "1.20", "1.25", "0.545", "count",
+                       "prop", "1049.6", "1524.7", "2510.5", "0.206", "0.300", "0.494", "geom_bar()",
+                       "weight = wghtpew", "y = after_stat(prop)", "0%", "10%", "20%", "30%", "40%", "50%"],
+}
+
 
 def kreise(svg):
     """(cx, cy, r, fill, stroke) je <circle>, in Zoll."""
@@ -178,6 +198,58 @@ class TestKap06(unittest.TestCase):
         for (x, y, w, h), p in zip(balken, props):
             self.assertAlmostEqual(h / balken[2][3], p / props[2], places=3)
             self.assertAlmostEqual(y + h, balken[0][1] + balken[0][3], places=3)
+
+    def test_en_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP06_EN), set(ERWARTET_KAP06))
+
+    def test_englische_texte(self):
+        import kap06
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap06.FIGUREN.items():
+                svg = fn().svg()
+                breite = float(ET.fromstring(svg).get("viewBox").split()[2])
+                self.assertLessEqual(breite, 768, name)
+                texte = alle_texte(svg)
+                for wert in ERWARTET_KAP06_EN[name]:
+                    self.assertIn(wert, texte, f"{name}: {wert}")
+        finally:
+            sprache.setze("de")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap06
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap06.FIGUREN.items():
+                self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+        finally:
+            sprache.setze("de")
+
+    def test_en_ohne_deutsche_namen(self):
+        """Keine deutschen Namen aus STYLE.md §13 in den englischen Abbildungen."""
+        import re
+        import kap06
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap06.FIGUREN.items():
+                texte = alle_texte(fn().svg())
+                for alt in ("vier", "educ_kat", "islamophobie", "niedrig", "mittel", "hoch"):
+                    self.assertIsNone(re.search(rf"\b{alt}\b", texte), f"{name}: {alt}")
+        finally:
+            sprache.setze("de")
+
+    def test_deutsch_unveraendert(self):
+        import kap06
+        import sprache
+        sprache.setze("de")
+        for name, fn in kap06.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP06[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":

@@ -30,6 +30,18 @@ ERWARTET_KAP07 = {
                         "Total missing", "1845", "zählen nicht mit", "1", "2", "4", "5", "7"],
 }
 
+ERWARTET_KAP07_EN = {
+    "k07-gewichtung": ["UNWEIGHTED", "WEIGHTED", "frequency(eastwest)", "frequency(eastwest, weights = wghtpew)",
+                       "OLD FEDERAL STATES", "NEW FEDERAL STATES", "1", "1.25", "1.20", "1.21", "0.545", "0.501",
+                       "0.541", "3567", "1679", "67.99 %", "32.01 %", "4363", "883", "83.16 %", "16.84 %"],
+    "k07-zeilenprozente": ["allbus |> crosstab(eastwest, educ_cat, weights = wghtpew)", "OLD FEDERAL STATES",
+                           "NEW FEDERAL STATES", "Total", "low", "medium", "high", "22.2%", "27.6%", "50.3%",
+                           "13.3%", "41.8%", "44.9%", "20.6%", "30.0%", "49.4%", "100.0%"],
+    "k07-haeufigkeit": ["allbus |> frequency(mm01:mm06, weights = wghtpew)", "PERCENT", "VALID PERCENT", "mm01",
+                        "N = 1077", "Raw % = 20.53", "Valid % = 31.66", "Total", "5246", "Total valid", "3401",
+                        "Total missing", "1845", "not counted", "1", "2", "4", "5", "7"],
+}
+
 
 def zoll(e, k):
     return float(e.get(k)) / 96
@@ -97,6 +109,58 @@ class TestKap07(unittest.TestCase):
             self.assertTrue(any(abs(l[1] - oben) < 0.03 and abs(l[2] - soll) < 0.03 for l in rechts), k)
             if k == 1:                                     # keine Klammer bei Valid % reicht über die leeren Steine
                 self.assertFalse(any(l[1] < unten_gueltig - 0.03 and l[2] > unten_gueltig + 0.1 for l in rechts))
+
+    def test_en_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP07_EN), set(ERWARTET_KAP07))
+
+    def test_englische_texte(self):
+        import kap07
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap07.FIGUREN.items():
+                svg = fn().svg()
+                breite = float(ET.fromstring(svg).get("viewBox").split()[2])
+                self.assertLessEqual(breite, 768, name)
+                texte = alle_texte(svg)
+                for wert in ERWARTET_KAP07_EN[name]:
+                    self.assertIn(wert, texte, f"{name}: {wert}")
+        finally:
+            sprache.setze("de")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap07
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap07.FIGUREN.items():
+                self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+        finally:
+            sprache.setze("de")
+
+    def test_en_ohne_deutsche_namen(self):
+        """Keine deutschen Namen aus STYLE.md §13 in den englischen Abbildungen."""
+        import re
+        import kap07
+        import sprache
+        sprache.setze("en")
+        try:
+            for name, fn in kap07.FIGUREN.items():
+                texte = alle_texte(fn().svg())
+                for alt in ("educ_kat", "niedrig", "mittel", "hoch"):
+                    self.assertIsNone(re.search(rf"\b{alt}\b", texte), f"{name}: {alt}")
+        finally:
+            sprache.setze("de")
+
+    def test_deutsch_unveraendert(self):
+        import kap07
+        import sprache
+        sprache.setze("de")
+        for name, fn in kap07.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP07[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
 
 
 if __name__ == "__main__":

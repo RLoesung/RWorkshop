@@ -220,6 +220,31 @@ EN = {
     "keine Antwort": "no answer",
     "dreimal 7": "three 7s",
     "n_extrem": "n_extreme",
+    # Kap. 6 bis 8: Abbildungen (eigene Namen nach STYLE.md §13; "niedrig", "mittel", "hoch", "MANN", "FRAU",
+    # "islamophobie", "ALTE/NEUE BUNDESLAENDER" stehen schon oben und bleiben unverändert)
+    "vier": "four",
+    "vier |> ggplot(aes(x = educ_kat, y = islamophobie, color = sex)) +":
+        "four |> ggplot(aes(x = educ_cat, y = islamophobia, color = sex)) +",
+    "educ_kat": "educ_cat",
+    "ggplot(aes(x = educ_kat, weight = wghtpew)) +": "ggplot(aes(x = educ_cat, weight = wghtpew)) +",
+    "allbus |> crosstab(eastwest, educ_kat, weights = wghtpew)":
+        "allbus |> crosstab(eastwest, educ_cat, weights = wghtpew)",
+    "DIVERS": "NON-BINARY",
+    "INNERHALB aes()": "INSIDE aes()",
+    "AUSSERHALB aes()": "OUTSIDE aes()",
+    "keine Legende": "no legend",
+    "UNGEWICHTET": "UNWEIGHTED",
+    "GEWICHTET": "WEIGHTED",
+    "PROZENT": "PERCENT",
+    "GÜLTIGE PROZENT": "VALID PERCENT",
+    "zählen nicht mit": "not counted",
+    "Islamfeindlichkeit": "Islamophobia",
+    "nicht gemessen": "not measured",
+    "gemessen": "measured",
+    "efa_vor": "efa_check",
+    "efa_vor$kmo$per_item": "efa_check$kmo$per_item",
+    "Summe ohne": "Sum without",
+    "nicht in der Summe": "not in the sum",
     # Titelbild
     "Sozialwissenschaften": "Social Sciences",
     "Einführung in die statistische Datenanalyse mit tidyverse und mariposa":
