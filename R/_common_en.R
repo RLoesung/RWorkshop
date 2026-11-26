@@ -4,6 +4,10 @@
 # Die Funktion liegt im globalen Environment und verdeckt daher
 # mariposa::read_spss auch nach einem spaeteren library(mariposa).
 
+# R-Meldungen (Warnungen, Fehler) auf Englisch, unabhaengig vom Locale
+# der Sitzung.
+Sys.setLanguage("en")
+
 source("R/_common.R")
 
 read_spss <- function(path, ...) {

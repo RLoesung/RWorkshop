@@ -20,13 +20,13 @@ Before you can answer this question, you need the dataset on your computer, and 
 
 ## What this chapter is about
 
-Imagine a colleague gives you a USB stick labelled *“ALLBUS 2023, have fun”*. You plug it in and open the file. What you see is not what you hoped for: 579 columns with names such as `mm01`, `pa29`, `pt06`, `wghtpew`. Negative numbers appear as values: `-8`, `-9`, `-11`, `-42` and a dozen or so more. Some variables are stored as numbers although they are really categories (`sex = 1` means “male”). And the actual labels, the wording of what was asked, are hidden somewhere in the background.
+Imagine a colleague gives you a USB stick labelled *“ALLBUS 2023, have fun”*. You plug it in and open the file. What you see is not what you hoped for: 579 columns with names such as `mm01`, `pa29`, `pt06`, `wghtpew`. Negative numbers appear where you would expect answers: `-8`, `-9`, `-11`, `-42` and a dozen or so more. Some variables are stored as numbers although they are really categories (`sex = 1` means “male”). And the actual labels, the wording of what was asked, are hidden somewhere in the background.
 
 This is normal. Secondary datasets in quantitative social research always look like this. They are built so that many people can use them for many different questions, and that only works if the data stay raw at first. Your task is to turn this raw state into an analysis dataset that fits your research question.
 
 Take your time over these steps. They are the methodological core of any honest analysis: Which cases do you exclude? How do you handle missing values? How do you translate `mm01 = 7` into “this person strongly rejects Muslims”? Each of these decisions affects the result, and each belongs in a pipeline that you can reproduce at any time, as open science requires.
 
-Everything that follows builds on this chapter. Here you create the analysis dataset with which you describe distributions in @sec-univbivar, check structures in @sec-latente and model hypotheses in @sec-erklaerung. Any error made here affects all later findings.
+Everything that follows builds on this chapter. Here you create the analysis dataset that you use to describe distributions in @sec-univbivar, check structures in @sec-latente and model hypotheses in @sec-erklaerung. Any error made here affects all later findings.
 
 ## What you will be able to do after this chapter {-}
 
@@ -53,7 +53,7 @@ library(mariposa)
 
 ## Importing the dataset with `read_spss()`
 
-The 2023 German General Social Survey (ALLBUS) is stored in your project folder as an SPSS file (`ALLBUS2023.sav`). You import it with `read_spss()` from mariposa. The English edition of the dataset stores the codes for missing values (“no answer”, “don't know”, “not applicable” and others) as ordinary numbers, so you declare them as missing when you read the file. `set_na()` without a variable name applies the codes to all numeric variables; the section on missing values (@sec-fehlende-werte) explains this in detail.
+The 2023 German General Social Survey (ALLBUS) is stored in your project folder as an SPSS file (`ALLBUS2023.sav`). You import it with `read_spss()` from mariposa. The English edition of the dataset stores the codes for missing values (“no answer”, “don't know”, “not applicable” and others) as ordinary numbers, so you declare them as missing when you read the file. `set_na()` without a variable name applies the codes to all numeric variables; @sec-fehlende-werte explains `set_na()`.
 
 ```{r read-allbus}
 allbus <- read_spss("ALLBUS2023.sav") |>
@@ -84,7 +84,7 @@ What do the small type markers under each column mean? Directly below each colum
 | `<dbl+lbl>`   | labelled double from SPSS          | typical ALLBUS variable           |
 | `<lgl>`       | logical (`TRUE`/`FALSE`)           | result of a condition             |
 
-You will see the `<dbl+lbl>` type everywhere in ALLBUS. It is created when you import the file: in the background, `read_spss()` uses the `haven` package and adds two properties you know from SPSS: **variable labels** (a descriptive label for each column) and **value labels** (a label for each value). Both are stored in the columns without being visible; you can retrieve them at any time or make them visible as a factor.
+You will see the `<dbl+lbl>` type everywhere in ALLBUS. It is created when you import the file. In the background, `read_spss()` uses the `haven` package and adds two properties you know from SPSS: **variable labels** (a descriptive label for each column) and **value labels** (a label for each value). Both are stored in the columns without being visible; you can retrieve them at any time or make them visible as a factor.
 
 Most variables therefore arrive as `<haven_labelled>` columns, printed as `<dbl+lbl>`. Such a column is not a factor. The values stay numeric, so you can still calculate with them, and in the background they keep their SPSS value labels (“1 = MALE, 2 = FEMALE, …”). For example:
 
@@ -253,7 +253,7 @@ allbus |>
   select(sex, age, educ)
 ```
 
-`filter()` checks the condition `sex == 2` for each row and keeps only the rows in which it is true. Code 2 stands for FEMALE; 2672 respondents remain (@fig-filter). `select()` then selects the three columns.
+`filter()` checks the condition `sex == 2` for each row and keeps only the rows in which it is true. Code 2 stands for FEMALE; 2672 respondents remain (@fig-filter). `select()` then keeps the three columns.
 
 ![`filter(sex == 2)` keeps only the rows with code 2 (FEMALE). The rows that are dropped are grey; the first six rows are shown.](Bilder/figuren/en/k04-filter.svg){#fig-filter .lightbox fig-alt="On the left the baseplate allbus, 5,246 × 579, with the towers sex, age and educ and an ellipsis for further towers; the first six rows are shown. The bricks of sex carry stickers: 1 MALE, 1 MALE, 2 FEMALE, 1 MALE, 2 FEMALE, 2 FEMALE. The three MALE rows with the ages 50, 51 and 72 are grey. A green arrow with sex == 2 leads to a new baseplate, 2,672 × 3, with the three FEMALE rows: ages 69, 18 and 45, educ 4, 5 and 5, below them an ellipsis. Below, the code allbus |> filter(sex == 2) |> select(sex, age, educ)."}
 
@@ -267,7 +267,7 @@ allbus |>
 ```
 
 ::: {.callout-warning}
-**Caution: Missing values.** `filter()` automatically excludes cases with `NA` in the condition. This is usually what you want, but it can take you by surprise. Three variants compared:
+**Caution: Missing values.** `filter()` automatically excludes cases with `NA` in the condition. This is usually what you want, but it can take you by surprise. Compare three variants:
 
 ```{r filter-na-trio, eval=FALSE}
 allbus |> filter(sex == 1)        # men only (NAs are excluded)
@@ -289,7 +289,7 @@ If your number of cases is suddenly smaller than you expected, the `NA` filterin
 allbus |> frequency(sex)
 ```
 
-18 respondents have code 3 (NON-BINARY) on `sex`; neither `sex == 1` nor `sex == 2` includes them. For the other 10, the value is missing (NO ANSWER nine times, DATA ERROR: MR once), and these rows are dropped by every comparison with `==`. `filter(is.na(sex))` gives you exactly these 10 rows.
+Eighteen respondents have code 3 (NON-BINARY) on `sex`; neither `sex == 1` nor `sex == 2` includes them. For the other 10, the value is missing (NO ANSWER nine times, DATA ERROR: MR once), and these rows are dropped by every comparison with `==`. `filter(is.na(sex))` gives you exactly these 10 rows.
 :::
 
 ### Sorting cases with `arrange()` and `desc()`
@@ -314,7 +314,7 @@ allbus |>
 
 When you work in SPSS, you rarely ask yourself which type a variable is. SPSS handles this in the background: a variable is “numeric” or “string”, and value labels (“1 = male, 2 = female”) are just a layer of labels on top. In R, this works a little differently, which can be confusing at first.
 
-R has a number of data types: plain numbers (`numeric`), text (`character`), logical values (`logical`) and categories with a fixed order (`factor`). When you import an SPSS dataset, another type is added, which mariposa takes over from haven: `<haven_labelled>`. It is a kind of hybrid: the column behaves like a number, but in the background the values keep their SPSS value labels. This way the information “1 means male” is kept, and you do not have to look it up in the codebook.
+R has a number of data types: plain numbers (`numeric`), text (`character`), logical values (`logical`) and categories with a fixed order (`factor`). When you import an SPSS dataset, there is one more type, which mariposa adopts from the haven package: `<haven_labelled>`. It is a kind of hybrid: the column behaves like a number, but in the background the values keep their SPSS value labels. This way the information “1 means male” is kept, and you do not have to look it up in the codebook.
 
 `class()` shows you the type of a variable:
 
@@ -323,7 +323,7 @@ class(allbus$sex)
 class(allbus$age)
 ```
 
-Both variables are `double`, that is, numbers, and at the same time `haven_labelled`. So a value of `sex` is a brick with a sticker, for example the number 1 with the value label MALE (@fig-dbl-lbl). In the tibble, this is shown by the type tag `<dbl+lbl>`. For `age`, only the missing code has a label; that is enough to make the variable labelled.
+Both variables are `double`, that is, numbers, and at the same time `haven_labelled`. So a value of `sex` is a brick with a sticker, for example the number 1 with the value label MALE (@fig-dbl-lbl). The tibble shows this as the type tag `<dbl+lbl>`. For `age`, only the missing code has a label; that is enough to make the variable labelled.
 
 ![A value of `sex`: the number 1 with the sticker MALE. `dbl` stands for the number (`double`), `lbl` for the value label (`haven_labelled`).](Bilder/figuren/en/k04-dbl-lbl.svg){#fig-dbl-lbl .lightbox fig-alt="At the top sex and the type tag dbl+lbl in angle brackets, dbl dark blue, lbl orange. Below, a large blue brick with the number 1 and a yellow sticker MALE. Under the number it says Number and double, under the sticker Value label and haven_labelled. On the right the code class(allbus$sex) with the output [1] “haven_labelled” “vctrs_vctr” “double”."}
 
@@ -378,7 +378,7 @@ allbus |>
   var_label()
 ```
 
-The result is a named character vector with the stored label for each variable. This tells you what a cryptic variable such as `mm01` means without looking it up in the codebook.
+The result is a named character vector with the stored label for each variable. This tells you what a cryptic variable such as `mm01` means, so you do not have to look it up in the codebook.
 
 A variable such as `mm01` carries three labels (@fig-labels): the variable name you work with in R, the variable label that `var_label()` reads, and the value labels that say what a number means. For `mm01`, only the end points 1 and 7 have a value label; for 2 to 6, `val_labels()` shows only `..`.
 
@@ -392,7 +392,7 @@ var_label(allbus$islamophobia) <- "Islamophobia scale (6 items, 1–7)"
 
 This label then appears automatically in `codebook()`, in the header of `frequency()` and in many `summary()` outputs, wherever mariposa looks for labels. For several variables at once, you pass a list: `var_label(allbus) <- list(islamophobia = "…", populism = "…")`.
 
-For value labels, there is no assignment arrow on the column. `val_labels()` takes pairs of a variable and a named vector (`"Label" = code`) and returns the changed dataset, which you save again. A typical case: a 0/1 dummy you have built yourself, such as `islamophobia_high` in @sec-erklaerung, should show readable values in `frequency()` and `crosstab()` instead of bare zeros and ones:
+Value labels are not set with an arrow on the column. `val_labels()` takes pairs of a variable and a named vector (`"Label" = code`) and returns the changed dataset, which you assign back to `allbus`. A typical case: a 0/1 dummy you have built yourself, such as `islamophobia_high` in @sec-erklaerung, should show readable values in `frequency()` and `crosstab()` instead of bare zeros and ones:
 
 ```{r val-labels-set, eval=FALSE}
 allbus <- val_labels(allbus, islamophobia_high = c("low" = 0, "high" = 1))
@@ -421,11 +421,11 @@ GESIS therefore distinguishes many kinds of missing values in ALLBUS and codes t
 | `-9`  | NO ANSWER                                         |
 | `-8`  | DO NOT KNOW                                       |
 
-Other variables have further codes, such as `-10` NAP: SCREENED OUT (question skipped after a filter question), `-15` NAP: MODE (not asked in this survey mode), `-7` REFUSED, `-32` CANNOT BE GENERATED (for age, `age`) or `-33` CANNOT BE CODED and `-41` DATA ERROR (for the school-leaving certificate, `educ`). `na_frequencies()`, which follows below, shows you which codes a particular variable has.
+Other variables have further codes, such as `-10` NAP: SCREENED OUT (question skipped after a filter question), `-15` NAP: MODE (not asked in this survey mode), `-7` REFUSED, `-32` CANNOT BE GENERATED (for `age`) or `-33` CANNOT BE CODED and `-41` DATA ERROR (for the school-leaving certificate, `educ`). `na_frequencies()` (see below) shows you which codes a particular variable has.
 
-The distinction matters for the content of your analysis: methodologically, a “don't know” is different from a refused answer, and a “not applicable” (the person was never asked the question) is different again from a genuine data error. If you treat these codes as ordinary numbers, which is what happens when you simply include them in a mean, your results are worthless: an “average” life satisfaction of `-3.4` is obviously nonsense.
+The distinction matters substantively. A “don't know” is methodologically different from a refused answer, and a “not applicable” (the person was never asked the question) is different again from a genuine data error. If you treat these codes as ordinary numbers, which is what happens when you simply include them in a mean, your results are worthless: an “average” life satisfaction of `-3.4` is obviously nonsense.
 
-In `allbus`, these codes are stored as **tagged NAs**. “Tagged” means that they count as `NA` (missing) in calculations, but in the background they keep the information about which type of missing value they are. So you can still tell them apart later, for example to show how many people chose “don't know”.
+After the import step, these codes are stored in `allbus` as **tagged NAs**. “Tagged” means that they count as `NA` (missing) in calculations, but in the background they keep the information about which type of missing value they are. So you can still tell them apart later, for example to show how many people chose “don't know”.
 
 In ALLBUS, some item batteries are put to only part of the sample (split design); respondents who are not shown them get the code `-11` (NAP: SPLIT). This applies in particular to the `mm` items of our Islamophobia scale: about 1650 respondents, just under a third, did not see them. The valid N per item is therefore about 3300–3450 rather than 5246. This is intended and belongs in the methods section.
 
@@ -435,7 +435,7 @@ In ALLBUS, some item batteries are put to only part of the sample (split design)
 na_frequencies(allbus$mm01)
 ```
 
-You see the breakdown: how many “don't know”, how many “no answer”, how many “not applicable”, all in one call. This is useful before you decide whether to keep certain codes as regular values or to treat them as missing for good.
+You see in one call how many cases fall under each code. This is useful before you decide whether to keep certain codes as regular values or to treat them as missing for good.
 
 In @fig-missing-codes, each of these gaps is an empty brick with a sticker: the brick is empty because there is no valid value, and the sticker gives the reason. The tags `g`, `l`, `n` and `o` distinguish the four codes within `mm01`. Because the import step gives each of the 17 codes its own tag, a code has the same tag in every variable (for `mm05`, NAP: SPLIT also has the tag `l`). The largest block, 1647 cases with NAP: SPLIT, comes from the split design: these respondents were not asked any of the six `mm` items.
 
