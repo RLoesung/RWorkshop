@@ -207,7 +207,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 
 - Britisches Englisch im Fließtext (*colour*, *analyse*, *visualisation*, *organisation*, *licence* als Nomen). Code und Funktionsargumente folgen den Paketen.
 - Du-Form als *you*. Schlicht und sachlich: direkt sagen, was eine Funktion tut oder was zu sehen ist.
-- Die Abschnitte 3 und 10 gelten auch im Englischen: aktiv vor passiv, keine Wir-Inflation, kein Werbeton. Fett nur Fachbegriffe beim ersten Auftreten, die Marken und die Einstiege der Kästen. Kursiv sparsam; die Regel „englische Originalbegriffe kursiv“ entfällt.
+- Alle Regeln aus §1–12 gelten auch im Englischen, besonders §3 und §10: aktiv vor passiv, keine Wir-Inflation, kein Werbeton. Fett nur Fachbegriffe beim ersten Auftreten, die Marken und die Einstiege der Kästen. Kursiv sparsam; die Regel „englische Originalbegriffe kursiv“ entfällt.
 - Geschlechtsneutral ohne Sonderzeichen: neutrale Wörter (*people switching from SPSS*, *users*, *participants*), wo nötig singular *they*. Das ersetzt `:innen`.
 - Anführungszeichen typografisch doppelt “…”, innen einfach ‘…’.
 - Zahlen im Text wie in den Ausgaben: Dezimalpunkt, keine Tausendertrennung, wo die Ausgabe keine hat (5246). Datumsangaben ausgeschrieben (26 November 2026).
@@ -240,6 +240,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 | **Frage:** | **Question:** | Marke (§1) |
 | **Lesart.** | **Interpretation.** | Marke (§1) |
 | Hintergrund: | Background: | zugeklappt, `## Background: …` |
+| Forschungshintergrund: | Research background: | wie Hintergrund; derzeit in keinem Kapitel, `seite.html` kennt das englische Wort noch nicht |
 | Vorsicht: | Caution: | offen, `**Caution: Title.** …` |
 | mariposa-Tipp: | mariposa tip: | zugeklappt, `## mariposa tip: …` |
 | SPSS → R | SPSS → R | offen, `**SPSS → R.** …` |
