@@ -14,7 +14,7 @@ Ziele
 
 - Eine englische Fassung aller elf Seiten (Vorwort, Kap. 1–10) unter `https://rloesung.github.io/RWorkshop/en/`.
 - Auf jeder Seite ein Knopf, der zur selben Seite in der anderen Sprache führt.
-- Englische R-Ausgaben, weil die englischen Kapitel den englischen ALLBUS (ZA8832) einlesen.
+- Englische R-Ausgaben, weil die englischen Kapitel den englischen ALLBUS (ZA8833) einlesen.
 - Beide Sprachen lassen sich wie bisher kapitelweise rendern, Freeze bleibt wirksam.
 
 Nicht-Ziele
@@ -34,9 +34,9 @@ Anti-Ziele (wäre ein Fehlschlag, auch wenn es technisch läuft)
 
 - Quarto 1.8.25 (in RStudio enthalten unter `/Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto`), R 4.6.2, mariposa 0.7.4.
 - GitHub Pages liefert `docs/` aus `main` aus. `docs/` und `_freeze/` werden mit committet (Ablauf wie bisher: Commit auf `modernisierung-2026`, `main` vorspulen, `main` pushen).
-- Der englische ALLBUS: „German General Social Survey – ALLBUS 2023“, GESIS-Studiennummer ZA8832, Version 1.0.0 vom 01.10.2025. Yannick legt die SPSS-Datei als `ALLBUS2023_en.sav` in den Projektordner. Sie wird nicht versioniert (`*.sav` steht schon in `.gitignore`).
-- Die deutsche Datei im Projekt ist ZA8830 Version 1.2.0: Die SPSS-Datei wurde am 30.07.2025 geschrieben, dem Erscheinungstag von 1.2.0, der aktuellen Version. `read_spss()` liest 5.246 Fälle und 579 Variablen; das Buch nennt 579. Der GESIS-Katalog gibt für ZA8830 und ZA8832 gleichermaßen 605 Variablen an. Diese Katalogzahl zählt offenbar anders und sagt nichts über einen Unterschied zwischen den Dateien.
-- Die GESIS-Bedingungen verbieten die KI-Verarbeitung der Daten. Yannick hat am 26.11.2026 entschieden, dass Claude die Kapitel trotzdem rendert. Das gilt auch für ZA8832. Keine Datenzeilen bewusst in den Kontext holen; Variablennamen und Labels (Metadaten, auch im öffentlichen Codebuch) sind in Ordnung.
+- Die deutsche Datei im Projekt ist **ZA8831, ALLBUScompact 2023, Version 1.3.0** (2025-07-30), laut den Konstanten `za_nr`, `version` und `doi` in der Datei. `read_spss()` liest 5.246 Fälle und 579 Variablen; das Buch nennt 579. (Eine frühere Fassung dieses Dokuments nahm ZA8830 an; das deutsche Buch verweist an drei Stellen ebenfalls auf ZA8830.)
+- Der englische ALLBUS ist das Gegenstück dazu: **ZA8833, „German General Social Survey – ALLBUScompact 2023“, Version 1.0.0** (2025-10-01). Geprüft am 26.11.2026: 5.246 Fälle, dieselben 579 Variablennamen wie die deutsche Datei. Die Datei liegt als `ALLBUS2023_en.sav` im Projektordner und wird nicht versioniert (`*.sav` steht in `.gitignore`).
+- Die GESIS-Bedingungen verbieten die KI-Verarbeitung der Daten. Yannick hat am 26.11.2026 entschieden, dass Claude die Kapitel trotzdem rendert. Das gilt auch für ZA8833. Keine Datenzeilen bewusst in den Kontext holen; Variablennamen und Labels (Metadaten, auch im öffentlichen Codebuch) sind in Ordnung.
 - Kapitel einzeln rendern. `quarto render a.qmd b.qmd` hat in diesem Projekt schon einmal Kapitel in `docs/index.html` zusammengelegt.
 
 ## 4 Ansätze
@@ -77,16 +77,16 @@ Mit einem Testbuch (Quarto 1.8.25) geprüft:
 
 ### 5.3 Daten und Code
 
-- Die englischen Kapitel zeigen im Code `read_spss("ALLBUS2023.sav")`, wie die deutschen. Wer das englische Buch liest, lädt ZA8832 herunter und speichert die Datei unter diesem Namen in seinem Projektordner. Im Buchprojekt liegt die englische Datei als `ALLBUS2023_en.sav`; ein unsichtbarer Setup-Schritt nur in den englischen Kapiteln leitet `read_spss("ALLBUS2023.sav")` auf diese Datei um. So bleiben Code und Abbildungen mit dem Dateinamen in beiden Sprachen gleich.
+- Die englischen Kapitel zeigen im Code `read_spss("ALLBUS2023.sav")`, wie die deutschen. Wer das englische Buch liest, lädt ZA8833 herunter und speichert die Datei unter diesem Namen in seinem Projektordner. Im Buchprojekt liegt die englische Datei als `ALLBUS2023_en.sav`; ein unsichtbarer Setup-Schritt nur in den englischen Kapiteln leitet `read_spss("ALLBUS2023.sav")` auf diese Datei um. So bleiben Code und Abbildungen mit dem Dateinamen in beiden Sprachen gleich.
 - Eigene Variablennamen werden englisch: `islamophobie` → `islamophobia`, `populismus` → `populism`, `islamophobie_p` → `islamophobia_p`, `populismus_p` → `populism_p`, und so weiter für alle im Buch gebildeten Variablen und Objekte. ALLBUS-Variablennamen (`mm01`, `pa29`, `sex`, `age` …) und `allbus` bleiben.
 - `R/prep_en.R` ist die englische Fassung von `R/prep.R`. `R/_common.R` bleibt gemeinsam.
 - Kommentare im Code, Achsentitel, Legenden, Kategorien in `rec()`- und `labels = c(…)`-Aufrufen, Prompt-Vorlagen (Kap. 10) und YAML-Beispiele (Kap. 2, etwa `lang: en`) werden englisch.
-- Die Lesarten zitieren die tatsächlichen englischen Labels aus ZA8832, nicht eigene Übersetzungen der deutschen Labels.
+- Die Lesarten zitieren die tatsächlichen englischen Labels aus ZA8833, nicht eigene Übersetzungen der deutschen Labels.
 
 ### 5.4 Prüfung der Zahlen
 
 - Jede Zahl einer englischen Ausgabe muss der deutschen Ausgabe desselben Chunks entsprechen. Ein Prüfskript vergleicht die Zahlen der Chunk-Ausgaben aus `_freeze/<name>/` und `_freeze/<name>.en/` Chunk für Chunk und meldet Abweichungen.
-- Erwartet werden keine Abweichungen, weil ZA8832 nach ZA8830 1.2.0 erschienen ist. Weicht doch etwas ab, das nicht aus der Übersetzung kommt (andere Fallzahl, andere Variablenzahl, andere Werte), ist das ein Haltepunkt: erst Yannick fragen, nicht anpassen.
+- Erwartet werden keine Abweichungen, weil ZA8833 dieselben Fälle und Variablen hat wie ZA8831. Weicht doch etwas ab, das nicht aus der Übersetzung kommt (andere Fallzahl, andere Variablenzahl, andere Werte), ist das ein Haltepunkt: erst Yannick fragen, nicht anpassen.
 - Bausteine-Abbildungen mit echten Datenwerten (etwa `k04-platte` mit `respid`, `age`, `mm01`) behalten in beiden Sprachen dieselben Werte; übersetzt werden nur Beschriftungen und Wertelabels.
 - Ein zweites Prüfskript vergleicht den Aufbau beider Sprachen je Kapitel: Zahl der Überschriften je Ebene, Chunks, Kästen je Typ, Abbildungen, Übungen. Es dient auch später, damit Änderungen nicht nur in einer Fassung landen.
 
@@ -115,7 +115,7 @@ Die alten Kastentypen in `TYPEN` (Konzept, Reviewer-Hinweis, Tipp, Faustregel) g
 
 ### 5.6 Abbildungen
 
-- Die 69 Bausteine-Abbildungen bekommen englische Fassungen in `Bilder/figuren/en/`, erzeugt von denselben Skripten in `figuren/` mit einem Sprachschalter. Wertelabels in den Abbildungen stammen aus ZA8832.
+- Die 69 Bausteine-Abbildungen bekommen englische Fassungen in `Bilder/figuren/en/`, erzeugt von denselben Skripten in `figuren/` mit einem Sprachschalter. Wertelabels in den Abbildungen stammen aus ZA8833.
 - Das Titelbild bekommt eine englische Fassung (`figuren/cover.py`).
 - Bildunterschriften und `fig-alt`-Texte werden übersetzt.
 
@@ -133,13 +133,13 @@ Die elf RStudio-Bildschirmfotos (`Bilder/rstudio/`) werden übernommen. Die Ober
 ### 5.9 Pflege
 
 - Die deutsche Fassung bleibt die Quelle. Wer ein deutsches Kapitel ändert, ändert die englische Fassung im selben Commit mit; das Aufbau-Prüfskript zeigt Abweichungen.
-- README bekommt einen englischen Abschnitt (Lesen, ZA8832 herunterladen, Rendern). NEWS bekommt einen Eintrag.
+- README bekommt einen englischen Abschnitt (Lesen, ZA8833 herunterladen, Rendern). NEWS bekommt einen Eintrag.
 - Veröffentlicht wird die englische Fassung erst, wenn alle elf Seiten übersetzt und geprüft sind. Bis dahin steht `/docs/en/` in `.gitignore`.
 
 ### 5.10 Ablauf mit Pilot
 
 1. Gerüst: Profile, Render-Skript, Umschalter, zweisprachiges Seitenskript und Styles, Prüfskripte.
-2. Pilot: Vorwort und Kap. 4 auf Englisch, mit englischen Abbildungen und gerendert gegen ZA8832. Kap. 4 enthält Daten, Abbildungen, alle Kastentypen und Übungen.
+2. Pilot: Vorwort und Kap. 4 auf Englisch, mit englischen Abbildungen und gerendert gegen ZA8833. Kap. 4 enthält Daten, Abbildungen, alle Kastentypen und Übungen.
 3. Yannick liest den Pilot und korrigiert Ton und Begriffe. Die Korrekturen kommen als englische Stilregeln in `STYLE.md` (eigener Abschnitt) und gelten für alle weiteren Kapitel.
 4. Erst danach die übrigen neun Seiten.
 

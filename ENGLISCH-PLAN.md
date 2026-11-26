@@ -122,7 +122,7 @@
 
 ### Task 5: Englische Daten einbinden und prüfen
 
-Braucht `ALLBUS2023_en.sav` (ZA8832) im Projektordner. Fehlt sie, hier anhalten und Yannick fragen.
+Braucht `ALLBUS2023_en.sav` (ZA8833) im Projektordner. Fehlt sie, hier anhalten und Yannick fragen.
 
 **Files:**
 - Create: `R/_common_en.R`, `R/pruefe_daten_en.R`, `R/test_common_en.R`
@@ -135,7 +135,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8832) im Projektordner. Fehlt sie, hier anhalten 
 - [ ] **Step 3: `R/_common_en.R` schreiben.**
 - [ ] **Step 4:** Run: `Rscript R/test_common_en.R`. Expected: ohne Fehler, Ausgabe „ok“.
 - [ ] **Step 5: `R/pruefe_daten_en.R`** vergleicht beide Dateien und gibt nur Zusammenfassungen aus: Fallzahl, Variablenzahl, Namen nur in einer Datei, Variablen mit abweichenden Wertecodes (Codes der Wertelabels, nicht die Texte). Run: `Rscript R/pruefe_daten_en.R`. Expected: gleiche Fall- und Variablenzahl, keine abweichenden Namen oder Codes. Weicht etwas ab: anhalten, Yannick fragen (Design §7).
-- [ ] **Step 6: Commit** „Englische Fassung: englischer ALLBUS (ZA8832) im Buchprojekt“.
+- [ ] **Step 6: Commit** „Englische Fassung: englischer ALLBUS (ZA8833) im Buchprojekt“.
 
 ### Task 6: Englische Abbildungen für Kap. 4 und Titelbild
 
@@ -144,10 +144,10 @@ Braucht `ALLBUS2023_en.sav` (ZA8832) im Projektordner. Fehlt sie, hier anhalten 
 - Create: `Bilder/figuren/en/k04-*.svg`, `Bilder/cover-en.svg`
 
 **Interfaces:**
-- Consumes: `sprache.t()`, `build.py --en` (Task 4); englische Labels aus ZA8832 (Task 5).
+- Consumes: `sprache.t()`, `build.py --en` (Task 4); englische Labels aus ZA8833 (Task 5).
 
 - [ ] **Step 1: Englische Labels holen.** Variablen- und Wertelabels der in `kap04.py` gezeigten Variablen (`sex`, `educ`, `mm01`, `mm06`, fehlende Codes −42, −11, −9, −8) aus `ALLBUS2023_en.sav` lesen (nur Labels, `n_max = 0`).
-- [ ] **Step 2: Tests** in `test_kap04.py`: `ERWARTET_KAP04_EN` mit denselben Schlüsseln wie `ERWARTET_KAP04`; Zahlen, Code und Namen gleich, Beschriftungen englisch, Wertelabels exakt wie in ZA8832. Ein Test baut jede Kap.-4-Abbildung mit `setze("en")` und prüft die erwarteten Texte; ein zweiter prüft, dass keine deutsche Beschriftung übrig ist (`check_en.deutsch_reste` auf den SVG-Texten).
+- [ ] **Step 2: Tests** in `test_kap04.py`: `ERWARTET_KAP04_EN` mit denselben Schlüsseln wie `ERWARTET_KAP04`; Zahlen, Code und Namen gleich, Beschriftungen englisch, Wertelabels exakt wie in ZA8833. Ein Test baut jede Kap.-4-Abbildung mit `setze("en")` und prüft die erwarteten Texte; ein zweiter prüft, dass keine deutsche Beschriftung übrig ist (`check_en.deutsch_reste` auf den SVG-Texten).
 - [ ] **Step 3: Tests laufen lassen.** Expected: FAIL.
 - [ ] **Step 4: Texte in `kap04.py` und `cover.py` durch `t()` führen**, Einträge in `en.EN` ergänzen. Cover: „R Workshop“, „Social Sciences“, „An introduction to statistical / data analysis with tidyverse and / mariposa“.
 - [ ] **Step 5: Tests grün**, `python3 -m unittest discover figuren` OK; `python3 figuren/build.py` lässt deutsche SVGs unverändert; `python3 figuren/build.py --en k04-…` (alle zwölf) und Cover nach `Bilder/cover-en.svg` erzeugen. SVGs ansehen (Read) auf Überlauf langer englischer Labels.
@@ -160,7 +160,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8832) im Projektordner. Fehlt sie, hier anhalten 
 - Modify: `STYLE.md` (neuer Abschnitt „12 — Englische Fassung“), `index.en.qmd`
 
 - [ ] **Step 1: `STYLE.md` §12** mit den Regeln aus Design §5.8 und den Anti-Zielen aus §2, der Begriffsliste (Question:/Interpretation., mini study, research journal, exercise, solution, mini research question, Kastennamen aus §5.5) und dem Hinweis, dass der Pilot diese Liste noch ändert.
-- [ ] **Step 2: `index.en.qmd` übersetzen** aus `index.qmd`: alle IDs und Chunk-Labels gleich; Roadmap-Chunk mit englischen Beschriftungen; ALLBUS als „German General Social Survey (ALLBUS)“ einführen; Download-Anleitung für ZA8832, Datei als `ALLBUS2023.sav` speichern; Codebeispiele mit `islamophobia` statt `islamophobie`.
+- [ ] **Step 2: `index.en.qmd` übersetzen** aus `index.qmd`: alle IDs und Chunk-Labels gleich; Roadmap-Chunk mit englischen Beschriftungen; ALLBUS als „German General Social Survey (ALLBUS)“ einführen; Download-Anleitung für ZA8833, Datei als `ALLBUS2023.sav` speichern; Codebeispiele mit `islamophobia` statt `islamophobie`.
 - [ ] **Step 3: Prüfen.** Run: `python3 figuren/check_en.py index`. Expected: keine Meldung.
 - [ ] **Step 4: Rendern** `quarto render index.en.qmd --profile en`; im Browser `/RWorkshop/en/index.html` ansehen: Titelblock, Cover, Roadmap, Umschalter.
 - [ ] **Step 5: Commit** „Englische Fassung: Stilregeln und Vorwort“.
@@ -177,7 +177,7 @@ Braucht `ALLBUS2023_en.sav` (ZA8832) im Projektordner. Fehlt sie, hier anhalten 
 - [ ] **Step 1: Übersetzen** aus `04-Datenimport.qmd`: Setup-Chunk mit `source("R/_common_en.R")`; Abbildungspfade `Bilder/figuren/en/…`; Bildunterschriften und `fig-alt` englisch; Kommentare und Kategorien im Code englisch; alle IDs gleich; `output-file: 04-Datenimport.html`.
 - [ ] **Step 2: Kapitelliste** in `_quarto-en.yml`: `04-Datenimport.qmd` → `04-Datenimport.en.qmd`.
 - [ ] **Step 3: Rendern** `quarto render 04-Datenimport.en.qmd --profile en`.
-- [ ] **Step 4: Lesarten abgleichen.** Jede Lesart und jedes zitierte Label mit der gerenderten Ausgabe vergleichen; zitiert werden die englischen Labels aus ZA8832.
+- [ ] **Step 4: Lesarten abgleichen.** Jede Lesart und jedes zitierte Label mit der gerenderten Ausgabe vergleichen; zitiert werden die englischen Labels aus ZA8833.
 - [ ] **Step 5: Prüfen.** Run: `python3 figuren/check_en.py 04-Datenimport`. Expected: keine Meldung zu Aufbau, Zahlen oder deutschen Resten. Zahlenabweichungen, die nicht aus der Übersetzung kommen: anhalten, Yannick fragen.
 - [ ] **Step 6: Im Browser prüfen** (`/RWorkshop/en/04-Datenimport.html`): englische Kastenetiketten, Übungen und Lösungen, „Output“, „tick off“, Abbildungen, Querverweise, Umschalter in beide Richtungen; Konsole ohne Fehler.
 - [ ] **Step 7: Commit** „Englische Fassung: Kap. 4 (Pilot)“.
