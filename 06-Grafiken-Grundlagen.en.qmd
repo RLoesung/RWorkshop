@@ -12,17 +12,20 @@ source("R/prep_en.R")
 
 # Chapter-specific additions: educ_cat (three education groups) and
 # conversion from labelled to factor for readable axes.
+# The short variable label keeps the legend of educ_cat within the plot
+# (the English ALLBUS label of educ is much longer than the German one).
 allbus <- allbus |>
   mutate(
     educ_cat = rec(educ, rules = "1:2=1 [low]; 3=2 [medium]; 4:5=3 [high]; else=NA",
                    as_factor = TRUE)
   ) |>
-  to_label(eastwest, sex)
+  to_label(eastwest, sex) |>
+  var_label(educ_cat = "Education")
 ```
 
 > *How do I show what I have found?*
 
-With this chapter you come to the part where you make your findings *visible*. The methods chapters that follow (univariate and bivariate analysis, latent structures, explanatory models) make extensive use of what you learn here. You lay the foundation for visualising distributions, group comparisons and relationships.
+In this chapter you learn to make your findings *visible*. The methods chapters that follow (univariate and bivariate analysis, latent structures, explanatory models) make extensive use of what you learn here. You lay the foundation for visualising distributions, group comparisons and relationships.
 
 ::: {.callout-note}
 **Research journal: Where are you in your mini study?** Your scales are ready. Before you start calculating, you learn visualisation, because every analysis begins with “look first, then test”. A histogram of the Islamophobia scale tells you more about whether the construct is distributed as expected than any table from @sec-datentransformation. Work through this chapter before you test hypotheses in @sec-univbivar.
@@ -30,17 +33,17 @@ With this chapter you come to the part where you make your findings *visible*. T
 
 ## What this chapter is about
 
-A good graphic answers a research question in two seconds. A good paragraph of text needs two minutes. And a table? Nobody reads it unless they have to. When your analysis is finished, only *half* of your work is done. The other half is communicating it so that readers understand what you have found.
+A good plot answers a research question in two seconds. A good paragraph of text needs two minutes. And a table? Nobody reads it unless they have to. When your analysis is finished, only *half* of your work is done. The other half is communicating it so that readers understand what you have found.
 
-In SPSS you click together what you need in the *Graphs* menu: bars, lines, points. Each chart type has its own sequence of clicks. If you want something more complex, such as a box plot with facets by education, it quickly becomes tedious. And the result looks as if it had been designed in 1998.
+In SPSS you build what you need by clicking through the *Graphs* menu: bars, lines, points. Each chart type has its own sequence of clicks. If you want something more complex, such as a box plot with facets by education, it quickly becomes tedious. And the result looks as if it had been designed in 1998.
 
-ggplot2 works differently. Imagine you are describing a graphic over the phone to a designer who is to make it for you. You would have to tell them exactly three things:
+ggplot2 works differently. Imagine you are describing over the phone a graphic that a designer will make for you. You would have to tell them exactly three things:
 
 1. Which data do you want to show? Which dataset?
 2. What goes where? Which variable goes on the x-axis, which on the y-axis, which determines the colour, which the grouping?
 3. What should the data points look like? Bars? Points? A line? A box plot?
 
-That is all you need. From these three pieces of information, ggplot2 builds the graphic *automatically*. The official names of the three components are *data*, *aesthetic mapping* and *layer (geom)*. Hadley Wickham derived the system from a 2005 book in which Leland Wilkinson described statistical graphics systematically as a “grammar”, hence the name **grammar of graphics**. Just as a language can build any sentence from nouns, verbs and adjectives, you can build any graphic from these three components.
+That is all you need. From these three pieces of information, ggplot2 builds the plot *automatically*. The official names of the three components are *data*, *aesthetic mapping* and *layer (geom)*. Hadley Wickham derived the system from a 2005 book in which Leland Wilkinson described statistical graphics systematically as a “grammar”, hence the name **grammar of graphics**. Just as you can build any sentence from nouns, verbs and adjectives, you can build any graphic from these three components.
 
 This has a big practical advantage: once you have understood how *one* chart is built, you understand all of them. If you can make a box plot, the step to a histogram or a scatter plot is just a different `geom_*()`; the basic structure stays the same.
 
@@ -50,19 +53,19 @@ This has a big practical advantage: once you have understood how *one* chart is 
 In *The Grammar of Graphics* (2005), Leland Wilkinson proposed building every statistical graphic from a small number of orthogonal components. Hadley Wickham implemented this in R in 2007 as `ggplot` (later `ggplot2`). Today the grammar is also standard in Python (plotnine), JavaScript (Observable Plot) and many commercial tools. Once you have learned in one system which layers a graphic is made of, you can read graphics in all of them.
 :::
 
-This chapter takes you through these three steps and the most important geom variants. You learn which graphic suits which data type, how to split subgroups with facets, and how to adjust colours, themes and labels. The more advanced visualisation topics (coefficient plots, combining several plots, saving in publication quality) follow in @sec-erklaerung at the end of the methods chapters, where you present concrete model results.
+This chapter takes you through these three steps and the most important geom variants. You learn which plot suits which data type, how to split the data into subgroups with facets, and how to adjust colours, themes and labels. The more advanced visualisation topics (coefficient plots, combining several plots, saving in publication quality) follow in @sec-erklaerung at the end of the methods chapters, where you present concrete model results.
 
 ## What you will be able to do after this chapter {-}
 
 - Explain the grammar of graphics approach of ggplot2.
 - Visualise frequencies, distributions and relationships with the appropriate `geom_*()` layers.
-- Split subgroups with `facet_wrap()` and `facet_grid()`.
+- Split the data into subgroups with `facet_wrap()` and `facet_grid()`.
 - Adjust colours, themes and labels, including readable axis labels with `to_label()`.
 - Explain the role of the book-wide theme `theme_rworkshop()`.
 
 ## The grammar of graphics {#sec-grammar}
 
-As explained in the introduction, every ggplot2 graphic consists of exactly three components: data, aesthetic mapping and layers. In code it looks like this:
+As explained in the introduction, every ggplot2 plot consists of exactly three components: data, aesthetic mapping and layers. In code it looks like this:
 
 ```r
 allbus |>
@@ -86,7 +89,7 @@ four |>
   geom_point(size = 3)
 ```
 
-`aes()` sets which tower determines which property of the graphic, and `geom_point()` draws each row as a point (@fig-grammatik). The x-axis shows only medium and high, because none of the four rows has low education.
+`aes()` sets which tower determines which property of the plot, and `geom_point()` draws each row as a point (@fig-grammatik). The x-axis shows only medium and high, because none of the four rows has low education.
 
 ![`aes()` assigns the towers of `four` to the x-axis, the y-axis and the colour. `geom_point()` turns each row into a point; the numbers next to the points are the `respid` values.](Bilder/figuren/en/k06-grammatik.svg){#fig-grammatik .lightbox fig-alt="At the top the code four |> ggplot(aes(x = educ_cat, y = islamophobia, color = sex)) + geom_point(size = 3). On the left a baseplate with four rows and the towers respid, educ_cat (fct), islamophobia (dbl) and sex (fct): 1, medium, 3.33, MALE; 5, high, 4, FEMALE; 6, high, 3.83, FEMALE; 9, high, 1.5, MALE. The first row is outlined in orange. Below the towers are the mappings x, y and color. A green arrow geom_point() leads to a small plot with the x-axis medium and high, labelled x, and the y-axis from 1.5 to 4.0, labelled y. It contains four points with their respid: 1 at medium and 3.33 in salmon red, circled in orange; 5 and 6 at high and 4 and 3.83 in turquoise; 9 at high and 1.5 in salmon red. On the right the legend color with MALE in salmon red and FEMALE in turquoise."}
 
@@ -105,7 +108,7 @@ or
 Error: `mapping` must be created by `aes()`
 ```
 
-The fix is a `+` instead of `|>` between the ggplot2 layers. Everything else stays as usual.
+The fix is a `+` instead of `|>` between the ggplot2 layers; nothing else changes.
 :::
 
 ### First plot: frequency distribution of an item
@@ -126,7 +129,7 @@ allbus |>
 **Interpretation.** The scale runs from 1 (COMPLETELY DISAGREE) to 7 (COMPLETELY AGREE). The distribution shows in which direction the respondents lean.
 
 ::: {.callout-warning}
-**Caution: `weight =` (ggplot2) vs. `weights =` (mariposa).** Both apply weights, but they are spelled differently. ggplot2 uses `weight` (singular, without s) as an *aesthetic* inside `aes()`; mariposa functions such as `frequency()` or `t_test()` use `weights` (plural, with s) as a function argument. If you write both in the same script, you will occasionally mistype one. An unweighted result produces no error message, so the mistake easily goes unnoticed.
+**Caution: `weight =` (ggplot2) vs. `weights =` (mariposa).** Both apply weights, but they are spelled differently. ggplot2 uses `weight` (singular, without s) as an aesthetic inside `aes()`; mariposa functions such as `frequency()` or `t_test()` use `weights` (plural, with s) as a function argument. If you write both in the same script, you will occasionally mistype one. An unweighted result produces no error message, so the mistake easily goes unnoticed.
 :::
 
 ### Second plot: comparing subgroups
@@ -297,9 +300,9 @@ allbus |>
   labs(x = "Education group", y = "Share")
 ```
 
-Before `geom_bar()` draws anything, it counts: for each level of `educ_cat` it adds up the weights from `wghtpew` to `count` (`1049.6`, `1524.7` and `2510.5`) and calculates the share `prop` from these (`0.206`, `0.300` and `0.494`). Without further instructions, `count` goes on the y-axis, as in the previous chunk; `after_stat(prop)` takes the shares instead (@fig-bar-zaehlt). `group = 1` puts all levels into one group; without it, ggplot2 calculates the share of each level relative to itself, and every bar would be 100% high.
+Before `geom_bar()` draws anything, it counts: for each level of `educ_cat` it sums the weights from `wghtpew` into `count` (`1049.6`, `1524.7` and `2510.5`) and calculates the share `prop` from these (`0.206`, `0.300` and `0.494`). Without further instructions, `count` goes on the y-axis, as in the previous chunk; `after_stat(prop)` takes the shares instead (@fig-bar-zaehlt). `group = 1` puts all levels into one group; without it, ggplot2 calculates the share of each level relative to itself, and every bar would be 100% high.
 
-![`geom_bar()` adds up the weights for each level of `educ_cat` to `count` and calculates the share `prop` from these; `after_stat(prop)` puts the shares on the y-axis. On the left are the first two respondents of each level.](Bilder/figuren/en/k06-bar-zaehlt.svg){#fig-bar-zaehlt .lightbox fig-alt="At the top the code ggplot(aes(x = educ_cat, weight = wghtpew)) + geom_bar(aes(y = after_stat(prop), group = 1), fill = “steelblue”). On the left a baseplate with the towers educ_cat (fct) and wghtpew (dbl+lbl), sorted by level: low twice with 1.20 and 1.20, medium twice with 1.25 and 0.545, high twice with 1.20 and 1.20, with an ellipsis after each level. Below the towers the mappings x and weight. A green arrow geom_bar() leads to a baseplate with the towers educ_cat, count and prop: low, 1049.6, 0.206; medium, 1524.7, 0.300; high, 2510.5, 0.494. The tower prop is outlined in green. An arrow leads to a bar chart with the mapping y = after_stat(prop) at the y-axis from 0% to 50% and x at the x-axis: three steel-blue bars for low, medium and high, about 21, 30 and 49 percent high."}
+![`geom_bar()` sums the weights for each level of `educ_cat` into `count` and calculates the share `prop` from these; `after_stat(prop)` puts the shares on the y-axis. On the left are the first two respondents of each level.](Bilder/figuren/en/k06-bar-zaehlt.svg){#fig-bar-zaehlt .lightbox fig-alt="At the top the code ggplot(aes(x = educ_cat, weight = wghtpew)) + geom_bar(aes(y = after_stat(prop), group = 1), fill = “steelblue”). On the left a baseplate with the towers educ_cat (fct) and wghtpew (dbl+lbl), sorted by level: low twice with 1.20 and 1.20, medium twice with 1.25 and 0.545, high twice with 1.20 and 1.20, with an ellipsis after each level. Below the towers the mappings x and weight. A green arrow geom_bar() leads to a baseplate with the towers educ_cat, count and prop: low, 1049.6, 0.206; medium, 1524.7, 0.300; high, 2510.5, 0.494. The tower prop is outlined in green. An arrow leads to a bar chart with the mapping y = after_stat(prop) at the y-axis from 0% to 50% and x at the x-axis: three steel-blue bars for low, medium and high, about 21%, 30% and 49% high."}
 
 With `fill =` as a second grouping variable you get stacked bars, and with `position = "dodge"` bars side by side:
 
@@ -347,11 +350,11 @@ allbus |>
        color = "Sex", caption = "ALLBUS 2023")
 ```
 
-`geom_smooth(method = "lm")` draws a linear regression line for each group. For non-linear trends you use `method = "loess"`. *What a regression line is mathematically, you learn in @sec-regression; here it only serves as a visual aid for the trend.*
+`geom_smooth(method = "lm")` draws a linear regression line for each group. For non-linear trends you use `method = "loess"`. *You learn what a regression line is mathematically in @sec-regression; here it only serves as a visual aid for the trend.*
 
-## Splitting subgroups with facets: `facet_wrap()` and `facet_grid()` {#sec-facets}
+## Splitting data into subgroups with facets: `facet_wrap()` and `facet_grid()` {#sec-facets}
 
-Imagine you want to show the relationship between populism and Islamophobia, but separately for each education group. You could overlay the three groups in a single plot in three different colours. With two groups this still works; with three or more it becomes chaotic: points overlap, trend lines cross, and the eye can no longer find its way.
+Imagine you want to show the relationship between populism and Islamophobia, but separately for each education group. You could overlay the three groups in a single plot in three different colours. With two groups this still works; with three or more it becomes chaotic: points overlap, trend lines cross, and the plot becomes hard to read.
 
 The solution is **facets**: ggplot2 turns *one* plot into several, one per subgroup, arranged side by side with identical axes. This lets you compare the subgroups directly without them overlapping. It is one of the most powerful features of ggplot2, and it is extremely useful in social research, because almost every question there is worth looking at group by group.
 
@@ -367,7 +370,7 @@ allbus |>
   labs(x = "Populism", y = "Islamophobia")
 ```
 
-With *two* grouping variables, `facet_grid()` is the right choice, with rows × columns:
+With *two* grouping variables, use `facet_grid()`, which arranges the panels in rows and columns:
 
 ```{r facet-grid}
 allbus |>
@@ -436,7 +439,7 @@ All plots in this book automatically use the theme `theme_rworkshop()`, which is
 
 ## Labels with `labs()` and `to_label()`
 
-`labs()` sets all texts of a plot in one function call:
+`labs()` sets all titles and labels of a plot in one function call:
 
 ```{r labs}
 allbus |>
@@ -453,7 +456,7 @@ allbus |>
   )
 ```
 
-`to_label()` makes axes readable. For `<haven_labelled>` variables from SPSS, you usually want to see the *value labels* in the plot, not the numeric codes. The setup chunk of this chapter does exactly that: `to_label(eastwest, sex)` turned the two variables into factors:
+`to_label()` makes axes readable. For `<haven_labelled>` variables from SPSS, you usually want to see the *value labels* in the plot, not the numeric codes. The setup chunk of this chapter did exactly that: `to_label(eastwest, sex)` turned the two variables into factors:
 
 ```{r to-label-axis}
 allbus |>
@@ -530,19 +533,19 @@ Choose an interesting political or social science question from ALLBUS 2023 and 
 :::
 
 ::: {.callout-note}
-**Research journal: Where your mini study stands.** You now know the vocabulary of visualisation: histogram, box plot, scatter plot, facets, themes. From the next chapter on, every statistical analysis comes with a matching plot. What comes next: in @sec-univbivar you describe the scale (univariate and bivariate), illustrate it with a histogram and a box plot, and test the first hypotheses, weighted and with effect sizes.
+**Research journal: Where your mini study stands.** You now know the vocabulary of visualisation: histogram, box plot, scatter plot, facets, themes. From the next chapter on, every statistical analysis comes with a matching plot. In @sec-univbivar you then describe the scale (univariate and bivariate), illustrate it with a histogram and a box plot, and test the first hypotheses, weighted and with effect sizes.
 :::
 
 ## What you know now {-}
 
 - You build ggplot2 plots in three steps: data, aesthetic mapping, layers.
 - You choose suitable `geom_*` layers by data type (categorical/continuous, one/two variables).
-- You split subgroups with `facet_wrap()` and `facet_grid()`.
+- You split the data into subgroups with `facet_wrap()` and `facet_grid()`.
 - You use Brewer and viridis palettes for accessible colours.
 - You know `theme_rworkshop()` as the default theme of this book and can use it in your own projects.
 - You use `to_label()` to put readable labels on the axes.
 
-In the following methods chapters you use these basics straight away: in @sec-univbivar to visualise distributions and groups, in @sec-erklaerung for coefficient plots and plots combined from several parts.
+In the following methods chapters you use these basics straight away: in @sec-univbivar to visualise distributions and groups, in @sec-erklaerung for coefficient plots and combined plots.
 
 ## Further reading {-}
 
