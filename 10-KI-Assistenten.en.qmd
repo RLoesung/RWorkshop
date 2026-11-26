@@ -5,7 +5,7 @@ output-file: 10-KI-Assistenten.html
 # Working with AI assistants {#sec-ki-assistenten}
 
 ```{r setup-kap10, include=FALSE}
-# This chapter only calculates with made-up example data.
+# This chapter only uses made-up example data.
 # Chunks with ALLBUS data are set to eval=FALSE (see the section “Protecting data”).
 library(tidyverse)
 library(mariposa)
@@ -14,7 +14,7 @@ source("R/_common_en.R")
 
 > *How can an AI assistant help me with R code, and what do I need to check myself?*
 
-When you get stuck while programming, you probably ask an AI assistant first: a program that answers a question in everyday language with text and code. For R, this is often helpful. An assistant finds typos, explains error messages and suggests code for steps you do not know yet. But it knows neither your data nor every package, and it does not tell you on its own when it does not know something. This chapter covers how to give an assistant enough context, how to check its answers and which data you must not give it.
+When you get stuck while programming, you probably ask an AI assistant first: a program that answers questions asked in everyday language with text and code. For R, this is often helpful. An assistant finds typos, explains error messages and suggests code for steps you do not know yet. But it knows neither your data nor every package, and it does not tell you on its own when it does not know something. This chapter covers how to give an assistant enough context, how to check its answers and which data you must not give it.
 
 ::: {.callout-note}
 **Research journal: Where are you in your mini study?** Your analysis is in place: scales, group comparisons, factor analysis and regression models. If you extend it, for example with another variable or a different model, an assistant can help you with the code. The ALLBUS data stay on your computer. @sec-ki-daten explains why.
@@ -39,9 +39,9 @@ An assistant writes code faster than you. Whether the code does the right thing 
 
 ## What an assistant knows about R {#sec-ki-wissen}
 
-A language model learns from texts that were collected up to a certain cut-off date. It does not know what appeared after that date, unless the program also searches the web. What rarely occurs in the texts, it knows poorly. For R, this means:
+A language model learns from texts that were collected up to a certain cut-off date. It does not know what appeared after that date, unless the program also searches the web. It knows little about what rarely occurs in those texts. For R, this means:
 
-- It knows base R, dplyr and ggplot2 well, because there is a great deal of code and many questions with answers about them on the web.
+- It knows base R, dplyr and ggplot2 well, because the web has a great deal of code and many answered questions about them.
 - Older ways of writing code are more common than new ones. You therefore often get `%>%` instead of `|>` (@sec-pipes) or `case_match()` instead of `recode_values()` (@sec-datentransformation).
 - Many answers follow the logic of SPSS or of other packages that solve similar tasks.
 - mariposa is young and used by comparatively few people. An assistant therefore often does not know its function names, or knows only those of an older version.
@@ -72,8 +72,8 @@ An assistant sees only what you write to it. The more precisely it knows what yo
 1. What you want to do, in one or two sentences and with the names of the variables.
 2. What you are working with: the versions of R and mariposa.
 3. The mariposa documentation. At <https://yannickdiehl.github.io/mariposa/llms.txt> there is an overview of all functions as a plain text file intended for language models. If your assistant can read web pages, the link is enough. Otherwise, copy the help page of the function in question into your request (for example `?w_mean`).
-4. The variables with names, labels and values. You find this information in the ALLBUS questionnaire and codebook, which GESIS offers for download without registration.
-5. For an error, the code that causes it and the full text of the error message.
+4. The variables with names, labels and values. This information is in the ALLBUS questionnaire and codebook, which are available on the GESIS study page.
+5. If there is an error, the code that causes it and the full text of the error message.
 
 R prints the versions itself:
 
@@ -114,10 +114,10 @@ The values are invented. All that matters is that the example shows the problem:
 
 ## A template for your request {#sec-ki-vorlage}
 
-The following template brings the context together and lists the rules that apply in this book. Save it as a text file in your project and fill it in for each request. With these rules, the assistant writes code in the style of this book, which you can check with what you have learned in the chapters.
+The following template brings the context together and lists the rules that apply in this book. Save it as a text file in your project and fill it in for each request. With these rules, the assistant writes code in the style of this book, and you can check that code with what you have learned in the chapters.
 
 ```text
-I am working in R (version: …) with the tidyverse and the package mariposa (version: …).
+I am working in R (version: …) with the tidyverse and the mariposa package (version: …).
 Documentation for mariposa: https://yannickdiehl.github.io/mariposa/llms.txt
 
 Please follow these rules:
@@ -126,8 +126,9 @@ Please follow these rules:
   frequency(), t_test() or linear_regression().
 - Weighting through the argument weights = wghtpew.
 - Recoding with rec() inside mutate().
-- The English ALLBUS file (ZA8833) does not declare missing values.
-  I declare them as NA with set_na() when I read the data with read_spss().
+- The English-language ALLBUS file (ZA8833) does not declare missing values.
+  I set them to NA with set_na() when I read the data with read_spss(),
+  so they are already NA in my data.
 - Use only functions and arguments that exist in the packages named above.
   If you are unsure about a function, say so.
 - Explain each line in a short comment.
@@ -145,7 +146,7 @@ My code so far and the error message (if any):
 The template contains no data, and what you fill in at the places marked … should not contain any either. @sec-ki-daten sets out what you may pass on.
 
 ::: {.callout-tip}
-**SPSS → R: Translating old syntax.** If you have SPSS syntax from earlier projects, an assistant can translate it into R. Syntax usually contains only commands and no data. Include the rules from the template in your request, because many mariposa functions correspond to an SPSS procedure: `FREQUENCIES` becomes `frequency()`, `DESCRIPTIVES` becomes `describe()`. Afterwards, compare whether R prints the same numbers as SPSS did.
+**SPSS → R: Translating old syntax.** If you have SPSS syntax from earlier projects, an assistant can translate it into R. Syntax usually contains only commands and no data. Include the rules from the template in your request, because many mariposa functions correspond to an SPSS procedure: `FREQUENCIES` becomes `frequency()`, `DESCRIPTIVES` becomes `describe()`. Afterwards, check whether R prints the same numbers as SPSS did.
 :::
 
 ## Checking answers {#sec-ki-pruefen}
@@ -190,7 +191,7 @@ Further checks take little time:
 - Number of cases: Does the N match what you expect? If many cases are missing, this is often due to missing values or a filter.
 - Range of values: The mean of a scale from 0 to 10 must lie between 0 and 10. Negative values point to missing-value codes that were counted as valid values (@sec-fehlende-werte).
 - Weights: mariposa states in the header of the output whether the analysis is weighted, for example *Weighted Mean Statistics*.
-- Comparison with a known result: First recalculate something whose result you know from this book, such as a frequency from @sec-datenimport. If it matches, the pipeline is in order up to that point.
+- Comparison with a known result: First reproduce a result you know from this book, such as a frequency from @sec-datenimport. If it matches, the pipeline works up to that point.
 
 Always take the numbers for your report from your own R output. An assistant that has not seen your data cannot know any results. If it gives numbers anyway, they are made up.
 
@@ -199,17 +200,17 @@ Always take the numbers for your report from your own R output. An assistant tha
 What you write to an assistant is sent to the provider, processed there and often stored as well. Research data have their own rules for this.
 
 ::: {.callout-warning}
-**Caution: ALLBUS data do not belong in an AI assistant.** The [GESIS terms of use for data](https://www.gesis.org/institut/datennutzungsbedingungen) (valid from 4 February 2026) prohibit, in section 4, using AI systems to process the data GESIS provides. GESIS allows exceptions only on request in individual cases, if you alone have control over the AI system and use it only for scientific purposes. Anyone who culpably breaches the terms loses the right of use and pays a contractual penalty of €10,000.
+**Caution: ALLBUS data do not belong in an AI assistant.** Section 4 of the [GESIS terms of use](https://www.gesis.org/en/institute/data-usage-terms) (valid from 4 February 2026) prohibits using AI systems to process the data GESIS provides. GESIS allows exceptions only on request in individual cases, and only if you alone have control over the AI system and use it exclusively for scientific purposes. Anyone who culpably breaches the terms loses the right of use and pays a contractual penalty of €10,000.
 :::
 
 For working with this book, this means:
 
 - You can pass on code, error messages, variable names and labels from the public documentation, and examples with made-up values.
-- The file `ALLBUS2023.sav`, data rows and any output that shows individual respondents stay with you, for example output from `head()`, `glimpse()` or `View()`.
-- The terms do not explicitly cover aggregated results such as a frequency table. The safest approach is to ask for code and interpret the numbers yourself.
+- Keep the file `ALLBUS2023.sav`, data rows and any output that shows individual respondents (such as the output of `head()`, `glimpse()` or `View()`) to yourself.
+- The terms do not explicitly address aggregated results such as a frequency table. The safest approach is to ask for code and interpret the numbers yourself.
 - An agent that reads files in your project folder and runs R processes the data itself. Use such tools only in a folder without ALLBUS data.
 
-Other datasets have their own terms of use. If you collect data yourself, for example in a survey for your thesis, data protection towards your respondents applies as well. In both cases, clarify with your supervisor beforehand which tools you may use. Terms of use change; read the current version before you start a new project.
+Other datasets have their own terms of use. If you collect data yourself, for example in a survey for your thesis, you also have data protection obligations to your respondents. In both cases, check with your supervisor beforehand which tools you may use. Terms of use change; read the current version before you start a new project.
 
 ## Assistants in coursework and theses {#sec-ki-hausarbeit}
 
@@ -229,7 +230,7 @@ You want to know how school leaving certificates (`educ`) are distributed in the
 
 ::: {.callout-tip title="Solution" collapse="true"}
 ```text
-I am working in R (version: 4.6.2) with the tidyverse and the package mariposa (version: 0.7.4).
+I am working in R (version: 4.6.2) with the tidyverse and the mariposa package (version: 0.7.4).
 Documentation for mariposa: https://yannickdiehl.github.io/mariposa/llms.txt
 
 [rules as in the template]
@@ -256,7 +257,7 @@ A suitable answer uses, for example, `set_na(educ = c(6, 7))` from @sec-fehlende
 :::
 
 ::: {.callout-note title="Exercise 2 · Checking an answer · Reproduction"}
-In answer to the question “How satisfied are people in the West and in the East with their lives, and how satisfied are they in Germany as a whole?”, an assistant suggested this code. Find at least three problems, first by reading. Then check your guesses in R.
+An assistant suggested this code for the question “How satisfied are people in the West and in the East with their lives, and how satisfied are they in Germany as a whole?” Find at least three problems, first by reading. Then check your guesses in R.
 
 ```{r ex2-kap10-aufgabe, eval=FALSE}
 allbus %>%
@@ -300,14 +301,14 @@ c("cross_table", "w_sd", "crosstab", "cronbach_alpha") %in% ls("package:mariposa
 :::
 
 ::: {.callout-note title="Exercise 4 · A step for your mini study · Mini research question"}
-Take your own research question from the exercises of the previous chapters and think of a next analysis step that you do not know yet, for example an additional control variable or a different graph. Write a request for it with the template and check the answer with the steps from @sec-ki-pruefen. Record in your Quarto document what you asked, what you changed in the answer and why.
+Take your own research question from the exercises of the previous chapters and think of a next analysis step that you have not learned yet, for example an additional control variable or a different graph. Write a request for it with the template and check the answer with the steps from @sec-ki-pruefen. Record in your Quarto document what you asked, what you changed in the answer and why.
 
 *There is no model solution for this exercise. What matters is the process from the request to the check.*
 :::
 
 ## What you know now {-}
 
-- A language model writes code that looks likely. For mariposa, it therefore easily invents functions and arguments.
+- A language model writes the code that is most likely given its training texts. For mariposa, it therefore easily invents functions and arguments.
 - You give an assistant context: goal, versions, the mariposa documentation, variables and error messages.
 - You reproduce problems with data using made-up example values.
 - You check suggestions with the R help, with `ls("package:mariposa")` and with simple checks of the number of cases, the range of values and the weights.
@@ -317,8 +318,8 @@ Take your own research question from the exercises of the previous chapters and 
 
 ## Further reading {-}
 
-- mariposa: [overview of all functions for language models](https://yannickdiehl.github.io/mariposa/llms.txt) and [reference of all functions](https://yannickdiehl.github.io/mariposa/reference/index.html).
-- GESIS, [terms of use for data](https://www.gesis.org/institut/datennutzungsbedingungen) (in German); section 4 covers the use of AI systems.
-- GESIS, [study description of the German General Social Survey – ALLBUScompact 2023 (ZA8833)](https://search.gesis.org/research_data/ZA8833), with questionnaire and codebook for download without registration.
+- mariposa: [overview of all functions for language models](https://yannickdiehl.github.io/mariposa/llms.txt) and [function reference](https://yannickdiehl.github.io/mariposa/reference/index.html).
+- GESIS, [terms of use](https://www.gesis.org/en/institute/data-usage-terms); section 4 covers the use of AI systems.
+- GESIS, [study description of the German General Social Survey – ALLBUScompact 2023 (ZA8833)](https://search.gesis.org/research_data/ZA8833), with questionnaire and codebook.
 - Jennifer Bryan et al., [reprex](https://reprex.tidyverse.org/): package and guide for reproducible examples.
 - Hadley Wickham, Mine Çetinkaya-Rundel and Garrett Grolemund, [R for Data Science (2e), chapter “Workflow: getting help”](https://r4ds.hadley.nz/workflow-help.html).
