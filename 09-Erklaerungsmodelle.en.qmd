@@ -33,9 +33,9 @@ In @sec-univbivar you described variables one at a time and compared them in pai
 
 The real strength of quantitative social research only shows when you look at more than two variables at the same time. In @sec-univbivar you showed that Islamophobia correlates positively with populism and negatively with education, and that it is higher in the East than in the West. But this immediately raises the next question: *Are these all independent effects, or are they related?*
 
-Perhaps the east–west difference is not “real” at all. Perhaps it exists only because the average level of education is somewhat lower in the East, and the actual driver is education. Perhaps populism works quite differently for people with low education than for people with high education. Bivariate tests cannot answer such multicausal questions. You need a model that takes several predictors into account *at the same time* and shows what remains for each variable when the others are controlled for.
+Perhaps the East–West difference is not “real” at all. Perhaps it exists only because the average level of education is somewhat lower in the East, and the actual driver is education. Perhaps populism works quite differently for people with low education than for people with high education. Bivariate tests cannot answer such multicausal questions. You need a model that takes several predictors into account *at the same time* and shows what remains for each variable when the others are controlled for.
 
-This is the core of multivariate methods: they isolate the effect of one variable by “partialling out” all the others at the same time. If the effect of region becomes smaller as soon as education is in the model, you know that part of the apparent east–west difference was really an education effect. If it stays the same, you know that region is a predictor in its own right.
+This is the core of multivariate methods: they isolate the effect of one variable by “partialling out” all the others at the same time. If the effect of region becomes smaller as soon as education is in the model, you know that part of the apparent East–West difference was really an education effect. If it stays the same, you know that region is a predictor in its own right.
 
 This chapter takes you through the four most important tools of this kind:
 
@@ -44,7 +44,7 @@ This chapter takes you through the four most important tools of this kind:
 3. Multiple linear regression: the all-rounder when your dependent variable is interval-scaled (like our Islamophobia scale). With it you can model any number of predictors and compare their relative strength.
 4. Logistic regression: when your dependent variable has only two values (yes/no, high/low). It is the standard method for modelling the *probability* of a binary outcome.
 
-At the end we communicate the findings graphically: coefficient plots make model results readable at a glance, patchwork combines several plots of findings into a publication-ready composition, and `ggsave()` exports the result in any format.
+At the end we communicate the findings graphically: coefficient plots make model results readable at a glance, patchwork combines several plots into a publication-ready composition, and `ggsave()` exports the result in any format.
 
 ## What you will be able to do after this chapter {-}
 
@@ -57,11 +57,11 @@ At the end we communicate the findings graphically: coefficient plots make model
 - Run a logistic regression for a dichotomous outcome, including odds ratios and average marginal effects in percentage points (`marginal_effects()`).
 - Visualise regression results as a coefficient plot with `broom::tidy()`.
 - Combine several plots into one composition with patchwork.
-- Export plots in publication quality with `ggsave()`.
+- Export plots at publication-quality resolution with `ggsave()`.
 
 ## Simple linear regression {#sec-simple-regression}
 
-We start with the simplest case: one predictor, one dependent variable. Once you understand this case, you have the mechanics of the whole regression family. Multiple regression, ANOVA and logistic regression are all variants of the same basic principle.
+We start with the simplest case: one predictor, one dependent variable. Once you understand this case, you understand the mechanics of the whole regression family. Multiple regression, ANOVA and logistic regression are all variants of the same basic principle.
 
 ### The rubber band idea
 
@@ -99,7 +99,7 @@ The closed-form solution for the slope looks like this:
 
 $$\hat{\beta} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}$$
 
-Read it as: *“how strongly x and y vary together, relative to how strongly x varies on its own.”* R calculates this in microseconds; the number you see in the output in the column `B` is exactly this number.
+Read it as: *“how strongly x and y vary together, relative to how strongly x varies on its own.”* R calculates this in microseconds; the value in the column `B` of the output is exactly this number.
 
 ### Fitting the model with `linear_regression()`
 
@@ -112,13 +112,13 @@ m_simple <- allbus |>
 m_simple
 ```
 
-**Interpretation of the compact output.** Three numbers carry the model:
+**Interpretation of the compact output.** Three numbers summarise the model:
 
 - R²: the share of the variance in Islamophobia that populism alone explains. With *one* explanatory variable, $R^2 = r^2$, the square of the Pearson correlation from @sec-univbivar.
 - F (model): tests whether $R^2$ differs significantly from 0.
 - N: how many cases entered the model.
 
-You get the full table with intercept and slope with `summary()`:
+`summary()` gives you the full table with intercept and slope:
 
 ```{r lm-simple-summary}
 summary(m_simple)
@@ -157,13 +157,13 @@ allbus |>
 
 ## Categorical predictors: dummy coding {#sec-dummy}
 
-The simple regression had a *metric* predictor: populism on a 1–5 scale. As soon as you move on to multiple regression in the next section, *categorical* predictors also enter the model: education in three levels, region as East/West, sex as male/female/non-binary. Regression models, however, calculate with *numbers*. How does that fit together?
+The simple regression had a *continuous* predictor: populism on a 1–5 scale. As soon as you move on to multiple regression in the next section, *categorical* predictors also enter the model: education with three levels, region as East/West, sex as male/female/non-binary. Regression models, however, calculate with *numbers*. How does that work?
 
 R solves this with a technique called **dummy coding**, and you need to understand it to read the output table correctly.
 
 ### The idea: k levels become k − 1 dummies
 
-For a factor with `k` levels, R internally creates `k − 1` new 0/1 variables (the dummies). One original level becomes the **reference**: it does *not* appear as a separate row in the output but is absorbed into the intercept.
+For a factor with `k` levels, R internally creates `k − 1` new 0/1 variables (the dummies). One original level becomes the **reference category**: it does *not* appear as a separate row in the output but is absorbed into the intercept.
 
 For `educ_cat` with three levels, the internal coding looks like this:
 
@@ -210,10 +210,10 @@ Important: R², the model F and all predictions stay the same. Only the interpre
 ::: {.callout-important collapse="true"}
 ## mariposa tip: The `factors` argument
 
-Since version 0.6.2 you control explicitly in `linear_regression()` and `logistic_regression()` how factor predictors are treated:
+Since version 0.6.2 you can control how `linear_regression()` and `logistic_regression()` treat factor predictors:
 
 - `factors = "dummy"` (default): as described above, k − 1 dummy contrasts. Consistent with base R `lm()`.
-- `factors = "numeric"`: the factor is converted into its integer codes (1, 2, 3, …) and treated as *metric*; you get *one* slope instead of k − 1 contrasts. This reproduces SPSS `REGRESSION` with ordinally coded variables.
+- `factors = "numeric"`: the factor is converted into its integer codes (1, 2, 3, …) and treated as *numeric*; you get *one* slope instead of k − 1 contrasts. This reproduces SPSS `REGRESSION` with ordinally coded variables.
 
 The choice between the two is an *assumption about the level of measurement*. Do you treat education as ordinal with equal distances (the step from level 2 to level 3 is the same as from level 1 to level 2 → `numeric`)? Or as purely categorical with unknown distances between the levels (`dummy`)? In this book we use the `dummy` default because it is methodologically more *conservative*: it does not impose the assumption of equal distances.
 :::
@@ -227,7 +227,7 @@ Instead of a line in two dimensions, you now look for a *plane* (two predictors)
 ::: {.callout-note collapse="true"}
 ## Background: What does “controlled for” mean?
 
-A concrete numerical example makes this tangible. You first calculate a *bivariate* regression (`islamophobia ~ education`) and get a coefficient of, say, −0.20: higher education → lower Islamophobia. Then you add populism to the model (`islamophobia ~ education + populism`), and the education coefficient shrinks to, say, −0.13.
+Take a numerical example. You first calculate a *bivariate* regression (`islamophobia ~ education`) and get a coefficient of, say, −0.20: higher education → lower Islamophobia. Then you add populism to the model (`islamophobia ~ education + populism`), and the education coefficient shrinks to, say, −0.13.
 
 As an arrow diagram:
 
@@ -244,10 +244,10 @@ As an arrow diagram:
 
 The difference of −0.07 is *the part of the education effect that actually runs through populism*: people with higher education are on average less populist, and populism explains Islamophobia better than education alone. What remains after controlling for populism (−0.13) is the *direct* education effect, which is *not* mediated by populism. This breakdown into *direct* and *mediated* effects is what multivariate modelling adds.
 
-*Note: the numbers here are illustrative. The exact breakdown depends on the model specification (for example, on whether education enters as a metric variable or as a dummy-coded categorical one, see @sec-dummy). The principle of splitting the effect into a direct and an indirect part stays the same.*
+*Note: the numbers here are illustrative. The exact breakdown depends on the model specification (for example, on whether education enters as a continuous variable or as a dummy-coded categorical one, see @sec-dummy). The principle of splitting the effect into a direct and an indirect part stays the same.*
 :::
 
-The most important number for the overall quality of the model is R²: the share of the variance in the dependent variable that the model explains. An R² of 0.30 means that your predictors explain 30 percent of the variation in the dependent variable; 70 percent remain unexplained (by variables that are not in your model, by measurement error, by chance). In social research, an R² above 0.30 is already a clear finding; near-perfect explanation with an R² close to 1 exists only in the natural sciences. Attitudes depend on very many influences, from personality and experience to social contexts, and no model can capture them all.
+The most important number for the overall quality of the model is R²: the share of the variance in the dependent variable that the model explains. An R² of 0.30 means that your predictors explain 30% of the variation in the dependent variable; 70% remain unexplained (by variables that are not in your model, by measurement error, by chance). In social research, an R² above 0.30 is already a clear finding; near-perfect explanation with an R² close to 1 exists only in the natural sciences. Attitudes depend on very many influences, from personality and experience to social contexts, and no model can capture them all.
 
 **Question:** Which variables explain Islamophobia best: education, age, region, sex, populism?
 
@@ -261,7 +261,7 @@ model <- allbus |>
 model
 ```
 
-The compact output shows R², adjusted R², the F-test of the overall model and N. This is good for a quick overview: *“Does the model fit at all?”* You get the full SPSS-style table with all coefficients with `summary()`; you need it as soon as you look at *individual* predictors:
+The compact output shows R², adjusted R², the F-test of the overall model and N. This is good for a quick overview: *“Does the model fit at all?”* `summary()` gives you the full SPSS-style table with all coefficients; you need it as soon as you look at *individual* predictors:
 
 ```{r lm-summary}
 summary(model)
@@ -269,13 +269,13 @@ summary(model)
 
 **Interpretation.** The `Coefficients` table is the core of the output:
 
-- B: unstandardised coefficients. For metric predictors: “If x increases by one unit, y changes by B units.” For dummy variables (e.g. `educ_cathigh`): “difference from the reference group.”
+- B: unstandardised coefficients. For continuous predictors: “If x increases by one unit, y changes by B units.” For dummy variables (e.g. `educ_cathigh`): “difference from the reference group.”
 - Std. Error and t: the precision of the estimate.
-- Beta: standardised coefficients. They do not depend on the scale of the variables and can therefore be compared directly between predictors. They are the most important aid for saying *which* predictor has the strongest relative effect.
+- Beta: standardised coefficients. They do not depend on the scale of the variables and can therefore be compared directly between predictors. They are the best guide to *which* predictor has the strongest relative effect.
 - Sig.: *p*-values.
 - 95% CI Lower / Upper: the confidence interval for B (SPSS: `/STATISTICS CI`). If it excludes 0, the coefficient is significant at the 5% level.
 
-Below it follows the table *Collinearity Statistics* with tolerance and VIF for each predictor; more on this in @sec-vif. In the header at the top there is a note about `age`: because the variable still carries value labels from SPSS, it enters the model with its numeric values as a metric predictor, as in SPSS `REGRESSION`. This is what we want for age. Only if you want to model a labelled variable as *categories* do you convert it to a factor with `to_label()` first.
+Below it is the *Collinearity Statistics* table with tolerance and VIF for each predictor; more on this in @sec-vif. In the header at the top there is a note about `age`: because the variable still carries value labels from SPSS, it enters the model with its numeric values as a continuous predictor, as in SPSS `REGRESSION`. This is what we want for age. Only if you want to model a labelled variable as *categories* do you convert it to a factor with `to_label()` first.
 
 Note also N = 1881: only cases with valid values on *all* variables enter the model (*listwise deletion*). Because `islamophobia` and `populism` come from different split modules (see @sec-univbivar), just over a third of the sample remains.
 
@@ -289,9 +289,9 @@ The other categorical predictors are read in the same way:
 - `sexFEMALE` (Beta = 0.04, *p* = .03): a weak positive effect for women compared with men (= reference).
 - `sexNON-BINARY` (Beta = −0.02, *p* = .43): not significant; but be careful, this is a *very* small group in the ALLBUS, and the estimate is unstable.
 
-Metric predictors keep the familiar interpretation: `age` (Beta = 0.30, *p* < .001) has a positive effect; older respondents have higher values.
+Continuous predictors keep the familiar interpretation: `age` (Beta = 0.30, *p* < .001) has a positive effect; older respondents have higher values.
 
-The model explains a *share* of the variance in Islamophobia. How large is this share, and how large is the unexplained rest? Here is the R² from the output, made visible:
+The model explains a *share* of the variance in Islamophobia. How large is this share, and how large is the unexplained remainder? Here is the R² from the output, made visible:
 
 ```{r r2-anteil, fig.height=1.8}
 library(broom)
@@ -316,7 +316,7 @@ tibble(
        caption = "Typical for the social sciences: an R² of about 0.20–0.30 is a clear finding.")
 ```
 
-**Interpretation.** The blue share is the finding: *“this much of the variation in Islamophobia can be explained by our five predictors.”* The grey rest is due to all variables that are *not* in the model, plus measurement error and chance.
+**Interpretation.** The blue share is the finding: *“this much of the variation in Islamophobia can be explained by our five predictors.”* The grey remainder is due to all variables that are *not* in the model, plus measurement error and chance.
 
 ::: {.callout-note collapse="true"}
 ## Background: B or Beta?
@@ -362,7 +362,7 @@ anova(m_base, m_full)   # F-test of the incremental explained variance
 
 ## Checking multicollinearity: VIF {#sec-vif}
 
-Imagine a jury in which two members *always* vote the same way. From their votes you can no longer tell who holds which opinion; the information is redundant. The same happens in a regression with two strongly correlated predictors: both contribute almost the same information, and the model can no longer separate their individual contributions. Coefficients become unstable, standard errors inflate and confidence intervals become wider. You lose explanatory power *without* this showing in the model R².
+Imagine a jury in which two members *always* vote the same way. From their votes you can no longer tell who holds which opinion; the information is redundant. The same happens in a regression with two strongly correlated predictors: both contribute almost the same information, and the model can no longer separate their individual contributions. Coefficients become unstable, standard errors inflate and confidence intervals become wider. Your estimates become less precise, *without* this showing in the model R².
 
 ### The formula is surprisingly simple
 
@@ -390,7 +390,7 @@ The **tolerance** is the reciprocal: $\text{Tolerance} = 1/\text{VIF} = 1 - R^2_
 
 ### Calculating the VIF by hand in three steps
 
-mariposa gives you VIF and tolerance ready-made in `summary(model)`. So that this number does not remain a black box, we calculate the VIF ourselves once, *exactly according to the formula above*, for *one* predictor in three visible steps. Example: the VIF for `populism`.
+mariposa gives you VIF and tolerance ready-made in `summary(model)`. To see where this number comes from, you calculate the VIF once yourself, *exactly according to the formula above*, for *one* predictor in three visible steps. Example: the VIF for `populism`.
 
 **Step 1: auxiliary regression.** We make `populism` the *dependent* variable and let all other predictors of the main model predict it. Important: this must be done on the *same set of cases* as the main model, so we use `allbus_model` from the model comparison above. With the full `allbus`, respondents without any value for Islamophobia would also enter, and the VIF would refer to a different sample from the model.
 
@@ -428,7 +428,7 @@ For the other predictors you repeat the same three steps, each with an adjusted 
 ::: {.callout-note collapse="true"}
 ## Background: Categorical predictors and VIF
 
-For a factor such as `educ_cat` (three levels → two dummy variables, see @sec-dummy), each dummy variable gets its own VIF; this is also how `summary(model)` reports it (`educ_catmedium` 1.79, `educ_cathigh` 2.12). It is normal that the two education dummies have somewhat higher values: anyone who is not “medium” is very likely to be “high”. Specialised functions such as `car::vif()` (from the package `car`) calculate the generalised VIF (GVIF) for factors instead. This is a single statistic per original variable, and its column `GVIF^(1/(2·Df))` can be compared directly with the VIF rules of thumb. For models like ours (all VIFs well below 2.5) the difference hardly matters; for models close to the warning threshold it is worth looking up the GVIF.
+For a factor such as `educ_cat` (three levels → two dummy variables, see @sec-dummy), each dummy variable gets its own VIF; this is also how `summary(model)` reports it (`educ_catmedium` 1.79, `educ_cathigh` 2.12). It is normal that the two education dummies have somewhat higher values: anyone who is not “medium” is very likely to be “high”. Specialised functions such as `car::vif()` (from the package `car`) calculate the generalised VIF (GVIF) for factors instead. This is a single statistic per original variable, and its column `GVIF^(1/(2·Df))` can be compared directly with the VIF rules of thumb. For models like ours (all VIFs well below 2.5) the difference hardly matters; for models close to the warning threshold it is worth checking the GVIF.
 :::
 
 ## Residual diagnostics by hand {#sec-residuen}
@@ -441,7 +441,7 @@ Base R offers `plot()` for every `lm` object, and because mariposa models inheri
 
 ### The four assumptions and their diagnostic plots
 
-| Plot                       | checks                         | good picture                                   |
+| Plot                       | checks                         | what you want to see                           |
 | :------------------------- | :----------------------------- | :--------------------------------------------- |
 | Residuals vs Fitted        | linearity                      | points scattered randomly around the zero line |
 | Normal Q-Q                 | normality of the residuals     | points lie on the diagonal                     |
@@ -463,7 +463,7 @@ For each observation, the tibble contains, among other things:
 - `.fitted`: the model prediction
 - `.resid`: the residuals (observed − predicted)
 - `.std.resid`: standardised residuals
-- `.hat`: leverage (the influence of a case in the space of the predictors)
+- `.hat`: leverage (how unusual a case's predictor values are)
 - `.cooksd`: Cook's distance (the overall influence of a case)
 
 @fig-augment shows the first two rows of `diag_df`; they are the respondents from rows 1 and 6 of @fig-fallset. `augment()` places the new columns next to the model data: `.fitted` is the calculation with the coefficients B from `summary(model)`, and `.resid` is the observed value minus this prediction.
@@ -511,7 +511,7 @@ p_rl <- diag_df |>
 (p_rf + p_qq) / (p_sl + p_rl)
 ```
 
-**Interpretation.** With N ≈ 1900 (as here), visible deviations are the exception; the LOESS lines should run largely flat around 0 (or horizontally in the Scale-Location plot). If the Q-Q plot deviates clearly from the diagonal at the ends, the assumption of normally distributed residuals is violated. With large samples this is usually unproblematic thanks to the central limit theorem. You check conspicuous single points with high leverage specifically with `diag_df |> filter(.cooksd > 4/n())`; Cook's distance values above 1 clearly call for a closer look.
+**Interpretation.** With N ≈ 1900 (as here), visible deviations are the exception; the LOESS lines should run largely flat around 0 (or horizontally in the Scale-Location plot). If the Q-Q plot deviates clearly from the diagonal at the ends, the assumption of normally distributed residuals is violated. With large samples this is usually unproblematic thanks to the central limit theorem. To check individual points with high leverage, use `diag_df |> filter(.cooksd > 4/n())`; Cook's distance values above 1 clearly call for a closer look.
 
 ::: {.callout-important collapse="true"}
 ## mariposa tip: What works directly with `model`?
@@ -609,7 +609,7 @@ allbus |>
   summary()
 ```
 
-**Interpretation.** In the simple ANOVA (@sec-univbivar), the low-education group was still a good 0.2 scale points above the medium group (4.68 versus 4.45). At equal age this difference almost disappears (4.41 versus 4.43); only high education stays clearly lower at 3.60. So part of the apparent education effect was an age effect: respondents with a low school-leaving certificate are older on average, and older people are more Islamophobic. This matches the `educ_catmedium` coefficient of the multiple regression above.
+**Interpretation.** In the simple ANOVA (@sec-univbivar), the low-education group was still just over 0.2 scale points above the medium group (4.68 versus 4.45). At equal age this difference almost disappears (4.41 versus 4.43); only high education stays clearly lower at 3.60. So part of the apparent education effect was an age effect: respondents with a low school-leaving certificate are older on average, and older people are more Islamophobic. This matches the `educ_catmedium` coefficient of the multiple regression above.
 
 @fig-randmittel puts both sets of means on the same scale: `low` moves from 4.68 to 4.41 and is then almost level with `medium`, while `high` rises from 3.48 to 3.60.
 
@@ -745,7 +745,7 @@ tibble(
 
 ### Translating odds ratios into probabilities: `marginal_effects()`
 
-Odds ratios are hard to communicate (see the Caution box above). If you want to say *by how many percentage points* the probability changes, you need **average marginal effects** (AME). An AME is the average change in the predicted probability: for a factor compared with the reference category, for a metric variable per unit. In Stata this is `margins, dydx(*)`; mariposa calculates it directly from the model with `marginal_effects()`:
+Odds ratios are hard to communicate (see the Caution box above). If you want to say *by how many percentage points* the probability changes, you need **average marginal effects** (AME). An AME is the average change in the predicted probability: for a factor compared with the reference category, for a continuous variable per unit. In Stata this is `margins, dydx(*)`; mariposa calculates it directly from the model with `marginal_effects()`:
 
 ```{r logreg-ame}
 model_log |> marginal_effects()
@@ -759,9 +759,9 @@ model_log |> marginal_effects()
 
 @fig-ame shows how `marginal_effects()` arrives at −0.252. For each person in the model, R predicts the probability twice, once with low and once with high education; age, region and sex stay as they are. The weighted mean of these differences is the AME.
 
-![The first three people in the model: `educ_cat` is set once to `low` and once to `high` for each of them, and `predict()` calculates the probabilities with `type = "response"`. The mean of the differences runs over all people in the model, weighted with `wghtpew`. The differences are rounded to two decimal places.](Bilder/figuren/en/k09-ame.svg){#fig-ame .lightbox fig-alt="A baseplate with respid 1, 5 and 6 and ellipses below them. A purple tower educ_cat with medium, high and high. Under the heading P(islamophobia_high = 1) at educ_cat = two blue towers: low with 0.584, 0.394 and 0.581, high with 0.316, 0.177 and 0.314. In each row, grey arrows lead to a tower high - low with a green border, with -0.27, -0.22 and -0.27. A bracket groups it, and a green arrow labelled weighted mean leads to a brick -0.252 labelled AME. At the bottom the code model_log |> marginal_effects() and the output educ_cat: high vs. low: AME = -0.252, p < 0.001 ***."}
+![The first three people in the model: `educ_cat` is set once to `low` and once to `high` for each of them, and `predict()` calculates the probabilities with `type = "response"`. The mean of the differences is taken over all people in the model, weighted with `wghtpew`. The differences are rounded to two decimal places.](Bilder/figuren/en/k09-ame.svg){#fig-ame .lightbox fig-alt="A baseplate with respid 1, 5 and 6 and ellipses below them. A purple tower educ_cat with medium, high and high. Under the heading P(islamophobia_high = 1) at educ_cat = two blue towers: low with 0.584, 0.394 and 0.581, high with 0.316, 0.177 and 0.314. In each row, grey arrows lead to a tower high - low with a green border, with -0.27, -0.22 and -0.27. A bracket groups it, and a green arrow labelled weighted mean leads to a brick -0.252 labelled AME. At the bottom the code model_log |> marginal_effects() and the output educ_cat: high vs. low: AME = -0.252, p < 0.001 ***."}
 
-You can write exactly these sentences in a term paper without misinterpretation. Statements about odds (“high education reduces the odds to a third”) are different: many readers involuntarily read them as probabilities. `summary()` shows standard errors, *z* values and confidence intervals of the AMEs (via the delta method). For a *linear* model you do not need `marginal_effects()`: there, the coefficient B already *is* the marginal effect.
+You can write exactly these sentences in a term paper without misinterpretation. Statements about odds (“high education reduces the odds to a third”) are different: many readers instinctively read them as probabilities. `summary()` shows standard errors, *z* values and confidence intervals of the AMEs (via the delta method). For a *linear* model you do not need `marginal_effects()`: there, the coefficient B already *is* the marginal effect.
 
 ### The sigmoid curve with real data
 
@@ -784,11 +784,11 @@ allbus_dummy |>
        caption = "Points (jittered) = individual respondents (top = islamophobia_high = 1) · curve = logistic regression")
 ```
 
-**Interpretation.** At low populism (left), the probability of high Islamophobia is below 30%. At high populism (right) it rises to over 80%. The *shape*, flat, then steep, then flat again, is exactly the sigmoid curve from the abstract plot above, now filled with real ALLBUS data. This is what logistic regression models.
+**Interpretation.** At low populism (left), the probability of high Islamophobia is below 30%. At high populism (right) it rises to over 80%. The *shape* (flat, then steep, then flat again) is exactly the sigmoid curve from the abstract plot above, now filled with real ALLBUS data. This is what logistic regression models.
 
 ## Communicating findings graphically
 
-The models are fitted and the coefficients interpreted; what remains is communicating the results. In a term paper, an article or a presentation, a regression table is the solid standard; a *plot* makes the result readable at a glance.
+The models are fitted and the coefficients interpreted; what remains is communicating the results. In a term paper, an article or a presentation, a regression table is the standard; a *plot* makes the result readable at a glance.
 
 ### Coefficient plots: visualising regression results with `tidy()` {#sec-coefplot}
 
@@ -809,7 +809,7 @@ model |>
        caption = "Multiple linear regression · ALLBUS 2023, weighted\nValues from broom::tidy(model)")
 ```
 
-**Interpretation.** At a glance you see *which* predictor has *how strong* an effect: populism has the largest positive effect, education the largest negative one. Confidence intervals that *cross the dashed zero line* are statistically uncertain: the effect does not differ clearly from 0.
+**Interpretation.** At a glance you see how strong the effect of each predictor is: populism has the largest positive effect, education the largest negative one. Confidence intervals that *cross the dashed zero line* are statistically uncertain: the effect does not differ clearly from 0.
 
 ::: {.callout-note collapse="true"}
 ## Background: What does `broom::tidy()` do?
@@ -862,7 +862,7 @@ ggsave(
 )
 ```
 
-A tip for practice: PDF for LaTeX reports (`filename = "....pdf"`), PNG with dpi ≥ 300 for Word and slides, SVG for the web (scalable).
+In practice: PDF for LaTeX reports (`filename = "....pdf"`), PNG with dpi ≥ 300 for Word and slides, SVG for the web (scalable).
 
 ## Exercises {-}
 
@@ -887,7 +887,7 @@ Calculate the VIF for the predictor **`age`** by hand, following the three-step 
 
 ::: {.callout-tip title="Solution" collapse="true"}
 ```{r ex2-kap9-loesung, eval=FALSE}
-# Step 1: auxiliary regression: explain age by all other predictors
+# Step 1: auxiliary regression (explain age by all other predictors)
 # (on the same set of cases as the main model: allbus_model)
 aux_age <- lm(age ~ populism + educ_cat + eastwest + sex,
               data = allbus_model, weights = wghtpew)
@@ -927,7 +927,7 @@ Choose your own dependent variable (e.g. satisfaction with democracy, life satis
 :::
 
 ::: {.callout-note}
-**Research journal: Your mini study is complete.** You have gone all the way: data import (@sec-datenimport) → building scales (@sec-datentransformation) → visualisation (@sec-grafiken-basics) → bivariate tests (@sec-univbivar) → validating the structure (@sec-latente) → multivariate modelling (here). You now know that populism, with Beta ≈ 0.32, is the strongest predictor of Islamophobia, that above all *high* education has a negative effect, that the education effect is similar in East and West, and that east–west differences remain even after controlling for socio-structural variables.
+**Research journal: Your mini study is complete.** You have gone all the way: data import (@sec-datenimport) → building scales (@sec-datentransformation) → visualisation (@sec-grafiken-basics) → bivariate tests (@sec-univbivar) → validating the structure (@sec-latente) → multivariate modelling (here). You now know that populism, with Beta ≈ 0.32, is the strongest predictor of Islamophobia, that above all *high* education has a negative effect, that the education effect is similar in East and West, and that East–West differences remain even after controlling for socio-structural variables.
 
 What comes next: transfer the approach to a question of your own. If you have followed the mini research question exercises in the previous chapters as a separate track, you now have a complete mini project at hand, from the codebook and the scale to the coefficient plot.
 :::
@@ -963,7 +963,7 @@ You now have the complete toolkit of this book: SPSS data → data import → da
 | adjusted R²           | R² corrected for the number of predictors; fair for model comparisons                    |
 | VIF                   | *variance inflation factor*: $\text{VIF}_i = 1/(1-R^2_i)$; > 10 problematic              |
 | tolerance             | $1/\text{VIF} = 1 - R^2_i$; low (< 0.1) = problematic                                    |
-| leverage              | influence of a case in the space of the predictors; high values = potentially influential case |
+| leverage              | how far a case lies from the others in the space of the predictors; high values = potentially influential case |
 | Cook's distance       | overall influence of a single case on the model; values > 1 call for a closer look       |
 | interaction           | the effect of one variable depends on the value of another                               |
 | odds ratio (OR)       | $\exp(\text{logit coefficient})$: the factor by which the odds change                    |
