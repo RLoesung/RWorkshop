@@ -115,6 +115,20 @@
       if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
       return;
     }
+    // Kasten mit Überschrift als Titel, etwa zum Aufklappen: „Hintergrund: …“
+    // Quarto setzt davor ein verstecktes Wort für Screenreader („Hinweis“); das bleibt erhalten
+    var sr = kopf ? kopf.querySelector(".screen-reader-only") : null;
+    var kopfText = kopf ? kopf.textContent.replace(sr ? sr.textContent : "", "").replace(/\s+/g, " ").trim() : "";
+    for (var k = 0; k < TYPEN.length; k++) {
+      var wort = TYPEN[k][2];
+      if (kopfText.indexOf(wort + ":") !== 0) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[k][1]);
+      var h = kopf.innerHTML.replace(sr ? sr.outerHTML : "", "").trim();
+      var rest = h.slice(h.indexOf(wort) + wort.length).replace(/^\s*:\s*/, "");
+      kopf.innerHTML = (sr ? sr.outerHTML : "") + '<span class="kasten-label">' + wort + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      return;
+    }
     if (titel) return;
     var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
     var st = p && p.firstElementChild;

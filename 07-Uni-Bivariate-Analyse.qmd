@@ -36,8 +36,8 @@ Die Statistik nennt diese ersten Schritte **univariate** und **bivariate** Analy
 
 Bei der bivariaten Analyse gibt es zwei methodisch ähnliche, aber konzeptionell unterschiedliche Fragen, die du nicht verwechseln solltest:
 
-- **Zusammenhang** — variieren zwei Variablen gemeinsam? (Korrelation für metrische Variablen, Chi² für kategoriale.)
-- **Unterschied** — unterscheiden sich Gruppen in einer Variable? (t-Test, ANOVA für metrische Variablen pro Gruppe.)
+- *Zusammenhang* — variieren zwei Variablen gemeinsam? (Korrelation für metrische Variablen, Chi² für kategoriale.)
+- *Unterschied* — unterscheiden sich Gruppen in einer Variable? (t-Test, ANOVA für metrische Variablen pro Gruppe.)
 
 Beide Fragen beantworten denselben methodischen Kern: Gibt es einen statistisch belastbaren Zusammenhang zwischen zwei Variablen? Aber die Werkzeuge und die Berichtsformate sind unterschiedlich.
 
@@ -49,19 +49,19 @@ Dieses Kapitel führt dich durch das mariposa-Inventar für jeden Standard-Test 
 - Mittelwert, Median, Streuung, IQR, Schiefe, Wölbung und Standardfehler bestimmen.
 - Univariate Häufigkeiten gegen eine theoretische Verteilung testen (Binomialtest, χ²-GOF).
 - Kreuztabellen mit Chi-Quadrat-Test, Fisher-Test, McNemar-Test, adjustierten Residuen und Effektgrößen lesen.
-- Pearson-, Spearman- und Kendall-Korrelationen berechnen und interpretieren — und mit einer **partiellen Korrelation** Drittvariablen kontrollieren.
-- Mittelwerte zweier Gruppen mit einem **t-Test** vergleichen — inklusive Voraussetzungs-Check (Normalverteilung, Levene).
-- Mittelwerte mehrerer Gruppen mit einer **einfaktoriellen ANOVA** vergleichen und vier Post-Hoc-Verfahren wählen.
+- Pearson-, Spearman- und Kendall-Korrelationen berechnen und interpretieren — und mit einer partiellen Korrelation Drittvariablen kontrollieren.
+- Mittelwerte zweier Gruppen mit einem t-Test vergleichen — inklusive Voraussetzungs-Check (Normalverteilung, Levene).
+- Mittelwerte mehrerer Gruppen mit einer einfaktoriellen ANOVA vergleichen und vier Post-Hoc-Verfahren wählen.
 - Nicht-parametrische Alternativen anwenden, wenn Voraussetzungen verletzt sind.
 - Effektgrößen einordnen — wann ein signifikanter Test inhaltlich klein, mittel oder groß ist.
-- Die drei Grundbegriffe statistischer Inferenz — **p-Wert**, **Standardfehler**, **Konfidenzintervall** — richtig lesen.
+- Die drei Grundbegriffe statistischer Inferenz — p-Wert, Standardfehler, Konfidenzintervall — richtig lesen.
 
 ## Über Gewichtung: das Argument `weights =`
 
-In der ALLBUS-Stichprobe sind die neuen Bundesländer **gewollt überrepräsentiert**, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das **personenbezogene Ost-West-Gewicht** `wghtpew`. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen" verzerrt.
+In der ALLBUS-Stichprobe sind die neuen Bundesländer gewollt überrepräsentiert, damit Aussagen auch dort statistisch belastbar sind. Für deutschlandweite Schätzungen brauchst du daher das personenbezogene Ost-West-Gewicht `wghtpew`. Wenn du Gewichte ignorierst, sind deine Aussagen über „die Deutschen" verzerrt.
 
 ::: {.callout-tip}
-**SPSS → R.** In SPSS aktivierst du Gewichtung einmal session-weit mit `WEIGHT BY wghtpew.` In R ist das anders: **jede Funktion**, die Gewichtung braucht, bekommt das Argument `weights =` einzeln. Das wirkt am Anfang umständlich, ist aber transparent — du siehst auf einen Blick, ob eine Analyse gewichtet ist.
+**SPSS → R: Gewichtung in jeder Funktion.** In SPSS aktivierst du Gewichtung einmal session-weit mit `WEIGHT BY wghtpew.` In R ist das anders: Jede Funktion, die Gewichtung braucht, bekommt das Argument `weights =` einzeln. Das wirkt am Anfang umständlich, ist aber transparent — du siehst auf einen Blick, ob eine Analyse gewichtet ist.
 :::
 
 In mariposa heißt das Argument durchgängig `weights = wghtpew` — egal, ob du eine Häufigkeitstabelle oder eine Regression rechnest.
@@ -79,17 +79,17 @@ allbus |> frequency(eastwest, weights = wghtpew)
 
 ## Inferenz verstehen — was hinter jedem Test steckt {#sec-inferenz}
 
-Bevor du den ersten Test rechnest, drei Begriffe, die in *jedem* Test-Output auftauchen — und die meisten Studis aus SPSS-Kursen *mechanisch* benutzen, ohne sie wirklich verstanden zu haben: **p-Wert**, **Standardfehler**, **Konfidenzintervall**. Wer diese drei richtig liest, kann jeden Test-Output sinnvoll interpretieren — wer sie missversteht, produziert Aussagen, die in einem Methoden-Seminar zerpflückt werden.
+Bevor du den ersten Test rechnest, drei Begriffe, die in *jedem* Test-Output auftauchen — und die meisten Studis aus SPSS-Kursen *mechanisch* benutzen, ohne sie wirklich verstanden zu haben: p-Wert, Standardfehler, Konfidenzintervall. Wer diese drei richtig liest, kann jeden Test-Output sinnvoll interpretieren — wer sie missversteht, produziert Aussagen, die in einem Methoden-Seminar zerpflückt werden.
 
 ### Was ist ein p-Wert?
 
 Stell dir vor, du wirfst eine Münze 100 mal und bekommst 60 mal Kopf. Ist die Münze gezinkt — oder ist 60:40 auch bei einer fairen Münze einfach mal drin?
 
-Der **p-Wert** beantwortet genau diese Frage. Er sagt dir, *wie wahrscheinlich* das beobachtete Ergebnis (oder ein noch extremeres) wäre, **wenn in Wirklichkeit nichts los ist** — also wenn die *Nullhypothese* stimmt. Bei der Münze heißt die Nullhypothese „Münze ist fair, Kopf-Wahrscheinlichkeit = 0.5". Ein p-Wert von 0.057 bedeutet: *wenn die Münze fair wäre, würdest du in 5.7 % aller Wiederholungs-Experimente 60 oder mehr Kopf-Treffer sehen*.
+Der **p-Wert** beantwortet genau diese Frage. Er sagt dir, *wie wahrscheinlich* das beobachtete Ergebnis (oder ein noch extremeres) wäre, wenn in Wirklichkeit nichts los ist — also wenn die *Nullhypothese* stimmt. Bei der Münze heißt die Nullhypothese „Münze ist fair, Kopf-Wahrscheinlichkeit = 0.5". Ein p-Wert von 0.057 bedeutet: *wenn die Münze fair wäre, würdest du in 5.7 % aller Wiederholungs-Experimente 60 oder mehr Kopf-Treffer sehen*.
 
 Die Konvention `p < .05` heißt: *„Das Ergebnis ist so unwahrscheinlich unter der Nullhypothese, dass wir die Nullhypothese verwerfen — wir gehen davon aus, dass tatsächlich ein Effekt existiert."*
 
-**Bild dazu.** Stell dir die Verteilung möglicher Testergebnisse unter der Nullhypothese als Glockenkurve vor. Die roten Flächen am Rand sind der **Ablehnungsbereich** — landest du dort mit deinem Befund, ist er „statistisch signifikant":
+Stell dir die Verteilung möglicher Testergebnisse unter der Nullhypothese als Glockenkurve vor. Die roten Flächen am Rand sind der **Ablehnungsbereich** — landest du dort mit deinem Befund, ist er „statistisch signifikant":
 
 ```{r p-value-plot, fig.height=3.4}
 p_data <- tibble(z = seq(-4, 4, length.out = 500)) |>
@@ -123,8 +123,8 @@ p_data |>
 ::: {.callout-warning}
 **Vorsicht: Klassische p-Wert-Fehlinterpretationen.**
 
-- *„p < .05 heißt: nur 5 % Chance, dass die Nullhypothese stimmt."* — **Falsch.** Der p-Wert sagt nichts über die Wahrscheinlichkeit der Nullhypothese aus. Er sagt nur, *wie wahrscheinlich diese Daten* unter der Nullhypothese wären.
-- *„p < .05 heißt: der Effekt ist groß."* — **Falsch.** *p* misst, wie sicher du dir bist, *dass es einen Effekt gibt* — nicht, *wie groß* er ist. Bei N = 5.000 wird fast jeder noch so kleine Effekt signifikant. Effektgrößen messen die *Stärke*.
+- *„p < .05 heißt: nur 5 % Chance, dass die Nullhypothese stimmt."* — Falsch. Der p-Wert sagt nichts über die Wahrscheinlichkeit der Nullhypothese aus. Er sagt nur, *wie wahrscheinlich diese Daten* unter der Nullhypothese wären.
+- *„p < .05 heißt: der Effekt ist groß."* — Falsch. *p* misst, wie sicher du dir bist, *dass es einen Effekt gibt* — nicht, *wie groß* er ist. Bei N = 5.000 wird fast jeder noch so kleine Effekt signifikant. Effektgrößen messen die *Stärke*.
 - *„p = .04 ist signifikant, p = .06 ist nicht."* — die `.05`-Grenze ist Konvention, keine Naturkonstante. *p* = .051 und *p* = .049 sind statistisch fast identisch. Lies *p*-Werte als kontinuierliches Maß für Evidenz, nicht als binäres Urteil.
 :::
 
@@ -134,12 +134,12 @@ Wenn du den ALLBUS 2023 *erneut* mit 5.246 anderen Befragten erheben würdest, k
 
 Der SE ist *nicht* dasselbe wie die Standardabweichung (SD):
 
-- **SD** = wie stark streuen die *einzelnen Befragten* um den Mittelwert? *„Wie unterschiedlich sind die Menschen?"*
-- **SE** = wie stark würde der *Mittelwert* streuen, wenn ich die Studie wiederholen würde? *„Wie präzise ist meine Schätzung?"*
+- SD = wie stark streuen die *einzelnen Befragten* um den Mittelwert? *„Wie unterschiedlich sind die Menschen?"*
+- SE = wie stark würde der *Mittelwert* streuen, wenn ich die Studie wiederholen würde? *„Wie präzise ist meine Schätzung?"*
 
 Der SE ist immer kleiner als die SD und schrumpft mit größerer Stichprobe (Formel: SE = SD / √N). Je größer N, desto präziser die Schätzung. Das ist der Grund, warum große Stichproben kleinere SE haben — und damit engere Konfidenzintervalle und kleinere p-Werte.
 
-**Bild dazu.** Wir können das *simulieren*: Ziehen 1.000 Mal eine zufällige Sub-Stichprobe (je N = 500) aus dem ALLBUS und rechnen den Mittelwert. Die Streuung dieser 1.000 Mittelwerte *ist* der Standardfehler — sichtbar gemacht:
+Wir können das *simulieren*: Wir ziehen 1.000 Mal eine zufällige Sub-Stichprobe (je N = 500) aus dem ALLBUS und rechnen jeweils den Mittelwert. Die Streuung dieser 1.000 Mittelwerte *ist* der Standardfehler — sichtbar gemacht:
 
 ```{r se-simulation, fig.height=3.4}
 set.seed(42)
@@ -164,7 +164,7 @@ tibble(mittelwert = sim_mw) |>
        caption = "Die Breite dieser Verteilung ist der Standardfehler.")
 ```
 
-**Lesart.** Hätten wir nur eine einzige ALLBUS-Erhebung — wäre der Mittelwert irgendwo in dieser Verteilung gelandet. Die Standardabweichung der gezeigten Verteilung ist der **Standardfehler** unserer Schätzung.
+**Lesart.** Hätten wir nur eine einzige ALLBUS-Erhebung — wäre der Mittelwert irgendwo in dieser Verteilung gelandet. Die Standardabweichung der gezeigten Verteilung ist der Standardfehler unserer Schätzung.
 
 ### Was ist ein Konfidenzintervall?
 
@@ -176,7 +176,7 @@ Das **95 %-Konfidenzintervall (KI)** ist die natürliche Erweiterung des Standar
 In der Praxis ist die *Faustregel* für die Lesart einfacher: *„Ein Wert außerhalb des 95 %-KI ist mit den Daten schwer vereinbar; ein Wert innerhalb ist mit den Daten vereinbar."*
 :::
 
-**Bild dazu.** Simulieren wir 100 hypothetische Studien (je N = 200) aus dem ALLBUS, rechnen für jede den Mittelwert und das 95 %-KI — und schauen, *wie viele* den wahren Wert einschließen:
+Simulieren wir 100 hypothetische Studien (je N = 200) aus dem ALLBUS, rechnen für jede den Mittelwert und das 95 %-KI — und schauen, *wie viele* den wahren Wert einschließen:
 
 ```{r ki-simulation, fig.height=5.5}
 set.seed(2026)
@@ -213,8 +213,8 @@ sim_kis |>
 
 Ein Test beantwortet *zwei* Fragen, die du sauber trennen musst:
 
-1. **„Existiert der Effekt überhaupt?"** → *p*-Wert, Konfidenzintervall.
-2. **„Wie groß ist der Effekt?"** → Effektgröße (Cohens d, Hedges' g, Cramérs V, R²).
+1. „Existiert der Effekt überhaupt?" → *p*-Wert, Konfidenzintervall.
+2. „Wie groß ist der Effekt?" → Effektgröße (Cohens d, Hedges' g, Cramérs V, R²).
 
 Bei N = 5.246 (wie im ALLBUS) wird fast jeder Effekt signifikant — *p* sagt dir dann nur, dass du dir des Effekts sicher bist, nicht *ob er etwas bedeutet*. Die Effektgröße liefert das inhaltliche Urteil. Beide gehören in jeden Methodenbericht zusammen.
 
@@ -244,8 +244,10 @@ In der Tabelle zu `mm01` hat der Wert 1 ein N von 1.077, 20.53 Raw % und 31.66 V
 
 ![Raw % und Valid % für den Wert 1 von `mm01`. Der Turm ist ein Schema aus zehn Steinen, nach Wert sortiert; N und Totals sind gewichtete Summen aus der Tabelle.](Bilder/figuren/k07-haeufigkeit.svg){#fig-haeufigkeit .lightbox fig-alt="Oben der Code allbus |> frequency(mm01:mm06, weights = wghtpew). Zweimal derselbe Turm mm01 aus zehn Steinen, nach Wert sortiert: zwei blaue Steine mit 1, dann 2, 4, 5 und 7, unten vier leere, gestrichelte Steine. Links unter PROZENT umfasst eine Klammer die beiden Steine mit 1, beschriftet mit N = 1077 und Raw % = 20.53; eine zweite Klammer umfasst alle zehn Steine, beschriftet mit Total 5246. Rechts unter GÜLTIGE PROZENT dieselbe Klammer um die Steine mit 1, beschriftet mit N = 1077 und Valid % = 31.66; eine Klammer um die sechs gefüllten Steine mit Total valid 3401 und eine graue Klammer um die vier leeren Steine mit Total missing 1845 und zählen nicht mit."}
 
-::: {.callout-tip}
-**Tipp: `fre()` als SPSS-naher Alias.** Wer aus SPSS umsteigt, tippt eher `fre(allbus, sex)` als `frequency(...)`. mariposa exportiert `fre()` als Alias mit identischer Funktionsweise und identischen Argumenten.
+::: {.callout-important collapse="true"}
+## mariposa-Tipp: `fre()` als SPSS-naher Alias
+
+Wer aus SPSS umsteigt, tippt eher `fre(allbus, sex)` als `frequency(...)`. mariposa exportiert `fre()` als Alias mit identischer Funktionsweise und identischen Argumenten.
 :::
 
 ### Deskriptive Statistik mit `describe()`
@@ -258,7 +260,7 @@ Mit `describe()` bekommst du Mittelwert, Median, Standardabweichung, Range, IQR 
 allbus |> describe(islamophobie, weights = wghtpew)
 ```
 
-**Lesart.** Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5). Bei gewichteten Analysen sind `N` und `Missing` — wie in SPSS mit `WEIGHT BY` — **Summen der Gewichte**, keine Fallzahlen. Weil `wghtpew` im Mittel bei 1 liegt, unterscheiden sie sich kaum von den ungewichteten Fallzahlen.
+**Lesart.** Der gewichtete Mittelwert von rund 4 auf einer 1–7-Skala bedeutet: Deutschland liegt — gemittelt — in der Mitte der Skala, mit deutlicher Streuung (SD ≈ 1.5). Bei gewichteten Analysen sind `N` und `Missing` — wie in SPSS mit `WEIGHT BY` — Summen der Gewichte, keine Fallzahlen. Weil `wghtpew` im Mittel bei 1 liegt, unterscheiden sie sich kaum von den ungewichteten Fallzahlen.
 
 Mehrere Variablen gleichzeitig:
 
@@ -274,11 +276,10 @@ allbus |>
            show = c("mean", "sd", "skew", "kurtosis"))
 ```
 
-::: {.callout-note}
-**Konzept: Was sind Schiefe und Wölbung?** Zwei Formmaße, die einen guten *Verteilungs-Charakter* auf einen Blick verraten — die Schiefe zeigt `describe()` standardmäßig, die Wölbung mit `show` (siehe oben).
+Schiefe und Wölbung sind zwei Formmaße, die den Charakter einer Verteilung auf einen Blick verraten:
 
-- **Schiefe** = Symmetrie. *Symmetrisch* (Schiefe ≈ 0) → klassische Glocke. *Linksschief* (negativ) → langer Ausläufer nach links (typisch bei Zufriedenheits-Skalen, wo die meisten „hoch" antworten). *Rechtsschief* (positiv) → langer Ausläufer nach rechts (typisch bei Einkommens-Verteilungen).
-- **Wölbung** (Kurtosis) = Spitze vs. flach. mariposa berichtet die *Exzess-Kurtosis*: 0 entspricht einer Normalverteilung. Positiv (leptokurtisch) = spitze Verteilung mit dicken Rändern; negativ (platykurtisch) = flachere Verteilung. Unsere Islamfeindlichkeits-Skala ist mit einer Wölbung von etwa −0.76 deutlich flacher als eine Glocke — die Antworten verteilen sich breit über die Skala.
+- Die **Schiefe** beschreibt die Symmetrie. *Symmetrisch* (Schiefe ≈ 0) → klassische Glocke. *Linksschief* (negativ) → langer Ausläufer nach links (typisch bei Zufriedenheits-Skalen, wo die meisten „hoch" antworten). *Rechtsschief* (positiv) → langer Ausläufer nach rechts (typisch bei Einkommens-Verteilungen).
+- Die **Wölbung** (Kurtosis) beschreibt, wie spitz oder flach eine Verteilung ist. mariposa berichtet die *Exzess-Kurtosis*: 0 entspricht einer Normalverteilung. Positiv (leptokurtisch) = spitze Verteilung mit dicken Rändern; negativ (platykurtisch) = flachere Verteilung. Unsere Islamfeindlichkeits-Skala ist mit einer Wölbung von etwa −0.76 deutlich flacher als eine Glocke — die Antworten verteilen sich breit über die Skala.
 
 Drei Schiefen im Vergleich:
 
@@ -302,7 +303,6 @@ tibble(
        title = "Drei Verteilungsformen — drei Schiefe-Werte",
        caption = "links: Schiefe < 0 · mitte: ≈ 0 · rechts: > 0")
 ```
-:::
 
 ### Einzelne Kennwerte mit `w_mean()` und Co.
 
@@ -346,7 +346,7 @@ Das ist die R-Variante zum SPSS-`AGGREGATE` mit `WEIGHT BY` — alles in *einem*
 
 ### Häufigkeits-Tests mit `binomial_test()` und `chisq_gof()`
 
-Wenn du prüfen willst, ob eine beobachtete Häufigkeit signifikant von einem **theoretischen** Anteil abweicht, brauchst du keinen Vergleich mit einer anderen Variable — ein Test gegen einen festen Wert genügt.
+Wenn du prüfen willst, ob eine beobachtete Häufigkeit signifikant von einem theoretischen Anteil abweicht, brauchst du keinen Vergleich mit einer anderen Variable — ein Test gegen einen festen Wert genügt.
 
 **Frage:** Weicht der Frauenanteil in der gewichteten Stichprobe signifikant von 50 % ab?
 
@@ -370,7 +370,7 @@ allbus |> chisq_gof(educ_kat, weights = wghtpew)
 
 ## Bivariate Statistik {#sec-bivariat}
 
-**Welche Frage → welcher Test?** Bevor du in die Tests einsteigst, eine Landkarte. Welches Verfahren du brauchst, hängt vom *Skalenniveau* der zwei Variablen ab:
+Bevor du in die Tests einsteigst, hilft eine Landkarte. Welches Verfahren du brauchst, hängt vom *Skalenniveau* der zwei Variablen ab:
 
 | Variable 1                  | Variable 2                  | Test (mariposa)                                  | Effektgröße            |
 | :-------------------------- | :-------------------------- | :----------------------------------------------- | :--------------------- |
@@ -382,8 +382,7 @@ allbus |> chisq_gof(educ_kat, weights = wghtpew)
 
 Wenn du dich verirrst — diese Tabelle ist dein Anker.
 
-::: {.callout-note}
-**Hintergrund: Warum Effektgrößen?** Ein signifikanter *p*-Wert sagt dir nur, dass ein Unterschied oder Zusammenhang von Zufall verschieden ist — *wie stark* er ist, sagt er nicht. Bei großen Stichproben (wie 5.246 ALLBUS-Fällen) sind fast alle Unterschiede statistisch signifikant. Effektgrößen ergänzen den p-Wert um die **inhaltliche Größenordnung**. Faustregeln für die wichtigsten Maße:
+Die letzte Spalte nennt die Effektgröße, die zum jeweiligen Test gehört. Wie in @sec-inferenz beschrieben, ergänzt sie den *p*-Wert um die inhaltliche Größenordnung. Für die wichtigsten Maße gibt es Faustregeln nach Cohen:
 
 | Maß                       | Klein  | Mittel | Groß   |
 |---------------------------|--------|--------|--------|
@@ -393,7 +392,6 @@ Wenn du dich verirrst — diese Tabelle ist dein Anker.
 | η² (ANOVA)                | ≥ 0.01 | ≥ 0.06 | ≥ 0.14 |
 
 Die mariposa-Tests geben dir Effektgrößen automatisch zurück — du musst sie nur lesen und einordnen.
-:::
 
 ### Kreuztabellen mit `crosstab()`
 
@@ -414,7 +412,7 @@ Die Prozente jeder Zeile ergeben zusammen 100 % (@fig-zeilenprozente). Deshalb v
 
 ![Die Zeilenprozente aus `crosstab()`: Jede Zeile der Tabelle ist ein Balken; seine Abschnitte ergeben zusammen 100 %.](Bilder/figuren/k07-zeilenprozente.svg){#fig-zeilenprozente .lightbox fig-alt="Oben der Code allbus |> crosstab(eastwest, educ_kat, weights = wghtpew) und eine Legende niedrig, mittel und hoch in drei Orangetönen. Darunter drei waagerechte Balken, jeder in drei Abschnitte geteilt und rechts mit 100.0% beschriftet: ALTE BUNDESLAENDER 22.2%, 27.6% und 50.3%; NEUE BUNDESLAENDER 13.3%, 41.8% und 44.9%; nach einer Trennlinie Total 20.6%, 30.0% und 49.4%."}
 
-**Vier Prozentuierungs-Richtungen** — sie beantworten *verschiedene* Fragen. Du wählst sie mit dem Argument `percentages`:
+Es gibt vier Prozentuierungs-Richtungen, und sie beantworten *verschiedene* Fragen. Du wählst sie mit dem Argument `percentages`:
 
 | Argument                       | Lesart                                                          | Wann sinnvoll                              |
 | :----------------------------- | :-------------------------------------------------------------- | :----------------------------------------- |
@@ -425,7 +423,7 @@ Die Prozente jeder Zeile ergeben zusammen 100 % (@fig-zeilenprozente). Deshalb v
 
 Mit `percentages = "none"` siehst du nur die Zellenzahlen ohne Prozentuierung.
 
-**Wo genau weicht die Tabelle ab?** Welche Zellen den Unterschied tragen, zeigen die **adjustierten standardisierten Residuen** (SPSS: `CROSSTABS /CELLS = ASRESID`). Du bekommst sie über `summary()`:
+Wo genau weicht die Tabelle ab? Welche Zellen den Unterschied tragen, zeigen die **adjustierten standardisierten Residuen** (SPSS: `CROSSTABS /CELLS = ASRESID`). Du bekommst sie über `summary()`:
 
 ```{r crosstab-residuals}
 allbus |>
@@ -439,16 +437,18 @@ Faustregel: Ein Residuum mit einem Betrag über 2 markiert eine Zelle, die deutl
 
 Eine Kreuztabelle beschreibt — aber sie sagt dir noch nicht, ob die beobachteten Muster *statistisch belastbar* sind oder ob sie auch durch Zufall in der Stichprobe entstanden sein könnten. Genau diese Frage beantwortet der **Chi-Quadrat-Test** (χ²): Er vergleicht die tatsächlichen Häufigkeiten in jeder Zelle mit den Häufigkeiten, die man unter der Annahme *völliger Unabhängigkeit* zwischen den beiden Variablen erwarten würde. Sind die beobachteten Werte deutlich anders, gibt es einen Zusammenhang.
 
-::: {.callout-note}
-**Konzept: Was vergleicht χ² konkret?** Stell dir eine kleine 2 × 2-Tabelle vor: Region (Ost/West) × Bildung (niedrig/hoch). Insgesamt 1.000 Befragte:
+::: {.callout-note collapse="true"}
+## Hintergrund: Was vergleicht χ² konkret?
 
-|              | niedrige Bildung | hohe Bildung | **Summe** |
-|:------------ | ---:             | ---:         | ---:      |
-| **West**     | 350              | 450          | **800**   |
-| **Ost**      | 130              | 70           | **200**   |
-| **Summe**    | **480**          | **520**      | **1.000** |
+Stell dir eine kleine 2 × 2-Tabelle vor: Region (Ost/West) × Bildung (niedrig/hoch). Insgesamt 1.000 Befragte:
 
-Wenn Region und Bildung *unabhängig* wären, müsste in jeder Zelle die Häufigkeit dem Produkt der Randanteile entsprechen. Beispiel West × hoch: 800/1000 × 520/1000 × 1000 = **416** wären *erwartet*. *Beobachtet* sind aber 450. Diese Differenz (450 − 416 = 34) ist für jede Zelle der Bauteil des χ²-Wertes; je größer alle Differenzen zusammen, desto größer χ² — desto unwahrscheinlicher die Unabhängigkeit.
+|              | niedrige Bildung | hohe Bildung | Summe |
+|:------------ | ---:             | ---:         | ---:  |
+| West         | 350              | 450          | 800   |
+| Ost          | 130              | 70           | 200   |
+| Summe        | 480              | 520          | 1.000 |
+
+Wenn Region und Bildung *unabhängig* wären, müsste in jeder Zelle die Häufigkeit dem Produkt der Randanteile entsprechen. Beispiel West × hoch: 800/1000 × 520/1000 × 1000 = 416 wären *erwartet*. *Beobachtet* sind aber 450. Diese Differenz (450 − 416 = 34) ist für jede Zelle der Bauteil des χ²-Wertes; je größer alle Differenzen zusammen, desto größer χ² — desto unwahrscheinlicher die Unabhängigkeit.
 
 Genau diese Vergleichslogik („beobachtet vs. erwartet unter Unabhängigkeit") steckt unter der Haube von `chi_square()` — du musst sie nicht händisch rechnen, aber wenn du sie verstehst, weißt du auch, *warum* der Test bei kleinen erwarteten Häufigkeiten (< 5) instabil wird: dann fallen einzelne große Differenzen relativ stark ins Gewicht.
 :::
@@ -465,19 +465,15 @@ allbus |> chi_square(eastwest, educ_kat, weights = wghtpew)
 
 #### Effektgrößen einzeln mit `cramers_v()`, `phi()` und `goodman_gamma()`
 
-::: {.callout-important}
-**mariposa-Tipp.** Brauchst du nur die Effektgröße — etwa für eine Caption, eine eigene Tabelle oder ein `summarise()` —, liefern dir `cramers_v()`, `phi()` und `goodman_gamma()` genau diese *eine Zahl* statt des ganzen Test-Outputs: `allbus |> cramers_v(eastwest, educ_kat, weights = wghtpew)` ergibt `0.125`. Für den vollständigen Test mit *p*-Wert bleibt `chi_square()` die richtige Wahl.
-:::
+Brauchst du nur die Effektgröße — etwa für eine Caption, eine eigene Tabelle oder ein `summarise()` —, liefern dir `cramers_v()`, `phi()` und `goodman_gamma()` genau diese *eine Zahl* statt des ganzen Test-Outputs: `allbus |> cramers_v(eastwest, educ_kat, weights = wghtpew)` ergibt `0.125`. Für den vollständigen Test mit *p*-Wert bleibt `chi_square()` die richtige Wahl.
 
 #### Verwandte Tests: `fisher_test()` und `mcnemar_test()`
 
-::: {.callout-note}
-**Hintergrund.**
+Neben `chi_square()` gibt es für Häufigkeiten und Kreuztabellen drei verwandte Tests:
 
-- **`fisher_test()`** — exakter Test bei kleinen Erwarteten (< 5 in mehr als 20 % der Zellen). Kein Erwartungswert-Limit, dafür rechenintensiv; für große Tabellen gibt es mit `simulate.p.value = TRUE` einen Monte-Carlo-*p*-Wert. Bei 2×2-Tabellen berichtet `fisher_test()` zusätzlich das **Odds Ratio** mit 95 %-Konfidenzintervall.
-- **`chisq_gof()`** — Goodness-of-Fit, eine Variable gegen eine theoretische Verteilung (siehe @sec-univariat).
-- **`mcnemar_test()`** — gepaarte 2×2-Tabellen (vorher/nachher, Test-Retest).
-:::
+- `fisher_test()` — exakter Test bei kleinen erwarteten Häufigkeiten (< 5 in mehr als 20 % der Zellen). Kein Erwartungswert-Limit, dafür rechenintensiv; für große Tabellen gibt es mit `simulate.p.value = TRUE` einen Monte-Carlo-*p*-Wert. Bei 2×2-Tabellen berichtet `fisher_test()` zusätzlich das Odds Ratio mit 95 %-Konfidenzintervall.
+- `chisq_gof()` — Goodness-of-Fit, eine Variable gegen eine theoretische Verteilung (siehe @sec-univariat).
+- `mcnemar_test()` — gepaarte 2×2-Tabellen (vorher/nachher, Test-Retest).
 
 ### Korrelation mit `pearson_cor()`, `spearman_rho()` und `kendall_tau()`
 
@@ -495,7 +491,7 @@ Lies sie als: *„wie stark schwingen x und y gemeinsam — in Einheiten der typ
 
 In der Sozialforschung sind Werte um 0.4 schon ein deutlicher Befund. Werte über 0.7 sind selten — und wenn doch, oft ein Hinweis, dass die zwei Variablen letztlich dasselbe messen.
 
-**Wie sehen verschiedene Korrelationen aus?** Vier simulierte Punktwolken — von „völlig wirr" bis „klar geneigt":
+Wie sehen verschiedene Korrelationen aus? Vier simulierte Punktwolken — von „völlig wirr" bis „klar geneigt":
 
 ```{r korr-vier-bilder, fig.height=2.6}
 set.seed(11)
@@ -515,7 +511,7 @@ bind_rows(sim_cor(0), sim_cor(0.3), sim_cor(0.5), sim_cor(0.8)) |>
        caption = "Vier Stichproben mit unterschiedlichem r")
 ```
 
-**Lesart.** Bei *r* = 0 ist die Wolke rund. Bei *r* = 0.3 ist eine *leichte* Neigung erkennbar. Bei *r* = 0.5 wird sie eindeutig. Bei *r* = 0.8 ist die Wolke fast eine schräge Ellipse. Vergleich mit dem ALLBUS-Wert: **+0.41** für Islamfeindlichkeit × Populismus sieht etwa wie das *r* = 0.3 – 0.5-Bild oben aus.
+**Lesart.** Bei *r* = 0 ist die Wolke rund. Bei *r* = 0.3 ist eine *leichte* Neigung erkennbar. Bei *r* = 0.5 wird sie eindeutig. Bei *r* = 0.8 ist die Wolke fast eine schräge Ellipse. Vergleich mit dem ALLBUS-Wert: +0.41 für Islamfeindlichkeit × Populismus sieht etwa wie das *r* = 0.3 – 0.5-Bild oben aus.
 
 Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzeptieren das `weights =`-Argument:
 
@@ -531,7 +527,7 @@ Drei verschiedene Korrelationskoeffizienten stehen zur Verfügung — alle akzep
 allbus |> pearson_cor(islamophobie, populismus, weights = wghtpew)
 ```
 
-**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa **+0.41** — das ist ein klar positiver Zusammenhang. Nach der Effektgrößen-Faustregel oben (Cohen: r ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß) bedeutet das einen *mittleren bis großen* Effekt. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit. Das ist *kein* Schluss auf Kausalität — die Korrelation sagt nicht, ob Populismus Islamfeindlichkeit fördert oder umgekehrt oder ob beides von einer dritten Variable (z. B. Bildung) getrieben wird. Die partielle Korrelation unten und die multivariate Regression in @sec-regression zerlegen das.
+**Lesart.** Der gewichtete Pearson-*r* liegt bei etwa +0.41 — das ist ein klar positiver Zusammenhang. Nach der Effektgrößen-Faustregel oben (Cohen: r ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß) bedeutet das einen *mittleren bis großen* Effekt. Wer hohe Werte auf der Populismus-Skala hat, tendiert auch zu höheren Werten bei Islamfeindlichkeit. Das ist *kein* Schluss auf Kausalität — die Korrelation sagt nicht, ob Populismus Islamfeindlichkeit fördert oder umgekehrt oder ob beides von einer dritten Variable (z. B. Bildung) getrieben wird. Die partielle Korrelation unten und die multivariate Regression in @sec-regression zerlegen das.
 
 Achte auch auf das *N*: Nur rund 1.900 Befragte gehen in die Korrelation ein, obwohl jede Skala für sich über 3.300 gültige Werte hat. Die `mm`- und die `pa`-Items stammen aus unterschiedlichen Split-Modulen des ALLBUS — beide Skalen zusammen hat nur ein Teil der Befragten beantwortet. Dieselbe Fallzahl begegnet dir in @sec-erklaerung in jedem Modell wieder, das beide Skalen enthält.
 
@@ -561,15 +557,17 @@ allbus |>
 
 **Lesart.** Die Ausgabe stellt die partielle Korrelation der **Korrelation nullter Ordnung** (*zero-order r*, der „normalen" Korrelation ohne Kontrolle) gegenüber. Nach Kontrolle von Alter und Bildung sinkt *r* von 0.40 auf 0.37 — der Zusammenhang wird etwas schwächer, bleibt aber klar bestehen. Alter und Bildung erklären also nur einen kleinen Teil der gemeinsamen Variation; der Großteil ist ein eigenständiger Zusammenhang. Die multiple Regression in @sec-regression verallgemeinert genau diese Logik auf viele Prädiktoren gleichzeitig.
 
-::: {.callout-tip}
-**POMPS und Korrelationen.** Wenn du die Korrelation auf den POMPS-Versionen `islamophobie_p` und `populismus_p` aus @sec-pomps rechnest, bekommst du **identische** Werte — POMPS ist eine lineare Transformation, Korrelationen sind invariant. POMPS hilft bei Mittelwertvergleichen *über Skalen hinweg*, nicht bei Korrelationen.
+::: {.callout-note collapse="true"}
+## Hintergrund: POMPS und Korrelationen
+
+Wenn du die Korrelation auf den POMPS-Versionen `islamophobie_p` und `populismus_p` aus @sec-pomps rechnest, bekommst du identische Werte — POMPS ist eine lineare Transformation, Korrelationen sind invariant. POMPS hilft bei Mittelwertvergleichen *über Skalen hinweg*, nicht bei Korrelationen.
 :::
 
 ## Mittelwertvergleiche {#sec-mvc}
 
 ### Voraussetzungen prüfen mit `normality_test()` {.unnumbered}
 
-**Voraussetzungs-Checkliste.** Bevor du t-Test, ANOVA oder Korrelation rechnest — ein Mini-Check, was die Verfahren brauchen. In der Praxis sind sie bei großen Stichproben *robust* gegen kleinere Verletzungen; trotzdem gehört der Check zum Methoden-Bericht.
+Bevor du t-Test, ANOVA oder Korrelation rechnest, solltest du wissen, was die Verfahren voraussetzen. In der Praxis sind sie bei großen Stichproben *robust* gegen kleinere Verletzungen; trotzdem gehört der Check zum Methoden-Bericht.
 
 | Test                 | Skalenniveau AV   | Verteilung               | Sonst-Annahme                | Bei N > 100             |
 | :------------------- | :---------------- | :----------------------- | :--------------------------- | :---------------------- |
@@ -594,7 +592,7 @@ Der **t-Test** ist eines der ältesten Werkzeuge der inferenziellen Statistik (W
 
 Der t-Test gibt dir darauf drei Antworten in einem Aufruf: die *Stärke* des Unterschieds (Mittelwertdifferenz), die *Wahrscheinlichkeit* eines Zufallsbefunds (*p*-Wert) und die *Effektgröße* (Hedges' *g*) — also wie groß der Unterschied inhaltlich ist, unabhängig von der Stichprobengröße. Die letzte Zahl ist die wichtigste: bei N = 5000 ist *fast jeder* Unterschied statistisch signifikant. Erst die Effektgröße sagt dir, ob er auch inhaltlich relevant ist.
 
-**Bild dazu.** Stell dir zwei Glockenkurven für zwei Gruppen vor. Die Mittelwertdifferenz allein sagt noch nichts — entscheidend ist sie *relativ zur Überlappung* der Verteilungen:
+Stell dir zwei Glockenkurven für zwei Gruppen vor. Die Mittelwertdifferenz allein sagt noch nichts — entscheidend ist sie *relativ zur Überlappung* der Verteilungen:
 
 ```{r t-test-plot, fig.height=3.2}
 t_data <- tibble(x = seq(-1, 7, length.out = 500)) |>
@@ -636,20 +634,15 @@ allbus |>
 
 **Lesart.** Westdeutsche liegen im Mittel bei 3.90, Ostdeutsche bei 4.55 — eine Differenz von gut einem halben Skalenpunkt (95 %-KI von −0.79 bis −0.50). Das Intervall schließt die Null weit aus. Wie in SPSS stehen beide Varianten des Tests untereinander: *Equal variances assumed* (Student-t) und *Equal variances not assumed* (Welch). Bei den Effektgrößen findest du Cohens *d*, Hedges' *g* und Glass' Δ nebeneinander.
 
-::: {.callout-note}
-**Forschungshintergrund: Ost-West-Vergleich als methodischer Klassiker.** Die Gegenüberstellung von Ost- und Westdeutschland ist eine der ältesten methodischen Vergleichsachsen der deutschen politischen Soziologie. Sie ist robust, gut interpretierbar — und in der Vorurteilsforschung umkämpft: Ein Ost-West-Unterschied bei Islamfeindlichkeit kann *strukturell* sein (Kontakt-Hypothese: weniger muslimische Bevölkerung im Osten → mehr Vorurteile), *historisch* (DDR-Sozialisationsfolgen, transformations­bedingte Statusängste) oder *kohortenspezifisch* (Altersstruktur unterschiedlich). Der t-Test sagt dir, *dass* ein Unterschied existiert — nicht, *warum*. Die multiple Regression in @sec-erklaerung versucht, das auseinanderzunehmen.
+::: {.callout-note collapse="true"}
+## Hintergrund: Ost-West-Vergleich als methodischer Klassiker
+
+Die Gegenüberstellung von Ost- und Westdeutschland ist eine der ältesten methodischen Vergleichsachsen der deutschen politischen Soziologie. Sie ist robust, gut interpretierbar — und in der Vorurteilsforschung umkämpft: Ein Ost-West-Unterschied bei Islamfeindlichkeit kann *strukturell* sein (Kontakt-Hypothese: weniger muslimische Bevölkerung im Osten → mehr Vorurteile), *historisch* (DDR-Sozialisationsfolgen, transformations­bedingte Statusängste) oder *kohortenspezifisch* (Altersstruktur unterschiedlich). Der t-Test sagt dir, *dass* ein Unterschied existiert — nicht, *warum*. Die multiple Regression in @sec-erklaerung versucht, das auseinanderzunehmen.
 :::
 
-::: {.callout-note}
-**Hintergrund: Welcher t-Test?** Die kompakte Ausgabe und das Ergebnisobjekt von `t_test()` beruhen standardmäßig auf dem **Welch-t-Test**, der ungleiche Varianzen erlaubt; `summary()` zeigt — wie SPSS — zusätzlich die Zeile für gleiche Varianzen. Wenn der klassische Student-t das Hauptergebnis sein soll, setze `var.equal = TRUE`. Für die Praxis gilt: der Welch-Test ist fast immer die sichere Wahl.
-:::
+Die kompakte Ausgabe und das Ergebnisobjekt von `t_test()` beruhen standardmäßig auf dem **Welch-t-Test**, der ungleiche Varianzen erlaubt; `summary()` zeigt — wie SPSS — zusätzlich die Zeile für gleiche Varianzen. Wenn der klassische Student-t das Hauptergebnis sein soll, setze `var.equal = TRUE`. Für die Praxis gilt: Der Welch-Test ist fast immer die sichere Wahl.
 
-::: {.callout-note}
-**Reviewer-Hinweis.** Beim t-Test in einer Publikation gehört berichtet: gewichtetes oder ungewichtetes *N* pro Gruppe, Mittelwerte und SDs pro Gruppe, *t*, df, *p*, Effektgröße (Hedges' *g* oder Cohens *d*) plus 95 %-KI für die Mittelwertdifferenz. *p* allein reicht nicht — bei N > 1000 sind fast alle Effekte „signifikant", aber inhaltlich womöglich winzig.
-:::
-
-::: {.callout-note}
-**Hintergrund: Varianzhomogenität prüfen.** Wenn du explizit testen willst, ob die Varianzen in den Gruppen gleich sind, ist der **Levene-Test** das Standardwerkzeug:
+Wenn du explizit testen willst, ob die Varianzen in den Gruppen gleich sind, ist der **Levene-Test** das Standardwerkzeug:
 
 ```{r levene}
 allbus |>
@@ -657,8 +650,9 @@ allbus |>
   levene_test()
 ```
 
-Signifikanter Levene-Test → Varianzen unterscheiden sich → Welch-Variante ist die richtige Wahl. Da `t_test()` ohnehin Welch nutzt, ist das eher eine *Begründung* in der Methodenbeschreibung als eine Entscheidungshilfe.
-:::
+Ist der Levene-Test signifikant, unterscheiden sich die Varianzen, und die Welch-Variante ist die richtige Wahl. Da `t_test()` ohnehin Welch nutzt, ist das eher eine *Begründung* in der Methodenbeschreibung als eine Entscheidungshilfe.
+
+In einer Publikation berichtest du zum t-Test: gewichtetes oder ungewichtetes *N* pro Gruppe, Mittelwerte und SDs pro Gruppe, *t*, df, *p*, Effektgröße (Hedges' *g* oder Cohens *d*) und das 95 %-KI für die Mittelwertdifferenz.
 
 ### ANOVA mit `oneway_anova()`
 
@@ -668,7 +662,7 @@ Ihr Trick ist elegant. Statt jedes Gruppenpaar einzeln zu vergleichen (was bei v
 
 Das wichtigste Maß im ANOVA-Output ist neben dem F-Wert und dem p-Wert die Effektgröße **η²** (eta-quadrat): der Anteil der Varianz in der abhängigen Variable, der durch die Gruppierung erklärt wird. Ein η² von 0.01 bedeutet, dass die Gruppen 1 Prozent der Varianz erklären — statistisch oft signifikant bei großen N, aber inhaltlich winzig. Ein η² von 0.10 oder größer ist schon ein substanzieller Effekt.
 
-**Bild dazu.** Die ANOVA zerlegt die Gesamtstreuung in zwei Bausteine. Drei Gruppen mit ihren Mittelwerten (Rauten) und Einzelfällen (Punkte):
+Die ANOVA zerlegt die Gesamtstreuung in zwei Bausteine. Drei Gruppen mit ihren Mittelwerten (Rauten) und Einzelfällen (Punkte):
 
 ```{r anova-between-within, fig.height=3.6}
 set.seed(3)
@@ -718,8 +712,10 @@ allbus |>
 
 **Lesart.** Du bekommst *F*, df, *p* und η² (eta-quadrat) — wie viel Prozent der Varianz in Islamfeindlichkeit durch Bildungsgruppen erklärt wird. Mit der Effektgrößen-Faustregel: η² ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß. Hier erklärt die Bildung 12.5 % der Varianz — ein mittlerer Effekt, knapp unter der Schwelle zu „groß". `summary()` zeigt dir dazu die Gruppenmittelwerte mit Konfidenzintervallen (niedrig 4.68, mittel 4.45, hoch 3.48), die klassische ANOVA-Tabelle, den gegen ungleiche Varianzen robusten Welch-Test (*Robust Tests of Equality of Means*) und neben η² die weniger verzerrten Maße ε² und ω². *Visualisieren lässt sich der Gruppenunterschied direkt mit einem Boxplot — die Grammatik dazu hast du in @sec-grafiken-basics gelernt, und im Coefficient-Plot in @sec-erklaerung wird die ANOVA als Spezialfall der Regression noch einmal aufgegriffen.*
 
-::: {.callout-note}
-**Forschungshintergrund: Bildung als Vorurteils-Prädiktor.** Bildung ist in der Sozialforschung der robusteste Prädiktor *gegen* gruppenbezogene Vorurteile — über Länder, Themen und Jahrzehnte hinweg. Die theoretische Debatte streitet, warum: *Liberalisierungs-Hypothese* (Bildung vermittelt liberale Werte direkt), *Kognitive-Komplexität-Hypothese* (Bildung erlaubt komplexere Bewertungen), *Status-Hypothese* (höher Gebildete fühlen sich weniger ökonomisch bedroht und weniger durch Outgroups herausgefordert). Eine ANOVA prüft *ob* der Effekt existiert; *welcher* der drei Erklärungsstränge stimmt, müsste über Mediator-Modelle oder qualitative Forschung beantwortet werden.
+::: {.callout-note collapse="true"}
+## Hintergrund: Bildung als Vorurteils-Prädiktor
+
+Bildung ist in der Sozialforschung der robusteste Prädiktor *gegen* gruppenbezogene Vorurteile — über Länder, Themen und Jahrzehnte hinweg. Die theoretische Debatte streitet, warum: *Liberalisierungs-Hypothese* (Bildung vermittelt liberale Werte direkt), *Kognitive-Komplexität-Hypothese* (Bildung erlaubt komplexere Bewertungen), *Status-Hypothese* (höher Gebildete fühlen sich weniger ökonomisch bedroht und weniger durch Outgroups herausgefordert). Eine ANOVA prüft *ob* der Effekt existiert; *welcher* der drei Erklärungsstränge stimmt, müsste über Mediator-Modelle oder qualitative Forschung beantwortet werden.
 :::
 
 ### Post-Hoc-Tests mit `tukey_test()`, `scheffe_test()` und `dunn_test()`
@@ -836,7 +832,7 @@ Formuliere eine eigene bivariate Hypothese auf Basis des ALLBUS 2023 — etwa: *
 :::
 
 ::: {.callout-note}
-**Forschungsjournal: Stand deiner Mini-Studie.** Du weißt jetzt: Islamfeindlichkeit liegt im Mittel um 4 (auf einer 1–7-Skala), deutlich gestreut. Ost-West-Unterschiede bestehen. Islamfeindlichkeit korreliert deutlich mit Populismus (*r* ≈ .41), negativ mit Bildung. Das sind die *Befunde-erster-Ordnung*, die jede multivariate Modellierung kennen muss. **Was als Nächstes kommt:** In @sec-latente prüfen wir, ob deine Skalen *empirisch* tragfähig sind (Faktorstruktur, Reliabilität). In @sec-erklaerung dann das eigentliche Modell mit mehreren Prädiktoren gleichzeitig.
+**Forschungsjournal: Stand deiner Mini-Studie.** Du weißt jetzt: Islamfeindlichkeit liegt im Mittel um 4 (auf einer 1–7-Skala), deutlich gestreut. Ost-West-Unterschiede bestehen. Islamfeindlichkeit korreliert deutlich mit Populismus (*r* ≈ .41), negativ mit Bildung. Das sind die *Befunde-erster-Ordnung*, die jede multivariate Modellierung kennen muss. Was als Nächstes kommt: In @sec-latente prüfen wir, ob deine Skalen *empirisch* tragfähig sind (Faktorstruktur, Reliabilität). In @sec-erklaerung dann das eigentliche Modell mit mehreren Prädiktoren gleichzeitig.
 :::
 
 ## Was du jetzt weißt {-}
@@ -860,23 +856,23 @@ In den nächsten zwei Kapiteln weiten wir den Blick auf multivariate Verfahren a
 
 | Begriff                  | Bedeutung in einem Satz                                                                  |
 | :----------------------- | :--------------------------------------------------------------------------------------- |
-| **Nullhypothese (H₀)**   | Annahme „kein Effekt"; wird verworfen, wenn der p-Wert klein genug ist                   |
-| **p-Wert**               | Wahrscheinlichkeit, das beobachtete (oder ein extremeres) Ergebnis unter H₀ zu sehen     |
-| **Signifikanz**          | Konvention: p < .05 → Effekt gilt als statistisch belastbar                              |
-| **Standardabweichung (SD)** | Streuung der Einzelfälle um den Mittelwert                                            |
-| **Standardfehler (SE)**  | Streuung der Schätzung über hypothetische Wiederholungen; SE = SD / √N                   |
-| **Konfidenzintervall (KI)** | Intervall, das in 95 % wiederholter Studien den wahren Wert einschließt                |
-| **Effektgröße**          | Maß für die *Stärke* eines Befunds — unabhängig von N                                    |
-| **Schiefe**              | Symmetrie einer Verteilung; positiv = lange Ausläufer nach rechts                        |
-| **Wölbung (Kurtosis)**   | „Spitzigkeit" einer Verteilung; hoch = spitze Verteilung mit dicken Rändern              |
-| **Pearson r**            | linearer Zusammenhang; $r = \text{Cov}(x,y) / (\text{SD}(x) \cdot \text{SD}(y))$         |
-| **Spearman ρ**           | rangbasierte Korrelation — robust bei nichtlinearen Zusammenhängen                       |
-| **Cramérs V**            | Effektgröße für Chi²; 0 – 1; ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß                       |
-| **Hedges' g / Cohens d** | standardisierte Mittelwertdifferenz; ≥ .20 klein, ≥ .50 mittel, ≥ .80 groß               |
-| **η² (eta-Quadrat)**     | Anteil erklärter Varianz in ANOVA; ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß                 |
-| **t-Statistik**          | (Mittelwertdifferenz) / (gepoolter Standardfehler)                                       |
-| **F-Statistik (ANOVA)**  | (Between-Varianz) / (Within-Varianz) — groß = Gruppen klar getrennt                      |
-| **Post-Hoc**             | Folgetest nach signifikanter ANOVA — klärt, welche Gruppenpaare sich unterscheiden       |
+| Nullhypothese (H₀)       | Annahme „kein Effekt"; wird verworfen, wenn der p-Wert klein genug ist                   |
+| p-Wert                   | Wahrscheinlichkeit, das beobachtete (oder ein extremeres) Ergebnis unter H₀ zu sehen     |
+| Signifikanz              | Konvention: p < .05 → Effekt gilt als statistisch belastbar                              |
+| Standardabweichung (SD)  | Streuung der Einzelfälle um den Mittelwert                                               |
+| Standardfehler (SE)      | Streuung der Schätzung über hypothetische Wiederholungen; SE = SD / √N                   |
+| Konfidenzintervall (KI)  | Intervall, das in 95 % wiederholter Studien den wahren Wert einschließt                   |
+| Effektgröße              | Maß für die *Stärke* eines Befunds — unabhängig von N                                    |
+| Schiefe                  | Symmetrie einer Verteilung; positiv = lange Ausläufer nach rechts                        |
+| Wölbung (Kurtosis)       | „Spitzigkeit" einer Verteilung; hoch = spitze Verteilung mit dicken Rändern              |
+| Pearson r                | linearer Zusammenhang; $r = \text{Cov}(x,y) / (\text{SD}(x) \cdot \text{SD}(y))$         |
+| Spearman ρ               | rangbasierte Korrelation — robust bei nichtlinearen Zusammenhängen                       |
+| Cramérs V                | Effektgröße für Chi²; 0 – 1; ≥ .10 klein, ≥ .30 mittel, ≥ .50 groß                       |
+| Hedges' g / Cohens d     | standardisierte Mittelwertdifferenz; ≥ .20 klein, ≥ .50 mittel, ≥ .80 groß               |
+| η² (eta-Quadrat)         | Anteil erklärter Varianz in ANOVA; ≥ .01 klein, ≥ .06 mittel, ≥ .14 groß                 |
+| t-Statistik              | (Mittelwertdifferenz) / (gepoolter Standardfehler)                                       |
+| F-Statistik (ANOVA)      | (Between-Varianz) / (Within-Varianz) — groß = Gruppen klar getrennt                      |
+| Post-Hoc                 | Folgetest nach signifikanter ANOVA — klärt, welche Gruppenpaare sich unterscheiden       |
 
 ## Weiterführend {-}
 

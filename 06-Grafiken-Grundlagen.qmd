@@ -32,19 +32,25 @@ In SPSS klickst du im *Diagramm*-Menü zusammen, was du brauchst: Balken, Linien
 
 ggplot2 macht das anders. Stell dir vor, du beschreibst einer Designerin am Telefon eine Grafik, die sie für dich anfertigen soll. Du müsstest ihr genau drei Dinge sagen:
 
-1. **Welche Daten** möchtest du zeigen? Welcher Datensatz?
-2. **Was kommt wohin?** Welche Variable auf die x-Achse, welche auf die y-Achse, welche bestimmt die Farbe, welche die Gruppierung?
-3. **Wie sollen die Datenpunkte aussehen?** Als Balken? Als Punkte? Als Linie? Als Boxplot?
+1. Welche Daten möchtest du zeigen? Welcher Datensatz?
+2. Was kommt wohin? Welche Variable auf die x-Achse, welche auf die y-Achse, welche bestimmt die Farbe, welche die Gruppierung?
+3. Wie sollen die Datenpunkte aussehen? Als Balken? Als Punkte? Als Linie? Als Boxplot?
 
 Mehr brauchst du nicht. ggplot2 baut nach diesen drei Angaben die Grafik *automatisch* zusammen. Diese drei Komponenten heißen offiziell *Data*, *Aesthetic Mapping* und *Layer (geom)*. Hadley Wickham hat das System aus einem Buch von 2005 abgeleitet, in dem Leland Wilkinson statistische Grafiken systematisch als „Grammatik" beschrieben hat — daher der Name **Grammar of Graphics**. Genauso wie eine Sprache aus Substantiven, Verben und Adjektiven jeden beliebigen Satz bauen kann, baust du aus diesen drei Bausteinen jede beliebige Grafik.
 
 Das hat einen großen praktischen Vorteil: Hast du einmal verstanden, wie *ein* Diagramm gebaut wird, verstehst du alle. Wenn du einen Boxplot beherrschst, ist der Schritt zu einem Histogramm oder Streudiagramm nur ein anderes `geom_*()` — das Grundgerüst bleibt gleich.
 
+::: {.callout-note collapse="true"}
+## Hintergrund: Wer hat die Grammatik erfunden?
+
+Leland Wilkinson formulierte 2005 in *The Grammar of Graphics* die Idee, jede statistische Grafik aus einer kleinen Zahl orthogonaler Komponenten zusammenzubauen. Hadley Wickham implementierte das 2007 als `ggplot` (später `ggplot2`) in R. Heute ist die Grammar Standard auch in Python (plotnine), JavaScript (Observable Plot) und vielen kommerziellen Tools — wer einmal in einem System gelernt hat, in welchen Schichten eine Grafik denkt, kann sie in allen lesen.
+:::
+
 Dieses Kapitel führt dich durch diese drei Schritte und die wichtigsten Geom-Varianten. Du lernst, welche Grafik zu welchem Datentyp passt, wie du Subgruppen mit Facets aufteilst und wie du Farben, Themes und Beschriftungen anpasst. Die fortgeschritteneren Visualisierungs-Themen (Coefficient-Plots, Multi-Plot-Komposition, Speichern in publikationsfähiger Qualität) folgen in @sec-erklaerung am Ende des Methoden-Pfads — dort, wo wir konkrete Modellergebnisse darstellen wollen.
 
 ## Was du nach diesem Kapitel kannst {-}
 
-- Den **Grammar of Graphics**-Ansatz von ggplot2 erklären.
+- Den Grammar-of-Graphics-Ansatz von ggplot2 erklären.
 - Häufigkeiten, Verteilungen und Zusammenhänge mit den passenden `geom_*()`-Schichten visualisieren.
 - Subgruppen mit `facet_wrap()` und `facet_grid()` aufteilen.
 - Farben, Themes und Beschriftungen anpassen — inklusive lesbarer Achsenlabels über `to_label()`.
@@ -98,10 +104,6 @@ Error: `mapping` must be created by `aes()`
 Heilmittel: ein `+` statt `|>` zwischen den ggplot2-Schichten — sonst bleibt alles wie gewohnt.
 :::
 
-::: {.callout-note}
-**Hintergrund: Wer hat die Grammatik erfunden?** Leland Wilkinson formulierte 2005 in *The Grammar of Graphics* die Idee, jede statistische Grafik aus einer kleinen Zahl orthogonaler Komponenten zusammenzubauen. Hadley Wickham implementierte das 2007 als `ggplot` (später `ggplot2`) in R. Heute ist die Grammar Standard auch in Python (plotnine), JavaScript (Observable Plot) und vielen kommerziellen Tools — wer einmal in einem System gelernt hat, in welchen Schichten eine Grafik denkt, kann sie in allen lesen.
-:::
-
 ### Erste Grafik: Häufigkeitsverteilung eines Items
 
 **Frage:** Wie verteilen sich die Antworten auf das Item `mm03` („Anwesenheit von Muslimen bringt Konflikt")?
@@ -119,8 +121,8 @@ allbus |>
 
 **Lesart.** Die Skala läuft von 1 („stimme gar nicht zu") bis 7 („stimme voll und ganz zu"). Die Verteilung zeigt, in welche Richtung die Befragten tendieren.
 
-::: {.callout-note}
-**`weight =` (ggplot2) vs. `weights =` (mariposa).** Beide gewichten — gleiches Konzept, andere Schreibung. ggplot2 nutzt `weight` (Singular, ohne s) als *Aesthetic* innerhalb von `aes()`; mariposa-Funktionen wie `frequency()` oder `t_test()` nutzen `weights` (Plural, mit s) als Funktionsargument. Wer beides im selben Skript schreibt, vertippt sich gelegentlich — und ungewichtete Outputs sind keine Fehlermeldung, sondern stillschweigend falsch.
+::: {.callout-warning}
+**Vorsicht: `weight =` (ggplot2) vs. `weights =` (mariposa).** Beide gewichten — gleiches Konzept, andere Schreibung. ggplot2 nutzt `weight` (Singular, ohne s) als *Aesthetic* innerhalb von `aes()`; mariposa-Funktionen wie `frequency()` oder `t_test()` nutzen `weights` (Plural, mit s) als Funktionsargument. Wer beides im selben Skript schreibt, vertippt sich gelegentlich — und ungewichtete Outputs sind keine Fehlermeldung, sondern stillschweigend falsch.
 :::
 
 ### Zweite Grafik: Subgruppen-Vergleich
@@ -154,7 +156,7 @@ Allein ist `g` ein „leeres" Plot-Objekt — es weiß noch nichts über Achsen 
 
 ### Aesthetic Mapping mit `aes()`
 
-Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften der Grafik** zu. Die wichtigsten Eigenschaften:
+Mit `aes()` ordnest du Spalten des Datensatzes den visuellen Eigenschaften der Grafik zu. Die wichtigsten Eigenschaften:
 
 | Argument           | Wozu                                  |
 | ------------------ | ------------------------------------- |
@@ -167,13 +169,12 @@ Mit `aes()` ordnest du **Spalten des Datensatzes** den **visuellen Eigenschaften
 | `size =`, `alpha =`| Größe / Transparenz                   |
 | `group =`          | unsichtbare Gruppierung               |
 
-**Wichtig:** Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
+Wenn `aes()` *innerhalb* von `ggplot()` steht, gilt das Mapping für alle Layer der Grafik. Du kannst Mappings auch pro Layer setzen — dann gelten sie nur dort.
 
-::: {.callout-warning}
-**Konzept: Innerhalb oder außerhalb von `aes()`?** Das ist *die* Anfänger:innen-Falle in ggplot2. Die Regel ist einfach, hat aber gegensätzliche Konsequenzen:
+Ob eine Angabe innerhalb oder außerhalb von `aes()` steht, macht einen großen Unterschied. Das ist *die* Anfänger:innen-Falle in ggplot2. Die Regel ist einfach, hat aber gegensätzliche Konsequenzen:
 
-- **Innerhalb `aes()`** → eine *Datenspalte* wird auf eine visuelle Eigenschaft gemappt. Die Farbe variiert dann mit den Werten der Variable, und ggplot2 vergibt automatisch eine Legende.
-- **Außerhalb `aes()`** → eine *konstante Eigenschaft* für alle Punkte/Balken. Keine Legende, alles in derselben Farbe.
+- Innerhalb `aes()` → eine *Datenspalte* wird auf eine visuelle Eigenschaft gemappt. Die Farbe variiert dann mit den Werten der Variable, und ggplot2 vergibt automatisch eine Legende.
+- Außerhalb `aes()` → eine *konstante Eigenschaft* für alle Punkte/Balken. Keine Legende, alles in derselben Farbe.
 
 ```{r aes-vs-konstant, eval=FALSE}
 ggplot(allbus, aes(x = age, fill = sex)) + geom_bar()         # ein Balken pro Alter, nach sex gestapelt
@@ -183,7 +184,6 @@ ggplot(allbus, aes(x = age)) + geom_bar(fill = "steelblue")   # alle Balken einh
 Im ersten Aufruf bestimmt der Turm `sex` die Farbe jedes Stücks eines Balkens, im zweiten gilt der eine Wert `"steelblue"` für alle Balken (@fig-aes-konstante).
 
 ![Oben bestimmt der Turm `sex` die Füllfarbe: Jeder Balken ist nach `sex` gestapelt, die Legende zeigt die Farben. Unten gilt der eine Wert `"steelblue"` für alle Balken, eine Legende gibt es nicht; gezeigt sind die Balken für 18 bis 24 Jahre.](Bilder/figuren/k06-aes-konstante.svg){#fig-aes-konstante .lightbox fig-alt="Zwei Teile untereinander. Oben unter INNERHALB aes() der Code ggplot(allbus, aes(x = age, fill = sex)) + geom_bar(). Links der Turm sex (fct) mit MANN, MANN, FRAU und Auslassungspunkten, ein grüner Pfeil mit der Zuordnung fill führt zu sieben Balken für die Alter 18 bis 24. Jeder Balken ist gestapelt: unten ein grünes Stück für FRAU, darüber ein lachsrotes für MANN, bei 19, 21, 22 und 24 ganz unten ein schmaler blauer Streifen für DIVERS. Rechts die Legende fill mit MANN in Lachsrot, FRAU in Grün, DIVERS in Blau und NA in Grau. Unten unter AUSSERHALB aes() der Code ggplot(allbus, aes(x = age)) + geom_bar(fill = „steelblue“). Ein lila Stein „steelblue“ führt mit dem Pfeil fill zu denselben sieben Balken, so hoch wie oben und alle in Stahlblau, daneben steht keine Legende."}
-:::
 
 **Kurz überlegen.** Was zeichnet R, wenn die Konstante in `aes()` steht: `ggplot(allbus, aes(x = age, fill = "steelblue")) + geom_bar()`? Welche Farbe haben die Balken, und gibt es eine Legende?
 
@@ -195,10 +195,10 @@ ggplot(allbus, aes(x = age, fill = "steelblue")) + geom_bar()
 In `aes()` behandelt ggplot2 `"steelblue"` wie einen Turm, in dem in jeder Reihe derselbe Wert steht. Das ist eine einzige Stufe, und sie bekommt die erste Farbe der Standardpalette, ein Lachsrot (`#F8766D`). Die Legende hat genau einen Eintrag, „steelblue“. Eine solche Legende ist ein deutliches Zeichen dafür, dass eine Konstante in `aes()` steht.
 :::
 
-**`fill` vs. `color` — die Mini-Regel.** ggplot2 unterscheidet zwei Farb-Aesthetics:
+Für Farben unterscheidet ggplot2 zwei Aesthetics, `fill` und `color`:
 
-- **`fill`** ist die *Füllfarbe* — für *Flächen*: Balken, Boxen, Polygone, Dichten.
-- **`color`** ist die *Strichfarbe* — für *Linien, Punkte, Outlines*.
+- `fill` ist die *Füllfarbe* — für *Flächen*: Balken, Boxen, Polygone, Dichten.
+- `color` ist die *Strichfarbe* — für *Linien, Punkte, Outlines*.
 
 Wer einen Balken einfärben will und `color = sex` schreibt, sieht nur dünne Outlines und eine ansonsten leere Fläche. Bei Punkten und Linien ist `color` richtig, bei Balken `fill`. Bei manchen Geoms (z. B. `geom_boxplot()`) brauchst du beides — `fill` für die Box, `color` für den Rahmen.
 
@@ -214,7 +214,7 @@ g <- allbus |>
 
 Layer kommen mit `+` dazu. Die Layer-Funktionen beginnen alle mit dem Präfix `geom_`.
 
-**Punktdiagramm / Jitter:**
+Ein Punktdiagramm mit `geom_jitter()`:
 
 ```{r jitter}
 allbus |>
@@ -228,7 +228,7 @@ allbus |>
 
 `geom_jitter()` verteilt überlappende Punkte leicht — das ist bei zwei diskreten Achsen (Skalen mit wenigen Ausprägungen) unverzichtbar, sonst sehen alle Befragten wie *ein* Punkt aus.
 
-**Boxplot und Violinplot:**
+Boxplot und Violinplot bauen auf demselben Grundgerüst `g_base` auf:
 
 ```{r boxviolin}
 g_base <- allbus |>
@@ -259,7 +259,7 @@ g_base +
 
 ## Geoms für verschiedene Datentypen {#sec-geoms}
 
-Welches `geom_*` sinnvoll ist, hängt vom **Datentyp** der Variablen ab. Eine Schnellübersicht:
+Welches `geom_*` sinnvoll ist, hängt vom Datentyp der Variablen ab. Eine Schnellübersicht:
 
 | Datentyp                                  | Empfohlene Geoms                                           |
 | ----------------------------------------- | ---------------------------------------------------------- |
@@ -282,7 +282,7 @@ allbus |>
   labs(x = "Bildungsgruppe", y = "Anzahl (gewichtet)")
 ```
 
-**Relative Häufigkeiten.** In modernem ggplot2 (ab Version 3.4) benutzt du `after_stat()` statt der alten `..count..`/`..prop..`-Syntax:
+Für relative Häufigkeiten benutzt du in modernem ggplot2 (ab Version 3.4) `after_stat()` statt der alten `..count..`/`..prop..`-Syntax:
 
 ```{r bar-prop}
 allbus |>
@@ -376,9 +376,7 @@ allbus |>
   labs(x = "Populismus", y = "Islamfeindlichkeit")
 ```
 
-::: {.callout-note}
-**Reviewer-Hinweis.** Facets sind in Publikationen aussagekräftiger als Tabellen mit Subgruppen-Statistiken. Wenn du in der Diskussion zeigen willst, dass ein Zusammenhang in einer Subgruppe stärker ist als in einer anderen, ist `facet_wrap` oder `facet_grid` das Werkzeug der Wahl — auf einen Blick sichtbar.
-:::
+In Publikationen sind Facets aussagekräftiger als Tabellen mit Subgruppen-Statistiken. Wenn du in der Diskussion zeigen willst, dass ein Zusammenhang in einer Subgruppe stärker ist als in einer anderen, macht `facet_wrap()` oder `facet_grid()` das auf einen Blick sichtbar.
 
 ## Farben und Themes {#sec-themes}
 
@@ -400,9 +398,7 @@ farben <- c("#2563eb", "#16a34a", "#dc2626")
 scale_color_manual(values = farben)
 ```
 
-::: {.callout-note}
-**Hintergrund: Barrierefreiheit.** Etwa 8 % der Männer (und 0.5 % der Frauen) haben eine Form der Rot-Grün-Sehschwäche. Default-Farbpaletten verwenden oft Rot und Grün als Hauptkontrast — für betroffene Leser:innen verschwindet damit die Information. **Viridis** (Standardpalette in matplotlib, jetzt auch in ggplot2) bleibt für alle Sehschwächen unterscheidbar und ist auch in Schwarzweiß-Druck lesbar. Faustregel: bei kontinuierlichen Skalen immer Viridis, bei kategorialen Variablen aus ColorBrewer-Paletten wählen (`Set1`, `Set2`, `Blues`, `RdYlBu`).
-:::
+Etwa 8 % der Männer (und 0.5 % der Frauen) haben eine Form der Rot-Grün-Sehschwäche. Default-Farbpaletten verwenden oft Rot und Grün als Hauptkontrast — für betroffene Leser:innen verschwindet damit die Information. Viridis (Standardpalette in matplotlib, jetzt auch in ggplot2) bleibt für alle Sehschwächen unterscheidbar und ist auch in Schwarzweiß-Druck lesbar. Als Faustregel nimmst du bei kontinuierlichen Skalen Viridis und bei kategorialen Variablen eine ColorBrewer-Palette (`Set1`, `Set2`, `Blues`, `RdYlBu`).
 
 ### Themes mit `theme_*()` und `theme()`
 
@@ -421,18 +417,14 @@ p + theme_minimal()
 
 `theme_bw()`, `theme_classic()`, `theme_dark()`, `theme_void()` sind weitere Optionen.
 
-::: {.callout-note}
-**Konzept: `theme_*()` vs. `theme()`.** Die zwei Funktions-Familien klingen gleich, machen aber Verschiedenes:
+Die zwei Funktions-Familien `theme_*()` und `theme()` klingen gleich, machen aber Verschiedenes:
 
-- **`theme_minimal()`, `theme_bw()`, `theme_classic()` …** — *komplette Themes*. Setzen den Gesamtstil (Hintergrund, Gitter, Schriftgrößen).
-- **`theme(legend.position = "none", …)`** — *einzelne Elemente* gezielt anpassen. Diese Funktion akzeptiert dutzende Elemente (`axis.text`, `plot.title`, `panel.grid` …).
+- `theme_minimal()`, `theme_bw()`, `theme_classic()` … — *komplette Themes*. Sie setzen den Gesamtstil (Hintergrund, Gitter, Schriftgrößen).
+- `theme(legend.position = "none", …)` — *einzelne Elemente* gezielt anpassen. Diese Funktion akzeptiert dutzende Elemente (`axis.text`, `plot.title`, `panel.grid` …).
 
 In der Praxis kombinierst du beide: zuerst ein komplettes Theme als Basis, dann einzelne Anpassungen via `theme()`.
-:::
 
-::: {.callout-important}
-**mariposa-Tipp / `theme_rworkshop()`.** Alle Grafiken in diesem Buch nutzen automatisch das Theme `theme_rworkshop()`, das in `R/_common.R` definiert und per `theme_set()` global gesetzt ist. So sehen alle Plots im Quarto-Projekt einheitlich aus, ohne dass du das Theme in jedem Chunk explizit angeben musst. Für dein eigenes Projekt definierst du dir ein passendes Theme einmal und referenzierst es per `source("R/_common.R")` aus jedem Kapitel-Setup-Chunk.
-:::
+Alle Grafiken in diesem Buch nutzen automatisch das Theme `theme_rworkshop()`, das in `R/_common.R` definiert und per `theme_set()` global gesetzt ist. So sehen alle Plots im Quarto-Projekt einheitlich aus, ohne dass du das Theme in jedem Chunk explizit angeben musst. Für dein eigenes Projekt definierst du dir ein passendes Theme einmal und referenzierst es per `source("R/_common.R")` aus jedem Kapitel-Setup-Chunk.
 
 ::: {.callout-tip}
 **SPSS → R: Klick vs. Code.** In SPSS klickst du Farben in einem Dialogfeld an, und die nächste Grafik fängt wieder bei Null an. In ggplot2 *speicherst* du Theme und Farbpalette als Code — und kannst sie auf jede neue Grafik anwenden, ohne dich zu wiederholen.
@@ -457,7 +449,7 @@ allbus |>
   )
 ```
 
-**Lesbare Achsen über `to_label()`.** Bei `<haven_labelled>`-Variablen aus SPSS willst du im Plot meist die *Wertelabels* sehen, nicht die numerischen Codes. Im Setup-Chunk dieses Kapitels haben wir genau das gemacht — `to_label(eastwest, sex)` hat die beiden Variablen in Faktoren verwandelt:
+Für lesbare Achsen sorgt `to_label()`. Bei `<haven_labelled>`-Variablen aus SPSS willst du im Plot meist die *Wertelabels* sehen, nicht die numerischen Codes. Im Setup-Chunk dieses Kapitels haben wir genau das gemacht — `to_label(eastwest, sex)` hat die beiden Variablen in Faktoren verwandelt:
 
 ```{r to-label-axis}
 allbus |>
@@ -474,8 +466,8 @@ Wenn du eine zusätzliche labelled-Variable im Plot brauchst, wendest du `to_lab
 
 Zwei weitere Bausteine, die du in den nächsten Kapiteln brauchst:
 
-- **Speichern mit `ggsave()`.** Eine Grafik in deine Hausarbeit oder Folien bringen geht über `ggsave("plot.png", width = 8, height = 5, dpi = 300)`. Vollständige Behandlung in @sec-ggsave.
-- **Mehrere Plots kombinieren mit `patchwork`.** Wenn du zwei Grafiken nebeneinander oder untereinander brauchst, kombinierst du sie mit `p1 + p2` (nebeneinander) oder `p1 / p2` (untereinander). Vollständige Behandlung in @sec-patchwork.
+- Speichern mit `ggsave()`: Eine Grafik in deine Hausarbeit oder Folien bringen geht über `ggsave("plot.png", width = 8, height = 5, dpi = 300)`. Vollständige Behandlung in @sec-ggsave.
+- Mehrere Plots kombinieren mit `patchwork`: Wenn du zwei Grafiken nebeneinander oder untereinander brauchst, kombinierst du sie mit `p1 + p2` (nebeneinander) oder `p1 / p2` (untereinander). Vollständige Behandlung in @sec-patchwork.
 
 ## Übungen {-}
 
@@ -534,7 +526,7 @@ Wähle aus dem ALLBUS 2023 eine politik-/sozialwissenschaftlich interessante Fra
 :::
 
 ::: {.callout-note}
-**Forschungsjournal: Stand deiner Mini-Studie.** Du beherrschst jetzt das Visualisierungs-Vokabular — Histogramm, Boxplot, Streudiagramm, Facets, Themes. Ab dem nächsten Kapitel ist jede statistische Analyse von einer entsprechenden Grafik begleitet. **Was als Nächstes kommt:** In @sec-univbivar beschreibst du die Skala (uni- und bivariat), illustrierst mit Histogramm und Boxplot, und testest die ersten Hypothesen — gewichtet, mit Effektgröße.
+**Forschungsjournal: Stand deiner Mini-Studie.** Du beherrschst jetzt das Visualisierungs-Vokabular — Histogramm, Boxplot, Streudiagramm, Facets, Themes. Ab dem nächsten Kapitel ist jede statistische Analyse von einer entsprechenden Grafik begleitet. Was als Nächstes kommt: In @sec-univbivar beschreibst du die Skala (uni- und bivariat), illustrierst mit Histogramm und Boxplot, und testest die ersten Hypothesen — gewichtet, mit Effektgröße.
 :::
 
 ## Was du jetzt weißt {-}

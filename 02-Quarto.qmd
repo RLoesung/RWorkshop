@@ -9,7 +9,7 @@ source("R/_common.R")
 
 Wissenschaftliche Arbeit ist nur dann *Wissenschaft*, wenn andere sie nachvollziehen können. Wer eine Analyse veröffentlicht, sollte den Weg von den Daten zum Ergebnis vollständig offenlegen — ohne dass Leser:innen Zwischenschritte rekonstruieren oder Tabellen aus dem Output-Fenster nachformatieren müssen.
 
-**Quarto** ist das Werkzeug, das diesen Anspruch praktisch einlöst. Es verbindet **R-Code** und **Schriftbericht** in einem einzigen Dokument: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word. Änderst du die Daten oder eine Methodenentscheidung, läuft das gesamte Dokument beim nächsten Render-Lauf frisch durch — Zahlen, Tabellen und Grafiken sind automatisch aktuell.
+Quarto ist das Werkzeug, das diesen Anspruch praktisch einlöst. Es verbindet R-Code und Schriftbericht in einem einzigen Dokument: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word. Änderst du die Daten oder eine Methodenentscheidung, läuft das gesamte Dokument beim nächsten Render-Lauf frisch durch — Zahlen, Tabellen und Grafiken sind automatisch aktuell.
 
 Dieses Kapitel führt dich von deinem ersten `.qmd`-Dokument bis zu einem reproduzierbaren Projekt nach den Standards offener Wissenschaft. Das Buch, das du gerade liest, ist selbst mit Quarto gebaut — du findest also überall in diesen Seiten das, was hier erklärt wird.
 
@@ -36,16 +36,18 @@ In Quarto trennst du nicht mehr zwischen Analyse und Bericht. Beides lebt im sel
 
 |                                | SPSS-Workflow                              | Quarto-Workflow                                |
 | :----------------------------- | :----------------------------------------- | :--------------------------------------------- |
-| **Wo wird gerechnet?**         | SPSS-Output-Fenster                        | Code-Chunk im `.qmd`                           |
-| **Wo wird geschrieben?**       | Word                                       | Lauftext im `.qmd`                             |
-| **Wie kommen Tabellen rein?**  | Word (kopieren, manuell formatieren)       | Quarto (automatisch beim Render)               |
-| **Was passiert bei Datenänderung?** | Alles neu kopieren                    | Render-Knopf — fertig                          |
-| **Wie reproduziert das jemand anderes?** | Hoffen, dass die Klick-Reihenfolge dokumentiert ist | `.qmd` plus Daten → identisches Ergebnis |
+| Wo wird gerechnet?             | SPSS-Output-Fenster                        | Code-Chunk im `.qmd`                           |
+| Wo wird geschrieben?           | Word                                       | Lauftext im `.qmd`                             |
+| Wie kommen Tabellen rein?      | Word (kopieren, manuell formatieren)       | Quarto (automatisch beim Render)               |
+| Was passiert bei Datenänderung? | Alles neu kopieren                        | Render-Knopf — fertig                          |
+| Wie reproduziert das jemand anderes? | Hoffen, dass die Klick-Reihenfolge dokumentiert ist | `.qmd` plus Daten → identisches Ergebnis |
 
-Quarto ist der **Nachfolger von R Markdown**. R Markdown war R-zentriert; Quarto ist mehrsprachig (R, Python, Julia, Observable) und vereinheitlicht die Konfiguration. Für unsere Zwecke benutzen wir Quarto mit R — alles, was du aus R-Markdown-Tutorials kennst, läuft fast unverändert in Quarto weiter.
+Quarto ist der Nachfolger von R Markdown. R Markdown war R-zentriert; Quarto ist mehrsprachig (R, Python, Julia, Observable) und vereinheitlicht die Konfiguration. Für unsere Zwecke benutzen wir Quarto mit R — alles, was du aus R-Markdown-Tutorials kennst, läuft fast unverändert in Quarto weiter.
 
-::: {.callout-note}
-**Hintergrund: R Markdown, Quarto, knitr.** Unter der Haube nutzt Quarto weiterhin **knitr**, die R-Engine, die Code-Chunks ausführt und in Markdown einbettet. Was Quarto neu macht, ist die Schicht *darüber*: ein einheitliches YAML-Format, eine konsistente Output-Architektur und Unterstützung für Bücher (wie dieses hier), Webseiten, Folien und Dashboards. Die meisten Beispiele aus R-Markdown-Tutorials funktionieren in Quarto identisch.
+::: {.callout-note collapse="true"}
+## Hintergrund: R Markdown, Quarto, knitr
+
+Unter der Haube nutzt Quarto weiterhin knitr, die R-Engine, die Code-Chunks ausführt und in Markdown einbettet. Was Quarto neu macht, ist die Schicht *darüber*: ein einheitliches YAML-Format, eine konsistente Output-Architektur und Unterstützung für Bücher (wie dieses hier), Webseiten, Folien und Dashboards. Die meisten Beispiele aus R-Markdown-Tutorials funktionieren in Quarto identisch.
 :::
 
 ## Markdown — die Schreibebene
@@ -69,7 +71,7 @@ Mehr brauchst du für 90 % aller Hausarbeiten nicht. Für Tabellen, Fußnoten un
 
 ## Dein erstes `.qmd`
 
-Ein Quarto-Dokument hast du in @sec-quarto-dokument schon angelegt: **`File` → `New File` → `Quarto Document`**. Im Dialog gibst du Titel und Autor an, wählst HTML als Format und drückst *Create*. RStudio öffnet ein Beispiel-Dokument, das du mit dem **Render**-Knopf (oder `cmd`/`strg` + `shift` + `K`) sofort in HTML übersetzen kannst.
+Ein Quarto-Dokument hast du in @sec-quarto-dokument schon angelegt: `File` → `New File` → `Quarto Document`. Im Dialog gibst du Titel und Autor an, wählst HTML als Format und drückst *Create*. RStudio öffnet ein Beispiel-Dokument, das du mit dem Render-Knopf (oder `cmd`/`strg` + `shift` + `K`) sofort in HTML übersetzen kannst.
 
 Ein minimales `.qmd` hat genau drei Bestandteile:
 
@@ -92,8 +94,8 @@ mean(c(1, 2, 3, 4, 5))
 Du erkennst:
 
 1. **YAML-Header** zwischen `---`-Linien — Metadaten und Format-Konfiguration.
-2. **Markdown-Lauftext** — siehe Mini-Spickzettel oben.
-3. **Code-Chunks** in dreifachen Backticks mit `{r}` — werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.
+2. Markdown-Lauftext — siehe Mini-Spickzettel oben.
+3. Code-Chunks in dreifachen Backticks mit `{r}` — werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.
 
 Das Ergebnis (gerendert) zeigt deinen Text, die Code-Zeile *und* deren Ausgabe (`3`) — alles in einer fertigen HTML-Datei. Genau dieser Workflow trägt dich von der Hausarbeit bis zur Dissertation.
 
@@ -103,7 +105,7 @@ Jede Schicht landet an ihrer eigenen Stelle im Bericht (@fig-qmd-schichten): Aus
 
 ## YAML-Header: das Steuerpult
 
-Der YAML-Header steuert das Verhalten deines Dokuments. Statt sofort alle Felder zu sehen, baust du ihn dir in **drei Ausbaustufen** auf — von „minimal lauffähig" bis „komplette Hausarbeit".
+Der YAML-Header steuert das Verhalten deines Dokuments. Statt sofort alle Felder zu sehen, baust du ihn dir in drei Ausbaustufen auf — von „minimal lauffähig" bis „komplette Hausarbeit".
 
 ### Stufe 1: Minimal
 
@@ -134,10 +136,10 @@ lang: de
 ---
 ```
 
-- **`toc: true`** schaltet das Inhaltsverzeichnis ein, **`toc-depth: 3`** nimmt drei Überschrift-Ebenen auf.
-- **`number-sections: true`** nummeriert Abschnitte automatisch (1, 1.1, 1.1.1).
-- **`lang: de`** sorgt für deutsche Beschriftungen (z. B. *„Inhalt"* statt *„Contents"*).
-- **`date: today`** setzt automatisch das Render-Datum.
+- `toc: true` schaltet das Inhaltsverzeichnis ein, `toc-depth: 3` nimmt drei Überschrift-Ebenen auf.
+- `number-sections: true` nummeriert Abschnitte automatisch (1, 1.1, 1.1.1).
+- `lang: de` sorgt für deutsche Beschriftungen (z. B. *„Inhalt"* statt *„Contents"*).
+- `date: today` setzt automatisch das Render-Datum.
 
 ### Stufe 3: Voller Forschungsbericht
 
@@ -174,14 +176,14 @@ lang: de
 
 Neu dazugekommen:
 
-- **Mehrere `author`-Einträge** als Liste (mit `-` eingerückt).
-- **Mehrere Output-Formate** parallel — Quarto rendert alle drei in einem Lauf.
-- **`bibliography`** verweist auf eine BibTeX-Datei (siehe @sec-literatur).
-- **`csl`** wählt den Zitationsstil (APA, Chicago, …).
-- **`execute`** setzt Default-Optionen für alle Code-Chunks: `echo: true` zeigt den Code, `warning: false` / `message: false` blendet R-Meldungen aus.
+- Mehrere `author`-Einträge als Liste (mit `-` eingerückt).
+- Mehrere Output-Formate parallel — Quarto rendert alle drei in einem Lauf.
+- `bibliography` verweist auf eine BibTeX-Datei (siehe @sec-literatur).
+- `csl` wählt den Zitationsstil (APA, Chicago, …).
+- `execute` setzt Default-Optionen für alle Code-Chunks: `echo: true` zeigt den Code, `warning: false` / `message: false` blendet R-Meldungen aus.
 
 ::: {.callout-warning}
-**Vorsicht: YAML-Einrückung.** YAML ist **leerzeichensensitiv**. Untergeordnete Felder werden mit *zwei Leerzeichen* eingerückt — Tabulatoren oder unregelmäßige Einrückung führen zu Render-Fehlern. Wenn ein Quarto-Render mit „yaml parsing error" abbricht, schaue zuerst auf die Einrückung.
+**Vorsicht: YAML-Einrückung.** YAML ist leerzeichensensitiv. Untergeordnete Felder werden mit *zwei Leerzeichen* eingerückt — Tabulatoren oder unregelmäßige Einrückung führen zu Render-Fehlern. Wenn ein Quarto-Render mit „yaml parsing error" abbricht, schaue zuerst auf die Einrückung.
 :::
 
 ## Code-Chunks im Detail
@@ -210,15 +212,13 @@ Die wichtigsten Optionen:
 
 ![Derselbe Chunk mit `mean(mtcars$mpg)` unter vier Einstellungen: was im Bericht steht und ob R den Code ausführt.](Bilder/figuren/k02-chunk-optionen.svg){#fig-chunk-optionen .lightbox fig-alt="Eine Tabelle mit den Spalten OPTION, IM BERICHT und AUSGEFÜHRT und vier Zeilen. Ohne Option: der Code mean(mtcars$mpg) und die Ausgabe [1] 20.09062, ausgeführt ja. echo=FALSE: nur die Ausgabe [1] 20.09062, ja. eval=FALSE: nur der Code, nein. include=FALSE: ein leeres Feld, ja."}
 
-::: {.callout-tip}
-**Welche Option brauche ich gerade?** In der Praxis stellt sich fast immer dieselbe Frage. Diese Mini-Entscheidung hilft:
+Welche Option du brauchst, hängt davon ab, was im Bericht stehen soll:
 
 - *Code und Output zeigen.* → Default. Keine Option nötig.
 - *Nur Output zeigen, Code verstecken.* → `echo: false` (z. B. Grafiken in einem Bericht).
-- *Code zeigen, aber **nicht** ausführen.* → `eval: false` (z. B. ein Beispiel zur Illustration, das fremde Daten bräuchte).
-- *Code **und** Output verstecken, aber trotzdem ausführen.* → `include: false` (z. B. Setup-Chunk, der Pakete lädt).
+- *Code zeigen, aber nicht ausführen.* → `eval: false` (z. B. ein Beispiel zur Illustration, das fremde Daten bräuchte).
+- *Code und Output verstecken, aber trotzdem ausführen.* → `include: false` (z. B. Setup-Chunk, der Pakete lädt).
 - *Code zeigen, Output zeigen, aber Warnungen unterdrücken.* → `warning: false, message: false`.
-:::
 
 **Chunk-Labels** (wie `mein-chunk` oben) müssen pro Dokument *eindeutig* sein. Sie dienen als Cache-Schlüssel und als Anker für Grafik-Referenzen.
 
@@ -234,7 +234,7 @@ mean(mtcars$mpg)
 ```
 ````
 
-Beide Schreibweisen sind erlaubt. **In diesem Buch nutzen wir die Header-Notation** (`{r mein-chunk, echo=TRUE}`), weil sie kompakter ist. In modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen — er ist bei langen Optionslisten lesbarer.
+Beide Schreibweisen sind erlaubt. In diesem Buch nutzen wir die Header-Notation (`{r mein-chunk, echo=TRUE}`), weil sie kompakter ist. In modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen — er ist bei langen Optionslisten lesbarer.
 
 ### Setup-Chunk
 
@@ -285,11 +285,9 @@ Beim Rendern wird daraus:
 
 > Die Stichprobe enthält `r nrow(mtcars)` Fahrzeuge. Der durchschnittliche Verbrauch liegt bei `r round(mean(mtcars$mpg), 1)` mpg.
 
-Inline-Code ist eines der wichtigsten Werkzeuge für **reproduzierbare Berichte**: Du nennst keine Zahl manuell, sondern lässt sie aus den Daten berechnen. Filterst du später anders oder spielst eine neue Datenwelle ein, sind alle Zahlen im Bericht beim nächsten Render automatisch aktuell — und keine bleibt versehentlich auf einem alten Wert stehen.
+Inline-Code ist eines der wichtigsten Werkzeuge für reproduzierbare Berichte: Du nennst keine Zahl manuell, sondern lässt sie aus den Daten berechnen. Filterst du später anders oder spielst eine neue Datenwelle ein, sind alle Zahlen im Bericht beim nächsten Render automatisch aktuell — und keine bleibt versehentlich auf einem alten Wert stehen.
 
-::: {.callout-tip}
-**Tipp: `round()` nicht vergessen.** R gibt Zahlen mit voller Maschinengenauigkeit aus (`23.847395`). Für den Fließtext rundest du auf so viele Nachkommastellen, wie es die Lesbarkeit verlangt — meist eine oder zwei.
-:::
+R gibt Zahlen mit voller Maschinengenauigkeit aus (`23.847395`). Für den Fließtext rundest du deshalb mit `round()` auf so viele Nachkommastellen, wie es die Lesbarkeit verlangt — meist eine oder zwei.
 
 ## Tabellen und Grafiken
 
@@ -319,9 +317,9 @@ Die `fig-cap`-Option erscheint als Bildunterschrift; bei `number-sections: true`
 
 ## Literaturverweise mit BibTeX und Zotero {#sec-literatur}
 
-Quarto integriert Zitationen direkt in den Fließtext. Du brauchst zwei Dinge: eine **BibTeX-Datei** mit deinen Quellen und einen **Verweis im YAML-Header**.
+Quarto integriert Zitationen direkt in den Fließtext. Du brauchst zwei Dinge: eine **BibTeX-Datei** mit deinen Quellen und einen Verweis im YAML-Header.
 
-**1. BibTeX-Datei `literatur.bib`** im Projektordner:
+Die BibTeX-Datei `literatur.bib` liegt im Projektordner:
 
 ```bibtex
 @article{Goodman2016,
@@ -343,21 +341,21 @@ Quarto integriert Zitationen direkt in den Fließtext. Du brauchst zwei Dinge: e
 }
 ```
 
-**2. YAML-Header** verweist auf die Datei:
+Der YAML-Header verweist auf die Datei:
 
 ```yaml
 bibliography: literatur.bib
 csl: apa.csl     # optional: Zitationsstil
 ```
 
-**3. Zitieren im Text** mit `@key`:
+Im Text zitierst du mit `@key`:
 
 ```markdown
 Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren.
 Für eine ausführliche Behandlung siehe auch [@Wickham2023].
 ```
 
-Quarto formatiert die Zitationen automatisch und hängt am Ende eine **Literaturliste** an. In HTML steht sie in einem eigenen Anhang am Ende der Seite. Endet dein Dokument mit einer Überschrift ohne Text darunter, etwa `## Literatur`, wird sie zur Überschrift dieses Anhangs. Soll die Liste an einer anderen Stelle stehen, setze dort einen leeren Block mit der ID `refs`:
+Quarto formatiert die Zitationen automatisch und hängt am Ende eine Literaturliste an. In HTML steht sie in einem eigenen Anhang am Ende der Seite. Endet dein Dokument mit einer Überschrift ohne Text darunter, etwa `## Literatur`, wird sie zur Überschrift dieses Anhangs. Soll die Liste an einer anderen Stelle stehen, setze dort einen leeren Block mit der ID `refs`:
 
 ```markdown
 ::: {#refs}
@@ -368,9 +366,7 @@ Aus `@Goodman2016` wird ein Zitat mit den Namen im Satz und dem Jahr in Klammern
 
 ![Die beiden Verweise aus dem Beispiel nach dem Rendern, im Standardstil und mit `lang: de`.](Bilder/figuren/k02-zitieren.svg){#fig-zitieren .lightbox fig-alt="Oben die zwei Zeilen aus analyse.qmd: Wie @Goodman2016 zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch [@Wickham2023]. Links darunter literatur.bib mit den Schlüsseln Goodman2016 (article) und Wickham2023 (book), ihre Felder sind ausgelassen. Ein Pfeil Render führt zur gerenderten Seite: Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich definieren. Für eine ausführliche Behandlung siehe auch (Wickham und Grolemund 2023). Darunter die Überschrift Literatur mit zwei Einträgen: Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. What does research reproducibility mean? Science Translational Medicine 8 (341): 341ps12. Und: Wickham, Hadley, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."}
 
-::: {.callout-tip}
-**Zotero-Integration.** Die meisten Studierenden verwalten ihre Quellen in **Zotero**. Mit dem Plugin [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) exportierst du deine Sammlung als `.bib`-Datei und hältst sie automatisch synchron. Im **Quarto Visual Editor** in RStudio kannst du außerdem über `Insert` → `Citation` Zotero-Quellen direkt nachschlagen.
-:::
+Die meisten Studierenden verwalten ihre Quellen in Zotero. Mit dem Plugin [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) exportierst du deine Sammlung als `.bib`-Datei und hältst sie automatisch synchron. Im Quarto Visual Editor in RStudio kannst du außerdem über `Insert` → `Citation` Zotero-Quellen direkt nachschlagen.
 
 ## Open Science: Reproduzierbarkeit als Standard
 
@@ -389,21 +385,23 @@ Reproduzierbarkeit ist Voraussetzung für Replizierbarkeit, aber nicht umgekehrt
 
 Die FAIR-Prinzipien beschreiben, was gute Forschungsdaten und gute Forschungssoftware ausmacht:
 
-- **Findable** — auffindbar über persistente Identifier (z. B. DOI).
-- **Accessible** — abrufbar über offene, dokumentierte Protokolle.
-- **Interoperable** — in standardisierten Formaten (`.csv` statt `.xlsx`-spezifischer Trickserei).
-- **Reusable** — mit ausreichender Dokumentation und klarer Lizenz weiternutzbar.
+- Findable — auffindbar über persistente Identifier (z. B. DOI).
+- Accessible — abrufbar über offene, dokumentierte Protokolle.
+- Interoperable — in standardisierten Formaten (`.csv` statt `.xlsx`-spezifischer Trickserei).
+- Reusable — mit ausreichender Dokumentation und klarer Lizenz weiternutzbar.
 
 Für deine Hausarbeit reicht ein kleiner Schritt: lege Code und (wenn möglich) Daten auf eine Plattform wie OSF und vergib eine offene Lizenz.
 
 ### Plattformen und Pre-Registration
 
-- **[OSF — Open Science Framework](https://osf.io/)** — kostenlose Plattform für Forschungsprojekte. Du legst dort Code, Daten und Pre-Registrations ab.
-- **[Zenodo](https://zenodo.org/)** — vergibt persistente DOIs für Code-Releases (häufig mit GitHub gekoppelt).
+- [OSF — Open Science Framework](https://osf.io/) — kostenlose Plattform für Forschungsprojekte. Du legst dort Code, Daten und Pre-Registrations ab.
+- [Zenodo](https://zenodo.org/) — vergibt persistente DOIs für Code-Releases (häufig mit GitHub gekoppelt).
 - **Pre-Registration** — Forschungsfrage, Hypothesen und Auswertungsplan werden *vor* Datenerhebung oder Auswertung schriftlich festgelegt. Das schützt vor *p-hacking* und *HARKing* (Hypothesizing After the Results are Known). Sinnvoll für konfirmatorische Studien; explorative Forschung markiert man entsprechend.
 
-::: {.callout-note}
-**Hintergrund: Warum jetzt?** Die *replication crisis* in der Psychologie und den empirischen Sozialwissenschaften (ab 2011, zugespitzt durch die Open Science Collaboration 2015) hat gezeigt, dass viele publizierte Befunde sich nicht reproduzieren lassen — teils, weil Methoden unsauber dokumentiert waren, teils, weil das Forschungs-Anreizsystem signifikante Ergebnisse über sorgfältige Methoden belohnte. Open Science, Pre-Registration und reproduzierbare Berichte (Quarto, R Markdown) sind die strukturelle Antwort darauf.
+::: {.callout-note collapse="true"}
+## Hintergrund: Die Replikationskrise
+
+Die *replication crisis* in der Psychologie und den empirischen Sozialwissenschaften (ab 2011, zugespitzt durch die Open Science Collaboration 2015) hat gezeigt, dass viele publizierte Befunde sich nicht reproduzieren lassen — teils, weil Methoden unsauber dokumentiert waren, teils, weil das Forschungs-Anreizsystem signifikante Ergebnisse über sorgfältige Methoden belohnte. Open Science, Pre-Registration und reproduzierbare Berichte (Quarto, R Markdown) sind die strukturelle Antwort darauf.
 :::
 
 ## Projektstruktur und Versionskontrolle
@@ -425,22 +423,22 @@ mein-projekt/
 
 Drei Regeln, die sich bewährt haben:
 
-- **Rohdaten sind heilig.** Du schreibst nie in `ALLBUS2023.sav` zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in `output/`.
-- **Code, Daten und Dokument liegen zusammen.** Niemals absolute Pfade (`/Users/anna/...`) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
-- **Geteilte Logik kommt in `R/`.** Wenn drei `.qmd`-Dateien dieselben Daten vorbereiten, gehört der Code in `R/prep.R` und wird in jedem Dokument per `source("R/prep.R")` eingebunden.
+- Rohdaten sind heilig. Du schreibst nie in `ALLBUS2023.sav` zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in `output/`.
+- Code, Daten und Dokument liegen zusammen. Niemals absolute Pfade (`/Users/anna/...`) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
+- Geteilte Logik kommt in `R/`. Wenn drei `.qmd`-Dateien dieselben Daten vorbereiten, gehört der Code in `R/prep.R` und wird in jedem Dokument per `source("R/prep.R")` eingebunden.
 
 ### Versionskontrolle mit Git — Ausblick
 
-**Git** ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht — aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
+Git ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht — aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
 
-Dieses Buch behandelt Git **nicht im Detail** — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
+Dieses Buch behandelt Git nicht im Detail — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
 
 ## Publizieren: HTML, PDF, Word
 
 Welches Output-Format das richtige ist, hängt vom Adressaten ab:
 
-- **HTML** — für die eigene Webseite, für GitHub Pages, für interaktive Berichte mit Verlinkungen. Schnellster Render-Lauf.
-- **PDF** — für Seminar-Abgaben und formale Berichte. Quarto nutzt LaTeX im Hintergrund; installiere einmalig:
+- HTML — für die eigene Webseite, für GitHub Pages, für interaktive Berichte mit Verlinkungen. Schnellster Render-Lauf.
+- PDF — für Seminar-Abgaben und formale Berichte. Quarto nutzt LaTeX im Hintergrund; installiere einmalig:
 
 ```{r tinytex, eval=FALSE}
 install.packages("tinytex")
@@ -451,7 +449,7 @@ tinytex::install_tinytex()
 **Vorsicht: Erster PDF-Render kann dauern.** `tinytex::install_tinytex()` lädt eine kleine LaTeX-Distribution herunter (ca. 5–10 Minuten je nach Internet). Beim *ersten* PDF-Render fehlende LaTeX-Pakete werden dann automatisch nachinstalliert — das kann den ersten Lauf nochmal ein paar Minuten verlängern. Wenn der Render mit einer kryptischen LaTeX-Fehlermeldung abbricht, lohnt es sich, ihn ein zweites Mal zu starten — oft fehlte nur ein Paket beim ersten Mal.
 :::
 
-- **Word** — für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.
+- Word — für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.
 
 Mehrere Formate parallel:
 
@@ -463,7 +461,7 @@ format:
   docx: default
 ```
 
-Quarto rendert beim nächsten Lauf alle drei. Über **`quarto publish`** kannst du HTML-Outputs direkt zu GitHub Pages, Quarto Pub oder Netlify veröffentlichen — alles ohne Server-Setup.
+Quarto rendert beim nächsten Lauf alle drei. Über `quarto publish` kannst du HTML-Outputs direkt zu GitHub Pages, Quarto Pub oder Netlify veröffentlichen — alles ohne Server-Setup.
 
 ## Übungen {-}
 
@@ -529,7 +527,7 @@ Skizziere die Struktur eines reproduzierbaren Forschungsberichts in einer eigene
 - Du strukturierst dein Projekt (`R/`, `output/`) und versionierst es mit Git.
 - Du publizierst in HTML, PDF oder Word.
 
-Im nächsten Kapitel kommst du zur **Programmiersprache R selbst** — Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.
+Im nächsten Kapitel kommst du zur Programmiersprache R selbst — Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.
 
 ## Weiterführend {-}
 

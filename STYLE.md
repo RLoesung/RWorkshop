@@ -49,6 +49,7 @@ Jedes Methoden-Kapitel hat **mindestens** diese Abschnitte, in dieser Reihenfolg
 - **Aktiv vor Passiv.** *„Wir wählen die Variable aus"* — nicht *„Die Variable wird ausgewählt"*.
 - **Geschlechtersensible Sprache:** `:innen` (z. B. „Anwender:innen"), wie bisher im Skript etabliert.
 - **Fachbegriffe** beim ersten Auftreten **fett** + 1-Satz-Definition. Danach normal.
+- **Sonst kein Fettdruck** im Fließtext: keine fetten Betonungen (sparsam *kursiv*), keine fetten Listen-Einstiege, keine fetten Zahlen. Ausnahmen sind die Marken **Frage:** und **Lesart.** und der Einstieg offener Kästen (§ 4).
 - **Englische Originalbegriffe** in *kursiv*, sofern Standard (z. B. *random sampling*, *missing at random*).
 - **Keine Wir-Inflation.** „Wir" nur, wenn es ein gemeinsamer Erkenntnisweg ist, nicht als Füllwort.
 
@@ -56,7 +57,23 @@ Jedes Methoden-Kapitel hat **mindestens** diese Abschnitte, in dieser Reihenfolg
 
 ## 4 — Callout-Boxen
 
-Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`.
+Vier Typen, einheitlich gesetzt, jeweils in Quarto-Syntax `::: {.callout-…}`. Seit dem 26.11.2026 (Rückmeldung: zu viele Kästen, zu viel Fett) gilt:
+
+- **Offen** stehen nur Vorsicht und SPSS → R, dazu das Forschungsjournal am Kapitelanfang und -ende. Einstieg fett: `**Vorsicht: Titel.** Text …`
+- **Zugeklappt** sind Hintergrund und mariposa-Tipp. Der Titel steht als Überschrift in der ersten Zeile, der Kasten zeigt dann nur diese Zeile:
+
+  ```
+  ::: {.callout-note collapse="true"}
+  ## Hintergrund: Titel ohne Schlusspunkt
+
+  Text …
+  :::
+  ```
+
+  (mariposa-Tipp: `::: {.callout-important collapse="true"}` mit `## mariposa-Tipp: …`)
+- **Nie zwei Kästen direkt untereinander.** Ein Kasten steht bei dem Absatz, den er ergänzt. Was zum Verständnis des Kapitels nötig ist, gehört in den Fließtext, nicht in einen Kasten. Wiederholt ein Kasten nur den Text, fällt er weg.
+- Andere Einstiege (Konzept, Forschungshintergrund, Reviewer-Hinweis, Tipp, Faustregel) gibt es nicht mehr; sie werden zu Hintergrund, Vorsicht, mariposa-Tipp oder Fließtext.
+- Prüfen: `python3 figuren/pruefe_kaesten.py <kapitel.qmd>`.
 
 **SPSS → R** (`.callout-tip` mit eigenem Icon-Override)
 > Brücke für Umsteiger:innen aus SPSS. Direktvergleich Syntax/Output. Nicht inflationär — nur wo der Übergang nicht offensichtlich ist.

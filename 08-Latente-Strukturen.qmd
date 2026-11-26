@@ -30,35 +30,35 @@ Diese Validierung ist der Job dieses Kapitels. Drei Werkzeuge stehen dafür bere
 
 Am Ende blicken wir kurz auf die **konfirmatorische Faktorenanalyse (CFA)** mit `lavaan` — den nächsten Schritt, wenn du eine konkrete Strukturhypothese *prüfen* statt nur *erkunden* willst. Die EFA fragt: „Welche Struktur passt am besten?". Die CFA fragt: „Passt *diese* spezifische Struktur, die ich aus der Theorie behaupte, zu den Daten?".
 
-::: {.callout-note}
-**Konzept: Was ist eine latente Variable?** In den sechs Item-Türmen stehen die Antworten der Befragten. Islamfeindlichkeit selbst hat niemand gemessen; sie ist ein Faktor ohne eigene Werte (@fig-latenter-faktor). Der Skalenwert `islamophobie` aus @sec-datentransformation ist aus den Items berechnet.
+Was eine latente Variable ist, zeigt @fig-latenter-faktor am Beispiel der Islamfeindlichkeit. In den sechs Item-Türmen stehen die Antworten der Befragten. Islamfeindlichkeit selbst hat niemand gemessen; sie ist ein Faktor ohne eigene Werte. Der Skalenwert `islamophobie` aus @sec-datentransformation ist aus den Items berechnet.
 
 ![Die sechs Items sind gemessen, hier mit den Antworten der ersten drei Befragten, die alle sechs beantwortet haben. Der Faktor Islamfeindlichkeit hat keine Werte; von ihm führt ein Pfeil zu jedem Item.](Bilder/figuren/k08-latenter-faktor.svg){#fig-latenter-faktor .lightbox fig-alt="Oben eine gestrichelte Ellipse mit dem Namen Islamfeindlichkeit, daneben nicht gemessen. Von ihr führen sechs Pfeile zu den Spaltennamen mm01, mm02r, mm03, mm04, mm05r und mm06. Darunter eine Bauplatte mit sechs blauen Türmen für die respid 1, 5 und 6: Reihe 1 hat 5, 5, 4, 2, 2 und 2, Reihe 5 hat 2, 4, 4, 3, 5 und 6, Reihe 6 hat 3, 5, 3, 7, 2 und 3. Rechts daneben gemessen."}
 
 Die Pfeile gehen *vom* unsichtbaren Faktor *zu* den beobachteten Items — die Annahme ist: *der Faktor erzeugt die Antworten*. Wer eine hohe Islamfeindlichkeit hat, kreuzt deshalb auf allen sechs Items eher zustimmende Werte an. Genau diese Pfeil-Richtung siehst du in CFA-Pfaddiagrammen wieder.
-:::
 
 ## Was du nach diesem Kapitel kannst {-}
 
-- Eine **Inter-Item-Korrelationsmatrix** aufstellen, lesen und als Heatmap mit ggplot2 visualisieren.
-- **KMO** und **Bartlett-Test** als Voraussetzungs-Check verstehen und im `efa()`-Output finden.
-- Die **Anzahl der Faktoren** mit Eigenwert-Kriterium und händisch gezeichnetem **Scree-Plot** entscheiden.
-- Eine **explorative Faktorenanalyse** rechnen, Faktorladungen lesen und als sortierten **Bar-Chart** visualisieren.
-- Den Unterschied zwischen **PCA**, **EFA** und **CFA** erklären — und wissen, wann welche Methode passt.
+- Eine Inter-Item-Korrelationsmatrix aufstellen, lesen und als Heatmap mit ggplot2 visualisieren.
+- KMO und Bartlett-Test als Voraussetzungs-Check verstehen und im `efa()`-Output finden.
+- Die Anzahl der Faktoren mit Eigenwert-Kriterium und händisch gezeichnetem Scree-Plot entscheiden.
+- Eine explorative Faktorenanalyse rechnen, Faktorladungen lesen und als sortierten Bar-Chart visualisieren.
+- Den Unterschied zwischen PCA, EFA und CFA erklären — und wissen, wann welche Methode passt.
 - Eine Rotation (`varimax`, `oblimin`) bewusst auswählen.
-- **Cronbachs α** berechnen, Item-Statistiken lesen, problematische Items identifizieren und **α-if-deleted** als Bar-Chart prüfen — und α mit **McDonalds ω** vergleichen.
+- Cronbachs α berechnen, Item-Statistiken lesen, problematische Items identifizieren und α-if-deleted als Bar-Chart prüfen — und α mit McDonalds ω vergleichen.
 - Ein einfaches CFA-Modell mit `lavaan` aufsetzen und Fit-Indizes interpretieren.
 
 ## Inter-Item-Korrelationen {#sec-korrelationsmatrix}
 
 ### Der Vorab-Check vor jeder Faktorenanalyse
 
-Stell dir vor, sechs Reporter:innen schicken ihre Berichte zur selben Lage. Wenn fünf davon ein ähnliches Bild zeichnen und einer komplett woanders steht — *dann weißt du schon vor jeder Analyse*: fünf messen vermutlich dasselbe, einer messt etwas anderes. Genau diese Vorab-Diagnose machen **Inter-Item-Korrelationen** für deine Skala.
+Stell dir vor, sechs Reporter:innen schicken ihre Berichte zur selben Lage. Wenn fünf davon ein ähnliches Bild zeichnen und einer komplett woanders steht — *dann weißt du schon vor jeder Analyse*: fünf messen vermutlich dasselbe, einer messt etwas anderes. Genau diese Vorab-Diagnose machen Inter-Item-Korrelationen für deine Skala.
 
 Sie sind die Grundvoraussetzung für jede sinnvolle Faktorisierung: Wenn die Items paarweise *nicht* miteinander korrelieren, gibt es nichts gemeinsam zu messen — eine EFA würde keine Faktoren finden, weil keine da sind.
 
-::: {.callout-note}
-**Hintergrund: Was misst eine Korrelation mathematisch?** Die Pearson-Korrelation $r$ ist die *standardisierte Kovarianz* — sie misst, wie stark zwei Variablen *gemeinsam* von ihrem jeweiligen Mittelwert abweichen, relativ zu ihrer Einzelstreuung:
+::: {.callout-note collapse="true"}
+## Hintergrund: Was misst eine Korrelation mathematisch?
+
+Die Pearson-Korrelation $r$ ist die *standardisierte Kovarianz* — sie misst, wie stark zwei Variablen *gemeinsam* von ihrem jeweiligen Mittelwert abweichen, relativ zu ihrer Einzelstreuung:
 
 $$r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}$$
 
@@ -80,17 +80,19 @@ Die kompakte Ausgabe listet alle fünfzehn Item-Paare mit Pearson-*r* und *p*-We
 
 | Inter-Item-*r* | Lesart                                                       |
 | :------------- | :----------------------------------------------------------- |
-| < 0.20         | **Fremdkörper-Item** — misst vermutlich etwas anderes        |
-| 0.30 – 0.70    | **gesunder Bereich** — Items hängen zusammen, aber nicht redundant |
-| > 0.85         | **Redundanz** — zwei Items messen fast dasselbe; eines fast überflüssig |
+| < 0.20         | Fremdkörper-Item — misst vermutlich etwas anderes            |
+| 0.30 – 0.70    | gesunder Bereich — Items hängen zusammen, aber nicht redundant |
+| > 0.85         | Redundanz — zwei Items messen fast dasselbe; eines fast überflüssig |
 
-::: {.callout-note}
-**Reviewer-Hinweis.** Eine Inter-Item-Korrelationsmatrix gehört in den Anhang eines empirischen Papers, das eine selbstgebaute Skala benutzt. Sie ist der schnellste Sanity-Check für die Operationalisierung — wer dort einen Wert nahe 0 oder über 0.85 sieht, fängt an, sich Sorgen zu machen.
+::: {.callout-note collapse="true"}
+## Hintergrund: Die Korrelationsmatrix im Anhang
+
+Eine Inter-Item-Korrelationsmatrix gehört in den Anhang eines empirischen Papers, das eine selbstgebaute Skala benutzt. Sie ist der schnellste Sanity-Check für die Operationalisierung — wer dort einen Wert nahe 0 oder über 0.85 sieht, fängt an, sich Sorgen zu machen.
 :::
 
 ### Heatmap mit ggplot2
 
-Eine Tabelle mit fünfzehn Zahlen liest sich zäh. Die gleiche Information als **Heatmap** ist auf einen Blick lesbar — dunkle Felder = starker Zusammenhang. Wir bauen sie händisch aus dem `pearson_cor()`-Output:
+Eine Tabelle mit fünfzehn Zahlen liest sich zäh. Die gleiche Information als Heatmap ist auf einen Blick lesbar — dunkle Felder = starker Zusammenhang. Wir bauen sie händisch aus dem `pearson_cor()`-Output:
 
 ```{r cor-heatmap}
 cor_obj <- allbus |>
@@ -112,15 +114,17 @@ cor_obj$matrices[[1]]$correlations |>
 
 **Lesart.** Die Diagonale ist trivialerweise 1.0 (jedes Item korreliert perfekt mit sich selbst). Spannend sind die Off-Diagonal-Felder: alle sechs Items zeigen Werte deutlich über 0.3 — der Spaziergangs-Reporter aus dem Bild oben gibt's hier nicht, alle messen offensichtlich dieselbe Richtung. Damit ist der Vorab-Check bestanden; die EFA kann starten.
 
-::: {.callout-important}
-**mariposa-Tipp: Volle Matrix aus dem `pearson_cor()`-Objekt.** `pearson_cor()` gibt dir nicht nur die Druckansicht — unter der Haube steckt ein strukturiertes Listen-Objekt. `cor_obj$matrices[[1]]$correlations` ist die quadratische Korrelationsmatrix (rownames = colnames = Variablennamen). Analog bekommst du `$p_values`, `$ci_lower`, `$ci_upper` und `$n_obs` als parallele Matrizen — alles, was du für eigene Visualisierungen brauchst, ohne `cor()` aus Base-R extra aufzurufen. Willst du stattdessen die Paar-Liste als Tabelle weiterverarbeiten, liefert `as_tibble(cor_obj)` sie als Tibble — das funktioniert seit mariposa 0.7.4 für jedes Analyse-Ergebnis.
+::: {.callout-important collapse="true"}
+## mariposa-Tipp: Volle Matrix aus dem `pearson_cor()`-Objekt
+
+`pearson_cor()` gibt dir nicht nur die Druckansicht — unter der Haube steckt ein strukturiertes Listen-Objekt. `cor_obj$matrices[[1]]$correlations` ist die quadratische Korrelationsmatrix (rownames = colnames = Variablennamen). Analog bekommst du `$p_values`, `$ci_lower`, `$ci_upper` und `$n_obs` als parallele Matrizen — alles, was du für eigene Visualisierungen brauchst, ohne `cor()` aus Base-R extra aufzurufen. Willst du stattdessen die Paar-Liste als Tabelle weiterverarbeiten, liefert `as_tibble(cor_obj)` sie als Tibble — das funktioniert seit mariposa 0.7.4 für jedes Analyse-Ergebnis.
 :::
 
-Die Inter-Item-Korrelationen sind grün — alle Items hängen zusammen, keiner ist Fremdkörper. Jetzt geht es an die eigentliche Faktorenanalyse. Sie ist das statistische **Röntgengerät**: Sie nimmt die beobachteten Korrelationen und versucht zu erschließen, wie viele *unsichtbare* Dimensionen dahinter stehen müssen, damit dieses Muster zustande kommt.
+Die Inter-Item-Korrelationen sind grün — alle Items hängen zusammen, keiner ist Fremdkörper. Jetzt geht es an die eigentliche Faktorenanalyse. Sie ist das statistische Röntgengerät: Sie nimmt die beobachteten Korrelationen und versucht zu erschließen, wie viele *unsichtbare* Dimensionen dahinter stehen müssen, damit dieses Muster zustande kommt.
 
-Stell dir vor, alle sechs Items werden von einer einzigen Hintergrundeinstellung getrieben. Dann müssen *alle* Items deutlich miteinander korrelieren — wer hohe Islamfeindlichkeit hat, kreuzt überall hoch an. Das wäre ein **Ein-Faktor-Modell**. Wenn aber *zwei* Hintergrundeinstellungen wirken (etwa „kognitive Stereotype" vs. „politisch-restriktive Haltung"), korrelieren manche Item-Paare stärker als andere — und es entsteht ein **Zwei-Faktor-Modell**. Die EFA prüft, welches passt.
+Stell dir vor, alle sechs Items werden von einer einzigen Hintergrundeinstellung getrieben. Dann müssen *alle* Items deutlich miteinander korrelieren — wer hohe Islamfeindlichkeit hat, kreuzt überall hoch an. Das wäre ein Ein-Faktor-Modell. Wenn aber *zwei* Hintergrundeinstellungen wirken (etwa „kognitive Stereotype" vs. „politisch-restriktive Haltung"), korrelieren manche Item-Paare stärker als andere — und es entsteht ein Zwei-Faktor-Modell. Die EFA prüft, welches passt.
 
-Wir gehen das **Schritt für Schritt** an: erst die Voraussetzungen (KMO, Bartlett), dann die Anzahl-Entscheidung (Eigenwerte, Scree-Plot), dann die endgültigen Modelle (Ein- vs. Zweifaktor) inklusive Rotation.
+Wir gehen das Schritt für Schritt an: erst die Voraussetzungen (KMO, Bartlett), dann die Anzahl-Entscheidung (Eigenwerte, Scree-Plot), dann die endgültigen Modelle (Ein- vs. Zweifaktor) inklusive Rotation.
 
 ## Voraussetzungen prüfen — KMO und Bartlett {#sec-kmo-bartlett}
 
@@ -136,7 +140,7 @@ mit $r_{ij}$ = paarweise Korrelationen und $a_{ij}$ = partielle Korrelationen (K
 
 Lies sie als: *„welcher Anteil der Item-Beziehungen lässt sich nicht durch andere Items wegerklären — also wirklich auf einen gemeinsamen Hintergrund-Faktor zurückführen."*
 
-Konzeptuell ist KMO der Mittelwert über alle Items: pro Item wird der **gemeinsame** Anteil (gut für Faktorisierung) gegen den **partiellen** Anteil abgewogen, und der KMO selbst ist das Aggregat dieser Anteile. Die Pro-Item-Werte (offiziell **MSA** — *Measure of Sampling Adequacy*) sehen wir gleich konkret im Diagnose-Block — mit echten Werten aus unserem Modell und als Plot. Die Schwellen-Tabelle für die Praxis:
+Konzeptuell ist KMO der Mittelwert über alle Items: pro Item wird der *gemeinsame* Anteil (gut für Faktorisierung) gegen den *partiellen* Anteil abgewogen, und der KMO selbst ist das Aggregat dieser Anteile. Die Pro-Item-Werte (offiziell **MSA** — *Measure of Sampling Adequacy*) sehen wir gleich konkret im Diagnose-Block — mit echten Werten aus unserem Modell und als Plot. Die Schwellen-Tabelle für die Praxis:
 
 | KMO         | Stichprobeneignung   |
 | :---------- | :------------------- |
@@ -156,7 +160,7 @@ Wenn der Test signifikant ist ($p < .05$), heißt das: *„zumindest *irgendeine
 
 Wir rufen `efa()` einmal mit `n_factors = 1` auf und speichern das Ergebnis — die Faktoranzahl ist hier egal, wir interessieren uns nur für die Voraussetzungs-Werte. Aus dem zurückgegebenen Objekt liest du *drei* Diagnose-Ebenen heraus.
 
-**Ebene 1: Gesamt-KMO.** Der kompakte Print zeigt ihn als zentrale Zahl:
+Ebene 1 ist der Gesamt-KMO. Der kompakte Print zeigt ihn als zentrale Zahl:
 
 ```{r efa-vor}
 efa_vor <- allbus |>
@@ -171,7 +175,7 @@ Gesamt-KMO ≈ 0.86 — die Stichprobe ist als Ganzes „meritorious" geeignet (
 
 ![Vier der 34 Elemente von `efa_vor` in ihrer Reihenfolge in der Liste; die Werte stammen aus den Ausgaben in diesem Abschnitt und aus `summary()` in @sec-efa-1. Grün umrandet ist das Fach, das `efa_vor$kmo$per_item` herausnimmt.](Bilder/figuren/k08-ergebnisobjekt.svg){#fig-ergebnisobjekt .lightbox fig-alt="Ein dunkles Namensschild efa_vor über einer Kiste mit fünf Fächern. $loadings enthält unter PC1 einen Turm aus 0.811, 0.664, 0.753, 0.769, 0.657 und 0.769. $eigenvalues enthält einen Turm aus 3.281, 0.833, 0.555, 0.479, 0.439 und 0.412. $kmo enthält eine kleinere Kiste mit den Fächern $overall, darin der Stein 0.862, und $per_item, darin ein grün umrandeter Turm aus 0.857, 0.876, 0.874, 0.849, 0.851 und 0.867. $bartlett enthält eine kleinere Kiste mit den Fächern $chi_sq mit 6532.633, $df mit 15 und $p_value mit 0. Das letzte Fach zeigt nur graue Auslassungspunkte. Darunter der Code efa_vor$kmo$per_item."}
 
-**Ebene 2: Bartlett-Test.** Aus dem Objekt-Slot `$bartlett`:
+Ebene 2 ist der Bartlett-Test. Du liest ihn aus dem Objekt-Slot `$bartlett`:
 
 ```{r efa-bartlett}
 efa_vor$bartlett
@@ -179,14 +183,14 @@ efa_vor$bartlett
 
 χ² ≈ 6533 bei df = 15 und *p* < .001 — die Korrelationsmatrix ist klar verschieden von einer Identitätsmatrix. Mindest-Voraussetzung erfüllt.
 
-**Ebene 3: Per-Item-KMO (MSA).** Das ist der eigentlich spannende Diagnose-Schritt — er zeigt, ob *jedes einzelne Item* ins gemeinsame Faktormodell passt. Im Output-Objekt liegt er als named numeric in `$kmo$per_item`; wir packen ihn in ein Tibble:
+Ebene 3 ist der Per-Item-KMO (MSA). Das ist der eigentlich spannende Diagnose-Schritt — er zeigt, ob *jedes einzelne Item* ins gemeinsame Faktormodell passt. Im Output-Objekt liegt er als named numeric in `$kmo$per_item`; wir packen ihn in ein Tibble:
 
 ```{r efa-msa}
 tibble(item = names(efa_vor$kmo$per_item),
        MSA  = round(efa_vor$kmo$per_item, 3))
 ```
 
-Faustregel pro Item: **MSA ≥ 0.5** akzeptabel, **< 0.5** Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.
+Faustregel pro Item: MSA ≥ 0.5 ist akzeptabel, ein Wert unter 0.5 ist ein Hinweis, dieses Item aus der Faktorenanalyse herauszunehmen. In unserem Fall liegen alle sechs Items zwischen 0.85 und 0.88 — durchweg saubere Werte, kein Item gehört rausgenommen.
 
 Visuell — gemeinsame (blau) vs. partielle (grau) Varianz pro Item, mit der MSA-Schwelle 0.5 als gestrichelter Linie:
 
@@ -235,9 +239,9 @@ Daraus die **Kaiser-Regel**: behalte alle Faktoren mit $\lambda > 1$. Sie ist ei
 
 | Kriterium             | Entscheidungs-Regel                                              | Stärke / Schwäche                            |
 | :-------------------- | :--------------------------------------------------------------- | :------------------------------------------- |
-| **Kaiser**            | alle Faktoren mit $\lambda > 1$                                  | einfach; tendiert zu *Überschätzung*         |
-| **Scree-Test**        | Faktoranzahl an der „Knickstelle" im Eigenwert-Plot              | visuell intuitiv; subjektiv                  |
-| **Parallelanalyse**   | Vergleich mit Eigenwerten zufällig generierter Daten gleicher Größe | methodischer Goldstandard; aufwendiger      |
+| Kaiser                | alle Faktoren mit $\lambda > 1$                                  | einfach; tendiert zu *Überschätzung*         |
+| Scree-Test            | Faktoranzahl an der „Knickstelle" im Eigenwert-Plot              | visuell intuitiv; subjektiv                  |
+| Parallelanalyse       | Vergleich mit Eigenwerten zufällig generierter Daten gleicher Größe | methodischer Goldstandard; aufwendiger      |
 
 In den meisten Methoden-Lehrbüchern wird mittlerweile die Parallelanalyse empfohlen (über `psych::fa.parallel()`); für unseren Workshop reicht die Kombination aus Kaiser + visueller Scree-Plot — beides sehen wir direkt im nächsten Schritt.
 
@@ -287,7 +291,7 @@ Mathematisch ist die Ladung in der Einfaktor-Lösung *gleich der Korrelation* zw
 | 0.50 – 0.70 | brauchbar                      |
 | ≥ 0.70     | hoch (Item ist Kernindikator)   |
 
-**Bild dazu.** Der Faktor in der Mitte, die Items strahlen aus — Linien-Dicke = Ladungsstärke. Items mit dicker Linie hängen *stark* am Faktor, Items mit dünner Linie hängen *schwächer*. Die Ladungen stammen schon aus unserer echten Einfaktor-Lösung (dem `efa_obj` aus dem Scree-Plot-Chunk); im nächsten Abschnitt liest du sie in der Output-Tabelle nach:
+Im Bild steht der Faktor in der Mitte, die Items strahlen aus; die Dicke einer Linie zeigt die Ladungsstärke. Items mit dicker Linie hängen *stark* am Faktor, Items mit dünner Linie hängen *schwächer*. Die Ladungen stammen schon aus unserer echten Einfaktor-Lösung (dem `efa_obj` aus dem Scree-Plot-Chunk); im nächsten Abschnitt liest du sie in der Output-Tabelle nach:
 
 ```{r faktorladung-radial, fig.height=4.2}
 faktor_radial <- efa_obj$loadings |>
@@ -317,7 +321,7 @@ faktor_radial |>
        caption = "Dicke der Linie = wie stark das Item am Faktor dranhängt.")
 ```
 
-**Lesart.** `mm01` (λ = 0.81) ist der stärkste **Kernindikator** — es reagiert am deutlichsten, wenn der Faktor sich „dreht"; `mm03`, `mm04` und `mm06` folgen dicht dahinter (je etwa 0.75–0.77). Die beiden umgepolten Items `mm02r` und `mm05r` hängen mit rund 0.66 etwas schwächer am Faktor, liegen aber immer noch klar im brauchbaren Bereich. Ein echter **Randindikator** (λ < 0.5) ist nicht dabei.
+**Lesart.** `mm01` (λ = 0.81) ist der stärkste Kernindikator — es reagiert am deutlichsten, wenn der Faktor sich „dreht"; `mm03`, `mm04` und `mm06` folgen dicht dahinter (je etwa 0.75–0.77). Die beiden umgepolten Items `mm02r` und `mm05r` hängen mit rund 0.66 etwas schwächer am Faktor, liegen aber immer noch klar im brauchbaren Bereich. Ein echter Randindikator (λ < 0.5) ist nicht dabei.
 
 ### Modell rechnen mit `efa()` und Ladungen lesen
 
@@ -332,14 +336,14 @@ allbus |>
 
 **Lesart.** Vier Blöcke sind für dich wichtig:
 
-- **KMO and Bartlett's Test** — wie bereits in @sec-kmo-bartlett gelesen.
-- **Communalities** — wie viel der Varianz jedes Items der Faktor bindet (*Extraction*). `mm01` liegt bei 0.66, die beiden umgepolten Items bei rund 0.44.
-- **Total Variance Explained** — die Eigenwerte aller sechs möglichen Komponenten und die erklärte Varianz. Der eine extrahierte Faktor erklärt 54.7 % — in gut funktionierenden Einfaktor-Skalen sind 40–60 % typisch.
-- **Component Matrix** — eine Spalte `PC1` mit dem Verbindungsgrad jedes Items zum Faktor, nach Größe sortiert: von 0.81 (`mm01`) bis 0.66 (`mm05r`). Ladungen unter 0.4 würde mariposa ausblenden (Argument `blank`), damit die Tabelle lesbar bleibt.
+- *KMO and Bartlett's Test* — wie bereits in @sec-kmo-bartlett gelesen.
+- *Communalities* — wie viel der Varianz jedes Items der Faktor bindet (*Extraction*). `mm01` liegt bei 0.66, die beiden umgepolten Items bei rund 0.44.
+- *Total Variance Explained* — die Eigenwerte aller sechs möglichen Komponenten und die erklärte Varianz. Der eine extrahierte Faktor erklärt 54.7 % — in gut funktionierenden Einfaktor-Skalen sind 40–60 % typisch.
+- *Component Matrix* — eine Spalte `PC1` mit dem Verbindungsgrad jedes Items zum Faktor, nach Größe sortiert: von 0.81 (`mm01`) bis 0.66 (`mm05r`). Ladungen unter 0.4 würde mariposa ausblenden (Argument `blank`), damit die Tabelle lesbar bleibt.
 
 ### Ladungen visualisieren
 
-Eine Tabelle mit sechs Ladungen liest sich noch gut — aber ein **sortierter Bar-Chart** macht auf einen Blick sichtbar, welche Items am stärksten am Konstrukt hängen und welche eher Randindikatoren sind. Auch das bauen wir händisch aus dem `efa()`-Objekt:
+Eine Tabelle mit sechs Ladungen liest sich noch gut — aber ein sortierter Bar-Chart macht auf einen Blick sichtbar, welche Items am stärksten am Konstrukt hängen und welche eher Randindikatoren sind. Auch das bauen wir händisch aus dem `efa()`-Objekt:
 
 ```{r loadings-bar, fig.height=3.6}
 efa_1 <- allbus |>
@@ -358,25 +362,23 @@ efa_1$loadings |>
        caption = "Senkrechte Linien: Schwellen brauchbar (0.5) und hoch (0.7)")
 ```
 
-**Lesart.** Items über 0.7 sind Kernindikatoren des Konstrukts; alles zwischen 0.5 und 0.7 ist brauchbar; alles unter 0.5 würde man theoretisch begründet behalten oder empirisch begründet entfernen. Der Bar-Chart ist zugleich eine **Item-Trichter-Diagnose**: wenn ein Item *deutlich* aus der Reihe fällt (z. B. < 0.3 oder mit umgekehrtem Vorzeichen), ist das ein Hinweis auf einen Polungsfehler oder ein themenfremdes Item.
+**Lesart.** Items über 0.7 sind Kernindikatoren des Konstrukts; alles zwischen 0.5 und 0.7 ist brauchbar; alles unter 0.5 würde man theoretisch begründet behalten oder empirisch begründet entfernen. Der Bar-Chart ist zugleich eine Item-Trichter-Diagnose: wenn ein Item *deutlich* aus der Reihe fällt (z. B. < 0.3 oder mit umgekehrtem Vorzeichen), ist das ein Hinweis auf einen Polungsfehler oder ein themenfremdes Item.
 
 ## Zwei-Faktor-Lösung mit Rotation {#sec-efa-2}
 
-Was, wenn die Skala *nicht* eindimensional ist? In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen **kognitiv-stereotyper** (z. B. `mm06` „Fanatiker") und **politisch-restriktiver** (z. B. `mm04` „beobachten lassen") Komponente unterschieden. Probieren wir es aus — mit zwei Faktoren *und* Rotation.
+Was, wenn die Skala *nicht* eindimensional ist? In der Forschungsdebatte zu Islamfeindlichkeit wird mitunter zwischen kognitiv-stereotyper (z. B. `mm06` „Fanatiker") und politisch-restriktiver (z. B. `mm04` „beobachten lassen") Komponente unterschieden. Probieren wir es aus — mit zwei Faktoren *und* Rotation.
 
-::: {.callout-note}
-**Konzept: Was ist Rotation?** Wenn du mehr als einen Faktor extrahierst, ist die Aufteilung der Ladungen auf die Faktoren mathematisch *nicht eindeutig* — viele Lösungen sind statistisch gleichwertig. Eine **Rotation** ist eine geometrische Drehung der Faktor-Achsen, die *eine* interpretierbare Lösung erzwingt: jedes Item soll möglichst hoch auf *einem* Faktor laden und niedrig auf den anderen.
+Wenn du mehr als einen Faktor extrahierst, ist die Aufteilung der Ladungen auf die Faktoren mathematisch *nicht eindeutig* — viele Lösungen sind statistisch gleichwertig. Eine **Rotation** ist eine geometrische Drehung der Faktor-Achsen, die *eine* interpretierbare Lösung erzwingt: jedes Item soll möglichst hoch auf *einem* Faktor laden und niedrig auf den anderen.
 
 Drei Rotations-Familien:
 
-- **`"varimax"`** — orthogonal, Faktoren bleiben **unkorreliert**. Standard, wenn du die Faktoren später als unabhängige Konstrukte interpretierst.
-- **`"oblimin"` / `"promax"`** — schräg, Faktoren dürfen **korreliert** sein. Realistischer in den Sozialwissenschaften, wo Konstrukte selten völlig unabhängig sind.
-- **`"none"`** — keine Rotation. Selten, nur für reine Datenreduktion.
+- `"varimax"` — orthogonal, Faktoren bleiben unkorreliert. Standard, wenn du die Faktoren später als unabhängige Konstrukte interpretierst.
+- `"oblimin"` / `"promax"` — schräg, Faktoren dürfen korreliert sein. Realistischer in den Sozialwissenschaften, wo Konstrukte selten völlig unabhängig sind.
+- `"none"` — keine Rotation. Selten, nur für reine Datenreduktion.
 
 Faustregel: Wenn dir theoretisch klar ist, dass die Konstrukte korrelieren (Islamfeindlichkeit und Populismus sind verwandt), nimm `oblimin`; sonst `varimax`. mariposa rechnet alle Rotationen mit den Algorithmen von SPSS `FACTOR` selbst — du brauchst dafür kein Zusatzpaket, und die rotierten Ladungen stimmen mit SPSS überein.
-:::
 
-**Bild dazu.** Was bewirkt eine Rotation visuell? Sechs Items im 2D-Faktor-Raum, *vor* und *nach* einer Varimax-Rotation. Vor der Rotation laden die Items diffus auf beiden Achsen; nach der Rotation sind sie sauber an *je einer* Achse ausgerichtet:
+Was bewirkt eine Rotation visuell? Sechs Items im 2D-Faktor-Raum, *vor* und *nach* einer Varimax-Rotation. Vor der Rotation laden die Items diffus auf beiden Achsen; nach der Rotation sind sie sauber an *je einer* Achse ausgerichtet:
 
 ```{r rotation-vor-nach, fig.height=3.8}
 items_unrot <- tibble(
@@ -422,27 +424,25 @@ allbus |>
 
 **Lesart.** In der *Rotated Component Matrix* stehen jetzt zwei Spalten `PC1` und `PC2`; Ladungen unter 0.4 sind ausgeblendet. Schau auf jede Zeile: Lädt das Item *klar* auf einem Faktor oder *gleichmäßig* auf beiden? Das Ergebnis ist aufschlussreich — aber anders als die Forschungsdebatte vermuten lässt:
 
-- **PC1** bündelt `mm04`, `mm03` und `mm06` (Ladungen 0.78–0.83) — beobachten, Konflikt, Fanatiker.
-- **PC2** bündelt genau die beiden *umgepolten* Items `mm05r` (0.84) und `mm02r` (0.79).
+- `PC1` bündelt `mm04`, `mm03` und `mm06` (Ladungen 0.78–0.83) — beobachten, Konflikt, Fanatiker.
+- `PC2` bündelt genau die beiden *umgepolten* Items `mm05r` (0.84) und `mm02r` (0.79).
 - `mm01` lädt auf beiden Faktoren (0.63 und 0.51) und lässt sich keinem klar zuordnen.
 
-Der zweite Faktor trennt also nicht „kognitiv-stereotyp" von „politisch-restriktiv", sondern die zwei positiv formulierten von den vier negativ formulierten Items. Das ist das typische Bild eines **Methodenfaktors**: Er spiegelt die Formulierungsrichtung wider, nicht eine zweite inhaltliche Dimension (mehr dazu im Hintergrund-Kasten zu Methoden-Effekten in @sec-cfa). Dazu passt die *Total Variance Explained*: Der Eigenwert des zweiten Faktors liegt mit 0.83 unter der Kaiser-Schwelle von 1. Beides spricht für die Einfaktor-Lösung — sie ist *sparsamer* und inhaltlich klarer. Das **Prinzip der Sparsamkeit** (Ockhams Rasiermesser) ist in der Modellwahl ein starker Anker.
+Der zweite Faktor trennt also nicht „kognitiv-stereotyp" von „politisch-restriktiv", sondern die zwei positiv formulierten von den vier negativ formulierten Items. Das ist das typische Bild eines **Methodenfaktors**: Er spiegelt die Formulierungsrichtung wider, nicht eine zweite inhaltliche Dimension (mehr zu Methoden-Effekten in @sec-cfa). Dazu passt die *Total Variance Explained*: Der Eigenwert des zweiten Faktors liegt mit 0.83 unter der Kaiser-Schwelle von 1. Beides spricht für die Einfaktor-Lösung — sie ist *sparsamer* und inhaltlich klarer. Das Prinzip der Sparsamkeit (Ockhams Rasiermesser) ist in der Modellwahl ein starker Anker.
 
-::: {.callout-note}
-**Hintergrund: PCA, EFA, CFA — was unterscheidet sie?**
+Die Ladungsspalten heißen `PC1` und `PC2`, weil `efa()` in der Voreinstellung eine Hauptkomponentenanalyse (PCA) rechnet. PCA, EFA und CFA unterscheiden sich im Ziel:
 
-- **PCA** (`extraction = "pca"`, Default in mariposa) sucht *Komponenten*, die maximal Varianz erklären — gut für Datenreduktion.
-- **EFA** (`extraction = "ml"`) modelliert *latente Faktoren* hinter den Items — gut für Theoriebildung.
-- **CFA** (mit `lavaan`, siehe @sec-cfa) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
+- PCA (`extraction = "pca"`) sucht *Komponenten*, die maximal Varianz erklären — gut für Datenreduktion.
+- EFA (`extraction = "ml"`) modelliert *latente Faktoren* hinter den Items — gut für Theoriebildung.
+- CFA (mit `lavaan`, siehe @sec-cfa) *prüft* ein vorab spezifiziertes Faktormodell — gut für Theorieprüfung.
 
 Faustregel: PCA für *Reduktion*, EFA für *Erkundung*, CFA für *Bestätigung*.
-:::
 
 ## Reliabilität — Cronbachs α {#sec-reliabilitaet}
 
 ### Die Idee: ein Spaziergang-Beispiel
 
-Stell dir vor, du fragst sechs Freund:innen, ob heute ein guter Tag für einen Spaziergang ist. Sagen alle sechs „ja klar", weißt du: das Urteil ist *konsistent* — sie messen vermutlich dasselbe (Wetter, freie Zeit, Stimmung). Sagen drei „ja" und drei „nein", misst die Skala vermutlich verschiedene Dinge — vielleicht haben drei aus dem Fenster geschaut, drei in ihren Kalender. **Cronbachs α gießt genau diese Idee in eine Zahl.**
+Stell dir vor, du fragst sechs Freund:innen, ob heute ein guter Tag für einen Spaziergang ist. Sagen alle sechs „ja klar", weißt du: das Urteil ist *konsistent* — sie messen vermutlich dasselbe (Wetter, freie Zeit, Stimmung). Sagen drei „ja" und drei „nein", misst die Skala vermutlich verschiedene Dinge — vielleicht haben drei aus dem Fenster geschaut, drei in ihren Kalender. Cronbachs α gießt genau diese Idee in eine Zahl.
 
 Während die EFA dir sagt, wie viele *Dimensionen* in den Items stecken, beantwortet die Reliabilitätsanalyse eine andere Frage: *„Wenn die Items eine Dimension messen — wie *eng* tun sie das?"* Sie ist der zweite Validitäts-Pfeiler neben der Faktorstruktur.
 
@@ -459,7 +459,7 @@ Lies sie als: *„je mehr Items, und je höher sie im Schnitt zusammenhängen, d
 - $k = 6$ Items mit $\bar{r} = 0.5$ → $\alpha = (6 \cdot 0.5) / (1 + 5 \cdot 0.5) = 3 / 3.5 ≈ 0.86$.
 - $k = 2$ Items mit derselben $\bar{r} = 0.5$ → $\alpha = (2 \cdot 0.5) / (1 + 1 \cdot 0.5) = 1 / 1.5 ≈ 0.67$.
 
-Daraus die zentrale Faustregel: **Mehr Items erkaufen Reliabilität — auch dann, wenn jedes einzelne Item nicht besser misst.** Das ist auch der Grund, warum etablierte Skalen oft 8–12 Items haben statt nur 3–4.
+Daraus die zentrale Faustregel: Mehr Items erkaufen Reliabilität — auch dann, wenn jedes einzelne Item nicht besser misst. Das ist auch der Grund, warum etablierte Skalen oft 8–12 Items haben statt nur 3–4.
 
 ### α berechnen mit `reliability()`
 
@@ -489,13 +489,13 @@ summary(rel_obj)
 
 Für die Diagnose zählen in der Tabelle *Item-Total Statistics* vor allem zwei Spalten:
 
-- **Corrected Item-Total** (korrigierte Item-Total-Korrelation) — wie stark hängt das einzelne Item mit der Summe der *anderen* (das eigene weggenommen) zusammen? Schwellen: ≥ 0.30 brauchbar, ≥ 0.50 stark.
-- **Alpha if Deleted** — wie würde sich α verändern, wenn dieses Item entfernt würde?
+- *Corrected Item-Total* (korrigierte Item-Total-Korrelation) — wie stark hängt das einzelne Item mit der Summe der *anderen* (das eigene weggenommen) zusammen? Schwellen: ≥ 0.30 brauchbar, ≥ 0.50 stark.
+- *Alpha if Deleted* — wie würde sich α verändern, wenn dieses Item entfernt würde?
 
 Daraus liest du sofort, *welches Item* die Skala trägt — und welches sie eher belastet:
 
-- **α steigt beim Entfernen** → das Item passt nicht zur Skala, Kandidat zum Streichen.
-- **α sinkt beim Entfernen** → das Item trägt zur Reliabilität bei, behalten.
+- α steigt beim Entfernen → das Item passt nicht zur Skala, Kandidat zum Streichen.
+- α sinkt beim Entfernen → das Item trägt zur Reliabilität bei, behalten.
 
 In unserer Skala liegen alle korrigierten Item-Total-Korrelationen zwischen 0.52 (`mm05r`) und 0.70 (`mm01`) — durchweg *stark*. Und kein Item würde α beim Streichen über 0.83 heben: Alle sechs tragen die Skala.
 
@@ -505,7 +505,7 @@ Für `mm05r` zählt `reliability()` in jeder Reihe die anderen fünf Items zusam
 
 ### α-if-deleted visualisieren
 
-Auch hier macht ein **Bar-Chart** den diagnostischen Blick auf einen Schlag möglich. Wir extrahieren `$item_total$alpha_if_deleted` aus dem mariposa-Objekt `rel_obj` von oben und legen die Gesamtschwelle als senkrechte Referenzlinie:
+Auch hier macht ein Bar-Chart den diagnostischen Blick auf einen Schlag möglich. Wir extrahieren `$item_total$alpha_if_deleted` aus dem mariposa-Objekt `rel_obj` von oben und legen die Gesamtschwelle als senkrechte Referenzlinie:
 
 ```{r alpha-deleted, fig.height=3.6}
 rel_obj$item_total |>
@@ -520,23 +520,17 @@ rel_obj$item_total |>
        caption = "Gestrichelte Linie: Cronbachs α der vollständigen Skala")
 ```
 
-**Lesart.** Balken **links** der gestrichelten Linie heißt: *„α würde sinken, wenn ich dieses Item streiche"* → Item trägt zur Skala bei, behalten. Balken **rechts** der Linie heißt: *„α würde steigen"* → Kandidat zum Streichen. In einer gut funktionierenden Skala liegen idealerweise alle Balken (links der Linie und) dicht beisammen — kein Item ist Ausreißer.
+**Lesart.** Balken links der gestrichelten Linie heißt: *„α würde sinken, wenn ich dieses Item streiche"* → Item trägt zur Skala bei, behalten. Balken rechts der Linie heißt: *„α würde steigen"* → Kandidat zum Streichen. In einer gut funktionierenden Skala liegen idealerweise alle Balken (links der Linie und) dicht beisammen — kein Item ist Ausreißer.
 
 ::: {.callout-warning}
-**Vorsicht: Cronbachs α ist eine Untergrenze.** α setzt voraus, dass alle Items *gleich stark* am Faktor hängen (*τ-Äquivalenz*). Ist das nicht der Fall, unterschätzt α die wahre Reliabilität. In der modernen Methodenliteratur gilt deshalb **McDonalds ω** als sauberere Wahl: ω wird aus einem Ein-Faktor-Modell geschätzt und lässt jedem Item seine eigene Ladung. `reliability()` berichtet ω gleich mit — in der kompakten Ausgabe, im Block *Reliability Statistics* und als Spalte *Omega if Deleted*. Hier liegt ω = 0.835 fast exakt bei α = 0.833: Die Ladungen unterscheiden sich nicht stark genug, um α nennenswert zu drücken. Berichte in deinem Methodenteil am besten beide Werte. ω ist (anders als α) noch nicht gegen SPSS-Output geprüft; den Stand dokumentiert die mariposa-Vignette [„SPSS Compatibility"](https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html).
+**Vorsicht: Cronbachs α ist eine Untergrenze.** α setzt voraus, dass alle Items *gleich stark* am Faktor hängen (*τ-Äquivalenz*). Ist das nicht der Fall, unterschätzt α die wahre Reliabilität. In der modernen Methodenliteratur gilt deshalb McDonalds ω als sauberere Wahl: ω wird aus einem Ein-Faktor-Modell geschätzt und lässt jedem Item seine eigene Ladung. `reliability()` berichtet ω gleich mit — in der kompakten Ausgabe, im Block *Reliability Statistics* und als Spalte *Omega if Deleted*. Hier liegt ω = 0.835 fast exakt bei α = 0.833: Die Ladungen unterscheiden sich nicht stark genug, um α nennenswert zu drücken. Berichte in deinem Methodenteil am besten beide Werte. ω ist (anders als α) noch nicht gegen SPSS-Output geprüft; den Stand dokumentiert die mariposa-Vignette [„SPSS Compatibility"](https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html).
 :::
 
-::: {.callout-note}
-**Reviewer-Hinweis.** In einem Methodenbericht reicht *nicht* der α-Wert allein. Standard ist: α (zunehmend ergänzt um ω) + Item-Total-Korrelationen aller Items + α-if-deleted aller Items — gerne in einer Tabelle oder dem Bar-Chart oben. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.
-:::
+Neben α und ω gehören in den Methodenbericht die Item-Total-Korrelationen und die α-if-deleted-Werte aller Items, als Tabelle oder als Bar-Chart wie oben. So kann die Leser:in selbst beurteilen, ob deine Skalenbildung methodisch konsistent ist.
 
 ## Konfirmatorische Faktorenanalyse als Ausblick: `cfa()` und `semPaths()` {#sec-cfa}
 
-Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine **konfirmatorische Faktorenanalyse**. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`.
-
-::: {.callout-important}
-**mariposa-Tipp: Bewusste Grenze.** mariposa deckt EFA, Reliabilität und (logistische) Regression ab. Für CFA und Strukturgleichungsmodelle bleiben `lavaan` und `semPlot` die Standardpakete — auch in modernen Lehrbüchern. Das ist eine bewusste Spezialisierung: jedes Werkzeug für die Aufgabe, für die es gemacht ist.
-:::
+Bisher haben wir die Faktorstruktur *exploriert*. Wenn du eine konkrete Hypothese hast — etwa „die sechs Items messen *einen* latenten Faktor" — und diese Hypothese *prüfen* willst, brauchst du eine konfirmatorische Faktorenanalyse. Dafür ist mariposa nicht gemacht; das übernimmt `lavaan`, das Standardpaket für CFA und Strukturgleichungsmodelle. Die Pfaddiagramme zeichnest du mit `semPlot`.
 
 Installation einmalig:
 
@@ -567,17 +561,15 @@ fit <- lavaan::cfa(modell_cfa, data = allbus,
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 ```
 
-::: {.callout-note}
-**Konzept: Was sind Fit-Indizes?** Eine CFA prüft, ob dein spezifiziertes Modell zu den Daten passt. Statt nur einer einzelnen Kennzahl gibt es vier Standard-Maße, die *unterschiedliche* Vergleichs-Perspektiven liefern:
+Eine CFA prüft, ob dein spezifiziertes Modell zu den Daten passt. Wie gut es passt, messen **Fit-Indizes**. Statt nur einer einzelnen Kennzahl gibt es vier Standard-Maße, die *unterschiedliche* Vergleichs-Perspektiven liefern:
 
-- **CFI / TLI** (*Comparative / Tucker-Lewis Fit Index*) — vergleichen dein Modell mit einem *Null-Modell* ohne Struktur. Werte gehen gegen 1; höher = besser.
-- **RMSEA** (*Root Mean Square Error of Approximation*) — *absoluter* Fit, korrigiert für Modellkomplexität. Werte gehen gegen 0; niedriger = besser.
-- **SRMR** (*Standardized Root Mean Square Residual*) — Durchschnitt der standardisierten Residuen. Niedriger = besser.
+- CFI / TLI (*Comparative / Tucker-Lewis Fit Index*) — vergleichen dein Modell mit einem *Null-Modell* ohne Struktur. Werte gehen gegen 1; höher = besser.
+- RMSEA (*Root Mean Square Error of Approximation*) — *absoluter* Fit, korrigiert für Modellkomplexität. Werte gehen gegen 0; niedriger = besser.
+- SRMR (*Standardized Root Mean Square Residual*) — Durchschnitt der standardisierten Residuen. Niedriger = besser.
 
 `fit.measures = TRUE` gibt dir alle vier auf einmal. Faustregeln: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08. Ein gutes Modell erfüllt *mehrere* dieser Schwellen — eine einzelne Kennzahl ist nie alleinige Entscheidung.
-:::
 
-**Bild dazu.** Ein „Fit-Ampel"-Plot — vier Indizes auf einen Blick, grün = Schwelle erfüllt, rot = verfehlt (schematische Beispielwerte für ein gut passendes Modell):
+Ein „Fit-Ampel"-Plot zeigt vier Indizes auf einen Blick, grün = Schwelle erfüllt, rot = verfehlt (schematische Beispielwerte für ein gut passendes Modell):
 
 ```{r fit-indizes-ampel, fig.height=2.8}
 tibble(
@@ -618,18 +610,18 @@ Eine Pfaddiagramm-Grafik:
 semPlot::semPaths(fit, whatLabels = "std", layout = "tree", edge.color = "black")
 ```
 
-::: {.callout-note}
-**Hintergrund: Wann CFA, wann nicht?** Eine CFA macht Sinn, wenn:
+Bei Skalen mit positiv und negativ formulierten Items (wie unserer Islamfeindlichkeits-Skala) bricht ein striktes 1-Faktor-CFA-Modell oft ein, weil die umgepolten Items miteinander korrelieren — auch nach Kontrolle des Hauptfaktors. Das ist *kein* inhaltlicher Sub-Faktor, sondern ein Methoden-Effekt (Akquieszenz). In der Zwei-Faktor-Lösung in @sec-efa-2 hat er sich als eigener Faktor gezeigt. In der CFA löst man das, indem man Residual-Kovarianzen zwischen den umgepolten Items zulässt (`mm02r ~~ mm05r`). Diese Spezifikation ist methodisch sauber und in der Literatur etabliert.
+
+::: {.callout-note collapse="true"}
+## Hintergrund: Wann CFA, wann nicht?
+
+Eine CFA ist sinnvoll, wenn:
 
 1. Du eine *konkrete* theoretische Hypothese über die Faktorstruktur hast.
 2. Deine Stichprobe groß genug ist (Faustregel: N ≥ 200).
 3. Du dich auf strenge Verteilungs- bzw. Schätz-Annahmen einlässt (MLR, WLSMV bei ordinalen Items).
 
 Wenn du Items einfach zu einer Skala zusammenfassen willst und keine Strukturhypothese prüfst, ist EFA + α der pragmatischere Weg.
-:::
-
-::: {.callout-note}
-**Hintergrund: Methoden-Effekte umgepolter Items.** Bei Skalen mit positiv und negativ formulierten Items (wie unserer Islamfeindlichkeits-Skala) bricht ein striktes 1-Faktor-CFA-Modell oft ein, weil die umgepolten Items miteinander korrelieren — auch nach Kontrolle des Hauptfaktors. Das ist *kein* inhaltlicher Sub-Faktor, sondern ein **Methoden-Effekt** (Akquieszenz). In der CFA löst man das, indem man Residual-Kovarianzen zwischen den umgepolten Items zulässt (`mm02r ~~ mm05r`). Diese Spezifikation ist methodisch sauber und in der Literatur etabliert.
 :::
 
 ## Übungen {-}
@@ -684,20 +676,20 @@ lavaan::fitMeasures(fit, c("cfi", "tli", "rmsea", "srmr"))
 :::
 
 ::: {.callout-note}
-**Forschungsjournal: Stand deiner Mini-Studie.** Deine Skalen sind methodisch validiert: Die Islamfeindlichkeits-Skala ist mit α = .83 und ω = .84 gut reliabel, die EFA bestätigt eine sparsame Einfaktor-Struktur (der zweite Faktor wäre nur ein Methodenfaktor der umgepolten Items), und die CFA (siehe Übung 4) zeigt, dass ein 1-Faktor-Modell — sobald der Polungs-Methodeneffekt zugelassen wird — gut passt. **Was als Nächstes kommt:** In @sec-erklaerung nimmst du diese Skalen und modellierst sie als abhängige bzw. unabhängige Variablen in multivariaten Modellen.
+**Forschungsjournal: Stand deiner Mini-Studie.** Deine Skalen sind methodisch validiert: Die Islamfeindlichkeits-Skala ist mit α = .83 und ω = .84 gut reliabel, die EFA bestätigt eine sparsame Einfaktor-Struktur (der zweite Faktor wäre nur ein Methodenfaktor der umgepolten Items), und die CFA (siehe Übung 4) zeigt, dass ein 1-Faktor-Modell — sobald der Polungs-Methodeneffekt zugelassen wird — gut passt. Was als Nächstes kommt: In @sec-erklaerung nimmst du diese Skalen und modellierst sie als abhängige bzw. unabhängige Variablen in multivariaten Modellen.
 :::
 
 ## Was du jetzt weißt {-}
 
-- Du erstellst gewichtete **Inter-Item-Korrelationsmatrizen** mit `pearson_cor()` und visualisierst sie als **Heatmap** händisch in ggplot2 (Quelle: `cor_obj$matrices[[1]]$correlations`).
-- Du liest **KMO** und **Bartlett** als Voraussetzungs-Check und verstehst, was hinter den Formeln steckt.
-- Du extrahierst **Eigenwerte** aus dem `efa()`-Objekt und entscheidest die Anzahl Faktoren mit Kaiser-Regel und einem händisch gezeichneten **Scree-Plot**.
-- Du führst eine **EFA** mit `efa()` durch, liest Faktorladungen und visualisierst sie als sortierten **Bar-Chart**.
-- Du wählst eine **Rotation** (`varimax`, `oblimin`) bewusst nach theoretischer Erwartung.
-- Du kennst den Unterschied zwischen **PCA** (Datenreduktion), **EFA** (explorativ) und **CFA** (konfirmatorisch).
-- Du berechnest **Cronbachs α** und **McDonalds ω** mit `reliability()`, liest die Item-Statistiken aus `summary()`, identifizierst problematische Items und stellst **α-if-deleted** als Bar-Chart dar.
-- Du erkennst einen **Methodenfaktor** umgepolter Items in einer Zwei-Faktor-Lösung und weißt, warum `library(lavaan)` mariposas `efa()` überdeckt.
-- Du weißt, wann **CFA** mit `lavaan` sinnvoll ist und wie eine Minimalspezifikation inkl. Methoden-Effekt aussieht.
+- Du erstellst gewichtete Inter-Item-Korrelationsmatrizen mit `pearson_cor()` und visualisierst sie als Heatmap händisch in ggplot2 (Quelle: `cor_obj$matrices[[1]]$correlations`).
+- Du liest KMO und Bartlett als Voraussetzungs-Check und verstehst, was hinter den Formeln steckt.
+- Du extrahierst Eigenwerte aus dem `efa()`-Objekt und entscheidest die Anzahl Faktoren mit Kaiser-Regel und einem händisch gezeichneten Scree-Plot.
+- Du führst eine EFA mit `efa()` durch, liest Faktorladungen und visualisierst sie als sortierten Bar-Chart.
+- Du wählst eine Rotation (`varimax`, `oblimin`) bewusst nach theoretischer Erwartung.
+- Du kennst den Unterschied zwischen PCA (Datenreduktion), EFA (explorativ) und CFA (konfirmatorisch).
+- Du berechnest Cronbachs α und McDonalds ω mit `reliability()`, liest die Item-Statistiken aus `summary()`, identifizierst problematische Items und stellst α-if-deleted als Bar-Chart dar.
+- Du erkennst einen Methodenfaktor umgepolter Items in einer Zwei-Faktor-Lösung und weißt, warum `library(lavaan)` mariposas `efa()` überdeckt.
+- Du weißt, wann CFA mit `lavaan` sinnvoll ist und wie eine Minimalspezifikation inkl. Methoden-Effekt aussieht.
 
 Im nächsten Kapitel (@sec-erklaerung) wechseln wir das Genre: statt *Struktur* zu *Erklärung* — wir modellieren Islamfeindlichkeit als abhängige Variable und prüfen, welche soziostrukturellen und politischen Prädiktoren sie am besten erklären.
 
@@ -705,20 +697,20 @@ Im nächsten Kapitel (@sec-erklaerung) wechseln wir das Genre: statt *Struktur* 
 
 | Begriff               | Bedeutung in einem Satz                                                                  |
 | :-------------------- | :--------------------------------------------------------------------------------------- |
-| **latent**            | unbeobachtete Hintergrund-Variable, die durch mehrere Items indirekt gemessen wird       |
-| **manifest**          | direkt beobachtetes Item (eine Spalte im Datensatz)                                      |
-| **Ladung**            | Verbindungsgrad Item ↔ Faktor; in Einfaktor-Lösung = Korrelation; ≥ 0.5 brauchbar, ≥ 0.7 hoch |
-| **Eigenwert** (λ)     | wie viel standardisierte Item-Varianz ein Faktor bündelt; λ > 1 = mehr als ein einzelnes Item (Kaiser-Regel) |
-| **KMO**               | Anteil gemeinsamer (nicht partieller) Item-Varianz; ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut |
-| **Bartlett-Test**     | Test, ob die Korrelationsmatrix signifikant von der Identitätsmatrix abweicht — Mindestbedingung für jede EFA |
-| **Scree-Plot**        | Eigenwerte als absteigende Linie — Faktoranzahl an der „Knickstelle" oder Kaiser-Schwelle ablesen |
-| **Rotation**          | geometrische Drehung der Faktor-Achsen für interpretierbare Lösung (orthogonal: `varimax`; schräg: `oblimin`) |
-| **Cronbachs α**       | Reliabilitätsmaß: $\alpha = k\bar{r} / (1 + (k-1)\bar{r})$; ab ≥ 0.7 akzeptabel       |
-| **McDonalds ω**       | Reliabilitätsmaß aus einem Ein-Faktor-Modell, das jedem Item eine eigene Ladung lässt; in der Regel ≥ α |
-| **Item-Total-Korrelation** | Zusammenhang eines Items mit der Summe der übrigen Items; ≥ 0.3 brauchbar              |
-| **α-if-deleted**      | wie sich α verändert, wenn ein Item gestrichen wird — Diagnose für Skala-fremde Items     |
-| **Fit-Index**         | Maß für die Übereinstimmung zwischen CFA-Modell und Daten (CFI, TLI, RMSEA, SRMR)         |
-| **Methoden-Effekt**   | systematische Antwort-Tendenz (z. B. Akquieszenz) — keine inhaltliche Sub-Dimension       |
+| latent                | unbeobachtete Hintergrund-Variable, die durch mehrere Items indirekt gemessen wird       |
+| manifest              | direkt beobachtetes Item (eine Spalte im Datensatz)                                      |
+| Ladung                | Verbindungsgrad Item ↔ Faktor; in Einfaktor-Lösung = Korrelation; ≥ 0.5 brauchbar, ≥ 0.7 hoch |
+| Eigenwert (λ)         | wie viel standardisierte Item-Varianz ein Faktor bündelt; λ > 1 = mehr als ein einzelnes Item (Kaiser-Regel) |
+| KMO                   | Anteil gemeinsamer (nicht partieller) Item-Varianz; ≥ 0.6 akzeptabel, ≥ 0.7 gut, ≥ 0.8 sehr gut |
+| Bartlett-Test         | Test, ob die Korrelationsmatrix signifikant von der Identitätsmatrix abweicht — Mindestbedingung für jede EFA |
+| Scree-Plot            | Eigenwerte als absteigende Linie — Faktoranzahl an der „Knickstelle" oder Kaiser-Schwelle ablesen |
+| Rotation              | geometrische Drehung der Faktor-Achsen für interpretierbare Lösung (orthogonal: `varimax`; schräg: `oblimin`) |
+| Cronbachs α           | Reliabilitätsmaß: $\alpha = k\bar{r} / (1 + (k-1)\bar{r})$; ab ≥ 0.7 akzeptabel       |
+| McDonalds ω           | Reliabilitätsmaß aus einem Ein-Faktor-Modell, das jedem Item eine eigene Ladung lässt; in der Regel ≥ α |
+| Item-Total-Korrelation     | Zusammenhang eines Items mit der Summe der übrigen Items; ≥ 0.3 brauchbar              |
+| α-if-deleted          | wie sich α verändert, wenn ein Item gestrichen wird — Diagnose für Skala-fremde Items     |
+| Fit-Index             | Maß für die Übereinstimmung zwischen CFA-Modell und Daten (CFI, TLI, RMSEA, SRMR)         |
+| Methoden-Effekt       | systematische Antwort-Tendenz (z. B. Akquieszenz) — keine inhaltliche Sub-Dimension       |
 
 ## Weiterführend {-}
 

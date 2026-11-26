@@ -2,6 +2,14 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
+## 26. November 2026 — Weniger Kästen, weniger Fettdruck
+
+- Das Buch hat weniger Kästen: statt 144 noch 92. Es gibt vier Arten (Hintergrund, Vorsicht, SPSS → R, mariposa-Tipp) und das Forschungsjournal am Kapitelanfang und -ende. Vorsicht und SPSS → R stehen offen; Hintergrund und mariposa-Tipp sind zugeklappt und zeigen nur eine farbige Zeile, die sich mit einem Klick öffnet. Zwei Kästen stehen nie mehr direkt untereinander.
+- Was zum Verständnis eines Kapitels nötig ist, steht jetzt im Fließtext, etwa die latente Variable in Kap. 8 oder Wahrscheinlichkeit, Odds und Logit in Kap. 9. Kästen, die nur den Text davor wiederholten, sind weggefallen.
+- Fett sind nur noch Fachbegriffe an der Stelle, wo sie eingeführt werden, die Marken „Frage“ und „Lesart“ und die Einstiege der offenen Kästen: statt 840 noch 265 Stellen.
+- Dabei korrigiert: In Kap. 4 wird die Tabelle mit SPSS- und R-Befehlen zur Dateninspektion wieder als Tabelle gesetzt; in Kap. 3 zeigt der Kasten zu typografischen Anführungszeichen jetzt die richtigen Zeichen.
+- Die Regeln stehen in `STYLE.md` § 4, `figuren/pruefe_kaesten.py` prüft sie. Alle R-Ausgaben sind unverändert.
+
 ## 17. November 2026 — Neues Aussehen: Design „Baukasten“
 
 - Das Buch hat ein neues Aussehen in Pastelltönen mit runden Schriften (Fredoka für Überschriften, Nunito für den Text). Jedes Kapitel hat eine eigene Steinfarbe, oben auf jeder Kapitelseite steht eine Leiste mit einem Stein je Kapitel, und ein schmaler Balken zeigt, wie weit du im Kapitel bist.

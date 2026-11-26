@@ -8,7 +8,7 @@ source("R/_common.R")
 
 ## Worum es geht
 
-In Kap. 1 hast du RStudio eingerichtet, in Kap. 2 dein erstes Quarto-Dokument gebaut. Jetzt geht es an die Sprache, in der du in diesem Buch alles formulierst: **R**. Variablen, Funktionen, Datentypen und der Pipe-Operator sind die Bausteine, mit denen du in den folgenden Kapiteln Datensätze einliest, transformierst, analysierst und visualisierst.
+In Kap. 1 hast du RStudio eingerichtet, in Kap. 2 dein erstes Quarto-Dokument gebaut. Jetzt geht es an die Sprache, in der du in diesem Buch alles formulierst: R. Variablen, Funktionen, Datentypen und der Pipe-Operator sind die Bausteine, mit denen du in den folgenden Kapiteln Datensätze einliest, transformierst, analysierst und visualisierst.
 
 Anders als die SPSS-Syntax — die im Kern eine Befehlssprache mit festem Vokabular ist — schreibst du in R selbst Funktionen, baust Werte zu Vektoren, kombinierst sie zu Datensätzen. Diese kleine Hürde am Anfang zahlt sich später aus: dieselben Bausteine tragen dich vom Einstieg bis zur Bachelorarbeit.
 
@@ -24,7 +24,7 @@ Anders als die SPSS-Syntax — die im Kern eine Befehlssprache mit festem Vokabu
 - Arithmetische, Vergleichs- und Logik-Operatoren (`==`, `&`, `%in%`, …) einsetzen.
 - Die wichtigsten R-Datentypen unterscheiden: Vektor, Faktor, Datensatz (Tibble), Liste.
 - Mit fehlenden Werten (`NA`) umgehen und sie aus Berechnungen ausschließen.
-- Den **nativen Pipe-Operator** `|>` lesen und schreiben.
+- Den nativen Pipe-Operator `|>` lesen und schreiben.
 - Den Unterschied zwischen `|>` und dem älteren `%>%` aus `magrittr` einordnen.
 - Code mit Pipes lesbar und linear strukturieren.
 
@@ -87,8 +87,8 @@ Eine Variable muss mit einem Buchstaben beginnen und darf danach Buchstaben, Zah
 
 Für lesbaren Code halten sich Sozialwissenschaftler:innen meist an eine von zwei Konventionen:
 
-1. **`snake_case`** — alles klein, Worte mit Unterstrich verbunden: `mittelwert_alter`. Tidyverse-Standard.
-2. **`camelCase`** — erstes Wort klein, weitere groß beginnend: `mittelwertAlter`. Verbreitet im Stata- und JavaScript-Umfeld.
+1. `snake_case` — alles klein, Worte mit Unterstrich verbunden: `mittelwert_alter`. Tidyverse-Standard.
+2. `camelCase` — erstes Wort klein, weitere groß beginnend: `mittelwertAlter`. Verbreitet im Stata- und JavaScript-Umfeld.
 
 Wähle eine und bleibe konsequent. In diesem Buch nutzen wir `snake_case`.
 
@@ -121,7 +121,7 @@ Kommentare sind das, was deinem zukünftigen Ich (oder Reviewer:innen) den Code 
 
 > „Everything that exists is an object. Everything that happens is a function call." — John Chambers
 
-Eine Funktion ist ein benanntes Werkzeug, dem du **Argumente** übergibst und das ein **Ergebnis** zurückgibt. Eine generische Funktion sieht so aus:
+Eine Funktion ist ein benanntes Werkzeug, dem du **Argumente** übergibst und das ein Ergebnis zurückgibt. Eine generische Funktion sieht so aus:
 
 ```r
 funktionsname(arg1 = wert1, arg2 = wert2, ...)
@@ -142,9 +142,7 @@ Beide Aufrufe geben dieselben fünf Zahlen zurück. @fig-funktion zeigt den erst
 
 ![Der erste Aufruf aus dem Chunk: `seq()` bekommt drei Argumente und gibt fünf Zahlen zurück.](Bilder/figuren/k03-funktion.svg){#fig-funktion .lightbox fig-alt="Oben drei blaue Steine 1, 10 und 2, darüber die orangefarbenen Argumentnamen from, to und by. Ein Pfeil führt in einen grünen Kasten seq(), ein weiterer Pfeil zu einem Turm aus fünf blauen Steinen 1, 3, 5, 7 und 9. Darunter der Aufruf als Code-Bausteine: seq grün, beschriftet Funktion; from = 1, to = 10 und by = 2 orange, beschriftet Argumente; daneben die Ausgabe [1] 1 3 5 7 9."}
 
-::: {.callout-tip}
-**Tipp: `?funktion`.** Wenn du die Argumente einer Funktion vergessen hast, gibt `?funktion` (z. B. `?seq`) die Hilfe in RStudio aus. Innerhalb der Klammern öffnet `Tab` ein Dropdown mit allen Argumenten.
-:::
+Wenn du die Argumente einer Funktion vergessen hast, gibt `?funktion` (z. B. `?seq`) die Hilfe in RStudio aus. Innerhalb der Klammern öffnet `Tab` ein Dropdown mit allen Argumenten.
 
 ### Grundfunktionen für den Einstieg: `c()`, `seq()` und `round()`
 
@@ -240,13 +238,11 @@ Diese Operatoren wirst du in Kap. 4 ständig brauchen, wenn du Fälle mit `filte
 
 ## Objekte und Datentypen {#sec-datentypen}
 
-In R ist **alles ein Objekt** — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit stellen die folgenden Abschnitte vor.
+In R ist alles ein Objekt — ein Wert, ein Datensatz, ein statistisches Modell, sogar eine Funktion. Die wichtigsten Datentypen für sozialwissenschaftliche Arbeit stellen die folgenden Abschnitte vor.
 
-::: {.callout-note}
-**Hintergrund: Die Bildsprache dieses Buchs.** Damit du siehst, was R mit deinen Daten macht, zeigen die Abbildungen Daten als Bausteine (@fig-legende). Ein einzelner Wert ist ein Stein, seine Farbe zeigt den Datentyp. Mehrere Steine übereinander sind ein Vektor, also ein Turm; gleich hohe Türme nebeneinander auf einer Bauplatte sind ein Datensatz. Ein leerer, gestrichelter Stein steht für einen fehlenden Wert, ein gelber Aufkleber für ein Wertelabel (@sec-datenimport). Im Code sind Objekte dunkel, Funktionen grün und Argumente orange markiert.
+Damit du siehst, was R mit deinen Daten macht, zeigen die Abbildungen Daten als Bausteine (@fig-legende). Ein einzelner Wert ist ein Stein, seine Farbe zeigt den Datentyp. Mehrere Steine übereinander sind ein Vektor, also ein Turm; gleich hohe Türme nebeneinander auf einer Bauplatte sind ein Datensatz. Ein leerer, gestrichelter Stein steht für einen fehlenden Wert, ein gelber Aufkleber für ein Wertelabel (@sec-datenimport). Im Code sind Objekte dunkel, Funktionen grün und Argumente orange markiert.
 
 ![Die Bausteine im Überblick: Werte, Vektoren, Datensätze und die Farben im Code.](Bilder/figuren/k03-legende.svg){#fig-legende .lightbox fig-alt="Legende der Bildsprache. Ein blauer Stein mit 1 steht für eine Zahl (numeric), ein lila Stein mit „Anna“ für Text (character), ein rosa Stein mit TRUE für einen Wahrheitswert (logical), ein leerer gestrichelter Stein für einen fehlenden Wert (NA), ein blauer Stein mit gelbem Aufkleber MANN für eine Zahl mit Wertelabel. Ein Turm aus drei blauen Steinen mit dem Namensschild zahlen, beschriftet Name, ist ein Vektor. Zwei Türme geschlecht und alter auf einer Bauplatte sind ein Datensatz; eine markierte Reihe ist ein Fall, ein Turm eine Variable. Darunter Code-Bausteine: zahlen dunkel als Objekt, round grün als Funktion, digits = 1 orange als Argument."}
-:::
 
 ### Vektoren und Indizierung mit `[ ]`
 
@@ -274,7 +270,7 @@ zahlen[2:4]    # zweites bis viertes
 zahlen[-1]     # alle ausser dem ersten
 ```
 
-**Boolesche Indizierung — der Schlüssel zu allem, was später kommt.** Statt mit Position kannst du auch mit *Bedingungen* indizieren — du übergibst einen logischen Vektor (`TRUE`/`FALSE`) gleicher Länge, und R behält nur die `TRUE`-Positionen:
+Statt mit Positionen kannst du auch mit *Bedingungen* indizieren. Bei dieser **booleschen Indizierung** übergibst du einen logischen Vektor (`TRUE`/`FALSE`) gleicher Länge, und R behält nur die `TRUE`-Positionen:
 
 ```{r boolean-indexing}
 zahlen <- c(10, 20, 30, 40, 50)
@@ -289,10 +285,9 @@ zahlen[!is.na(zahlen)]       # behält nur Nicht-NA-Werte
 
 Diese Logik ist *exakt* das, was tidyverse-Funktionen wie `filter()` (Kap. 4) intern machen. Wer hier sicher ist, versteht `filter(allbus, age > 30)` sofort.
 
-::: {.callout-note}
-**Konzept: Vektorisierung.** Wenn du in R `zahlen * 2` schreibst, wird die Operation auf *jedes Element* angewendet — du bekommst `c(20, 40, 60, 80, 100)` zurück. Das nennt sich **Vektorisierung** und ist eines der Power-Features von R. Du musst fast nie eine `for`-Schleife schreiben, um eine Operation auf vielen Werten auszuführen.
+Wenn du in R `zahlen * 2` schreibst, wird die Operation auf *jedes Element* angewendet — du bekommst `c(20, 40, 60, 80, 100)` zurück. Das nennt sich **Vektorisierung** und ist eines der Power-Features von R. Du musst fast nie eine `for`-Schleife schreiben, um eine Operation auf vielen Werten auszuführen.
 
-**Recycling als Falle.** Wenn zwei Vektoren unterschiedlicher Länge kombiniert werden, *wiederholt* R den kürzeren stillschweigend:
+Wenn zwei Vektoren unterschiedlicher Länge kombiniert werden, *wiederholt* R den kürzeren stillschweigend (**Recycling**):
 
 ```{r recycling}
 c(1, 2, 3, 4) + c(10, 20)   # ergibt 11, 22, 13, 24 — nicht 11, 22!
@@ -303,9 +298,8 @@ c(1, 2, 3, 4) + c(10, 20)   # ergibt 11, 22, 13, 24 — nicht 11, 22!
 ![Recycling: R wiederholt den kürzeren Vektor, bis er so lang ist wie der längere. Blasse Steine sind wiederholte Werte.](Bilder/figuren/k03-recycling.svg){#fig-recycling .lightbox fig-alt="Zwei Beispiele. Links zahlen * 2: der Turm zahlen mit 10, 20, 30, 40 und 50, daneben in jeder Reihe ein * und ein Stein 2; die oberste 2 ist kräftig blau, die vier darunter sind blass. Pfeile führen zum Ergebnis 20, 40, 60, 80, 100, darunter die Ausgabe [1] 20 40 60 80 100. Rechts c(1, 2, 3, 4) + c(10, 20): der Turm 1, 2, 3, 4, daneben in jeder Reihe ein + und die Steine 10 und 20, darunter blass noch einmal 10 und 20. Das Ergebnis ist 11, 22, 13, 24, darunter die Ausgabe [1] 11 22 13 24."}
 
 Das ist absichtliches Verhalten — und genau die Anfänger:innen-Falle, die zu falschen Ergebnissen führt. Wenn du dir nicht sicher bist, prüfe mit `length()`, dass beide Vektoren gleich lang sind.
-:::
 
-**Gemischte Datentypen.** Was passiert, wenn du in `c()` verschiedene Datentypen mischst? R wandelt dann alle Werte in einen gemeinsamen Typ um. Diese **Typumwandlung** (englisch *coercion*) geschieht ohne Warnung:
+Was passiert, wenn du in `c()` verschiedene Datentypen mischst? R wandelt dann alle Werte in einen gemeinsamen Typ um. Diese **Typumwandlung** (englisch *coercion*) geschieht ohne Warnung:
 
 ```{r coercion}
 c(1, TRUE, FALSE)
@@ -330,9 +324,9 @@ Beide Werte werden zu Text, `"TRUE"` und `"ja"`. Der Vektor ist character, weil 
 
 Ein **Faktor** ist ein Vektor mit definierten **Ausprägungen** (`levels`) — für kategoriale Variablen wie Geschlecht oder Bildung. Warum nicht einfach ein Character-Vektor? Drei Gründe:
 
-1. **Feste Reihenfolge.** Bei einer Bildungs-Variable willst du, dass *„niedrig"* vor *„hoch"* steht — auch wenn alphabetisch das Gegenteil gilt. Faktoren erlauben dir, die Reihenfolge zu erzwingen.
-2. **Referenzkategorie für Modelle.** Regressionen brauchen eine *Vergleichs-Kategorie*; Faktoren liefern sie automatisch (= die erste Ausprägung).
-3. **Speichereffizienz.** Statt jeden Eintrag als Text zu speichern, hält R intern eine kleine Zahl pro Wert.
+1. Feste Reihenfolge: Bei einer Bildungs-Variable willst du, dass *„niedrig"* vor *„hoch"* steht — auch wenn alphabetisch das Gegenteil gilt. Faktoren erlauben dir, die Reihenfolge zu erzwingen.
+2. Referenzkategorie für Modelle: Regressionen brauchen eine *Vergleichs-Kategorie*; Faktoren liefern sie automatisch (= die erste Ausprägung).
+3. Speichereffizienz: Statt jeden Eintrag als Text zu speichern, hält R intern eine kleine Zahl pro Wert.
 
 ```{r factors}
 geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),
@@ -357,8 +351,10 @@ Ohne `levels` sortiert R die Stufen alphabetisch: `hoch`, `mittel`, `niedrig`. R
 
 Mit `relevel()` (Base R) oder `forcats::fct_relevel()` (tidyverse) änderst du die Reihenfolge nachträglich. `forcats` ist Teil des tidyverse und liefert ein ganzes Set an Faktor-Werkzeugen (`fct_recode()`, `fct_lump()`, `fct_reorder()`) — du brauchst sie spätestens bei Grafiken in Kap. 6.
 
-::: {.callout-note}
-**Hintergrund: `haven_labelled` vs. Faktor.** Wenn du Daten aus SPSS einliest (Kap. 4), bekommst du Spalten vom Typ `<haven_labelled>`. Das ist *kein* Faktor — sondern ein numerischer Vektor mit Labels als Begleitinformation. Mit `to_label()` (mariposa) wandelst du sie bei Bedarf in einen klassischen Faktor.
+::: {.callout-note collapse="true"}
+## Hintergrund: `haven_labelled` vs. Faktor
+
+Wenn du Daten aus SPSS einliest (Kap. 4), bekommst du Spalten vom Typ `<haven_labelled>`. Das ist *kein* Faktor — sondern ein numerischer Vektor mit Labels als Begleitinformation. Mit `to_label()` (mariposa) wandelst du sie bei Bedarf in einen klassischen Faktor.
 :::
 
 ### Datensätze (Tibbles) mit `tibble()`, `$` und `[[ ]]`
@@ -385,10 +381,10 @@ befragte[["alter"]]
 befragte[1, "alter"]   # erste Zeile, Spalte "alter"
 ```
 
-**Faustregel `$` vs. `[[ ]]`.** Beide geben dieselbe Spalte zurück — der Unterschied ist die Bedienung:
+`$` und `[[ ]]` geben dieselbe Spalte zurück. Der Unterschied liegt in der Bedienung:
 
-- **`$alter`** ist kompakter, ideal für interaktive Konsole und Skripte.
-- **`[["alter"]]`** akzeptiert den Spaltennamen als *String* — unverzichtbar, wenn der Spaltenname in einer Variable steckt (`spalte <- "alter"; befragte[[spalte]]`).
+- `$alter` ist kompakter, ideal für interaktive Konsole und Skripte.
+- `[["alter"]]` akzeptiert den Spaltennamen als *String* — unverzichtbar, wenn der Spaltenname in einer Variable steckt (`spalte <- "alter"; befragte[[spalte]]`).
 
 In der Praxis liest du Datensätze fertig aus SPSS-, Stata- oder Excel-Dateien ein (siehe Kap. 4). Selbst-gebaute Tibbles brauchst du fast nur für kleine Demonstrationen.
 
@@ -421,7 +417,13 @@ x
 is.na(x)              # welche Elemente sind NA?
 ```
 
-**Rechnungen mit `NA` ergeben `NA`.** Das ist Absicht: der Mittelwert von „1, 2, ?, 4, 5" ist eigentlich unbekannt.
+::: {.callout-note collapse="true"}
+## Hintergrund: Mehrere Arten von Missing
+
+SPSS unterscheidet *system-missing* (leeres Feld) von *user-missing* (z. B. „keine Angabe" als Code `-9`). In R gibt es per Default nur ein generisches `NA` — beim SPSS-Import behält mariposa die *user-missing*-Codes aber als tagged NA, sodass du den Grund des Fehlens jederzeit nachschauen kannst. Mehr dazu in Kap. 4.
+:::
+
+Rechnungen mit `NA` ergeben `NA`. Das ist Absicht: der Mittelwert von „1, 2, ?, 4, 5" ist eigentlich unbekannt.
 
 ```{r na-arith}
 NA + 1
@@ -450,10 +452,6 @@ summary(daten$age)      # zeigt unten "NA's: 47" wenn vorhanden
 Heilmittel: `na.rm = TRUE` an die Berechnung, oder die fehlenden Fälle gezielt mit `filter(!is.na(age))` ausschließen.
 :::
 
-::: {.callout-note}
-**Hintergrund: Mehrere Arten von Missing.** SPSS unterscheidet *system-missing* (leeres Feld) von *user-missing* (z. B. „keine Angabe" als Code `-9`). In R gibt es per Default nur ein generisches `NA` — beim SPSS-Import behält mariposa die *user-missing*-Codes aber als **tagged NA**, sodass du den Grund des Fehlens jederzeit nachschauen kannst. Mehr dazu in Kap. 4.
-:::
-
 ## Pipe-Operatoren {#sec-pipes}
 
 R erlaubt es, Funktionen ineinander zu verschachteln — der Output einer Funktion wird zum Input der nächsten:
@@ -476,7 +474,7 @@ zahlen |>
   head(n = 3)
 ```
 
-Lies das wie einen Satz: „Nimm `zahlen`, **dann** runde auf 1 Nachkommastelle, **dann** zeige die ersten 3."
+Lies das wie einen Satz: „Nimm `zahlen`, *dann* runde auf 1 Nachkommastelle, *dann* zeige die ersten 3."
 
 @fig-pipe zeigt, was dabei passiert: Die Pipe setzt das Ergebnis links in das erste Feld der Funktion rechts. `zahlen` landet im ersten Argument von `round()`, das Ergebnis von `round()` im ersten Argument von `head()`. Die übrigen Argumente, `digits = 1` und `n = 3`, bleiben in der Klammer.
 
@@ -492,10 +490,12 @@ c(9, 16) |> sum() |> sqrt()
 Verschachtelt liest du von innen nach außen: erst `c()`, dann `sum()`, dann `sqrt()`. Mit der Pipe stehen die Schritte in genau dieser Reihenfolge von links nach rechts. 9 + 16 ergibt 25, die Wurzel daraus 5.
 :::
 
-**Tastenkürzel:** `cmd`/`strg` + `shift` + `M`. Stelle in RStudio unter `Tools` → `Global Options` → `Code` → *Use native pipe operator* die Option ein, damit das Shortcut `|>` statt `%>%` einfügt.
+Das Tastenkürzel für die Pipe ist `cmd`/`strg` + `shift` + `M`. Stelle in RStudio unter `Tools` → `Global Options` → `Code` → *Use native pipe operator* die Option ein, damit das Shortcut `|>` statt `%>%` einfügt.
 
-::: {.callout-note}
-**Hintergrund: Wert nicht ans erste Argument?** Standardmäßig übergibt `|>` den Wert als **erstes Argument** der nächsten Funktion. Wenn er an eine *andere* Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter `_` — er muss als benanntes Argument stehen:
+::: {.callout-note collapse="true"}
+## Hintergrund: Wert nicht ans erste Argument?
+
+Standardmäßig übergibt `|>` den Wert als erstes Argument der nächsten Funktion. Wenn er an eine *andere* Stelle gehen soll, nutzt du seit R 4.2 den Platzhalter `_` — er muss als benanntes Argument stehen:
 
 ```{r placeholder, eval=FALSE}
 allbus |>
@@ -517,13 +517,13 @@ zahlen %>%
 
 Beide funktionieren in tidyverse-Code, beide liefern dieselben Ergebnisse. Wir nutzen in diesem Buch durchgängig `|>`, weil er Teil der Sprache selbst ist (kein Paket nötig) und ein klein wenig schneller — aber wenn du in fremdem Code `%>%` siehst, ist das kein Problem.
 
-::: {.callout-note}
-**Hintergrund: Wo `%>%` etwas anders ist.** Der magrittr-Pipe hat einen Platzhalter `.`, der überall positionierbar ist:
-`x %>% lm(y ~ ., data = .)`. Platzhalter ist hier nur der Punkt hinter `data =`; der Punkt in `y ~ .` gehört zur Formel und steht für alle übrigen Variablen im Datensatz. Der native `_` muss benannt sein. Bei den meisten Tidyverse-Funktionen brauchst du den Platzhalter nicht — das erste Argument ist immer der Datensatz.
-:::
+::: {.callout-note collapse="true"}
+## Hintergrund: Wo `%>%` etwas anders ist
 
-::: {.callout-warning}
-**Verschwundene Operatoren.** `%$%`, `%T>%`, `%<>%` aus `magrittr` waren früher gelegentlich nötig (z. B. um Pipes durch Plotting-Funktionen zu führen). In diesem Buch brauchen wir sie *nirgends* — mariposa-Funktionen sind durchgehend data-first und pipe-freundlich.
+Der magrittr-Pipe hat einen Platzhalter `.`, der überall positionierbar ist:
+`x %>% lm(y ~ ., data = .)`. Platzhalter ist hier nur der Punkt hinter `data =`; der Punkt in `y ~ .` gehört zur Formel und steht für alle übrigen Variablen im Datensatz. Der native `_` muss benannt sein. Bei den meisten Tidyverse-Funktionen brauchst du den Platzhalter nicht — das erste Argument ist immer der Datensatz.
+
+Außerdem bringt `magrittr` weitere Operatoren mit: `%$%`, `%T>%` und `%<>%`. Sie waren früher gelegentlich nötig (z. B. um Pipes durch Plotting-Funktionen zu führen). In diesem Buch brauchen wir sie *nirgends* — mariposa-Funktionen sind durchgehend data-first und pipe-freundlich.
 :::
 
 ### Pipes in der Praxis
@@ -558,8 +558,8 @@ Bevor du die Übungen rechnest — drei Stolpersteine, die fast alle einmal tref
 | `T` / `F` statt `TRUE` / `FALSE`                | funktioniert — bis jemand `T <- 1` setzt              | Immer ausschreiben                                     |
 | `mean(x)` gibt `NA` zurück, scheinbar grundlos  | Variable hat fehlende Werte                          | `mean(x, na.rm = TRUE)` oder vorher `sum(is.na(x))` prüfen |
 
-::: {.callout-tip}
-**Anführungszeichen-Falle.** Wenn du Code aus Word oder Powerpoint kopierst, werden gerade Anführungszeichen (`"`) zu typografischen (`"`/`"`). R sieht das als Syntaxfehler. Bei der Fehlermeldung *„unexpected input"* oder *„unexpected string constant"* — Anführungszeichen prüfen.
+::: {.callout-warning}
+**Vorsicht: Typografische Anführungszeichen.** Wenn du Code aus Word oder Powerpoint kopierst, werden gerade Anführungszeichen (`"`) zu typografischen (`„`, `“` oder `”`). R sieht das als Syntaxfehler. Bei der Fehlermeldung *„unexpected input"* oder *„unexpected string constant"* — Anführungszeichen prüfen.
 :::
 
 ## Übungen {-}
