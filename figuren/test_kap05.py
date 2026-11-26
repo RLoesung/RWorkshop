@@ -105,7 +105,7 @@ ERWARTET_KAP05_EN = {
     "k05-pipeline": ["1", "2", "3", "4", "5", "6", "R/prep.R", 'source("R/prep.R")', "4.3", "5.3.3", "5.7.1",
                      "5.7.3", "5.8", "read_spss()", "set_na()", "row_means()", "pomps()", "read in",
                      "reverse-code", "mm02, mm05", "pa29 to pa35", "islamophobia", "scale",
-                     "populism scale", "POMP versions", "Script in the project folder",
+                     "populism scale", "POMPS", "versions", "Script in the project folder",
                      "Setup chunk in Ch. 6 to 9"],
     "k05-std": ["age", "age_c", "age_z", "center()", "std()", "50", "69", "52.51", "18.25", "-2.51", "16.49",
                 "-0.138", "0.903", "30", "40", "60", "70", "-20", "-10", "0", "10", "20", "-1", "1",

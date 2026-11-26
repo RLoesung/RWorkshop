@@ -203,7 +203,7 @@ EN = {
     "pa29 bis pa35 umpolen": "reverse-code pa29 to pa35",
     "Skala islamophobie": "islamophobia scale",
     "Skala populismus": "populism scale",
-    "POMPS-Versionen": "POMP versions",
+    "POMPS-Versionen": "POMPS versions",
     "Skript im Projektordner": "Script in the project folder",
     "Setup-Chunk in Kap. 6 bis 9": "Setup chunk in Ch. 6 to 9",
     "Mittelwert ": "Mean ",

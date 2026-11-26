@@ -1,6 +1,8 @@
 """Prüft ein Kapitel auf die Kastenregeln vom 26.11.2026 (Prototyp „weniger Kästen“).
 
-Aufruf: python3 figuren/pruefe_kaesten.py <kapitel.qmd>  (im Projektordner; vergleicht mit dem Stand vor dem Umbau, Commit 9267f80)
+Aufruf: python3 figuren/pruefe_kaesten.py [--gegen COMMIT] <kapitel.qmd> …  (im Projektordner)
+Ohne --gegen prüft das Skript nur die Kastenregeln. Mit --gegen COMMIT vergleicht es zusätzlich Überschriften und Code-Chunks
+deutscher Kapitel mit dem Stand in COMMIT (etwa nach einem Umbau, der den Inhalt nicht ändern soll).
 
 Regeln:
 - Lehrkästen nur in vier Typen plus Forschungsjournal.
@@ -19,7 +21,6 @@ import subprocess
 import sys
 from collections import Counter
 
-BASIS = "9267f80"
 OFFEN = {"Vorsicht": "warning", "SPSS → R": "tip", "Forschungsjournal": "note"}
 ZU = {"Hintergrund": "note", "mariposa-Tipp": "important"}
 # Englische Kastenwörter (STYLE.md §13), gleiche Klassen wie die deutschen
@@ -88,12 +89,12 @@ def fett(text):
     return re.findall(r"\*\*[^*\n]+\*\*", ohne_code)
 
 
-def main(pfad):
+def main(pfad, gegen=None):
     text = open(pfad, encoding="utf-8").read()
     sp = sprache(pfad)
     offen, zu, frei = (OFFEN_EN, ZU_EN, LEHRFREI["en"]) if sp == "en" else (OFFEN, ZU, LEHRFREI["de"])
-    # Die englische Fassung hat keinen Stand vor dem Umbau: nur die Kastenregeln prüfen
-    alt = "" if sp == "en" else subprocess.run(["git", "show", f"{BASIS}:{pfad}"], capture_output=True, text=True).stdout
+    # Der Vergleich mit einem früheren Stand ist nur auf Wunsch (--gegen) und nur für deutsche Kapitel
+    alt = subprocess.run(["git", "show", f"{gegen}:{pfad}"], capture_output=True, text=True).stdout if gegen and sp == "de" else ""
     zeilen, kaesten, chunks, ueb = zerlege(text)
     _, kaesten_alt, chunks_alt, ueb_alt = zerlege(alt)
     fehler = []
@@ -142,4 +143,10 @@ def main(pfad):
 
 
 if __name__ == "__main__":
-    sys.exit(1 if sum(main(p) for p in sys.argv[1:]) else 0)
+    args = sys.argv[1:]
+    gegen = None
+    if "--gegen" in args:
+        i = args.index("--gegen")
+        gegen = args[i + 1]
+        del args[i:i + 2]
+    sys.exit(1 if sum(main(p, gegen) for p in args) else 0)

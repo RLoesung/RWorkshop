@@ -10,4 +10,7 @@ else
   Q=/Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto
 fi
 "$Q" render
-"$Q" render --profile en
+"$Q" render --profile en || {
+  echo "FEHLER: Der englische Build ist fehlgeschlagen. docs/en/ ist jetzt leer und muss mit quarto render --profile en neu gebaut werden." >&2
+  exit 1
+}

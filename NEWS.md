@@ -4,9 +4,9 @@ Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.gith
 
 ## 26. November 2026 — Korrekturen und englische Fassung vorbereitet
 
-- Die Studiennummer des ALLBUS 2023 ist ZA8831, nicht ZA8830 und nicht ZA8901. Die Literaturangaben zu *R for Data Science* nennen jetzt auch Mine Çetinkaya-Rundel als Autorin.
+- Die Studiennummer des ALLBUS 2023 ist ZA8831, nicht ZA8830 und nicht ZA8901. Die Literaturangaben zu *R for Data Science* nennen jetzt auch Mine Çetinkaya-Rundel als Autorin (auch in Kap. 5).
 - Kap. 2: Die Chunk-Option für Bildunterschriften heißt `fig.cap` (im `#|`-Stil `fig-cap`); die Beispiele mit Inline-R-Code im Quelltext werden als Text gezeigt und nicht ausgewertet; in der Übung steht der Dateiname ohne Formatierung im Titel.
-- Kap. 5, 7, 8, 9: Kleine Korrekturen an Abbildungen und Tabellen, etwa Achsenränder, ein zentrierter Titel, Beschriftungen mit Zeilenumbruch und die Tabelle der Ladungen in Kap. 8. In Kap. 9 nennt der Text die Spalte `B` statt `Estimate`. Die Zahlen sind unverändert.
+- Kap. 7, 8, 9: Kleine Korrekturen an Abbildungen und Tabellen, etwa Achsenränder, ein zentrierter Titel, Beschriftungen mit Zeilenumbruch und die Tabelle der Ladungen in Kap. 8. In Kap. 8 stand in der Legende „verfehlt“ bei erfüllten Schwellen; jetzt stimmt die Beschriftung. In Kap. 9 nennt der Text die Spalte `B` statt `Estimate`, die Lesart nennt für hohe Bildung OR = 0,33 statt 0,34, und der Titel der Koeffizientengrafik steht vollständig im Bild. Die R-Ausgaben sind unverändert.
 - Eine englische Fassung des Buchs ist vorbereitet, aber noch nicht veröffentlicht. `./render.sh` baut beide Sprachen; die englischen Seiten entstehen lokal unter `docs/en/`. Die Kapitelkarten im englischen Vorwort erzeugt `python3 figuren/kapitelkarten.py --en`, und `figuren/pruefe_kaesten.py` prüft jetzt auch englische Kapitel.
 
 ## 26. November 2026 — Neues Kap. 10: Mit KI-Assistenten arbeiten

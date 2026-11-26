@@ -201,8 +201,6 @@ Erklärgrafiken in der Bausteine-Bildsprache (Stein = Wert, Turm = Vektor, Baupl
 
 Die englische Fassung (`*.en.qmd` neben den deutschen Dateien, gerendert nach `docs/en/`) ist für ein englischsprachiges Publikum gedacht, etwa für Teilnehmende der Summer Schools in Essex und Lugano, die das Buch als Nachschlagewerk nutzen. Die deutsche Fassung bleibt die Quelle: Wer ein deutsches Kapitel ändert, ändert die englische Fassung im selben Commit mit. Hintergrund und Entscheidungen stehen in `ENGLISCH-DESIGN.md`.
 
-Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den Pilot (Vorwort und Kap. 4) und korrigiert Ton und Begriffe; seine Korrekturen kommen hierher und gelten dann für alle weiteren Kapitel.
-
 **Sprache.**
 
 - Britisches Englisch im Fließtext (*colour*, *analyse*, *visualisation*, *organisation*, *licence* als Nomen). Code und Funktionsargumente folgen den Paketen.
@@ -256,7 +254,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 | Transfer | Transfer | Übungstyp (§7) |
 | Mini-Forschungsfrage | Mini research question | Übungstyp (§7) |
 
-**Weitere Begriffe** (Vorschläge, der Pilot ändert sie noch).
+**Weitere Begriffe.**
 
 | Deutsch | Englisch |
 |---|---|
@@ -277,7 +275,7 @@ Die Regeln und Begriffe in diesem Abschnitt sind vorläufig. Yannick liest den P
 | Begleitfigur | companion figure |
 | Umsteiger:innen aus SPSS | people switching from SPSS |
 
-**Kapiteltitel** (Vorschlag, so in den Kapitelkarten des englischen Vorworts): 1 RStudio · 2 Quarto and reproducible research · 3 The R programming language · 4 Data import and inspection · 5 Transforming data and building scales · 6 Visualisation basics · 7 Univariate and bivariate analysis · 8 Latent structures · 9 Explanatory models · 10 Working with AI assistants.
+**Kapiteltitel** (so in den Kapitelkarten des englischen Vorworts): 1 RStudio · 2 Quarto and reproducible research · 3 The R programming language · 4 Data import and inspection · 5 Transforming data and building scales · 6 Visualisation basics · 7 Univariate and bivariate analysis · 8 Latent structures · 9 Explanatory models · 10 Working with AI assistants.
 
 ### Namen im Code (verbindlich)
 
@@ -428,6 +426,17 @@ Die Schritte für jedes Kapitel `NN-Name.qmd` → `NN-Name.en.qmd`. Vorbilder si
 7. **Rendern.** Einzeln und nur ein Render gleichzeitig: `quarto render NN-Name.en.qmd --profile en` (Quarto liegt unter `/Applications/RStudio.app/Contents/Resources/app/quarto/bin/quarto`).
 8. **Lesarten abgleichen.** Jede Zahl und jedes zitierte Label gegen die gerenderte englische Ausgabe prüfen; ALLBUS-Labels in Großbuchstaben, wie ZA8833 sie druckt.
 9. **Prüfen.** `python3 figuren/check_en.py NN-Name` muss 0 Meldungen ergeben. Bekannte, begründete Abweichungen (etwa andere Treffer von `find_var()`, andere Zeilenreihenfolge, Studiennummer und Version, `splt23_2` als `NA`) stehen mit einem Teilstring der Meldung und der Begründung in `figuren/erwartet_en.py`. Weicht eine Zahl ohne Grund in der Übersetzung ab: anhalten und melden.
-10. **Tests.** `Rscript R/test_common_en.R` ergibt „ok“; bei Kapiteln mit `R/prep_en.R` auch `Rscript R/test_prep_en.R`.
+10. **Tests.** `Rscript R/test_common_en.R` ergibt „ok“; bei Kapiteln mit `R/prep_en.R` auch `Rscript R/test_prep_en.R`. Lernziele in den Kapitelkarten: `python3 figuren/kapitelkarten.py --en`. Kastenregeln: `python3 figuren/pruefe_kaesten.py NN-Name.en.qmd` ohne Fehler.
 11. **Im Browser ansehen.** `/RWorkshop/en/NN-Name.html`: Kästen, Übungen und Lösungen, Abbildungen, Querverweise, Sprachumschalter, Konsole ohne Fehler.
 12. **Commit.** `git commit -m "Englische Fassung: Kap. N" -- NN-Name.en.qmd _quarto-en.yml _freeze/NN-Name.en/` und gegebenenfalls `figuren/erwartet_en.py` und `STYLE.md`; nie `git add -A` oder `git commit -a`.
+
+### Ein Kapitel ändern (beide Sprachen)
+
+Die deutsche Fassung ist die Quelle, die englische zieht im selben Commit nach.
+
+1. Beide Dateien ändern: `NN-Name.qmd` und `NN-Name.en.qmd`.
+2. Beide rendern, einzeln und nacheinander: `quarto render NN-Name.qmd` und `quarto render NN-Name.en.qmd --profile en`.
+3. `python3 figuren/check_en.py NN-Name` muss 0 Meldungen ergeben.
+4. Bei geänderten Lernzielen: `python3 figuren/kapitelkarten.py` und `python3 figuren/kapitelkarten.py --en`.
+5. Bei geänderten Abbildungen: `python3 figuren/build.py NAME` und `python3 figuren/build.py --en NAME`. Der Test `figuren/test_figuren_aktuell.py` meldet, wenn ein committetes SVG nicht mehr zum Quelltext passt.
+6. `python3 figuren/pruefe_kaesten.py NN-Name.qmd NN-Name.en.qmd` ohne Fehler.

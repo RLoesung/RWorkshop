@@ -45,9 +45,14 @@ Jedes Kapitel folgt dem Dreischritt **Frage → Code → Lesart** und endet mit 
 **Rendern**
 
 ```bash
-quarto render                               # ganzes Buch nach docs/
-quarto render 07-Uni-Bivariate-Analyse.qmd  # nur ein Kapitel
+./render.sh                                           # ganzes Buch, deutsch nach docs/, englisch nach docs/en/
+quarto render 07-Uni-Bivariate-Analyse.qmd            # ein Kapitel, deutsch
+quarto render 07-Uni-Bivariate-Analyse.en.qmd --profile en   # ein Kapitel, englisch
 ```
+
+Für das ganze Buch nimmst du `./render.sh`: Es baut erst die deutsche, dann die englische Fassung. Ein schlichtes `quarto render` baut nur die deutsche Fassung und leert dabei `docs/en/`.
+
+Eine englische Fassung des Buchs ist vorbereitet, aber noch nicht veröffentlicht.
 
 Das Projekt nutzt `freeze: auto`: Beim Render des ganzen Buchs werden nur Kapitel neu gerechnet, deren Quelltext sich geändert hat. Alle anderen Kapitel kommen aus `_freeze/`. Wenn du ein einzelnes Kapitel gezielt renderst, wird es immer neu ausgeführt. Das ist der Weg nach einem Paket-Update.
 
@@ -58,11 +63,18 @@ Die Online-Fassung liefert GitHub Pages direkt aus `docs/` auf `main` aus. Nach 
 ```
 ├── index.qmd                 Vorwort (Kap. 0)
 ├── 01-RStudio.qmd … 10-KI-Assistenten.qmd   Kapitel
+├── index.en.qmd, 01-RStudio.en.qmd …        englische Fassung (je eine Datei neben der deutschen)
 ├── R/
 │   ├── _common.R             gemeinsames ggplot-Theme (theme_rworkshop)
-│   └── prep.R                Datenpräp-Pipeline der Mini-Studie (Kap. 5)
-├── Bilder/                   Screenshots für Kap. 1
-├── _quarto.yml               Buch-Konfiguration
+│   ├── _common_en.R          dasselbe für die englische Fassung (liest ALLBUS2023_en.sav)
+│   ├── prep.R                Datenpräp-Pipeline der Mini-Studie (Kap. 5)
+│   └── prep_en.R             dieselbe Pipeline mit englischen Namen
+├── figuren/                  Skripte für die Abbildungen, Prüfskripte und Tests
+├── Bilder/                   Screenshots für Kap. 1 und die Abbildungen (Bilder/figuren/, englisch in en/)
+├── _quarto.yml               Buch-Konfiguration (gemeinsamer Teil)
+├── _quarto-de.yml            Kapitelliste und Optionen der deutschen Fassung
+├── _quarto-en.yml            dasselbe für die englische Fassung (Profil en)
+├── render.sh                 baut beide Sprachfassungen nacheinander
 ├── theme.scss                Theme-Anpassungen (auf Basis von cosmo)
 ├── ALLBUS2023.sav            Datensatz — nicht im Repo, selbst bei GESIS laden
 ├── _freeze/                  eingefrorene Rechenergebnisse (versioniert)

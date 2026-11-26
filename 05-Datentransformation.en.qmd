@@ -198,9 +198,9 @@ allbus |>
 
 `n()` counts all cases in the group, `n_distinct()` counts the unique values of a variable.
 
-`summarise()` turns each group into one row (@fig-summarise): the 3567 respondents in the west become one row with a mean age of 51.7 years, the 1679 in the east one row with 54.3 years.
+`summarise()` turns each group into one row (@fig-summarise): the 3567 respondents in the West become one row with a mean age of 51.7 years, the 1679 in the East one row with 54.3 years.
 
-![The two groups of `eastwest`, shown with the first three respondents from west and east. `summarise()` combines all rows of a group into one row with the mean.](Bilder/figuren/en/k05-summarise.svg){#fig-summarise .lightbox fig-alt="At the top the code group_by(eastwest) |> summarise(…, mean_age = mean(age, na.rm = TRUE)). On the left a baseplate with the towers eastwest and age in two blocks: three rows with 1, the sticker OLD FEDERAL STATES and the ages 50, 51 and 69, below them 3567 cases; three rows with 2, the sticker NEW FEDERAL STATES and the ages 72, 44 and 60, below them 1679 cases. A green arrow mean() leads to a baseplate with two rows and the columns eastwest and mean_age: 1 OLD FEDERAL STATES with 51.7 and 2 NEW FEDERAL STATES with 54.3."}
+![The two groups of `eastwest`, shown with the first three respondents from West and East. `summarise()` combines all rows of a group into one row with the mean.](Bilder/figuren/en/k05-summarise.svg){#fig-summarise .lightbox fig-alt="At the top the code group_by(eastwest) |> summarise(…, mean_age = mean(age, na.rm = TRUE)). On the left a baseplate with the towers eastwest and age in two blocks: three rows with 1, the sticker OLD FEDERAL STATES and the ages 50, 51 and 69, below them 3567 cases; three rows with 2, the sticker NEW FEDERAL STATES and the ages 72, 44 and 60, below them 1679 cases. A green arrow mean() leads to a baseplate with two rows and the columns eastwest and mean_age: 1 OLD FEDERAL STATES with 51.7 and 2 NEW FEDERAL STATES with 54.3."}
 
 ::: {.callout-note collapse="true"}
 ## Background: Grouping with `.by`
@@ -429,7 +429,7 @@ The tool for this is `left_join()` from dplyr. The name describes what it does: 
 ```{r join-kontext}
 region_context <- tibble(
   eastwest       = c(1, 2),
-  muslim_share   = c(7.2, 1.4),     # share in per cent (synthetic)
+  muslim_share   = c(7.2, 1.4),     # share in percent (synthetic)
   gdp_per_capita = c(45000, 32000)  # euros (synthetic, rounded)
 )
 region_context
@@ -486,7 +486,7 @@ This matters because ggplot2 usually expects long format (one aesthetic = one co
 
 ### `pivot_longer()`: wide → long
 
-**Question:** You want to show all six `mm` items together in one ggplot2 plot, for example as a boxplot per item. For this you need long format.
+**Question:** You want to show all six `mm` items together in one ggplot2 plot, for example as a box plot per item. For this you need long format.
 
 First a look at the wide format, the way ALLBUS comes by default, with one column per item and one row per person:
 
@@ -552,14 +552,14 @@ means_long <- allbus |>
 means_long
 ```
 
-Six rows: three items × two regions. This is readable, but impractical for a direct comparison of east and west. `pivot_wider()` turns it into a comparison table:
+Six rows: three items × two regions. This is readable, but impractical for a direct comparison of East and West. `pivot_wider()` turns it into a comparison table:
 
 ```{r pivot-wider-demo}
 means_long |>
   pivot_wider(names_from = eastwest, values_from = m)
 ```
 
-Now each item is in one row and the regions are in two columns, with east and west side by side. This is the format that looks good in an essay or a report.
+Now each item is in one row and the regions are in two columns, with East and West side by side. This is the format that looks good in an essay or a report.
 
 `names_from = eastwest` sets where the new column names come from: the two levels of `eastwest` become name tags. `values_from = m` supplies the bricks below them (@fig-pivot-wider).
 
@@ -753,9 +753,9 @@ POMPS is a *linear* transformation: the distribution of the values does not chan
 
 ## The complete data preparation pipeline {#sec-pipeline}
 
-Everything you have built step by step in this chapter can be combined into a single clean pipeline. This pipeline is the anchor for Chapters 6–9: you will find it as a setup block at the start of each of the following chapters, included through `source("R/prep.R")`.
+Everything you have built step by step in this chapter can be combined into a single clean pipeline. This pipeline is the anchor for Chapters 6–9: you will find it as a setup block at the start of each of the following chapters, read in with `source()`.
 
-Where is `R/prep.R`? In the project folder there is a subfolder `R/` with two scripts: `_common.R` (theme setup) and `prep.R` (the pipeline below). Both are read in the setup chunk of every methods chapter with `source()`. If you use the book's code in your own project, copy the `R/` folder along with it, and the setup chunks work unchanged.
+In your own project, save the pipeline below as `R/prep.R` and read it in with `source("R/prep.R")`. In this book's repository, the English version is `R/prep_en.R`.
 
 ```{r full-pipeline, eval=FALSE}
 allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
@@ -788,9 +788,9 @@ allbus <- read_spss("ALLBUS2023.sav") |>                          # <1>
 5. Populism scale as the mean of the seven reverse-coded `pa` items; at least 6 of 7 must be valid.
 6. POMPS versions of both scales on 0–100 for direct comparison (optional; the original scales are kept).
 
-With this pipeline, the dataset is ready for analysis. @fig-pipeline assigns the six steps to the sections in which you learned them. Together they are in `R/prep.R`; the setup chunk of each of the following chapters reads the script with `source("R/prep.R")`.
+With this pipeline, the dataset is ready for analysis. @fig-pipeline assigns the six steps to the sections in which you learned them. Saved together as `R/prep.R`, they form the script that the setup chunks of the following chapters read with `source()`.
 
-![The six steps of the pipeline with the sections in which they are introduced. `R/prep.R` combines them, and the setup chunks of Chapters 6 to 9 read the script.](Bilder/figuren/en/k05-pipeline.svg){#fig-pipeline .lightbox fig-alt="A timeline with six green numbered dots: 1 read in, read_spss() and set_na(), 4.3; 2 reverse-code mm02, mm05, rec(), 5.3.3; 3 reverse-code pa29 to pa35, rec(), 5.7.3; 4 islamophobia scale, row_means(), 5.7.1; 5 populism scale, row_means(), 5.7.3; 6 POMP versions, pomps(), 5.8. A line combines all the steps, and a green arrow leads to the file R/prep.R, labelled Script in the project folder. Another arrow leads to a code box with library(tidyverse), library(mariposa), source(“R/_common.R”) and source(“R/prep.R”), labelled Setup chunk in Ch. 6 to 9."}
+![The six steps of the pipeline with the sections in which they are introduced. Saved as `R/prep.R`, they form the script that the setup chunks of Chapters 6 to 9 read.](Bilder/figuren/en/k05-pipeline.svg){#fig-pipeline .lightbox fig-alt="A timeline with six green numbered dots: 1 read in, read_spss() and set_na(), 4.3; 2 reverse-code mm02, mm05, rec(), 5.3.3; 3 reverse-code pa29 to pa35, rec(), 5.7.3; 4 islamophobia scale, row_means(), 5.7.1; 5 populism scale, row_means(), 5.7.3; 6 POMPS versions, pomps(), 5.8. A line combines all the steps, and a green arrow leads to the file R/prep.R, labelled Script in the project folder. Another arrow leads to a code box with library(tidyverse), library(mariposa), source(“R/_common.R”) and source(“R/prep.R”), labelled Setup chunk in Ch. 6 to 9."}
 
 ::: {.callout-note collapse="true"}
 ## Background: What belongs in the methods report?
@@ -873,7 +873,7 @@ Choose a political science or sociological construct that interests you (satisfa
 - You build mean scales with `row_means()` and a controlled `min_valid`.
 - You check response styles and data quality with `row_count()`.
 - You make scales with different ranges directly comparable with `pomps()`.
-- You know the complete data preparation pipeline for the mini study; it is stored in `R/prep.R` and included in the following chapters with `source()`.
+- You know the complete data preparation pipeline for the mini study; you can save it as `R/prep.R` and read it in with `source()`, as the following chapters do.
 
 In the next chapter (@sec-grafiken-basics) you get to know the ggplot2 graphics system. You need it from the chapter after that onwards to visualise distributions, group comparisons and relationships.
 

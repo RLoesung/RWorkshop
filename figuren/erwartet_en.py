@@ -33,6 +33,8 @@ ERWARTET = {
         ("deutsche Setup-Datei: Everything you have built step by step",
          "R/prep.R ist der Dateiname im Projekt der Lesenden, wie in der Abbildung k05-pipeline und "
          "nach STYLE.md §13 (Dateien im Buchprojekt behalten ihren Namen); der versteckte Setup lädt R/_common_en.R"),
+        ("deutsche Setup-Datei: In your own project, save the pipeline below",
+         "Rat für das eigene Projekt der Lesenden; der Satz nennt R/prep_en.R als englische Fassung im Repository"),
         ("deutsche Setup-Datei: With this pipeline, the dataset is ready",
          "wie oben: source(\"R/prep.R\") im Fließtext, passend zur Abbildung k05-pipeline"),
     ],
