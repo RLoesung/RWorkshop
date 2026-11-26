@@ -8,7 +8,7 @@ source("R/_common.R")
 
 > *Wer trägt islamfeindliche Einstellungen in Deutschland 2023?*
 
-Bevor du diese Frage beantworten kannst, brauchst du den Datensatz auf deinem Rechner — und du musst ihn so weit verstehen, dass du gezielt die richtigen Variablen herausziehen kannst. Dieses Kapitel begleitet dich vom Einlesen der SPSS-Datei über die ersten Inspektionsschritte bis zur sauberen Behandlung fehlender Werte. In @sec-datentransformation baust du dann auf diesem Fundament die zwei Skalen der Mini-Studie auf.
+Bevor du diese Frage beantworten kannst, brauchst du den Datensatz auf deinem Rechner – und du musst ihn so weit verstehen, dass du gezielt die richtigen Variablen herausziehen kannst. Dieses Kapitel begleitet dich vom Einlesen der SPSS-Datei über die ersten Inspektionsschritte bis zur sauberen Behandlung fehlender Werte. In @sec-datentransformation baust du dann auf diesem Fundament die zwei Skalen der Mini-Studie auf.
 
 ::: {.callout-note}
 **Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Werkzeug steht (Kap. 1–3). Jetzt beginnt die *eigentliche* Forschungsarbeit. Mit diesem Kapitel hältst du am Ende einen Analyse-Datensatz in der Hand: 5.246 Befragte, dein eigenes Variablenset, fehlende Werte deklariert. Das ist der Rohzustand, von dem aus alle weiteren Etappen aufbauen.
@@ -16,17 +16,17 @@ Bevor du diese Frage beantworten kannst, brauchst du den Datensatz auf deinem Re
 
 ## Worum es geht
 
-Stell dir vor, du bekommst von einer Kollegin einen USB-Stick mit der Aufschrift *„ALLBUS 2023 — viel Spaß"*. Du steckst ihn ein und öffnest die Datei. Was du siehst, ist nicht das, was du dir erhofft hast: 579 Spalten mit Namen wie `mm01`, `pa29`, `pt06`, `wghtpew`. Negative Zahlen tauchen als „Wert" auf — `-8`, `-9`, `-11`, `-42` und ein gutes Dutzend weitere. Manche Variablen sind als Zahl gespeichert, obwohl sie eigentlich eine Kategorie sind (`sex = 1` heißt „Mann"). Und die wirklichen Beschriftungen — das, was tatsächlich gefragt wurde — liegen irgendwo versteckt, unsichtbar im Hintergrund.
+Stell dir vor, du bekommst von einer Kollegin einen USB-Stick mit der Aufschrift *„ALLBUS 2023 – viel Spaß"*. Du steckst ihn ein und öffnest die Datei. Was du siehst, ist nicht das, was du dir erhofft hast: 579 Spalten mit Namen wie `mm01`, `pa29`, `pt06`, `wghtpew`. Negative Zahlen tauchen als „Wert" auf – `-8`, `-9`, `-11`, `-42` und ein gutes Dutzend weitere. Manche Variablen sind als Zahl gespeichert, obwohl sie eigentlich eine Kategorie sind (`sex = 1` heißt „Mann"). Und die wirklichen Beschriftungen – das, was tatsächlich gefragt wurde – liegen irgendwo versteckt, unsichtbar im Hintergrund.
 
-Genau dieser Zustand ist normal. Sekundärdatensätze aus der quantitativen Sozialforschung sehen *immer* so aus. Sie sind so gebaut, dass viele Menschen sie für viele unterschiedliche Fragen nutzen können — und das geht nur, wenn die Daten zunächst *roh* bleiben. Deine Aufgabe ist es, aus diesem Rohzustand einen Analyse-Datensatz zu machen, der zu *deiner* Forschungsfrage passt.
+Genau dieser Zustand ist normal. Sekundärdatensätze aus der quantitativen Sozialforschung sehen *immer* so aus. Sie sind so gebaut, dass viele Menschen sie für viele unterschiedliche Fragen nutzen können – und das geht nur, wenn die Daten zunächst *roh* bleiben. Deine Aufgabe ist es, aus diesem Rohzustand einen Analyse-Datensatz zu machen, der zu *deiner* Forschungsfrage passt.
 
-Diese Schritte sind keine Vorarbeit, die man möglichst schnell hinter sich bringt. Sie sind der methodische Kern jeder ehrlichen Auswertung: Welche Fälle nimmst du raus? Wie behandelst du fehlende Werte? Wie übersetzt du `mm01 = 7` in „diese Person lehnt Muslime stark ab"? Jede dieser Entscheidungen beeinflusst, was am Ende rauskommt — und jede gehört in eine Pipeline, die du jederzeit reproduzieren kannst. *Das* ist offene Wissenschaft im konkreten Handwerk.
+Diese Schritte sind keine Vorarbeit, die man möglichst schnell hinter sich bringt. Sie sind der methodische Kern jeder ehrlichen Auswertung: Welche Fälle nimmst du raus? Wie behandelst du fehlende Werte? Wie übersetzt du `mm01 = 7` in „diese Person lehnt Muslime stark ab"? Jede dieser Entscheidungen beeinflusst, was am Ende rauskommt – und jede gehört in eine Pipeline, die du jederzeit reproduzieren kannst. *Das* ist offene Wissenschaft im konkreten Handwerk.
 
 Dieses Kapitel ist der Anker für alles, was folgt. Du legst hier den Analyse-Datensatz an, mit dem du in @sec-univbivar Verteilungen beschreibst, in @sec-latente Strukturen prüfst und in @sec-erklaerung Hypothesen modellierst. Wenn dieser Anker hält, halten alle späteren Befunde.
 
 ## Was du nach diesem Kapitel kannst {-}
 
-- Einen SPSS-Datensatz mit `read_spss()` einlesen — inklusive aller Variablen- und Wertelabels.
+- Einen SPSS-Datensatz mit `read_spss()` einlesen – inklusive aller Variablen- und Wertelabels.
 - Variablen über Name oder Label mit `find_var()` suchen.
 - Detail-Codebooks für ausgewählte Variablen mit `codebook()` erzeugen.
 - Variablen und Fälle gezielt auswählen, filtern, sortieren und umsortieren (`select()`, `filter()`, `arrange()`, `relocate()`).
@@ -44,7 +44,7 @@ library(mariposa)
 ```
 
 ::: {.callout-tip}
-**SPSS → R: Pakete laden.** In SPSS bist du gewohnt, dass alle Funktionen direkt verfügbar sind. In R aktivierst du dir mit `library()` gezielt die Werkzeuge, die du brauchst — das hält den Funktions-Namensraum übersichtlich und macht jeden Schritt nachvollziehbar.
+**SPSS → R: Pakete laden.** In SPSS bist du gewohnt, dass alle Funktionen direkt verfügbar sind. In R aktivierst du dir mit `library()` gezielt die Werkzeuge, die du brauchst – das hält den Funktions-Namensraum übersichtlich und macht jeden Schritt nachvollziehbar.
 :::
 
 ## Datensatz einlesen mit `read_spss()`
@@ -55,13 +55,13 @@ Der ALLBUS 2023 liegt als SPSS-Datei (`ALLBUS2023.sav`) im Projektordner. Mit `r
 allbus <- read_spss("ALLBUS2023.sav")
 ```
 
-`allbus` ist jetzt ein Tibble — ein moderner Datentyp im tidyverse. Tibbles verhalten sich wie klassische Data Frames, drucken aber kompakter und behalten ihre Spaltentypen besser. Was wir geladen haben:
+`allbus` ist jetzt ein Tibble – ein moderner Datentyp im tidyverse. Tibbles verhalten sich wie klassische Data Frames, drucken aber kompakter und behalten ihre Spaltentypen besser. Was wir geladen haben:
 
 ```{r read-show}
 allbus
 ```
 
-Im Kopf siehst du `5,246 × 579` — der Datensatz hat 5.246 Fälle und 579 Variablen. Darunter eine Auswahl der ersten Spalten mit ihren Datentypen.
+Im Kopf siehst du `5,246 × 579` – der Datensatz hat 5.246 Fälle und 579 Variablen. Darunter eine Auswahl der ersten Spalten mit ihren Datentypen.
 
 @fig-einlesen zeigt den Weg von der Datei zum Objekt: `read_spss()` liest `ALLBUS2023.sav` aus dem Projektordner und legt das Ergebnis unter dem Namen `allbus` ab. Ab jetzt arbeitest du mit diesem Objekt in R; die Datei auf der Festplatte bleibt unverändert.
 
@@ -78,9 +78,9 @@ Was bedeuten die kleinen Typ-Marker unter jeder Spalte? Direkt unter dem Spalten
 | `<dbl+lbl>`   | labelled-double aus SPSS           | typische ALLBUS-Variable          |
 | `<lgl>`       | logisch (`TRUE`/`FALSE`)           | aus einer Bedingung               |
 
-Den letzten Typ — `<dbl+lbl>` — wirst du im ALLBUS *überall* sehen. Er entsteht beim Einlesen: `read_spss()` verwendet im Hintergrund das Paket `haven` und reichert die Daten mit zwei Eigenschaften an, die du aus SPSS kennst: **Variablenlabels** (eine ausführliche Beschriftung pro Spalte) und **Wertelabels** (eine Beschriftung pro Ausprägung). Beide Informationen bleiben unsichtbar in den Spalten gespeichert — du kannst sie jederzeit abrufen oder als Faktor sichtbar machen.
+Den letzten Typ – `<dbl+lbl>` – wirst du im ALLBUS *überall* sehen. Er entsteht beim Einlesen: `read_spss()` verwendet im Hintergrund das Paket `haven` und reichert die Daten mit zwei Eigenschaften an, die du aus SPSS kennst: **Variablenlabels** (eine ausführliche Beschriftung pro Spalte) und **Wertelabels** (eine Beschriftung pro Ausprägung). Beide Informationen bleiben unsichtbar in den Spalten gespeichert – du kannst sie jederzeit abrufen oder als Faktor sichtbar machen.
 
-Die meisten Variablen kommen deshalb als `<haven_labelled>`-Spalten an, gedruckt als `<dbl+lbl>`. Das ist *kein* Faktor: Die Werte bleiben numerisch (du kannst weiterrechnen), aber im Hintergrund tragen sie ihre SPSS-Wertelabels mit — *„1 = MANN, 2 = FRAU, …"*. Konkret:
+Die meisten Variablen kommen deshalb als `<haven_labelled>`-Spalten an, gedruckt als `<dbl+lbl>`. Das ist *kein* Faktor: Die Werte bleiben numerisch (du kannst weiterrechnen), aber im Hintergrund tragen sie ihre SPSS-Wertelabels mit – *„1 = MANN, 2 = FRAU, …"*. Konkret:
 
 ```{r labelled-demo}
 allbus$sex |> head(5)
@@ -128,13 +128,13 @@ ncol(allbus)              # Anzahl Variablen
 
 ### Variablen finden mit `find_var()`
 
-Die Variablennamen im ALLBUS sind kryptisch (`mm01`, `pa29`, `wghtpew`). Was wirklich gemessen wird, steht im Variablenlabel. mariposas `find_var()` durchsucht beide gleichzeitig — Name und Label — und liefert dir die Treffer als kleine Übersichtstabelle:
+Die Variablennamen im ALLBUS sind kryptisch (`mm01`, `pa29`, `wghtpew`). Was wirklich gemessen wird, steht im Variablenlabel. mariposas `find_var()` durchsucht beide gleichzeitig – Name und Label – und liefert dir die Treffer als kleine Übersichtstabelle:
 
 ```{r find-var-demo}
 allbus |> find_var("muslim")
 ```
 
-Die Ergebnistabelle zeigt pro Treffer die Position der Variable im Datensatz (`col`), ihren Namen und das vollständige Label; Groß- und Kleinschreibung spielen bei der Suche keine Rolle. Drei Treffer — `mm03`, `mm05`, `mm06`. Die anderen drei Items unserer Skala sprechen vom „Islam" statt von „Muslimen". Weil das Suchmuster ein **regulärer Ausdruck** ist, fragst du beide Begriffe auf einmal ab — `|` heißt „oder":
+Die Ergebnistabelle zeigt pro Treffer die Position der Variable im Datensatz (`col`), ihren Namen und das vollständige Label; Groß- und Kleinschreibung spielen bei der Suche keine Rolle. Drei Treffer – `mm03`, `mm05`, `mm06`. Die anderen drei Items unserer Skala sprechen vom „Islam" statt von „Muslimen". Weil das Suchmuster ein **regulärer Ausdruck** ist, fragst du beide Begriffe auf einmal ab – `|` heißt „oder":
 
 ```{r find-var-regex}
 allbus |> find_var("islam|muslim")
@@ -161,7 +161,7 @@ In RStudio öffnet sich die Übersicht im Viewer-Reiter; in einem Quarto-Dokumen
 In einer Methodenbeschreibung gehört zu jeder Skala ein Mini-Codebook: Wortlaut der Items, Antwortformat, Missing-Behandlung, N pro Item. Erzeugst du dieses Codebook mit `codebook()` und stellst es in den Anhang deines Berichts, erfüllst du diese Anforderung.
 
 ::: {.callout-tip}
-**SPSS → R: Dateninspektion.** In SPSS kennst du `DISPLAY DICTIONARY` für eine Gesamtübersicht. `find_var()` ist gezielter: du suchst nach einem inhaltlichen Stichwort und bekommst sofort die passenden Variablen — selbst wenn du die kryptischen Namen nicht im Kopf hast.
+**SPSS → R: Dateninspektion.** In SPSS kennst du `DISPLAY DICTIONARY` für eine Gesamtübersicht. `find_var()` ist gezielter: du suchst nach einem inhaltlichen Stichwort und bekommst sofort die passenden Variablen – selbst wenn du die kryptischen Namen nicht im Kopf hast.
 
 | SPSS                            | R                                |
 | ------------------------------- | -------------------------------- |
@@ -192,7 +192,7 @@ allbus |>
   select(mm01:mm06, eastwest, sex, age, educ)
 ```
 
-Diese Auswahl — die sechs Skalen-Items plus Demografie — ist genau das, was du für die Mini-Studie brauchst.
+Diese Auswahl – die sechs Skalen-Items plus Demografie – ist genau das, was du für die Mini-Studie brauchst.
 
 In @sec-datentypen hast du eine einzelne Spalte mit `$` herausgeholt. Das geht auch mit `select()`, aber du bekommst ein anderes Objekt zurück:
 
@@ -228,16 +228,16 @@ Bei großen Datensätzen wie ALLBUS willst du oft *alle Variablen, die ein Muste
 | `contains("teil")`      | alle, deren Name `teil` enthält                      | `select(contains("wght"))`: die vier Gewichtungsvariablen |
 | `matches("regex")`      | alle, die zum regulären Ausdruck passen              | `select(matches("^p[at]"))`             |
 | `where(is.numeric)`     | alle, deren Inhalt eine Bedingung erfüllt            | `select(where(is.numeric))`             |
-| `everything()`          | alle übrigen — typisch in `relocate()`               | `relocate(respid, .before = everything())` |
+| `everything()`          | alle übrigen – typisch in `relocate()`               | `relocate(respid, .before = everything())` |
 
-Diese Helfer funktionieren genauso in `mutate(across(...))`, `summarise(across(...))` und in vielen mariposa-Aufrufen — ein tidyverse-weites Vokabular.
+Diese Helfer funktionieren genauso in `mutate(across(...))`, `summarise(across(...))` und in vielen mariposa-Aufrufen – ein tidyverse-weites Vokabular.
 
 #### Spalten herausziehen und umsortieren mit `pull()` und `relocate()`
 
 Zwei nahe Verwandte von `select()`:
 
-- `pull(var)` zieht eine einzelne Spalte als reinen Vektor heraus — nützlich, wenn du den Spalteninhalt direkt in eine Funktion füttern willst, die kein Tibble erwartet: `allbus |> pull(age) |> mean(na.rm = TRUE)`.
-- `relocate(var, .before = X, .after = Y)` sortiert Spalten um, ohne welche zu entfernen — praktisch, wenn die wichtigsten Variablen vorne stehen sollen: `allbus |> relocate(mm01:mm06, eastwest, sex, age, educ, .before = everything())`.
+- `pull(var)` zieht eine einzelne Spalte als reinen Vektor heraus – nützlich, wenn du den Spalteninhalt direkt in eine Funktion füttern willst, die kein Tibble erwartet: `allbus |> pull(age) |> mean(na.rm = TRUE)`.
+- `relocate(var, .before = X, .after = Y)` sortiert Spalten um, ohne welche zu entfernen – praktisch, wenn die wichtigsten Variablen vorne stehen sollen: `allbus |> relocate(mm01:mm06, eastwest, sex, age, educ, .before = everything())`.
 
 ### Fälle filtern mit `filter()`
 
@@ -273,7 +273,7 @@ allbus |> filter(!is.na(sex))     # alle Fälle, wo sex vorhanden ist
 
 ![`filter(sex == 1)` behält nur die Reihen, in denen der Vergleich `TRUE` ergibt. Wo `sex` fehlt, ist auch das Ergebnis des Vergleichs ein leerer Stein, und die Reihe fällt weg.](Bilder/figuren/k04-filter-na.svg){#fig-filter-na .lightbox fig-alt="Links der Turm sex, dbl+lbl, mit den Reihen 1, 2, 3 und 110: 1 MANN, 1 MANN, 2 FRAU in Grau, Auslassungspunkte und ein leerer gestrichelter Stein mit dem blassen Aufkleber KEINE ANGABE. Daneben der rosa Turm sex == 1 mit TRUE, TRUE, FALSE und einem leeren gestrichelten Stein NA. Ein grüner Pfeil filter() führt zum Turm sex mit zwei Steinen 1 MANN auf Höhe der Reihen 1 und 2, darunter Auslassungspunkte. Darunter der Code allbus |> filter(sex == 1)."}
 
-Wenn du dich wunderst, warum deine Fallzahl plötzlich kleiner ist als erwartet — die `NA`-Filterung ist meist der Grund.
+Wenn du dich wunderst, warum deine Fallzahl plötzlich kleiner ist als erwartet – die `NA`-Filterung ist meist der Grund.
 :::
 
 **Kurz überlegen.** `allbus |> filter(sex == 1)` behält 2.546 Reihen, `filter(sex == 2)` 2.672 (@fig-filter). Zusammen sind das 5.218, `allbus` hat aber 5.246 Reihen. Wo sind die übrigen 28?
@@ -306,7 +306,7 @@ allbus |>
 
 ## Datentypen verstehen mit `class()` {#sec-datentypen-verstehen}
 
-Wenn du in SPSS arbeitest, fragst du dich selten, *welcher Typ* eine Variable ist. SPSS macht das im Hintergrund: eine Variable ist „numerisch" oder „string", und Wertelabels („1 = Mann, 2 = Frau") sind nur eine Beschriftungs-Schicht obendrauf. In R ist das ein bisschen anders — und am Anfang verwirrend.
+Wenn du in SPSS arbeitest, fragst du dich selten, *welcher Typ* eine Variable ist. SPSS macht das im Hintergrund: eine Variable ist „numerisch" oder „string", und Wertelabels („1 = Mann, 2 = Frau") sind nur eine Beschriftungs-Schicht obendrauf. In R ist das ein bisschen anders – und am Anfang verwirrend.
 
 R kennt eine ganze Reihe von Datentypen: reine Zahlen (`numeric`), Text (`character`), Logik (`logical`), Kategorien mit fester Reihenfolge (`factor`). Beim Einlesen eines SPSS-Datensatzes kommt noch ein vierter Typ hinzu, den mariposa von haven übernimmt: `<haven_labelled>`. Das ist eine Art *Hybrid*: Die Spalte verhält sich nach außen wie eine Zahl, aber im Hintergrund tragen die Werte ihre SPSS-Wertelabels mit. So bleibt die Information „1 bedeutet Mann" erhalten, ohne dass du sie aus dem Codebook nachschlagen musst.
 
@@ -327,8 +327,8 @@ Drei Konvertierungen wirst du immer wieder brauchen:
 
 | Funktion                              | Wirkung                                                                                                                       |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `to_label(data, var)`                 | wandelt `<haven_labelled>` in einen Faktor mit den Wertelabels als Stufen — Standard, wenn du in `ggplot()`-Achsen lesbare Beschriftungen willst |
-| `to_numeric(data, var)`               | wandelt in einen reinen numerischen Vektor — Labels gehen verloren                                                            |
+| `to_label(data, var)`                 | wandelt `<haven_labelled>` in einen Faktor mit den Wertelabels als Stufen – Standard, wenn du in `ggplot()`-Achsen lesbare Beschriftungen willst |
+| `to_numeric(data, var)`               | wandelt in einen reinen numerischen Vektor – Labels gehen verloren                                                            |
 | `to_labelled(data, var, labels = ...)`| wandelt umgekehrt einen Faktor zurück in ein `<haven_labelled>`                                                              |
 
 ```{r to-label}
@@ -349,8 +349,8 @@ Wenn du nur Labels *abstreifen* willst (z. B. weil eine Funktion mit labelled-Ve
 
 In SPSS sind Variablen entweder numerisch oder *string*. Wertelabels sind ein Zusatz. In R gibt es Faktoren (Kategorien) und numerische Vektoren als getrennte Typen. `<haven_labelled>` ist eine Brücke: Du arbeitest mit Zahlen, aber die Wertelabels reisen mit. Wann du das auflösen solltest:
 
-- `to_label()`, wenn du sortierst, gruppierst, kreuztabellierst oder plottest — Faktoren liefern lesbare Outputs.
-- `to_numeric()`, wenn du rechnest oder skalierst — z. B. bei Likert-Items, die du als pseudo-metrisch behandelst.
+- `to_label()`, wenn du sortierst, gruppierst, kreuztabellierst oder plottest – Faktoren liefern lesbare Outputs.
+- `to_numeric()`, wenn du rechnest oder skalierst – z. B. bei Likert-Items, die du als pseudo-metrisch behandelst.
 - Beim Original lassen, wenn die Variable noch nicht final ist und du das Label später noch brauchst.
 :::
 
@@ -372,7 +372,7 @@ allbus |>
   var_label()
 ```
 
-Das Ergebnis ist ein benannter Character-Vektor — pro Variable das hinterlegte Label. So liest du, was eine kryptische Variable wie `mm01` eigentlich bedeutet, ohne ins Codebook zu schauen.
+Das Ergebnis ist ein benannter Character-Vektor – pro Variable das hinterlegte Label. So liest du, was eine kryptische Variable wie `mm01` eigentlich bedeutet, ohne ins Codebook zu schauen.
 
 Eine Variable wie `mm01` trägt drei Beschriftungen (@fig-labels): den Variablennamen, mit dem du in R arbeitest, das Variablenlabel, das `var_label()` ausliest, und die Wertelabels, die sagen, was eine Zahl bedeutet. Bei `mm01` haben nur die Endpunkte 1 und 7 ein Wertelabel; für 2 bis 6 zeigt `val_labels()` nur `..`.
 
@@ -384,7 +384,7 @@ Wenn du eine neue Variable erzeugst (z. B. eine Skala in @sec-datentransformatio
 var_label(allbus$islamophobie) <- "Islamfeindlichkeits-Skala (6 Items, 1–7)"
 ```
 
-Dieses Label erscheint später automatisch in `codebook()`, in der Kopfzeile von `frequency()` und in vielen `summary()`-Ausgaben — überall, wo mariposa Beschriftungen sucht. Für mehrere Variablen auf einmal übergibst du eine Liste: `var_label(allbus) <- list(islamophobie = "…", populismus = "…")`.
+Dieses Label erscheint später automatisch in `codebook()`, in der Kopfzeile von `frequency()` und in vielen `summary()`-Ausgaben – überall, wo mariposa Beschriftungen sucht. Für mehrere Variablen auf einmal übergibst du eine Liste: `var_label(allbus) <- list(islamophobie = "…", populismus = "…")`.
 
 Für Wertelabels gibt es keinen Zuweisungspfeil auf die Spalte. `val_labels()` bekommt Paare aus Variable und benanntem Vektor (`"Label" = Code`) und gibt den geänderten Datensatz zurück, den du wieder abspeicherst. Typischer Fall: Ein selbst gebauter 0/1-Dummy wie `islam_hoch` in @sec-erklaerung soll in `frequency()` und `crosstab()` lesbare Ausprägungen zeigen statt nackter Nullen und Einsen:
 
@@ -404,7 +404,7 @@ Mit `val_labels(allbus, mm01 = NULL)` entfernst du die Wertelabels einer Variabl
 
 ## Fehlende Werte deklarieren mit `na_frequencies()`, `set_na()` und `drop_na()` {#sec-fehlende-werte}
 
-Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage — manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.
+Fehlende Werte sind in der Sozialforschung Normalität, nicht Ausnahme. Niemand beantwortet jede Frage einer Umfrage – manche überspringen einzelne Punkte, manche wissen es schlicht nicht, manche bekommen wegen eines Split-Designs bestimmte Fragen gar nicht vorgelegt. Und manche Antworten waren ursprünglich da, gingen aber durch einen Datenfehler verloren.
 
 Die GESIS unterscheidet in ALLBUS deshalb viele Arten von fehlenden Werten und kodiert sie mit klar unterscheidbaren negativen Zahlen. Im ALLBUS 2023 sind es 17 verschiedene Codes. Bei den sechs Items unserer Islamfeindlichkeits-Skala (`mm01` bis `mm06`) kommen vier davon vor:
 
@@ -417,11 +417,11 @@ Die GESIS unterscheidet in ALLBUS deshalb viele Arten von fehlenden Werten und k
 
 Andere Variablen bringen weitere Codes mit, etwa `-10` TNZ: FILTER (Frage nach einer Filterfrage übersprungen), `-15` TNZ: MODE (im Befragungsmodus nicht gestellt), `-7` VERWEIGERT, `-32` NICHT GENERIERBAR (beim Alter `age`) oder `-33` NICHT BESTIMMBAR und `-41` DATENFEHLER (beim Schulabschluss `educ`). Welche Codes eine bestimmte Variable hat, zeigt dir `na_frequencies()` weiter unten.
 
-Die Unterscheidung ist *inhaltlich wichtig*: ein „weiß nicht" ist methodisch etwas anderes als eine verweigerte Antwort, und ein „trifft nicht zu" (jemand hat die Frage gar nicht gestellt bekommen) ist wiederum etwas anderes als ein echter Datenfehler. Wenn du diese Codes als reguläre Zahlen behandelst — was passiert, wenn du sie einfach in einen Mittelwert wirfst — sind deine Ergebnisse Müll: ein „Durchschnittswert" von `-3.4` für Lebenszufriedenheit ist offensichtlich Unsinn.
+Die Unterscheidung ist *inhaltlich wichtig*: ein „weiß nicht" ist methodisch etwas anderes als eine verweigerte Antwort, und ein „trifft nicht zu" (jemand hat die Frage gar nicht gestellt bekommen) ist wiederum etwas anderes als ein echter Datenfehler. Wenn du diese Codes als reguläre Zahlen behandelst – was passiert, wenn du sie einfach in einen Mittelwert wirfst – sind deine Ergebnisse Müll: ein „Durchschnittswert" von `-3.4` für Lebenszufriedenheit ist offensichtlich Unsinn.
 
-Beim Einlesen werden diese in SPSS als *user-missing* deklarierten Codes automatisch zu **tagged NAs**. „Tagged" heißt: sie zählen in Berechnungen als `NA` (also fehlend), behalten aber im Hintergrund die Information, *welcher* Missing-Typ sie sind. Du kannst sie also später trotzdem voneinander unterscheiden — etwa um zu zeigen, wie viele Personen „weiß nicht" gewählt haben.
+Beim Einlesen werden diese in SPSS als *user-missing* deklarierten Codes automatisch zu **tagged NAs**. „Tagged" heißt: sie zählen in Berechnungen als `NA` (also fehlend), behalten aber im Hintergrund die Information, *welcher* Missing-Typ sie sind. Du kannst sie also später trotzdem voneinander unterscheiden – etwa um zu zeigen, wie viele Personen „weiß nicht" gewählt haben.
 
-Manche Itembatterien werden im ALLBUS nur einem Teil der Stichprobe gestellt (Split-Design); wer sie nicht vorgelegt bekommt, erhält den Code `-11` (TNZ: SPLIT). Das gilt insbesondere für die `mm`-Items unserer Islamfeindlichkeits-Skala: Rund 1.650 Befragte — knapp ein Drittel — haben sie nicht gesehen. Die gültige N pro Item liegt deshalb bei etwa 3.300–3.450 statt 5.246. Das ist so vorgesehen und gehört in die Methodenbeschreibung.
+Manche Itembatterien werden im ALLBUS nur einem Teil der Stichprobe gestellt (Split-Design); wer sie nicht vorgelegt bekommt, erhält den Code `-11` (TNZ: SPLIT). Das gilt insbesondere für die `mm`-Items unserer Islamfeindlichkeits-Skala: Rund 1.650 Befragte – knapp ein Drittel – haben sie nicht gesehen. Die gültige N pro Item liegt deshalb bei etwa 3.300–3.450 statt 5.246. Das ist so vorgesehen und gehört in die Methodenbeschreibung.
 
 Wie viele Fälle pro Missing-Code in einer konkreten Variable stecken, zeigt dir `na_frequencies()`:
 
@@ -429,7 +429,7 @@ Wie viele Fälle pro Missing-Code in einer konkreten Variable stecken, zeigt dir
 na_frequencies(allbus$mm01)
 ```
 
-Du siehst die Aufschlüsselung: wie viele „weiß nicht", wie viele „keine Angabe", wie viele „trifft nicht zu" — alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.
+Du siehst die Aufschlüsselung: wie viele „weiß nicht", wie viele „keine Angabe", wie viele „trifft nicht zu" – alles in einem Aufruf. Praktisch, bevor du entscheidest, ob du bestimmte Codes als reguläre Werte behältst oder als endgültige Missings behandelst.
 
 In @fig-missing-codes ist jede dieser Lücken ein leerer Stein mit Aufkleber: Der Stein ist leer, weil kein gültiger Wert vorliegt, und der Aufkleber nennt den Grund. Die Tags `a` bis `d` unterscheiden die vier Codes innerhalb von `mm01`; in einer anderen Variable kann derselbe Code ein anderes Tag haben (bei `mm05` hat TNZ: SPLIT das Tag `a`). Der größte Block, 1.647 Fälle mit TNZ: SPLIT, geht auf das Split-Design zurück: Diesen Befragten wurde keines der sechs `mm`-Items gestellt.
 
@@ -445,7 +445,7 @@ sum(is.na(allbus$mm01))
 `is.na()` prüft nur, ob ein Wert fehlt. Alle vier Codes zählen deshalb als `NA`, gleich aus welchem Grund: 2 + 1647 + 73 + 123 = 1845. Wie sich die Lücken auf die Gründe verteilen, zeigt `na_frequencies()`.
 :::
 
-Wenn bestimmte *gültige* Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit `set_na()`. Ein Beispiel: Beim Schulabschluss `educ` lassen sich „anderer Abschluss" (Code 6) und „noch Schüler:in" (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an — `variable = c(code1, code2)`:
+Wenn bestimmte *gültige* Codes für deine Analyse erst nachträglich als fehlend gelten sollen, deklarierst du sie mit `set_na()`. Ein Beispiel: Beim Schulabschluss `educ` lassen sich „anderer Abschluss" (Code 6) und „noch Schüler:in" (Code 7) in keine Bildungsstufe einordnen. Du gibst die Variable als Name und die Codes als Werte an – `variable = c(code1, code2)`:
 
 ```{r set-na-demo}
 #| message: true
@@ -454,7 +454,7 @@ allbus |>
   frequency(educ)
 ```
 
-Mit `verbose = TRUE` zeigt mariposa dir an, wie viele Werte zu `NA` wurden — kontrolliert und nachvollziehbar. Die beiden Codes stehen anschließend mit ihrem Label im Missing-Block der Häufigkeitstabelle: Sie zählen nicht mehr als gültig, bleiben aber als eigener Missing-Typ unterscheidbar. Lässt du den Variablennamen weg (`set_na(-99)`), gilt der Code für *alle* numerischen Variablen.
+Mit `verbose = TRUE` zeigt mariposa dir an, wie viele Werte zu `NA` wurden – kontrolliert und nachvollziehbar. Die beiden Codes stehen anschließend mit ihrem Label im Missing-Block der Häufigkeitstabelle: Sie zählen nicht mehr als gültig, bleiben aber als eigener Missing-Typ unterscheidbar. Lässt du den Variablennamen weg (`set_na(-99)`), gilt der Code für *alle* numerischen Variablen.
 
 @fig-set-na zeigt, was dabei passiert: Die Steine mit 6 und 7 verlieren ihren Wert und werden leer, ihr Aufkleber bleibt. Deshalb stehen beide Codes in der Ausgabe im Missing-Block, mit 18 und 26 Fällen. Die gültige Fallzahl sinkt um diese 44 auf 5.093.
 
@@ -478,12 +478,12 @@ Dieses Vorgehen heißt **listenweiser Ausschluss** (*listwise deletion*): Ein Fa
 ::: {.callout-note collapse="true"}
 ## Hintergrund: MCAR, MAR, MNAR
 
-Die Methodenliteratur unterscheidet drei Missing-Mechanismen: *Missing Completely at Random* (Zufall, keine Verzerrung), *Missing at Random* (Zufall bedingt durch beobachtete Variablen, durch Modellierung korrigierbar) und *Missing Not at Random* (systematisch, schwer zu beheben). In Survey-Daten wie ALLBUS ist MAR der Regelfall; einfache Listwise Deletion (`drop_na()`) ist dann ein konservativer, aber transparenter Umgang. Imputationsverfahren (z. B. `mice`) sind die nächste Ausbaustufe — für ein Einsteigerbuch jedoch zu viel.
+Die Methodenliteratur unterscheidet drei Missing-Mechanismen: *Missing Completely at Random* (Zufall, keine Verzerrung), *Missing at Random* (Zufall bedingt durch beobachtete Variablen, durch Modellierung korrigierbar) und *Missing Not at Random* (systematisch, schwer zu beheben). In Survey-Daten wie ALLBUS ist MAR der Regelfall; einfache Listwise Deletion (`drop_na()`) ist dann ein konservativer, aber transparenter Umgang. Imputationsverfahren (z. B. `mice`) sind die nächste Ausbaustufe – für ein Einsteigerbuch jedoch zu viel.
 :::
 
-## Wenn etwas komisch aussieht — Diagnose-Spickzettel {-}
+## Wenn etwas komisch aussieht – Diagnose-Spickzettel {-}
 
-Die häufigsten Anfänger:innen-Probleme beim Datenimport haben drei Ursachen — und drei direkte Diagnosen:
+Die häufigsten Anfänger:innen-Probleme beim Datenimport haben drei Ursachen – und drei direkte Diagnosen:
 
 | Symptom                                                    | Wahrscheinliche Ursache                              | Diagnose                                       |
 | :--------------------------------------------------------- | :--------------------------------------------------- | :--------------------------------------------- |
@@ -494,7 +494,7 @@ Die häufigsten Anfänger:innen-Probleme beim Datenimport haben drei Ursachen �
 Wer diese drei kennt, hat 80 % aller „warum funktioniert das nicht"-Momente abgedeckt.
 
 ::: {.callout-note}
-**Forschungsjournal: Stand deiner Mini-Studie.** Du hast den ALLBUS 2023 eingelesen und hast die Werkzeuge, um durch 579 Variablen gezielt zu navigieren. Du weißt, was hinter `mm01` bis `mm06` steckt (die sechs Islamfeindlichkeits-Items), du kennst die Missing-Codes der GESIS, und du kannst dein Analyse-Subset gezielt zusammenstellen. Was als Nächstes kommt: In @sec-datentransformation wandelst du die Rohitems in zwei Skalen um — Islamfeindlichkeit und Populismus.
+**Forschungsjournal: Stand deiner Mini-Studie.** Du hast den ALLBUS 2023 eingelesen und hast die Werkzeuge, um durch 579 Variablen gezielt zu navigieren. Du weißt, was hinter `mm01` bis `mm06` steckt (die sechs Islamfeindlichkeits-Items), du kennst die Missing-Codes der GESIS, und du kannst dein Analyse-Subset gezielt zusammenstellen. Was als Nächstes kommt: In @sec-datentransformation wandelst du die Rohitems in zwei Skalen um – Islamfeindlichkeit und Populismus.
 :::
 
 ## Übungen {-}
@@ -511,7 +511,7 @@ allbus |> find_var("^st", search = "name")
 :::
 
 ::: {.callout-note title="Übung 2 · Codebook der politischen Vertrauens-Items · Reproduktion"}
-Erstelle ein `codebook()` für die Items `pt01` bis `pt08` (Vertrauen in verschiedene Institutionen). Schau dir Labels und Wertelabels an. *Tipp: Ein Item `pt05` gibt es im ALLBUS 2023 nicht — der Bereich `pt01:pt08` wählt einfach alle Spalten, die im Datensatz dazwischen stehen.*
+Erstelle ein `codebook()` für die Items `pt01` bis `pt08` (Vertrauen in verschiedene Institutionen). Schau dir Labels und Wertelabels an. *Tipp: Ein Item `pt05` gibt es im ALLBUS 2023 nicht – der Bereich `pt01:pt08` wählt einfach alle Spalten, die im Datensatz dazwischen stehen.*
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
@@ -537,23 +537,23 @@ nrow(analyse)
 ::: {.callout-note title="Übung 4 · Eigene Forschungsfrage · Mini-Forschungsfrage"}
 Wähle ein Thema, das dich politik- oder sozialwissenschaftlich interessiert (Migration, Klima, Geschlechterrollen, …). Finde mit `find_var()` zwei bis drei Variablen im ALLBUS 2023, die deine Frage beleuchten könnten. Erstelle ein `codebook()` für deine Auswahl. Beschreibe in 2–3 Sätzen, was du untersuchen würdest und welche Variable als unabhängige bzw. abhängige Variable dienen könnte.
 
-*Es gibt hier keine Musterlösung — die Übung trainiert das Auffinden und Verstehen von Variablen, nicht eine bestimmte Antwort.*
+*Es gibt hier keine Musterlösung – die Übung trainiert das Auffinden und Verstehen von Variablen, nicht eine bestimmte Antwort.*
 :::
 
 ## Was du jetzt weißt {-}
 
 - Du liest SPSS-Daten mit `read_spss()` ein und behältst Variablen- und Wertelabels.
 - Du findest Variablen über Name oder Label mit `find_var()` und holst dir Detail-Codebooks per `codebook()`.
-- Du wählst Variablen und Fälle mit `select()`, `filter()`, `arrange()` aus — und sortierst sie mit `relocate()` um.
+- Du wählst Variablen und Fälle mit `select()`, `filter()`, `arrange()` aus – und sortierst sie mit `relocate()` um.
 - Du verstehst den `<haven_labelled>`-Typ und wandelst ihn bei Bedarf in Faktor oder numerisch.
 - Du liest und setzt Variablen- und Wertelabels mit `var_label()` und `val_labels()`.
 - Du erkennst die ALLBUS-Missing-Codes, prüfst sie mit `na_frequencies()` und schließt Fälle gezielt aus.
 
-Im nächsten Kapitel (@sec-datentransformation) lernst du, wie du aus diesen Rohvariablen die zwei Skalen baust, die die Mini-Studie trägt — Islamfeindlichkeit und Populismus.
+Im nächsten Kapitel (@sec-datentransformation) lernst du, wie du aus diesen Rohvariablen die zwei Skalen baust, die die Mini-Studie trägt – Islamfeindlichkeit und Populismus.
 
 ## Weiterführend {-}
 
 - mariposa-Vignetten [„Data I/O"](https://yannickdiehl.github.io/mariposa/articles/data-io.html) und [„Labels and Missing Values"](https://yannickdiehl.github.io/mariposa/articles/labels-and-missing-values.html).
 - Hadley Wickham & Garrett Grolemund, [R for Data Science (2e), Kapitel „Data Import" und „Data Transformation"](https://r4ds.hadley.nz/data-import.html).
-- Joseph Larmarange, [„labelled" Vignetten](https://larmarange.github.io/labelled/) — vertiefte Auseinandersetzung mit labelled-Datentypen.
-- GESIS, [Datensatzbeschreibung ALLBUS 2023 (ZA8901)](https://search.gesis.org/research_data/ZA8901) — Methodenbericht und Codeplan.
+- Joseph Larmarange, [„labelled" Vignetten](https://larmarange.github.io/labelled/) – vertiefte Auseinandersetzung mit labelled-Datentypen.
+- GESIS, [Datensatzbeschreibung ALLBUS 2023 (ZA8901)](https://search.gesis.org/research_data/ZA8901) – Methodenbericht und Codeplan.

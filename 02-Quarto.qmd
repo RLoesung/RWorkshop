@@ -7,14 +7,14 @@ source("R/_common.R")
 
 ## Worum es geht
 
-Wissenschaftliche Arbeit ist nur dann *Wissenschaft*, wenn andere sie nachvollziehen können. Wer eine Analyse veröffentlicht, sollte den Weg von den Daten zum Ergebnis vollständig offenlegen — ohne dass Leser:innen Zwischenschritte rekonstruieren oder Tabellen aus dem Output-Fenster nachformatieren müssen.
+Wissenschaftliche Arbeit ist nur dann *Wissenschaft*, wenn andere sie nachvollziehen können. Wer eine Analyse veröffentlicht, sollte den Weg von den Daten zum Ergebnis vollständig offenlegen – ohne dass Leser:innen Zwischenschritte rekonstruieren oder Tabellen aus dem Output-Fenster nachformatieren müssen.
 
-Quarto ist das Werkzeug, das diesen Anspruch praktisch einlöst. Es verbindet R-Code und Schriftbericht in einem einzigen Dokument: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word. Änderst du die Daten oder eine Methodenentscheidung, läuft das gesamte Dokument beim nächsten Render-Lauf frisch durch — Zahlen, Tabellen und Grafiken sind automatisch aktuell.
+Quarto ist das Werkzeug, das diesen Anspruch praktisch einlöst. Es verbindet R-Code und Schriftbericht in einem einzigen Dokument: Du schreibst deine Hausarbeit, deinen Seminarbeitrag oder deine Bachelorarbeit zusammen mit dem Code, der die Zahlen produziert. Quarto rendert daraus HTML, PDF oder Word. Änderst du die Daten oder eine Methodenentscheidung, läuft das gesamte Dokument beim nächsten Render-Lauf frisch durch – Zahlen, Tabellen und Grafiken sind automatisch aktuell.
 
-Dieses Kapitel führt dich von deinem ersten `.qmd`-Dokument bis zu einem reproduzierbaren Projekt nach den Standards offener Wissenschaft. Das Buch, das du gerade liest, ist selbst mit Quarto gebaut — du findest also überall in diesen Seiten das, was hier erklärt wird.
+Dieses Kapitel führt dich von deinem ersten `.qmd`-Dokument bis zu einem reproduzierbaren Projekt nach den Standards offener Wissenschaft. Das Buch, das du gerade liest, ist selbst mit Quarto gebaut – du findest also überall in diesen Seiten das, was hier erklärt wird.
 
 ::: {.callout-note}
-**Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Du hast in @sec-rstudio die IDE aufgesetzt. Jetzt lernst du das Format kennen, in dem du am Ende deine Befunde zur Islamfeindlichkeit *publizieren* wirst — als reproduzierbarer Bericht, der Code, Tabellen und Grafiken in einem Dokument verbindet. Wenn du ab @sec-erklaerung Coefficient-Plots und Regressionstabellen produzierst, möchtest du sie in einem Quarto-Dokument zusammenführen — nicht in Word kopieren.
+**Forschungsjournal: Wo stehst du in deiner Mini-Studie?** Du hast in @sec-rstudio die IDE aufgesetzt. Jetzt lernst du das Format kennen, in dem du am Ende deine Befunde zur Islamfeindlichkeit *publizieren* wirst – als reproduzierbarer Bericht, der Code, Tabellen und Grafiken in einem Dokument verbindet. Wenn du ab @sec-erklaerung Coefficient-Plots und Regressionstabellen produzierst, möchtest du sie in einem Quarto-Dokument zusammenführen – nicht in Word kopieren.
 :::
 
 ## Was du nach diesem Kapitel kannst {-}
@@ -28,7 +28,7 @@ Dieses Kapitel führt dich von deinem ersten `.qmd`-Dokument bis zu einem reprod
 - Open-Science-Prinzipien (Reproduzierbarkeit, FAIR, OSF, Pre-Registration) auf dein Projekt anwenden.
 - Ein Projekt sauber strukturieren (`R/`, `output/`) und mit Git versionieren.
 
-## Warum Quarto? — vom Skript zum Bericht
+## Warum Quarto? – vom Skript zum Bericht
 
 Wenn du in SPSS arbeitest, kennst du den Ablauf: Du klickst durch die Menüs, der Output erscheint in einem separaten Fenster, und du kopierst Tabellen und Grafiken nach Word, wo du sie noch einmal formatierst. Wenn dir später auffällt, dass du eine Variable falsch rekodiert hast, beginnt der ganze Prozess von vorn.
 
@@ -39,10 +39,10 @@ In Quarto trennst du nicht mehr zwischen Analyse und Bericht. Beides lebt im sel
 | Wo wird gerechnet?             | SPSS-Output-Fenster                        | Code-Chunk im `.qmd`                           |
 | Wo wird geschrieben?           | Word                                       | Lauftext im `.qmd`                             |
 | Wie kommen Tabellen rein?      | Word (kopieren, manuell formatieren)       | Quarto (automatisch beim Render)               |
-| Was passiert bei Datenänderung? | Alles neu kopieren                        | Render-Knopf — fertig                          |
+| Was passiert bei Datenänderung? | Alles neu kopieren                        | Render-Knopf – fertig                          |
 | Wie reproduziert das jemand anderes? | Hoffen, dass die Klick-Reihenfolge dokumentiert ist | `.qmd` plus Daten → identisches Ergebnis |
 
-Quarto ist der Nachfolger von R Markdown. R Markdown war R-zentriert; Quarto ist mehrsprachig (R, Python, Julia, Observable) und vereinheitlicht die Konfiguration. Für unsere Zwecke benutzen wir Quarto mit R — alles, was du aus R-Markdown-Tutorials kennst, läuft fast unverändert in Quarto weiter.
+Quarto ist der Nachfolger von R Markdown. R Markdown war R-zentriert; Quarto ist mehrsprachig (R, Python, Julia, Observable) und vereinheitlicht die Konfiguration. Für unsere Zwecke benutzen wir Quarto mit R – alles, was du aus R-Markdown-Tutorials kennst, läuft fast unverändert in Quarto weiter.
 
 ::: {.callout-note collapse="true"}
 ## Hintergrund: R Markdown, Quarto, knitr
@@ -50,9 +50,9 @@ Quarto ist der Nachfolger von R Markdown. R Markdown war R-zentriert; Quarto ist
 Unter der Haube nutzt Quarto weiterhin knitr, die R-Engine, die Code-Chunks ausführt und in Markdown einbettet. Was Quarto neu macht, ist die Schicht *darüber*: ein einheitliches YAML-Format, eine konsistente Output-Architektur und Unterstützung für Bücher (wie dieses hier), Webseiten, Folien und Dashboards. Die meisten Beispiele aus R-Markdown-Tutorials funktionieren in Quarto identisch.
 :::
 
-## Markdown — die Schreibebene
+## Markdown – die Schreibebene
 
-Bevor du dein erstes `.qmd` baust, ein Mini-Spickzettel zu **Markdown** — der Auszeichnungssprache, in der du den *Lauftext* schreibst (also alles, was kein R-Code ist). Markdown ist absichtlich simpel: ein paar Sonderzeichen reichen für die meisten Formatierungen.
+Bevor du dein erstes `.qmd` baust, ein Mini-Spickzettel zu **Markdown** – der Auszeichnungssprache, in der du den *Lauftext* schreibst (also alles, was kein R-Code ist). Markdown ist absichtlich simpel: ein paar Sonderzeichen reichen für die meisten Formatierungen.
 
 | Markdown               | Ergebnis                              |
 | :--------------------- | :------------------------------------ |
@@ -67,7 +67,7 @@ Bevor du dein erstes `.qmd` baust, ein Mini-Spickzettel zu **Markdown** — der 
 | `> Zitat`              | eingerücktes Zitat                    |
 | Leerzeile              | neuer Absatz                          |
 
-Mehr brauchst du für 90 % aller Hausarbeiten nicht. Für Tabellen, Fußnoten und Bilder gibt es eigene Markdown-Syntax — die [Quarto-Markdown-Referenz](https://quarto.org/docs/authoring/markdown-basics.html) ist der Spickzettel für später.
+Mehr brauchst du für 90 % aller Hausarbeiten nicht. Für Tabellen, Fußnoten und Bilder gibt es eigene Markdown-Syntax – die [Quarto-Markdown-Referenz](https://quarto.org/docs/authoring/markdown-basics.html) ist der Spickzettel für später.
 
 ## Dein erstes `.qmd`
 
@@ -93,11 +93,11 @@ mean(c(1, 2, 3, 4, 5))
 
 Du erkennst:
 
-1. **YAML-Header** zwischen `---`-Linien — Metadaten und Format-Konfiguration.
-2. Markdown-Lauftext — siehe Mini-Spickzettel oben.
-3. Code-Chunks in dreifachen Backticks mit `{r}` — werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.
+1. **YAML-Header** zwischen `---`-Linien – Metadaten und Format-Konfiguration.
+2. Markdown-Lauftext – siehe Mini-Spickzettel oben.
+3. Code-Chunks in dreifachen Backticks mit `{r}` – werden beim Rendern ausgeführt, ihr Output landet direkt im Bericht.
 
-Das Ergebnis (gerendert) zeigt deinen Text, die Code-Zeile *und* deren Ausgabe (`3`) — alles in einer fertigen HTML-Datei. Genau dieser Workflow trägt dich von der Hausarbeit bis zur Dissertation.
+Das Ergebnis (gerendert) zeigt deinen Text, die Code-Zeile *und* deren Ausgabe (`3`) – alles in einer fertigen HTML-Datei. Genau dieser Workflow trägt dich von der Hausarbeit bis zur Dissertation.
 
 Jede Schicht landet an ihrer eigenen Stelle im Bericht (@fig-qmd-schichten): Aus dem YAML-Header werden Titel und Autorin, aus dem Lauftext Überschrift und Absatz, aus dem Chunk die Code-Zeile mit ihrer Ausgabe `[1] 3`.
 
@@ -105,7 +105,7 @@ Jede Schicht landet an ihrer eigenen Stelle im Bericht (@fig-qmd-schichten): Aus
 
 ## YAML-Header: das Steuerpult
 
-Der YAML-Header steuert das Verhalten deines Dokuments. Statt sofort alle Felder zu sehen, baust du ihn dir in drei Ausbaustufen auf — von „minimal lauffähig" bis „komplette Hausarbeit".
+Der YAML-Header steuert das Verhalten deines Dokuments. Statt sofort alle Felder zu sehen, baust du ihn dir in drei Ausbaustufen auf – von „minimal lauffähig" bis „komplette Hausarbeit".
 
 ### Stufe 1: Minimal
 
@@ -177,13 +177,13 @@ lang: de
 Neu dazugekommen:
 
 - Mehrere `author`-Einträge als Liste (mit `-` eingerückt).
-- Mehrere Output-Formate parallel — Quarto rendert alle drei in einem Lauf.
+- Mehrere Output-Formate parallel – Quarto rendert alle drei in einem Lauf.
 - `bibliography` verweist auf eine BibTeX-Datei (siehe @sec-literatur).
 - `csl` wählt den Zitationsstil (APA, Chicago, …).
 - `execute` setzt Default-Optionen für alle Code-Chunks: `echo: true` zeigt den Code, `warning: false` / `message: false` blendet R-Meldungen aus.
 
 ::: {.callout-warning}
-**Vorsicht: YAML-Einrückung.** YAML ist leerzeichensensitiv. Untergeordnete Felder werden mit *zwei Leerzeichen* eingerückt — Tabulatoren oder unregelmäßige Einrückung führen zu Render-Fehlern. Wenn ein Quarto-Render mit „yaml parsing error" abbricht, schaue zuerst auf die Einrückung.
+**Vorsicht: YAML-Einrückung.** YAML ist leerzeichensensitiv. Untergeordnete Felder werden mit *zwei Leerzeichen* eingerückt – Tabulatoren oder unregelmäßige Einrückung führen zu Render-Fehlern. Wenn ein Quarto-Render mit „yaml parsing error" abbricht, schaue zuerst auf die Einrückung.
 :::
 
 ## Code-Chunks im Detail
@@ -222,7 +222,7 @@ Welche Option du brauchst, hängt davon ab, was im Bericht stehen soll:
 
 **Chunk-Labels** (wie `mein-chunk` oben) müssen pro Dokument *eindeutig* sein. Sie dienen als Cache-Schlüssel und als Anker für Grafik-Referenzen.
 
-Seit Quarto setzt sich auch ein zweiter Schreibstil für Chunk-Optionen durch — der **`#|`-Stil**, innerhalb des Chunks statt im Header:
+Seit Quarto setzt sich auch ein zweiter Schreibstil für Chunk-Optionen durch – der **`#|`-Stil**, innerhalb des Chunks statt im Header:
 
 ````markdown
 ```{{r mein-chunk}}
@@ -234,11 +234,11 @@ mean(mtcars$mpg)
 ```
 ````
 
-Beide Schreibweisen sind erlaubt. In diesem Buch nutzen wir die Header-Notation (`{r mein-chunk, echo=TRUE}`), weil sie kompakter ist. In modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen — er ist bei langen Optionslisten lesbarer.
+Beide Schreibweisen sind erlaubt. In diesem Buch nutzen wir die Header-Notation (`{r mein-chunk, echo=TRUE}`), weil sie kompakter ist. In modernen Quarto-Beispielen im Web wirst du häufiger den `#|`-Stil sehen – er ist bei langen Optionslisten lesbarer.
 
 ### Setup-Chunk
 
-Am Anfang jedes Dokuments steht typischerweise ein **Setup-Chunk**, der Pakete lädt und Defaults setzt — versteckt vor den Leser:innen mit `include=FALSE`:
+Am Anfang jedes Dokuments steht typischerweise ein **Setup-Chunk**, der Pakete lädt und Defaults setzt – versteckt vor den Leser:innen mit `include=FALSE`:
 
 ````markdown
 ```{{r setup, include=FALSE}}
@@ -248,7 +248,7 @@ allbus <- read_spss("ALLBUS2023.sav")
 ```
 ````
 
-Alle nachfolgenden Chunks erben den geladenen Zustand. Das ist der Grund, warum du in den Kapiteln dieses Buchs `tidyverse` und `mariposa` nicht in jedem Chunk neu lädst — der Setup-Chunk oben hat schon alles bereitgestellt.
+Alle nachfolgenden Chunks erben den geladenen Zustand. Das ist der Grund, warum du in den Kapiteln dieses Buchs `tidyverse` und `mariposa` nicht in jedem Chunk neu lädst – der Setup-Chunk oben hat schon alles bereitgestellt.
 
 Beim Rendern startet Quarto eine neue R-Sitzung, in der nur base R geladen ist. Was du vorher in der Konsole geladen oder eingelesen hast, gibt es dort nicht; erst der Setup-Chunk legt tidyverse und mariposa auf die Werkbank und `allbus` ins Environment (@fig-render-sitzung).
 
@@ -274,7 +274,7 @@ Mit `eval=FALSE` überspringt R den Setup-Chunk. Die neue Sitzung bleibt leer, e
 
 ## Inline-R-Code: Zahlen im Fließtext
 
-Manchmal willst du nicht eine ganze Tabelle einbinden, sondern *eine Zahl* direkt im Satz nennen — den Stichprobenumfang, einen Mittelwert, einen p-Wert. Quarto erlaubt das über **Inline-R-Code** mit Backticks und einem vorangestellten `r`:
+Manchmal willst du nicht eine ganze Tabelle einbinden, sondern *eine Zahl* direkt im Satz nennen – den Stichprobenumfang, einen Mittelwert, einen p-Wert. Quarto erlaubt das über **Inline-R-Code** mit Backticks und einem vorangestellten `r`:
 
 ```markdown
 Die Stichprobe enthält `r nrow(mtcars)` Fahrzeuge.
@@ -285,9 +285,9 @@ Beim Rendern wird daraus:
 
 > Die Stichprobe enthält `r nrow(mtcars)` Fahrzeuge. Der durchschnittliche Verbrauch liegt bei `r round(mean(mtcars$mpg), 1)` mpg.
 
-Inline-Code ist eines der wichtigsten Werkzeuge für reproduzierbare Berichte: Du nennst keine Zahl manuell, sondern lässt sie aus den Daten berechnen. Filterst du später anders oder spielst eine neue Datenwelle ein, sind alle Zahlen im Bericht beim nächsten Render automatisch aktuell — und keine bleibt versehentlich auf einem alten Wert stehen.
+Inline-Code ist eines der wichtigsten Werkzeuge für reproduzierbare Berichte: Du nennst keine Zahl manuell, sondern lässt sie aus den Daten berechnen. Filterst du später anders oder spielst eine neue Datenwelle ein, sind alle Zahlen im Bericht beim nächsten Render automatisch aktuell – und keine bleibt versehentlich auf einem alten Wert stehen.
 
-R gibt Zahlen mit voller Maschinengenauigkeit aus (`23.847395`). Für den Fließtext rundest du deshalb mit `round()` auf so viele Nachkommastellen, wie es die Lesbarkeit verlangt — meist eine oder zwei.
+R gibt Zahlen mit voller Maschinengenauigkeit aus (`23.847395`). Für den Fließtext rundest du deshalb mit `round()` auf so viele Nachkommastellen, wie es die Lesbarkeit verlangt – meist eine oder zwei.
 
 ## Tabellen und Grafiken
 
@@ -300,7 +300,7 @@ head(mtcars, 3) |>
   knitr::kable(caption = "Erste drei Zeilen des mtcars-Datensatzes")
 ```
 
-`kable()` ist Teil von `knitr` und kommt mit jeder R-Markdown- bzw. Quarto-Installation mit — du brauchst kein zusätzliches Paket. Für die meisten Hausarbeiten reicht das vollkommen. Wenn du später anspruchsvollere Tabellen brauchst (Spalten-Gruppen, bedingte Färbung, mehrzeilige Header), sind das Paket [`gt`](https://gt.rstudio.com/) oder [`flextable`](https://ardata-fr.github.io/flextabook/) die nächsten Schritte — beide nicht Teil des Buch-Stacks.
+`kable()` ist Teil von `knitr` und kommt mit jeder R-Markdown- bzw. Quarto-Installation mit – du brauchst kein zusätzliches Paket. Für die meisten Hausarbeiten reicht das vollkommen. Wenn du später anspruchsvollere Tabellen brauchst (Spalten-Gruppen, bedingte Färbung, mehrzeilige Header), sind das Paket [`gt`](https://gt.rstudio.com/) oder [`flextable`](https://ardata-fr.github.io/flextabook/) die nächsten Schritte – beide nicht Teil des Buch-Stacks.
 
 ### Grafiken
 
@@ -370,14 +370,14 @@ Die meisten Studierenden verwalten ihre Quellen in Zotero. Mit dem Plugin [Bette
 
 ## Open Science: Reproduzierbarkeit als Standard
 
-Quarto ist nicht nur Komfort — es ist die technische Grundlage einer Forschungspraxis, die sich seit etwa 2015 als **Open Science** etabliert hat. Drei Konzepte solltest du kennen.
+Quarto ist nicht nur Komfort – es ist die technische Grundlage einer Forschungspraxis, die sich seit etwa 2015 als **Open Science** etabliert hat. Drei Konzepte solltest du kennen.
 
 ### Reproduzierbarkeit vs. Replizierbarkeit
 
 Goodman, Fanelli & Ioannidis (2016) unterscheiden zwei Begriffe, die im Alltag gerne verwechselt werden:
 
 - **Reproduzierbar** = gleicher Code + gleiche Daten → gleiches Ergebnis. Das ist die technische Mindestanforderung. Quarto liefert sie dir geschenkt.
-- **Replizierbar** = gleiche Methode + neue Daten → ähnliches Ergebnis. Das ist die wissenschaftliche Frage — kann jemand anderes deinen Befund mit einer neuen Stichprobe bestätigen?
+- **Replizierbar** = gleiche Methode + neue Daten → ähnliches Ergebnis. Das ist die wissenschaftliche Frage – kann jemand anderes deinen Befund mit einer neuen Stichprobe bestätigen?
 
 Reproduzierbarkeit ist Voraussetzung für Replizierbarkeit, aber nicht umgekehrt. Eine Studie kann perfekt reproduzierbar sein und trotzdem ein Ein-mal-Ergebnis (gerne mit *p* = .04) bleiben.
 
@@ -385,23 +385,23 @@ Reproduzierbarkeit ist Voraussetzung für Replizierbarkeit, aber nicht umgekehrt
 
 Die FAIR-Prinzipien beschreiben, was gute Forschungsdaten und gute Forschungssoftware ausmacht:
 
-- Findable — auffindbar über persistente Identifier (z. B. DOI).
-- Accessible — abrufbar über offene, dokumentierte Protokolle.
-- Interoperable — in standardisierten Formaten (`.csv` statt `.xlsx`-spezifischer Trickserei).
-- Reusable — mit ausreichender Dokumentation und klarer Lizenz weiternutzbar.
+- Findable – auffindbar über persistente Identifier (z. B. DOI).
+- Accessible – abrufbar über offene, dokumentierte Protokolle.
+- Interoperable – in standardisierten Formaten (`.csv` statt `.xlsx`-spezifischer Trickserei).
+- Reusable – mit ausreichender Dokumentation und klarer Lizenz weiternutzbar.
 
 Für deine Hausarbeit reicht ein kleiner Schritt: lege Code und (wenn möglich) Daten auf eine Plattform wie OSF und vergib eine offene Lizenz.
 
 ### Plattformen und Pre-Registration
 
-- [OSF — Open Science Framework](https://osf.io/) — kostenlose Plattform für Forschungsprojekte. Du legst dort Code, Daten und Pre-Registrations ab.
-- [Zenodo](https://zenodo.org/) — vergibt persistente DOIs für Code-Releases (häufig mit GitHub gekoppelt).
-- **Pre-Registration** — Forschungsfrage, Hypothesen und Auswertungsplan werden *vor* Datenerhebung oder Auswertung schriftlich festgelegt. Das schützt vor *p-hacking* und *HARKing* (Hypothesizing After the Results are Known). Sinnvoll für konfirmatorische Studien; explorative Forschung markiert man entsprechend.
+- [OSF – Open Science Framework](https://osf.io/) – kostenlose Plattform für Forschungsprojekte. Du legst dort Code, Daten und Pre-Registrations ab.
+- [Zenodo](https://zenodo.org/) – vergibt persistente DOIs für Code-Releases (häufig mit GitHub gekoppelt).
+- **Pre-Registration** – Forschungsfrage, Hypothesen und Auswertungsplan werden *vor* Datenerhebung oder Auswertung schriftlich festgelegt. Das schützt vor *p-hacking* und *HARKing* (Hypothesizing After the Results are Known). Sinnvoll für konfirmatorische Studien; explorative Forschung markiert man entsprechend.
 
 ::: {.callout-note collapse="true"}
 ## Hintergrund: Die Replikationskrise
 
-Die *replication crisis* in der Psychologie und den empirischen Sozialwissenschaften (ab 2011, zugespitzt durch die Open Science Collaboration 2015) hat gezeigt, dass viele publizierte Befunde sich nicht reproduzieren lassen — teils, weil Methoden unsauber dokumentiert waren, teils, weil das Forschungs-Anreizsystem signifikante Ergebnisse über sorgfältige Methoden belohnte. Open Science, Pre-Registration und reproduzierbare Berichte (Quarto, R Markdown) sind die strukturelle Antwort darauf.
+Die *replication crisis* in der Psychologie und den empirischen Sozialwissenschaften (ab 2011, zugespitzt durch die Open Science Collaboration 2015) hat gezeigt, dass viele publizierte Befunde sich nicht reproduzieren lassen – teils, weil Methoden unsauber dokumentiert waren, teils, weil das Forschungs-Anreizsystem signifikante Ergebnisse über sorgfältige Methoden belohnte. Open Science, Pre-Registration und reproduzierbare Berichte (Quarto, R Markdown) sind die strukturelle Antwort darauf.
 :::
 
 ## Projektstruktur und Versionskontrolle
@@ -414,7 +414,7 @@ mein-projekt/
 │   ├── _common.R             # geteilte Theme-/Helper-Funktionen
 │   └── prep.R                # Datenpräp als Funktion
 ├── output/                   # erzeugte Tabellen/Grafiken
-├── ALLBUS2023.sav            # Rohdaten — niemals bearbeiten
+├── ALLBUS2023.sav            # Rohdaten – niemals bearbeiten
 ├── README.md                 # Beschreibung der Datenquelle
 ├── literatur.bib
 ├── analyse.qmd               # das Hauptdokument
@@ -424,21 +424,21 @@ mein-projekt/
 Drei Regeln, die sich bewährt haben:
 
 - Rohdaten sind heilig. Du schreibst nie in `ALLBUS2023.sav` zurück. Bearbeitete Daten bleiben im Speicher (während der Analyse) oder landen als abgeleitete Datei in `output/`.
-- Code, Daten und Dokument liegen zusammen. Niemals absolute Pfade (`/Users/anna/...`) — sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
+- Code, Daten und Dokument liegen zusammen. Niemals absolute Pfade (`/Users/anna/...`) – sobald du teilst, sind sie kaputt. Mit RStudio-Projekten ist der Pfad automatisch relativ zum Projektordner.
 - Geteilte Logik kommt in `R/`. Wenn drei `.qmd`-Dateien dieselben Daten vorbereiten, gehört der Code in `R/prep.R` und wird in jedem Dokument per `source("R/prep.R")` eingebunden.
 
-### Versionskontrolle mit Git — Ausblick
+### Versionskontrolle mit Git – Ausblick
 
-Git ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht — aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
+Git ist eine Software, die jeden Stand deines Projekts speichert und dir erlaubt, jederzeit zurückzuspringen. Für ein einzelnes Hausarbeits-Projekt brauchst du Git nicht – aber sobald du *zu zweit* an einem Skript arbeitest, ist Git der unverzichtbare Standard. RStudio bringt Git-Integration mit (Reiter `Git` oben rechts).
 
-Dieses Buch behandelt Git nicht im Detail — es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
+Dieses Buch behandelt Git nicht im Detail – es würde ein eigenes Kapitel füllen. Wenn du einsteigen willst, sind die [Happy Git with R](https://happygitwithr.com/)-Anleitung von Jenny Bryan und das [GitHub Student Developer Pack](https://education.github.com/pack) (kostenlose private Repositories für Studierende) die besten Einstiege.
 
 ## Publizieren: HTML, PDF, Word
 
 Welches Output-Format das richtige ist, hängt vom Adressaten ab:
 
-- HTML — für die eigene Webseite, für GitHub Pages, für interaktive Berichte mit Verlinkungen. Schnellster Render-Lauf.
-- PDF — für Seminar-Abgaben und formale Berichte. Quarto nutzt LaTeX im Hintergrund; installiere einmalig:
+- HTML – für die eigene Webseite, für GitHub Pages, für interaktive Berichte mit Verlinkungen. Schnellster Render-Lauf.
+- PDF – für Seminar-Abgaben und formale Berichte. Quarto nutzt LaTeX im Hintergrund; installiere einmalig:
 
 ```{r tinytex, eval=FALSE}
 install.packages("tinytex")
@@ -446,10 +446,10 @@ tinytex::install_tinytex()
 ```
 
 ::: {.callout-warning}
-**Vorsicht: Erster PDF-Render kann dauern.** `tinytex::install_tinytex()` lädt eine kleine LaTeX-Distribution herunter (ca. 5–10 Minuten je nach Internet). Beim *ersten* PDF-Render fehlende LaTeX-Pakete werden dann automatisch nachinstalliert — das kann den ersten Lauf nochmal ein paar Minuten verlängern. Wenn der Render mit einer kryptischen LaTeX-Fehlermeldung abbricht, lohnt es sich, ihn ein zweites Mal zu starten — oft fehlte nur ein Paket beim ersten Mal.
+**Vorsicht: Erster PDF-Render kann dauern.** `tinytex::install_tinytex()` lädt eine kleine LaTeX-Distribution herunter (ca. 5–10 Minuten je nach Internet). Beim *ersten* PDF-Render fehlende LaTeX-Pakete werden dann automatisch nachinstalliert – das kann den ersten Lauf nochmal ein paar Minuten verlängern. Wenn der Render mit einer kryptischen LaTeX-Fehlermeldung abbricht, lohnt es sich, ihn ein zweites Mal zu starten – oft fehlte nur ein Paket beim ersten Mal.
 :::
 
-- Word — für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.
+- Word – für Co-Autor:innen, die Kommentare über die Word-Review-Funktion einfügen wollen. Du verlierst etwas Layout-Kontrolle, gewinnst aber an Kollaboration.
 
 Mehrere Formate parallel:
 
@@ -461,7 +461,7 @@ format:
   docx: default
 ```
 
-Quarto rendert beim nächsten Lauf alle drei. Über `quarto publish` kannst du HTML-Outputs direkt zu GitHub Pages, Quarto Pub oder Netlify veröffentlichen — alles ohne Server-Setup.
+Quarto rendert beim nächsten Lauf alle drei. Über `quarto publish` kannst du HTML-Outputs direkt zu GitHub Pages, Quarto Pub oder Netlify veröffentlichen – alles ohne Server-Setup.
 
 ## Übungen {-}
 
@@ -474,7 +474,7 @@ Lege in deinem RStudio-Projekt ein neues Quarto-Dokument an, schreibe einen kurz
 :::
 
 ::: {.callout-note title="Übung 2 · Inline-R-Code üben · Reproduktion"}
-Schreibe einen Methoden-Satz, der den Stichprobenumfang und den Mittelwert *einer* Variable aus `mtcars` per Inline-Code einbettet. Achte auf eine sinnvolle Rundung. (`mtcars` ist ein in R eingebauter Beispieldatensatz — du brauchst ihn nicht laden.)
+Schreibe einen Methoden-Satz, der den Stichprobenumfang und den Mittelwert *einer* Variable aus `mtcars` per Inline-Code einbettet. Achte auf eine sinnvolle Rundung. (`mtcars` ist ein in R eingebauter Beispieldatensatz – du brauchst ihn nicht laden.)
 :::
 
 ::: {.callout-tip title="Lösung" collapse="true"}
@@ -510,9 +510,9 @@ Im YAML: `bibliography: literatur.bib`. Im Text: `[@Schulz2017]` und `[@Goodman2
 :::
 
 ::: {.callout-note title="Übung 4 · Mini-Forschungsbericht skizzieren · Mini-Forschungsfrage"}
-Skizziere die Struktur eines reproduzierbaren Forschungsberichts in einer eigenen `.qmd`-Datei: YAML-Header mit Titel, Autor:in, Datum; Abschnitte *Einleitung*, *Daten und Methode*, *Ergebnisse*, *Diskussion*, *Literatur*. Schreibe pro Abschnitt 2–3 Platzhalter-Sätze, was dort später hineinkommen wird — bezogen auf eine politik- oder sozialwissenschaftliche Frage, die dich interessiert. Speichere das Skelett — du wirst es im Lauf des Buchs füllen.
+Skizziere die Struktur eines reproduzierbaren Forschungsberichts in einer eigenen `.qmd`-Datei: YAML-Header mit Titel, Autor:in, Datum; Abschnitte *Einleitung*, *Daten und Methode*, *Ergebnisse*, *Diskussion*, *Literatur*. Schreibe pro Abschnitt 2–3 Platzhalter-Sätze, was dort später hineinkommen wird – bezogen auf eine politik- oder sozialwissenschaftliche Frage, die dich interessiert. Speichere das Skelett – du wirst es im Lauf des Buchs füllen.
 
-*Keine Musterlösung — diese Übung gibt dir die Vorlage für dein eigenes Capstone-Projekt am Ende des Buchs.*
+*Keine Musterlösung – diese Übung gibt dir die Vorlage für dein eigenes Capstone-Projekt am Ende des Buchs.*
 :::
 
 ## Was du jetzt weißt {-}
@@ -527,14 +527,14 @@ Skizziere die Struktur eines reproduzierbaren Forschungsberichts in einer eigene
 - Du strukturierst dein Projekt (`R/`, `output/`) und versionierst es mit Git.
 - Du publizierst in HTML, PDF oder Word.
 
-Im nächsten Kapitel kommst du zur Programmiersprache R selbst — Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.
+Im nächsten Kapitel kommst du zur Programmiersprache R selbst – Variablen, Funktionen, Datentypen und der Pipe-Operator. Damit baust du die Grundlage für jede der folgenden Analysen.
 
 ## Weiterführend {-}
 
-- Posit, [Quarto-Dokumentation](https://quarto.org/) — Referenz für alle Output-Formate, YAML-Optionen und Erweiterungen.
-- Garrett Grolemund & Hadley Wickham, [R for Data Science (2e), Kapitel „Quarto"](https://r4ds.hadley.nz/quarto.html) — kompakter Einstieg in den Workflow.
-- Kieran Healy, [The Plain Person's Guide to Plain Text Social Science](https://plain-text.co/) — wie sozialwissenschaftliche Forschung mit Plain-Text-Tools (Quarto, Git, BibTeX) durchgängig wird.
-- Steven Goodman, Daniele Fanelli & John Ioannidis, [„What Does Research Reproducibility Mean?"](https://www.science.org/doi/10.1126/scitranslmed.aaf5027) — Science Translational Medicine (2016) — die meistzitierte Definition.
-- Open Science Collaboration, [„Estimating the reproducibility of psychological science"](https://www.science.org/doi/10.1126/science.aac4716) — Science (2015) — die Studie, die die Replikationskrise ins Bewusstsein der Sozialwissenschaft brachte.
-- [Open Science Framework](https://osf.io/) — Plattform für Daten, Code und Pre-Registrations.
-- [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) — der Schlüssel zur Zotero-Quarto-Brücke.
+- Posit, [Quarto-Dokumentation](https://quarto.org/) – Referenz für alle Output-Formate, YAML-Optionen und Erweiterungen.
+- Garrett Grolemund & Hadley Wickham, [R for Data Science (2e), Kapitel „Quarto"](https://r4ds.hadley.nz/quarto.html) – kompakter Einstieg in den Workflow.
+- Kieran Healy, [The Plain Person's Guide to Plain Text Social Science](https://plain-text.co/) – wie sozialwissenschaftliche Forschung mit Plain-Text-Tools (Quarto, Git, BibTeX) durchgängig wird.
+- Steven Goodman, Daniele Fanelli & John Ioannidis, [„What Does Research Reproducibility Mean?"](https://www.science.org/doi/10.1126/scitranslmed.aaf5027) – Science Translational Medicine (2016) – die meistzitierte Definition.
+- Open Science Collaboration, [„Estimating the reproducibility of psychological science"](https://www.science.org/doi/10.1126/science.aac4716) – Science (2015) – die Studie, die die Replikationskrise ins Bewusstsein der Sozialwissenschaft brachte.
+- [Open Science Framework](https://osf.io/) – Plattform für Daten, Code und Pre-Registrations.
+- [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/) – der Schlüssel zur Zotero-Quarto-Brücke.
