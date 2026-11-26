@@ -43,6 +43,39 @@ ERWARTET_KAP04 = {
 }
 
 
+# Englische Fassung: gleiche Schlüssel, Zahlen/Code/Namen gleich, Beschriftungen und Wertelabels aus ZA8833
+# (ALLBUS2023_en.sav; fehlende Codes nach set_na(), Kennbuchstaben g, l, n, o bei mm01)
+ERWARTET_KAP04_EN = {
+    "k04-einlesen": ["ALLBUS2023.sav", "read_spss()", "allbus", "5,246 × 579", "<-", "read_spss",
+                     '"ALLBUS2023.sav"', "File in the project folder", "Function from mariposa", "Object in R"],
+    "k04-platte": ["allbus", "respid", "age", "mm01", "1", "5", "50", "51", "69", "72", "18", "2",
+                   "nrow(allbus)", "[1] 5246", "ncol(allbus)", "[1] 579", "A row is a case:",
+                   "A tower is a variable:", "An empty brick is a missing value."],
+    "k04-select": ERWARTET_KAP04["k04-select"],
+    "k04-dollar-select": ["allbus$age |> head(5)", "allbus |> select(age) |> head(5)", "[1] 50 51 69 72 18",
+                          "5 × 1", "age", "<dbl+lbl>", "50", "51", "69", "72", "18", "Vector", "Tibble"],
+    "k04-filter": ["allbus", "sex", "age", "educ", "MALE", "FEMALE", "50", "51", "69", "72", "18", "45", "3", "4",
+                   "5", "sex == 2", "2,672 × 3", "allbus |> filter(sex == 2) |> select(sex, age, educ)"],
+    "k04-dbl-lbl": ["1", "MALE", "double", "haven_labelled", "<dbl+lbl>", "dbl", "lbl", "class(allbus$sex)",
+                    '[1] "haven_labelled" "vctrs_vctr"     "double"', "Number", "Value label"],
+    "k04-to-label": ["sex", "<dbl+lbl>", "<fct>", "<dbl>", "to_label()", "to_numeric()", "MALE", "FEMALE", "1", "2",
+                     "Factor", "Number without label"],
+    "k04-labels": ["mm01", '"EXERCISE OF MUSLIM FAITH SHLD BE LIMITED"', "COMPLETELY DISAGREE",
+                   "COMPLETELY AGREE", "1", "7", "Variable name", "Variable label", "Value labels",
+                   "var_label()", "val_labels()"],
+    "k04-missing-codes": ["-42", "-11", "-9", "-8", "DATA ERROR: MR", "NAP: SPLIT", "NO ANSWER", "DO NOT KNOW",
+                          "2", "1647", "73", "123", "NA(g)", "NA(l)", "NA(n)", "NA(o)", "code", "n", "tag",
+                          "na_frequencies(allbus$mm01)", "mm01", "mm06", "SPLIT DESIGN",
+                          "two thirds: questions asked", "just under a third: NAP: SPLIT"],
+    "k04-set-na": ["6", "7", "OTHER SCHOOL CERTIF.", "STILL AT SCHOOL", "18", "26", "set_na", "educ = c(6, 7)",
+                   "# total N=5246 valid N=5093", "VALID", "MISSING", "18 + 26 = 44 fewer valid values"],
+    "k04-filter-na": ["sex", "<dbl+lbl>", "1", "2", "3", "110", "MALE", "FEMALE", "NO ANSWER", "sex == 1", "TRUE",
+                      "FALSE", "NA", "filter()", "allbus |> filter(sex == 1)"],
+    "k04-drop-na": ["mm01", "mm02", "mm03", "1", "2", "53", "5", "3", "4", "drop_na()", "one gap",
+                    "allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow()", "[1] 3285"],
+}
+
+
 def texte_pos(svg):
     """(Text, x, y, Farbe) je <text>, in Zoll; x ist bei zentrierten Steinwerten die Mitte."""
     from lego import DPI
@@ -133,6 +166,42 @@ class TestKap04(unittest.TestCase):
         blau = [(t, round(y, 2)) for t, _, y, f in pos if f == STEIN["num"][1]]
         self.assertEqual([t for t, _ in blau], ["5", "3", "4", "5", "3", "4"])     # Quelle und Ergebnis: Reihe 1
         self.assertEqual(len({y for _, y in blau}), 1)                           # auf gleicher Höhe
+
+
+class TestKap04Englisch(unittest.TestCase):
+    def tearDown(self):
+        import sprache
+        sprache.setze("de")
+
+    def test_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP04_EN), set(ERWARTET_KAP04))
+
+    def test_englische_texte(self):
+        import kap04
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap04.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP04_EN[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap04
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap04.FIGUREN.items():
+            reste = check_en.deutsch_reste(alle_texte(fn().svg()))
+            self.assertEqual(reste, [], name)
+
+    def test_deutsch_unveraendert(self):
+        import kap04
+        import sprache
+        sprache.setze("en")
+        en_texte = alle_texte(kap04.labels_fig().svg())
+        sprache.setze("de")
+        self.assertIn("Variablenname", alle_texte(kap04.labels_fig().svg()))
+        self.assertNotIn("Variablenname", en_texte)
 
 
 if __name__ == "__main__":

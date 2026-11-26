@@ -1,12 +1,14 @@
 """Cover des Buchs (Design „Baukasten“): Titel, drei Türme aus Bausteinen und die Begleitfigur „hallo“.
 
-Aufruf: python3 figuren/cover.py — schreibt Bilder/cover.svg.
+Aufruf: python3 figuren/cover.py [--en] — schreibt Bilder/cover.svg (mit --en: Bilder/cover-en.svg).
 """
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lego  # noqa: E402
+import sprache  # noqa: E402
+from sprache import t as tr  # noqa: E402
 from lego import R, P, text, rect, L  # noqa: E402
 
 
@@ -20,8 +22,8 @@ def cover_spiel(path, bg, ink, sub, steine, plate, frame=None):
     x = 0.24
     text(s, x, 0.28, W - 2 * x, 0.3, [P(R("ALLBUS 2023 · tidyverse · mariposa", size=10, bold=True, color=sub), align=L)])
     text(s, x, 0.56, W - 2 * x, 0.6, [P(R("R Workshop", font=rund, size=26, bold=True, color=ink), align=L)])
-    text(s, x, 1.02, W - 2 * x, 0.4, [P(R("Sozialwissenschaften", font=rund, size=16, color=ink), align=L)])
-    text(s, x, 1.42, W - 2 * x, 0.6, [P(R("Einführung in die statistische Datenanalyse mit tidyverse und mariposa", size=11, color=sub), align=L)])
+    text(s, x, 1.02, W - 2 * x, 0.4, [P(R(tr("Sozialwissenschaften"), font=rund, size=16, color=ink), align=L)])
+    text(s, x, 1.42, W - 2 * x, 0.6, [P(R(tr("Einführung in die statistische Datenanalyse mit tidyverse und mariposa"), size=11, color=sub), align=L)])
     bw, bh, gap = 0.5, 0.28, 0.1
     px, base = 0.3, 3.62
     for i, (fill, line) in enumerate(steine):
@@ -38,7 +40,10 @@ def cover_spiel(path, bg, ink, sub, steine, plate, frame=None):
 
 
 if __name__ == "__main__":
-    ziel = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Bilder", "cover.svg")
+    englisch = "--en" in sys.argv[1:]
+    sprache.setze("en" if englisch else "de")
+    datei = "cover-en.svg" if englisch else "cover.svg"
+    ziel = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Bilder", datei)
     cover_spiel(ziel, "#FFF4E8", "#1E2D3C", "#6E6157",
                 [("#BFE3F7", "#86B9DE"), ("#CDEFD9", "#8FCBA6"), ("#DCD6F8", "#A79FE2")], "#F7C9DA")
-    print("Bilder/cover.svg geschrieben")
+    print(f"Bilder/{datei} geschrieben")

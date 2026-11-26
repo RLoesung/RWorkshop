@@ -7,6 +7,7 @@ from lego import (Canvas, R, P, text, rect, label_box, tokens, stein, schild, ar
                   connector, vline, codebox, text_width, INK, GRAY, GREEN, ORANGE, CARDLINE, DARKORANGE, WHITE,
                   STICKER, STEIN, MONO, C, L, RT)
 from kap03 import mono, notiz, platte
+from sprache import t as tr
 
 
 def aufkleber(s, x, y, w, h, t, size=10):
@@ -90,8 +91,8 @@ def einlesen():
         saeule(s, 5.0 + k * 0.52, 0.75, 0.45, 0.2, kind, ["", "", "", ""])
     punkte(s, 7.08, 1.12)
     platte(s, 4.92, 1.83, 2.58)
-    for mitte, t in [(1.025, "Datei im Projektordner"), (3.425, "Funktion aus mariposa"), (6.2, "Objekt in R")]:
-        text(s, mitte - 1.1, 1.98, 2.2, 0.25, notiz(t, size=10.5))
+    for mitte, txt in [(1.025, "Datei im Projektordner"), (3.425, "Funktion aus mariposa"), (6.2, "Objekt in R")]:
+        text(s, mitte - 1.1, 1.98, 2.2, 0.25, notiz(tr(txt), size=10.5))
     tokens(s, 0.15, 2.42, [("allbus", "obj"), ("<-", "sym"), ("read_spss", "fun"), ("(", "sym"),
                            ('"ALLBUS2023.sav"', "arg"), (")", "sym")], size=12, h=0.36)
     return s
@@ -113,16 +114,16 @@ def platte_fig():
     outline(s, xs[1] - 0.07, top - 0.12, w + 0.14, 5 * (h + 0.07) + 0.1, color=GREEN, lw=1.75)
     cx, cw = 3.65, 3.8
     card(s, cx, 0.62, cw, 0.8)
-    text(s, cx + 0.15, 0.68, cw - 0.3, 0.75, [P(R("Eine Reihe ist ein Fall:", size=11.5, bold=True, color=DARKORANGE)),
+    text(s, cx + 0.15, 0.68, cw - 0.3, 0.75, [P(R(tr("Eine Reihe ist ein Fall:"), size=11.5, bold=True, color=DARKORANGE)),
                                              P(R("nrow(allbus)", font=MONO, size=10.5, bold=True), sb=3),
                                              P(R("[1] 5246", font=MONO, size=10.5, bold=True, color=GREEN), sb=1)])
     card(s, cx, 1.55, cw, 0.8)
-    text(s, cx + 0.15, 1.61, cw - 0.3, 0.75, [P(R("Ein Turm ist eine Variable:", size=11.5, bold=True, color=GREEN)),
+    text(s, cx + 0.15, 1.61, cw - 0.3, 0.75, [P(R(tr("Ein Turm ist eine Variable:"), size=11.5, bold=True, color=GREEN)),
                                              P(R("ncol(allbus)", font=MONO, size=10.5, bold=True), sb=3),
                                              P(R("[1] 579", font=MONO, size=10.5, bold=True, color=GREEN), sb=1)])
     card(s, cx, 2.48, cw, 0.55)
     stein(s, cx + 0.15, 2.6, 0.6, 0.3, "na", "")
-    text(s, cx + 0.9, 2.48, cw - 1.0, 0.55, [P(R("Ein leerer Stein ist ein fehlender Wert.", size=11.5, bold=True,
+    text(s, cx + 0.9, 2.48, cw - 1.0, 0.55, [P(R(tr("Ein leerer Stein ist ein fehlender Wert."), size=11.5, bold=True,
                                                  color=GRAY))], anchor="middle")
     return s
 
@@ -168,7 +169,7 @@ def dollar_select():
     unten = saeule(s, 0.45, top, w, h, "num", werte, size=12)
     platte(s, 0.35, unten + 0.07, w + 0.2)
     text(s, 1.5, top + 0.75, 2.2, 0.3, mono("[1] 50 51 69 72 18", size=10.5, color=GREEN, align="start"))
-    text(s, 0.15, unten + 0.17, 1.4, 0.25, notiz("Vektor", size=10.5))
+    text(s, 0.15, unten + 0.17, 1.4, 0.25, notiz(tr("Vektor"), size=10.5))
     vline(s, 3.8, 0.15, unten + 0.4, color=CARDLINE, width=0.75)
     # rechts: select() gibt eine Bauplatte mit einem Turm; die Platte hat Platz für weitere Türme
     text(s, 3.95, 0.15, 3.6, 0.28, codezeile("allbus |> select(age) |> head(5)", size=11))
@@ -195,7 +196,7 @@ def filter_fig():
         for k, (w, name) in enumerate(spalten):
             kopf(s, x, w, 0.6, name, size=10.5)
             if k == 0:
-                unten = saeule(s, x, top, w, h, kinds, [r[0] for r in reihen], size=10.5, tags=[r[1] for r in reihen])
+                unten = saeule(s, x, top, w, h, kinds, [r[0] for r in reihen], size=10.5, tags=[tr(r[1]) for r in reihen])
             else:
                 unten = saeule(s, x, top, w, h, kinds, [r[k + 1] for r in reihen], size=10.5)
             x += w + 0.1
@@ -230,8 +231,8 @@ def dbl_lbl():
                                 R(">", font=MONO, size=12, bold=True, color=GRAY), align=C)])
     stein(s, x, y, w, h, "num", "")
     text(s, x, y, 0.8, h, mono("1", size=20, color=zahl), anchor="middle")
-    aufkleber(s, x + 0.82, y + 0.13, w - 0.94, h - 0.26, "MANN", size=14)
-    for mitte, wort, typ, farbe in [(x + 0.4, "Zahl", "double", zahl), (x + 0.82 + (w - 0.94) / 2, "Wertelabel",
+    aufkleber(s, x + 0.82, y + 0.13, w - 0.94, h - 0.26, tr("MANN"), size=14)
+    for mitte, wort, typ, farbe in [(x + 0.4, tr("Zahl"), "double", zahl), (x + 0.82 + (w - 0.94) / 2, tr("Wertelabel"),
                                                                           "haven_labelled", aufk)]:
         text(s, mitte - 0.9, y + h + 0.12, 1.8, 0.6, [P(R(wort, size=11.5, bold=True), align=C),
                                                        P(R(typ, font=MONO, size=10.5, bold=True, color=farbe),
@@ -246,7 +247,7 @@ def to_label_fig():
     h = 0.32
     # Ausgangsturm: Zahl mit Aufkleber
     kopf(s, 0.25, 1.25, 1.12, "sex", "<dbl+lbl>")
-    unten = saeule(s, 0.25, 1.67, 1.25, h, "num", ["1", "1", "2"], size=12, tags=["MANN", "MANN", "FRAU"])
+    unten = saeule(s, 0.25, 1.67, 1.25, h, "num", ["1", "1", "2"], size=12, tags=[tr("MANN"), tr("MANN"), tr("FRAU")])
     platte(s, 0.15, unten + 0.07, 1.45)
     mitte = (1.67 + unten) / 2
     oben_m, unten_m = 1.2, 3.2
@@ -258,14 +259,14 @@ def to_label_fig():
         text(s, 1.95, ym - 0.47, 1.8, 0.3, mono(fn, size=12, color=GREEN))
     # oben: Faktor, das Label ist der Wert
     kopf(s, 4.0, 1.05, 0.12, "sex", "<fct>")
-    u1 = saeule(s, 4.0, 0.68, 1.05, h, "txt", ["MANN", "MANN", "FRAU"], size=12)
+    u1 = saeule(s, 4.0, 0.68, 1.05, h, "txt", [tr("MANN"), tr("MANN"), tr("FRAU")], size=12)
     platte(s, 3.9, u1 + 0.07, 1.25)
-    text(s, 5.3, oben_m - 0.13, 1.8, 0.3, notiz("Faktor", size=10.5, align="start"))
+    text(s, 5.3, oben_m - 0.13, 1.8, 0.3, notiz(tr("Faktor"), size=10.5, align="start"))
     # unten: Zahl ohne Aufkleber
     kopf(s, 4.0, 1.05, 2.12, "sex", "<dbl>")
     u2 = saeule(s, 4.0, 2.68, 1.05, h, "num", ["1", "1", "2"], size=12)
     platte(s, 3.9, u2 + 0.07, 1.25)
-    text(s, 5.3, unten_m - 0.13, 1.8, 0.3, notiz("Zahl ohne Label", size=10.5, align="start"))
+    text(s, 5.3, unten_m - 0.13, 1.8, 0.3, notiz(tr("Zahl ohne Label"), size=10.5, align="start"))
     return s
 
 
@@ -273,9 +274,10 @@ def to_label_fig():
 def labels_fig():
     s = Canvas(7.7, 2.3)
     tx = 5.5
-    lw = max(lstein_breite("STIMME GAR NICHT ZU"), lstein_breite("STIMME VOLL+GANZ ZU"))
-    zeilen = [(0.12, 0.55, "Variablenname", None), (0.77, 0.55, "Variablenlabel", "var_label()"),
-              (1.42, 0.72, "Wertelabels", "val_labels()")]
+    lab1, lab7 = tr("STIMME GAR NICHT ZU"), tr("STIMME VOLL+GANZ ZU")
+    lw = max(lstein_breite(lab1), lstein_breite(lab7))
+    zeilen = [(0.12, 0.55, tr("Variablenname"), None), (0.77, 0.55, tr("Variablenlabel"), "var_label()"),
+              (1.42, 0.72, tr("Wertelabels"), "val_labels()")]
     for y, hh, wort, fn in zeilen:
         card(s, 0.1, y, 7.5, hh)
         ps = [P(R(wort, size=12, bold=True))]
@@ -284,10 +286,10 @@ def labels_fig():
         text(s, tx, y, 2.05, hh, ps, anchor="middle")
     schild(s, 0.25, 0.215, "mm01", w=1.0)
     rect(s, 0.25, 0.855, 4.6, 0.38, WHITE, CARDLINE, 0.75)
-    text(s, 0.25, 0.855, 4.6, 0.38, mono('"ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN"', size=10.5), anchor="middle")
-    lstein(s, 0.25, 1.6, lw, 0.42, "num", "1", "STIMME GAR NICHT ZU", size=12)
+    text(s, 0.25, 0.855, 4.6, 0.38, mono(tr('"ISLAMAUSUEBUNG IN DEUTSCHL. BESCHRAENKEN"'), size=10.5), anchor="middle")
+    lstein(s, 0.25, 1.6, lw, 0.42, "num", "1", lab1, size=12)
     text(s, 0.25 + lw, 1.6, 0.36, 0.42, [P(R("…", size=14, bold=True, color=GRAY), align=C)], anchor="middle")
-    lstein(s, 0.61 + lw, 1.6, lw, 0.42, "num", "7", "STIMME VOLL+GANZ ZU", size=12)
+    lstein(s, 0.61 + lw, 1.6, lw, 0.42, "num", "7", lab7, size=12)
     return s
 
 
@@ -295,8 +297,8 @@ def labels_fig():
 def missing_codes():
     s = Canvas(7.8, 3.15)
     text(s, 0.15, 0.12, 4.4, 0.3, codezeile("na_frequencies(allbus$mm01)", size=11))
-    zeilen = [("-42", "DATENFEHLER: MFN", "2", "NA(a)"), ("-11", "TNZ: SPLIT", "1647", "NA(b)"),
-              ("-9", "KEINE ANGABE", "73", "NA(c)"), ("-8", "WEISS NICHT", "123", "NA(d)")]
+    zeilen = [("-42", tr("DATENFEHLER: MFN"), "2", tr("NA(a)")), ("-11", tr("TNZ: SPLIT"), "1647", tr("NA(b)")),
+              ("-9", tr("KEINE ANGABE"), "73", tr("NA(c)")), ("-8", tr("WEISS NICHT"), "123", tr("NA(d)"))]
     sx, sw = 0.8, 2.0
     for t, x, w, al in [("code", 0.1, 0.55, RT), ("label", sx, sw, C), ("n", 2.95, 0.6, RT), ("tag", 3.75, 0.6, L)]:
         text(s, x, 0.5, w, 0.25, mono(t, size=10, color=GRAY, bold=False, align=al))
@@ -308,7 +310,7 @@ def missing_codes():
         text(s, 3.75, y, 0.8, 0.4, mono(tag, size=11, color=GRAY, align="start"), anchor="middle")
     outline(s, 0.15, 0.9 + 0.56 - 0.12, 4.3, 0.58, color=ORANGE, lw=1.75)
     # rechts: Split-Design, schematisch
-    eyebrow(s, 4.95, 0.12, 2.8, "SPLIT-DESIGN", size=10.5)
+    eyebrow(s, 4.95, 0.12, 2.8, tr("SPLIT-DESIGN"), size=10.5)
     gx, gw, gp, top, h, gap = 4.98, 0.38, 0.45, 0.98, 0.3, 0.16    # Abstand lässt Platz für den Rahmen
     for j in range(6):
         text(s, gx + j * gp - 0.08, 0.55, gw + 0.16, 0.25, mono(f"mm0{j + 1}", size=10))
@@ -317,9 +319,9 @@ def missing_codes():
     leer = top + 2 * (h + gap)                   # Oberkante der leeren Reihe; Rahmen mittig in den Lücken
     outline(s, gx - 0.06, leer - 0.11, 5 * gp + gw + 0.12, h + 0.19, color=ORANGE, lw=1.75)
     unter = unten + gap + 0.13                   # Text unter der Platte
-    text(s, 4.7, unter, 3.05, 0.5, [P(R("zwei Drittel: Fragen gestellt", size=10.5, italic=True, color=GRAY),
+    text(s, 4.7, unter, 3.05, 0.5, [P(R(tr("zwei Drittel: Fragen gestellt"), size=10.5, italic=True, color=GRAY),
                                      align=C),
-                                   P(R("knapp ein Drittel: TNZ: SPLIT", size=10.5, italic=True,
+                                   P(R(tr("knapp ein Drittel: TNZ: SPLIT"), size=10.5, italic=True,
                                        color=DARKORANGE), align=C, sb=2)])
     return s
 
@@ -327,15 +329,16 @@ def missing_codes():
 # 4.8 set_na() aus dem Chunk `set-na-demo` ---------------------------------------------------
 def set_na_fig():
     s = Canvas(7.6, 2.3)
-    codes = [("6", "ANDERER ABSCHLUSS", "18"), ("7", "NOCH SCHUELER", "26")]
-    lw = lstein_breite("ANDERER ABSCHLUSS")
-    rw = lstein_breite("ANDERER ABSCHLUSS", wert=False)
+    codes = [("6", tr("ANDERER ABSCHLUSS"), "18"), ("7", tr("NOCH SCHUELER"), "26")]
+    lw = lstein_breite(codes[0][1])
+    rw = lstein_breite(codes[0][1], wert=False)
     rx = 7.0 - rw
-    eyebrow(s, 0.15, 0.12, 1.5, "GÜLTIG", size=10.5)
-    eyebrow(s, rx, 0.12, 1.5, "FEHLEND", size=10.5)
+    eyebrow(s, 0.15, 0.12, 1.5, tr("GÜLTIG"), size=10.5)
+    teile = [("set_na", "fun"), ("(", "sym"), ("educ = c(6, 7)", "arg"), (")", "sym")]
+    ende = tokens(Canvas(1, 1), 0.15 + lw + 0.2, 0.1, teile, size=11, h=0.32)[1]
+    eyebrow(s, max(rx, ende + 0.1), 0.12, 1.5, tr("FEHLEND"), size=10.5)   # englische Labels: Kopf rückt nach rechts
     text(s, 7.05, 0.12, 0.45, 0.3, mono("N", size=10, color=GRAY, bold=False, align=RT))
-    tokens(s, 0.15 + lw + 0.2, 0.1, [("set_na", "fun"), ("(", "sym"), ("educ = c(6, 7)", "arg"), (")", "sym")],
-           size=11, h=0.32)
+    tokens(s, 0.15 + lw + 0.2, 0.1, teile, size=11, h=0.32)
     for k, (wert, label, n) in enumerate(codes):
         y = 0.65 + k * 0.6
         lstein(s, 0.15, y, lw, 0.42, "num", wert, label, size=12)
@@ -343,7 +346,7 @@ def set_na_fig():
         lstein(s, rx, y, rw, 0.42, "na", "", label)
         text(s, 7.05, y, 0.45, 0.42, mono(n, size=11, align=RT), anchor="middle")
     text(s, 0.15, 1.9, 7.3, 0.3, [P(R("# total N=5246 valid N=5093", font=MONO, size=10.5, bold=True, color=GREEN),
-                                    R("   18 + 26 = 44 gültige Werte weniger", size=10.5, italic=True, color=GRAY),
+                                    R(tr("   18 + 26 = 44 gültige Werte weniger"), size=10.5, italic=True, color=GRAY),
                                     align=C)])
     return s
 
@@ -353,10 +356,10 @@ def set_na_fig():
 def filter_na():
     s = Canvas(5.65, 3.1)
     h, pitch, top = 0.3, 0.37, 0.72
-    sw = lstein_breite("KEINE ANGABE", wert=False)
+    sw = lstein_breite(tr("KEINE ANGABE"), wert=False)
     sx, lx, lw = 0.65, 0.65 + sw + 0.25, 0.8
-    reihen = [("1", "num", "1", "MANN", "TRUE"), ("2", "num", "1", "MANN", "TRUE"), ("3", "dim", "2", "FRAU", "FALSE"),
-              None, ("110", "na", "", "KEINE ANGABE", "")]
+    reihen = [("1", "num", "1", tr("MANN"), "TRUE"), ("2", "num", "1", tr("MANN"), "TRUE"),
+              ("3", "dim", "2", tr("FRAU"), "FALSE"), None, ("110", "na", "", tr("KEINE ANGABE"), "")]
     kopf(s, sx, sw, 0.12, "sex", "<dbl+lbl>")
     text(s, lx - 0.3, 0.12, lw + 0.6, 0.25, mono("sex == 1", size=11))
     y = top
@@ -383,7 +386,7 @@ def filter_na():
     rx = ax + aw + 0.2
     kopf(s, rx, sw, 0.12, "sex", "<dbl+lbl>")
     for i in range(2):
-        lstein(s, rx, top + i * pitch, sw, h, "num", "1", "MANN", size=11)
+        lstein(s, rx, top + i * pitch, sw, h, "num", "1", tr("MANN"), size=11)
     unten = top + pitch + h
     platte(s, rx - 0.1, unten + 0.07, sw + 0.2)
     punkte(s, rx, unten + 0.17, w=sw)
@@ -418,7 +421,7 @@ def drop_na_fig():
     breite = 2 * step + w
     platte(s, x0 - 0.1, base, breite + 0.2)
     outline(s, x0 - 0.08, y53 - 0.1, breite + 0.16, h + 0.14, color=ORANGE, lw=1.75)
-    text(s, x0 + breite + 0.18, y53, 1.0, h, notiz("eine Lücke", size=10.5, color=DARKORANGE, align="start"),
+    text(s, x0 + breite + 0.18, y53, 1.0, h, notiz(tr("eine Lücke"), size=10.5, color=DARKORANGE, align="start"),
          anchor="middle")
     mitte = (top + base) / 2 - 0.15
     ax, aw = x0 + breite + 0.25, 0.75
