@@ -47,6 +47,36 @@ ERWARTET_KAP01 = {
 }
 
 
+# Englische Fassung: gleiche Schlüssel; Code, Paket- und Funktionsnamen und RStudio-Wörter bleiben
+ERWARTET_KAP01_EN = {
+    "k01-oekosystem": ["tidyverse", "dplyr", "tidyr", "ggplot2", "readr", "purrr", "tibble", "stringr", "forcats",
+                       "lubridate", "mariposa", "read_spss()", "w_mean()", "Function", "Package", "Ecosystem",
+                       "data manipulation and visualisation", "statistical analysis"],
+    "k01-regal-werkbank": ["SHELF: INSTALLED", "WORKBENCH: ACTIVE", "tidyverse", "mariposa", "patchwork",
+                           'install.packages("tidyverse")', 'install.packages("mariposa")',
+                           'install.packages("patchwork")', "library(tidyverse)", "library(mariposa)",
+                           "library(patchwork)", "once per computer", "once per R session"],
+    "k01-arbeitsverzeichnis": ['read_spss("ALLBUS2023.sav")',
+                               'read_spss("/Users/anna/Documents/R-Workshop/ALLBUS2023.sav")',
+                               "ANNA\u2019S COMPUTER", "BORIS\u2019S COMPUTER", "getwd()",
+                               '[1] "/Users/anna/Documents/R-Workshop"', '[1] "C:/Users/boris/Documents/R-Workshop"',
+                               "R-Workshop", "R-Workshop.Rproj", "01-first_steps.qmd", "ALLBUS2023.sav",
+                               "found", "not found"],
+    "k01-hilfeseite": ["mean {base}", "R Documentation", "Arithmetic Mean", "Description",
+                       "Generic function for the (trimmed) arithmetic mean.", "Usage", "mean(x, ...)",
+                       "## Default S3 method:", "trim = 0", "na.rm = FALSE", "Arguments", "na.rm", "trim",
+                       "Value, References, See Also", "Examples", "x <- c(0:10, 50)", "xm <- mean(x)",
+                       "c(xm, mean(x, trim = 0.10))", "function description", "default values", "arguments",
+                       "examples"],
+    "k01-oberflaeche": ["RStudio", "R-Workshop", "Write and save code", "Try out code, view output",
+                        "Objects and command history", "Files, plots, packages, help", "01-first_steps.qmd", "Run",
+                        "```{r}", "```", "var1 <- 2 + 3", "Console", "Terminal", "Background Jobs",
+                        "> var1 <- 2 + 3", "> var1", "[1] 5", "Environment", "History", "Connections", "Tutorial",
+                        "Global Environment", "Values", "Files", "Plots", "Packages", "Help", "Viewer",
+                        "Home > Documents > R-Workshop", "ALLBUS2023.sav", "R-Workshop.Rproj"],
+}
+
+
 def text_elemente(svg):
     """(Text, x, y) je <text>, in Zoll."""
     from lego import DPI
@@ -139,6 +169,56 @@ class TestKap01(unittest.TestCase):
         import kap01
         for n, (x, w, reiter) in kap01.reiterzeilen().items():
             self.assertLessEqual(reiter, x + w - 0.08, f"Bereich {n}")
+
+
+class TestKap01Englisch(unittest.TestCase):
+    def tearDown(self):
+        import sprache
+        sprache.setze("de")
+
+    def test_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP01_EN), set(ERWARTET_KAP01))
+
+    def test_englische_texte(self):
+        import kap01
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap01.FIGUREN.items():
+            texte = alle_texte(fn().svg())
+            for wert in ERWARTET_KAP01_EN[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap01
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap01.FIGUREN.items():
+            self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+
+    def test_deutsch_unveraendert(self):
+        import kap01
+        import sprache
+        sprache.setze("en")
+        en_texte = alle_texte(kap01.oekosystem().svg())
+        sprache.setze("de")
+        self.assertIn("Ökosystem", alle_texte(kap01.oekosystem().svg()))
+        self.assertNotIn("Ökosystem", en_texte)
+
+    def test_englisch_arbeitsverzeichnis_und_oberflaeche(self):
+        """Dieselben Prüfungen wie im Deutschen, mit englischen Wörtern; Reiter passen in die Breite."""
+        import kap01
+        import sprache
+        sprache.setze("en")
+        els = text_elemente(kap01.arbeitsverzeichnis().svg())
+        self.assertEqual(len([1 for t, x, y in els if t == "found"]), 3)
+        self.assertEqual(len([1 for t, x, y in els if t == "not found"]), 1)
+        for n, (x, w, ende) in kap01.reiterzeilen().items():
+            self.assertLessEqual(ende, x + w - 0.08, f"Bereich {n}")
+        s = kap01.oberflaeche()
+        pos = {t: (x, y) for t, x, y in text_elemente(s.svg())}
+        self.assertLess(pos["Write and save code"][1], s.h / 2)
+        self.assertGreater(pos["Try out code, view output"][1], s.h / 2)
 
 
 if __name__ == "__main__":

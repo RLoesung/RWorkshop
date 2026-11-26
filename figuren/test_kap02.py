@@ -32,12 +32,35 @@ ERWARTET_KAP02 = {
                      "Für eine ausführliche Behandlung siehe auch [@Wickham2023].", "Render", "Literatur"],
 }
 
+# Englische Fassung: gleiche Schlüssel; set_na() im Setup-Chunk, drei Autoren bei R for Data Science
+ERWARTET_KAP02_EN = {
+    "k02-qmd-schichten": ["---", 'title: "My first report"', 'author: "Anna Schmidt"', "format: html",
+                          "## Introduction", "In this report I analyse the ALLBUS 2023.", "```{r}",
+                          "mean(c(1, 2, 3, 4, 5))", "```", "YAML header", "Markdown text", "Code chunk",
+                          "Render", "My first report", "Anna Schmidt", "Introduction", "[1] 3"],
+    "k02-chunk-optionen": ["OPTION", "IN THE REPORT", "EXECUTED", "no option", "echo=FALSE", "eval=FALSE",
+                           "include=FALSE", "mean(mtcars$mpg)", "[1] 20.09062", "yes", "no"],
+    "k02-render-sitzung": ["NEW R SESSION", "AFTER THE SETUP CHUNK", "WORKBENCH", "ENVIRONMENT", "base R only",
+                           "empty", "tidyverse", "mariposa", "allbus", "```{r setup, include=FALSE}",
+                           "library(tidyverse)", "library(mariposa)", 'allbus <- read_spss("ALLBUS2023.sav")',
+                           "  |> set_na(-56, \u2026, -6)"],
+    "k02-zitieren": ["references.bib", "@article{Goodman2016,", "@book{Wickham2023,", "analysis.qmd",
+                     "As @Goodman2016 show, reproducibility can be defined in different ways.",
+                     "For a detailed discussion, see also [@Wickham2023].", "Render", "References"],
+}
+
 # gerenderter Text in k02-zitieren, über Zeilenumbrüche hinweg
 ZITIERT = ["Wie Goodman, Fanelli, und Ioannidis (2016) zeigt, lässt sich Reproduzierbarkeit unterschiedlich "
-           "definieren. Für eine ausführliche Behandlung siehe auch (Wickham und Grolemund 2023).",
+           "definieren. Für eine ausführliche Behandlung siehe auch (Wickham, Çetinkaya-Rundel, und Grolemund 2023).",
            "Goodman, Steven N., Daniele Fanelli, und John P. A. Ioannidis. 2016. „What does research "
            "reproducibility mean?“ Science Translational Medicine 8 (341): 341ps12.",
-           "Wickham, Hadley, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."]
+           "Wickham, Hadley, Mine Çetinkaya-Rundel, und Garrett Grolemund. 2023. R for Data Science. 2. Aufl. O’Reilly."]
+ZITIERT_EN = ["As Goodman, Fanelli, and Ioannidis (2016) show, reproducibility can be defined in different ways. "
+              "For a detailed discussion, see also (Wickham, Çetinkaya-Rundel, and Grolemund 2023).",
+              "Goodman, Steven N., Daniele Fanelli, and John P. A. Ioannidis. 2016. “What does research "
+              "reproducibility mean?” Science Translational Medicine 8 (341): 341ps12.",
+              "Wickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. R for Data Science. 2nd ed. "
+              "O’Reilly."]
 
 
 def text_elemente(svg):
@@ -111,6 +134,67 @@ class TestKap02(unittest.TestCase):
                 if sp.get("font-style") == "italic":
                     self.assertLessEqual(vorher, 10, "".join(t.itertext()))
                 vorher += len(sp.text or "")
+
+
+class TestKap02Englisch(unittest.TestCase):
+    def tearDown(self):
+        import sprache
+        sprache.setze("de")
+
+    def test_schluessel_gleich(self):
+        self.assertEqual(set(ERWARTET_KAP02_EN), set(ERWARTET_KAP02))
+
+    def test_englische_texte(self):
+        import kap02
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap02.FIGUREN.items():
+            svg = fn().svg()
+            self.assertLessEqual(float(ET.fromstring(svg).get("viewBox").split()[2]), 768, name)
+            texte = alle_texte(svg)
+            for wert in ERWARTET_KAP02_EN[name]:
+                self.assertIn(wert, texte, f"{name}: {wert}")
+
+    def test_kein_deutscher_rest(self):
+        import check_en
+        import kap02
+        import sprache
+        sprache.setze("en")
+        for name, fn in kap02.FIGUREN.items():
+            self.assertEqual(check_en.deutsch_reste(alle_texte(fn().svg())), [], name)
+
+    def test_chunk_optionen_englisch(self):
+        import kap02
+        import sprache
+        sprache.setze("en")
+        els = text_elemente(kap02.chunk_optionen().svg())
+        optionen = ["no option", "echo=FALSE", "eval=FALSE", "include=FALSE"]
+        zeile = {t: y for t, x, y in els if t in optionen}
+        self.assertEqual(sorted(optionen, key=zeile.get), optionen)
+        nein = [y for t, x, y in els if t == "no"]
+        self.assertEqual(len(nein), 1)
+        self.assertLess(abs(nein[0] - zeile["eval=FALSE"]), 0.5)
+
+    def test_render_sitzung_set_na_im_chunk(self):
+        """Die Setup-Zeile steht mit der Pipe und set_na() unter dem Einlesen, innerhalb der Leinwand."""
+        import kap02
+        import sprache
+        sprache.setze("en")
+        s = kap02.render_sitzung()
+        els = text_elemente(s.svg())
+        y_read = [y for t, x, y in els if t == 'allbus <- read_spss("ALLBUS2023.sav")'][0]
+        y_na = [y for t, x, y in els if t == "  |> set_na(-56, \u2026, -6)"][0]
+        self.assertGreater(y_na, y_read)
+        self.assertLess(max(y for t, x, y in els), s.h)
+
+    def test_zitieren_ausgabe_englisch(self):
+        import re
+        import kap02
+        import sprache
+        sprache.setze("en")
+        texte = re.sub(r"\s+", " ", " ".join(t for t, x, y in text_elemente(kap02.zitieren().svg())))
+        for satz in ZITIERT_EN:
+            self.assertIn(satz, texte)
 
 
 if __name__ == "__main__":

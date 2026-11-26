@@ -17,6 +17,9 @@ from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, arrow, cod
                   werkbank, kreis, text_width, INK, GRAY, GREEN, ORANGE, CARD, CARDLINE, DARKORANGE, WHITE, PALE,
                   MONO_EM, SANS, C, L, RT)
 from kap03 import mono, notiz
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
 
 
 def paket(s, x, y, w, h, name, size=11, fill=WHITE):
@@ -37,7 +40,7 @@ def oekosystem():
     fx, fy, fw, fh = 0.15, 0.15, 4.7, 2.2
     rect(s, fx, fy, fw, fh, None, GREEN, 1.5, dash=True)
     text(s, fx, fy + 0.08, fw, 0.3, mono("tidyverse", size=13, color=GREEN))
-    text(s, fx, fy + 0.38, fw, 0.25, notiz("Datenmanipulation und Visualisierung", size=10.5))
+    text(s, fx, fy + 0.38, fw, 0.25, notiz(tr("Datenmanipulation und Visualisierung"), size=10.5))
     pakete = ["dplyr", "tidyr", "ggplot2", "readr", "purrr", "tibble", "stringr", "forcats", "lubridate"]
     tw, th, gx, gy = 1.3, 0.36, 0.13, 0.12
     x0 = fx + (fw - 3 * tw - 2 * gx) / 2
@@ -47,14 +50,14 @@ def oekosystem():
     mx, mw = 5.2, 2.25
     rect(s, mx, fy, mw, fh, WHITE, INK, 1.25)
     text(s, mx, fy + 0.08, mw, 0.3, mono("mariposa", size=13))
-    text(s, mx, fy + 0.38, mw, 0.25, notiz("statistische Analyse", size=10.5))
+    text(s, mx, fy + 0.38, mw, 0.25, notiz(tr("statistische Analyse"), size=10.5))
     for k, fn in enumerate(["read_spss()", "w_mean()"]):
         funktion(s, mx + 0.25, fy + 0.8 + k * (th + gy), mw - 0.5, th, fn)
     text(s, mx, fy + 0.8 + 2 * (th + gy) - 0.04, mw, 0.3, [P(R("…", size=16, bold=True, color=GRAY), align=C)])
     # Legende: drei Ebenen, von klein nach groß
     ly, lh = 2.6, 0.55
     lw = (7.45 - 0.15 - 2 * 0.15) / 3
-    for k, wort in enumerate(["Funktion", "Paket", "Ökosystem"]):
+    for k, wort in enumerate([tr("Funktion"), tr("Paket"), tr("Ökosystem")]):
         x = 0.15 + k * (lw + 0.15)
         card(s, x, ly, lw, lh)
         bx, by, bw, bh = x + 0.18, ly + 0.13, 0.6, 0.29
@@ -75,7 +78,7 @@ def regal_werkbank():
     th = 0.42
     # Regal: zwei Bretter zwischen zwei Seitenwänden
     rx, rw = 0.25, 2.5
-    eyebrow(s, 0.15, 0.12, 2.8, "REGAL: INSTALLIERT", size=10.5)
+    eyebrow(s, 0.15, 0.12, 2.8, tr("REGAL: INSTALLIERT"), size=10.5)
     b1, b2 = 1.0, 1.7
     for by in (b1, b2):
         rect(s, rx, by, rw, 0.08, INK)
@@ -85,21 +88,22 @@ def regal_werkbank():
     kachel(s, rx + 0.06 + 0.07, b1 - th - 0.02, iw, th, pakete[0])
     kachel(s, rx + 0.06 + 0.14 + iw, b1 - th - 0.02, iw, th, pakete[1])
     kachel(s, rx + 0.06 + 0.07, b2 - th - 0.02, iw, th, pakete[2])
-    text(s, 0.15, 1.9, 2.8, 0.25, notiz("einmal pro Rechner", size=10.5, align=L))
+    text(s, 0.15, 1.9, 2.8, 0.25, notiz(tr("einmal pro Rechner"), size=10.5, align=L))
     codebox(s, 0.15, 2.2, 2.85, [f'install.packages("{p}")' for p in pakete], size=10)
     # vom Regal auf die Werkbank
     arrow(s, 3.2, 1.0, w=0.75, h=0.36, color=ORANGE)
     # Werkbank: Platte mit zwei Beinen, darauf die drei Pakete
-    eyebrow(s, 4.1, 0.12, 3.0, "WERKBANK: AKTIV", size=10.5)
+    eyebrow(s, 4.1, 0.12, 3.0, tr("WERKBANK: AKTIV"), size=10.5)
     werkbank(s, 4.15, 1.42, 3.3, pakete, beine=b2 + 0.08 - 1.56, th=th)
-    text(s, 4.1, 1.9, 3.3, 0.25, notiz("einmal pro R-Sitzung", size=10.5, align=L))
+    text(s, 4.1, 1.9, 3.3, 0.25, notiz(tr("einmal pro R-Sitzung"), size=10.5, align=L))
     codebox(s, 4.1, 2.2, 2.85, [f"library({p})" for p in pakete], size=10)
     return s
 
 
 # 1.4.4 Arbeitsverzeichnis auf zwei Rechnern (Chunk getwd-demo, Vorsicht-Kasten) ------------------
 ABSOLUT = "/Users/anna/Documents/R-Workshop/ALLBUS2023.sav"
-DATEIEN = ["R-Workshop.Rproj", "01-erste_schritte.qmd", "ALLBUS2023.sav"]
+def dateien():
+    return ["R-Workshop.Rproj", tr("01-erste_schritte.qmd"), "ALLBUS2023.sav"]
 
 
 def ordner(s, x, y, name, dateien, w=1.92, size=10, fh=0.27, gap=0.06):
@@ -127,8 +131,8 @@ def arbeitsverzeichnis():
         yy = 0.27 + k * zh
         numdot(s, 0.15, yy + zh / 2 - 0.12, k + 1, fill=GREEN, d=0.24, size=10)
         text(s, 0.72, yy, 5.5, zh, mono(z, size=10.5, align="start"), anchor="middle")
-    rechner = [("RECHNER VON ANNA", "/Users/anna/Documents/R-Workshop", [True, True]),
-               ("RECHNER VON BORIS", "C:/Users/boris/Documents/R-Workshop", [True, False])]
+    rechner = [(tr("RECHNER VON ANNA"), "/Users/anna/Documents/R-Workshop", [True, True]),
+               (tr("RECHNER VON BORIS"), "C:/Users/boris/Documents/R-Workshop", [True, False])]
     cw, ch, cy = 3.68, 2.38, 1.1
     for j, (wer, pfad, ok) in enumerate(rechner):
         x0 = 0.12 + j * (cw + 0.08)
@@ -137,14 +141,14 @@ def arbeitsverzeichnis():
         text(s, x0 + 0.12, cy + 0.42, cw - 0.2, 0.22, mono("getwd()", size=10, align="start"))
         text(s, x0 + 0.12, cy + 0.63, cw - 0.15, 0.22, mono(f'[1] "{pfad}"', size=10, color=GREEN, align="start"))
         oy = cy + 0.98
-        oh = ordner(s, x0 + 0.12, oy, "R-Workshop", DATEIEN)
+        oh = ordner(s, x0 + 0.12, oy, "R-Workshop", dateien())
         mitte = oy + 0.25 + (oh - 0.25) / 2
         rx = x0 + 0.12 + 1.92 + 0.16
         for k, gut in enumerate(ok):
             yy = mitte - 0.31 + k * 0.38
             numdot(s, rx, yy, k + 1, fill=GREEN if gut else DARKORANGE, d=0.24, size=10)
             text(s, rx + 0.32, yy - 0.01, cw - (rx - x0) - 0.36, 0.26,
-                 [P(R("gefunden" if gut else "nicht gefunden", size=10.5, bold=True,
+                 [P(R(tr("gefunden") if gut else tr("nicht gefunden"), size=10.5, bold=True,
                       color=GREEN if gut else DARKORANGE))], anchor="middle")
     return s
 
@@ -182,7 +186,7 @@ def hilfeseite():
     def kopf(yy, titel, wort=None, farbe=INK):
         text(s, ix, yy, iw, 0.24, [P(R(titel, size=11.5, bold=True, color=farbe))])
         if wort:
-            beschriftung[wort] = yy
+            beschriftung[tr(wort)] = yy
 
     kopf(0.78, "Description", "Funktionsbeschreibung")
     text(s, ix, 1.0, iw, 0.22, [P(R("Generic function for the (trimmed) arithmetic mean.", size=10.5))])
@@ -210,19 +214,23 @@ def hilfeseite():
 
 # 1.4 Die vier Bereiche (Tabelle in 1.4, Beispiel aus 1.5.2) ------------------------------------
 # Nummer: (x, y, Breite, Höhe, Zweck, Reiter, aktiver Reiter)
-BEREICHE = {
-    1: (0.2, 0.5, 3.5, 2.1, "Code schreiben und speichern", ["01-erste_schritte.qmd"], 0),
-    2: (0.2, 2.7, 3.5, 1.85, "Code ausprobieren, Output ansehen", ["Console", "Terminal", "Background Jobs"], 0),
-    3: (3.8, 0.5, 3.6, 2.1, "Objekte und Befehlsverlauf", ["Environment", "History", "Connections", "Tutorial"], 0),
-    4: (3.8, 2.7, 3.6, 1.85, "Dateien, Grafiken, Pakete, Hilfe", ["Files", "Plots", "Packages", "Help", "Viewer"], 0),
-}
+def bereiche():
+    return {
+        1: (0.2, 0.5, 3.5, 2.1, tr("Code schreiben und speichern"), [tr("01-erste_schritte.qmd")], 0),
+        2: (0.2, 2.7, 3.5, 1.85, tr("Code ausprobieren, Output ansehen"), ["Console", "Terminal", "Background Jobs"], 0),
+        3: (3.8, 0.5, 3.6, 2.1, tr("Objekte und Befehlsverlauf"), ["Environment", "History", "Connections", "Tutorial"], 0),
+        4: (3.8, 2.7, 3.6, 1.85, tr("Dateien, Grafiken, Pakete, Hilfe"), ["Files", "Plots", "Packages", "Help", "Viewer"], 0),
+    }
+
+
+BEREICHE = bereiche()                                               # deutsch, für die Tests
 REITER_PT, REITER_PAD = 10.5, 0.16
 
 
 def reiterzeilen():
     """Je Bereich: (x, Breite, rechtes Ende der Reiterzeile) in Zoll."""
     out = {}
-    for n, (x, y, w, h, zweck, reiter, aktiv) in BEREICHE.items():
+    for n, (x, y, w, h, zweck, reiter, aktiv) in bereiche().items():
         ende = x + 0.1 + sum(text_width(r, SANS, REITER_PT, k == aktiv) + REITER_PAD for k, r in enumerate(reiter))
         if n == 1:
             ende += 0.1 + 0.62                                  # Run-Knopf rechts in der Zeile
@@ -233,7 +241,7 @@ def reiterzeilen():
 def bereich(s, n):
     """Ein Bereich: Nummer und Zweck, darunter die Reiter wie in RStudio, darunter ein weißes Inhaltsfeld.
     Gibt (x, y) der ersten Inhaltszeile und die Breite des Feldes zurück."""
-    x, y, w, h, zweck, reiter, aktiv = BEREICHE[n]
+    x, y, w, h, zweck, reiter, aktiv = bereiche()[n]
     rect(s, x, y, w, h, CARD, CARDLINE, 0.75)
     numdot(s, x + 0.1, y + 0.1, n, fill=GREEN, d=0.28, size=10)
     text(s, x + 0.46, y + 0.08, w - 0.56, 0.32, [P(R(zweck, size=11.5, bold=True))], anchor="middle")
@@ -269,7 +277,8 @@ def oberflaeche():
     lh = 0.21
     # 1 Editor: der Chunk aus 1.5.2 mit seinem Ergebnis darunter, rechts der Run-Knopf
     x, y, w = bereich(s, 1)
-    bx, by = BEREICHE[1][0] + BEREICHE[1][2] - 0.72, BEREICHE[1][1] + 0.47
+    b1 = bereiche()[1]
+    bx, by = b1[0] + b1[2] - 0.72, b1[1] + 0.47
     rect(s, bx, by, 0.62, 0.25, WHITE, CARDLINE, 0.75)
     text(s, bx, by, 0.62, 0.25, [P(R("→ ", size=10, bold=True, color=GREEN), R("Run", size=10, bold=True),
                                    align=C)], anchor="middle")
@@ -292,7 +301,7 @@ def oberflaeche():
     # 4 Files: der Projektordner aus 1.4.4
     x, y, w = bereich(s, 4)
     zeile(s, x, y, w, "Home > Documents > R-Workshop", color=GRAY, font="sans")
-    for k, d in enumerate(["01-erste_schritte.qmd", "ALLBUS2023.sav", "R-Workshop.Rproj"]):
+    for k, d in enumerate([tr("01-erste_schritte.qmd"), "ALLBUS2023.sav", "R-Workshop.Rproj"]):
         zeile(s, x, y + (k + 1) * lh, w, d)
     return s
 
