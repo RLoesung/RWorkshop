@@ -14,7 +14,7 @@ source("R/prep_en.R")
 
 > *Do the six items really measure a single attitude, or do they contain several dimensions?*
 
-In @sec-datentransformation you combined several items into a scale. But is that actually legitimate? Does each item load *evenly* on the construct, or are there outliers? Does the scale measure *one* thing or *several*? And how consistent are the items with each other?
+In @sec-datentransformation you combined several items into a scale. But is that actually legitimate? Does each item load *evenly* on the construct, or do some items stand apart? Does the scale measure *one* thing or *several*? And how consistent are the items with each other?
 
 ::: {.callout-note}
 **Research journal: Where are you in your mini study?** You have built scales and have your first bivariate findings. Now you check the measure itself: *Are the items dimensionally clean?* This is the validation step that decides whether your findings from @sec-univbivar and the modelling in @sec-erklaerung rest on a methodologically defensible measure. If at the end of this chapter Cronbach's α > .7 and EFA and CFA give a consistent picture, you have *defended the operationalisation against reviewers*.
@@ -22,7 +22,7 @@ In @sec-datentransformation you combined several items into a scale. But is that
 
 ## What this chapter is about
 
-Most of the constructs that interest social research cannot be measured *directly*; you can only infer them indirectly. Nobody can read “intelligence” off a thermometer, measure “satisfaction with democracy” with a ruler or record “Islamophobia” as a single value with a sensor. These are all **latent** (hidden) quantities. They only become visible when you ask people several concrete questions and combine the answers, like a detective who does not see the offender but works out who it is from the clues.
+Most of the constructs that social researchers are interested in cannot be measured *directly*; you can only infer them indirectly. Nobody can read “intelligence” off a thermometer, measure “satisfaction with democracy” with a ruler or record “Islamophobia” as a single value with a sensor. These are all **latent** (hidden) quantities. They only become visible when you ask people several concrete questions and combine the answers, like a detective who does not see the offender but works out who it is from the clues.
 
 When you do this, a follow-up question arises: how do you actually know that the six items *really* measure one construct together? Perhaps they measure two different things that you are wrongly lumping together. Or one of the items is out of line and measures something else entirely. Or the items are related so unreliably that your scale score is nothing but noise.
 
@@ -38,7 +38,7 @@ At the end you take a brief look at **confirmatory factor analysis (CFA)** with 
 
 ![The six items are measured, shown here with the answers of the first three respondents who answered all six. The factor Islamophobia has no values; an arrow leads from it to each item.](Bilder/figuren/en/k08-latenter-faktor.svg){#fig-latenter-faktor .lightbox fig-alt="At the top a dashed ellipse with the name Islamophobia, next to it not measured. Six arrows lead from it to the column names mm01, mm02r, mm03, mm04, mm05r and mm06. Below them a baseplate with six blue towers for the respid 1, 5 and 6: row 1 has 5, 5, 4, 2, 2 and 2, row 5 has 2, 4, 4, 3, 5 and 6, row 6 has 3, 5, 3, 7, 2 and 3. To the right of them, measured."}
 
-The arrows run *from* the invisible factor *to* the observed items. The assumption is that *the factor produces the answers*. A person with a high level of Islamophobia therefore tends to tick agreeing values on all six items. You will see the same direction of the arrows again in CFA path diagrams.
+The arrows run *from* the invisible factor *to* the observed items. The assumption is that *the factor produces the answers*. A person with a high level of Islamophobia therefore tends to choose high values on all six items. You will see the same direction of the arrows again in CFA path diagrams.
 
 ## What you will be able to do after this chapter {-}
 
@@ -66,7 +66,7 @@ The Pearson correlation $r$ is the *standardised covariance*. It measures how st
 
 $$r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}$$
 
-Read it as: *“how strongly x and y swing together, in units of the typical swing of each variable on its own.”* Because of the division, $r$ always lies between $-1$ (perfectly opposed) and $+1$ (perfectly in step). This is the number you get in the `pearson_cor()` output for each pair of items.
+Read it as: *“how strongly x and y vary together, in units of each variable's own typical variation.”* Because of the division, $r$ always lies between $-1$ (perfectly opposed) and $+1$ (perfectly in step). This is the number you get in the `pearson_cor()` output for each pair of items.
 :::
 
 ### Computing the matrix with `pearson_cor()`
@@ -80,7 +80,7 @@ allbus |>
 
 ### Reading the thresholds
 
-The compact output lists all fifteen item pairs with Pearson's *r* and the *p*-value. You get the classic square matrix, together with *p*-values, confidence intervals and *N* per cell, with `summary()`. All pairs lie between 0.34 and 0.56. Three thresholds help you to classify such values straight away:
+The compact output lists all fifteen item pairs with Pearson's *r* and the *p*-value. `summary()` gives you the classic square matrix, together with *p*-values, confidence intervals and *N* per cell. All pairs lie between 0.34 and 0.56. Three thresholds help you to classify such values straight away:
 
 | Inter-item *r* | Interpretation                                                   |
 | :------------- | :--------------------------------------------------------------- |
@@ -113,7 +113,8 @@ cor_obj$matrices[[1]]$correlations |>
   labs(x = NULL, y = NULL, fill = "r",
        title = "Inter-item correlations of the six Islamophobia items",
        caption = "ALLBUS 2023, weighted with wghtpew") +
-  coord_fixed()
+  coord_fixed() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 **Interpretation.** The diagonal is trivially 1.0 (each item correlates perfectly with itself). The off-diagonal cells are the interesting ones: all six items show values well above 0.3. The reporter from the example above who describes something else does not appear here; all items clearly point in the same direction. The preliminary check is passed, and the EFA can start.
@@ -124,7 +125,7 @@ cor_obj$matrices[[1]]$correlations |>
 `pearson_cor()` returns more than the printed view: underneath is a structured list object. `cor_obj$matrices[[1]]$correlations` is the square correlation matrix (rownames = colnames = variable names). In the same way you get `$p_values`, `$ci_lower`, `$ci_upper` and `$n_obs` as parallel matrices. That is everything you need for your own visualisations, without calling `cor()` from base R separately. If you want to process the list of pairs as a table instead, `as_tibble(cor_obj)` returns it as a tibble; this works for every analysis result since mariposa 0.7.4.
 :::
 
-The inter-item correlations give the green light: all items are related, and none of them is out of place. Now comes the actual factor analysis. It works like an X-ray machine for statistics: it takes the observed correlations and tries to infer how many *invisible* dimensions must lie behind them to produce this pattern.
+The inter-item correlations give the green light: all items are related, and none of them is out of place. Now comes the actual factor analysis. It works like an X-ray of the correlations: it tries to infer how many *invisible* dimensions must lie behind the observed correlations to produce this pattern.
 
 Imagine that all six items are driven by a single underlying attitude. Then *all* items must correlate clearly with each other, since a person with high Islamophobia ticks high values everywhere. That would be a one-factor model. If *two* underlying attitudes are at work (such as “cognitive stereotypes” and a “politically restrictive stance”), some item pairs correlate more strongly than others, and the result is a two-factor model. The EFA checks which one fits.
 
@@ -156,13 +157,13 @@ Conceptually, KMO is the average over all items: for each item, the *shared* par
 
 ### Bartlett's test: are the correlations different from zero at all?
 
-Bartlett's test of sphericity asks a conservative minimum question: is the correlation matrix *significantly different* from an identity matrix at all (a matrix in which only the diagonal is 1 and all off-diagonal values are 0, that is, no correlation whatsoever)?
+Bartlett's test of sphericity asks a basic minimum question: is the correlation matrix *significantly different* from an identity matrix at all (a matrix in which only the diagonal is 1 and all off-diagonal values are 0, that is, no correlation whatsoever)?
 
 If the test is significant ($p < .05$), this means: *“at least one correlation in the matrix is different from zero, so there is something to factor-analyse.”* With N > 1000, Bartlett's test is almost always significant; it is more of a *technical minimum check* than a substantive argument. KMO is the far more informative measure.
 
 ### Three diagnostic levels from one call to `efa()`
 
-You call `efa()` once with `n_factors = 1` and store the result. The number of factors does not matter here; you are only interested in the assumption values. From the returned object you read *three* diagnostic levels.
+You call `efa()` once with `n_factors = 1` and store the result. The number of factors does not matter here; you are only interested in the values for the assumption checks. From the returned object you read *three* diagnostic levels.
 
 Level 1 is the overall KMO. The compact print shows it as the central number:
 
@@ -224,19 +225,19 @@ tibble(item   = names(efa_check$kmo$per_item),
 
 In every bar the blue part reaches far above the 0.5 threshold. The plot confirms what the table above shows in numbers.
 
-**Overall interpretation.** All three levels give the green light: overall KMO 0.86, Bartlett's test significant, an MSA ≥ 0.85 for every single item. The decision on the number of factors in the next section can begin.
+**Overall interpretation.** All three levels give the green light: overall KMO 0.86, Bartlett's test significant, an MSA ≥ 0.85 for every single item. In the next section you decide on the number of factors.
 
 ## Determining the number of factors {#sec-anzahl-faktoren}
 
-### Eigenvalue: how much information does a factor bundle?
+### Eigenvalue: how much information does a factor capture?
 
 Imagine you squeeze the information from six items into *one* common underlying factor. How much of the total variation in the items fits into this one dimension? This is what the **eigenvalue** $\lambda$ measures.
 
 The intuitive rule of thumb is surprisingly simple: each item has a *standardised* variance of 1. So you can read eigenvalues “in item units”:
 
-- $\lambda = 1$ → the factor bundles as much information as *a single* item and adds nothing.
-- $\lambda = 3$ → the factor bundles as much as *three* items, a substantial gain.
-- $\lambda = 0.3$ → the factor bundles less than one item and captures only noise.
+- $\lambda = 1$ → the factor captures as much information as *a single* item and adds nothing.
+- $\lambda = 3$ → the factor captures as much as *three* items, a substantial gain.
+- $\lambda = 0.3$ → the factor captures less than one item and picks up only noise.
 
 This gives the **Kaiser criterion**: keep all factors with $\lambda > 1$. It is simple and robust and has been the standard since the 1960s, even though newer methods (see below) refine it.
 
@@ -285,7 +286,7 @@ You have checked the assumptions and decided on the number of factors. Now comes
 
 ### What is a factor loading?
 
-Think of an invisible *factor* as a dial. When the dial is turned up, people tick strongly agreeing answers on some items: the loading is high. On other items the answer hardly responds: the loading is low. The **factor loading** is this degree of connection between item and factor.
+Think of an invisible *factor* as a dial. When the dial is turned up, people tick strongly agreeing answers on some items: the loading is high. On other items the answer hardly responds: the loading is low. The **factor loading** is the strength of the relationship between item and factor.
 
 Mathematically, in the one-factor solution the loading *equals the correlation* between item and factor. It ranges from $-1$ to $+1$, with the usual thresholds:
 
@@ -344,7 +345,7 @@ allbus |>
 - *KMO and Bartlett's Test*: as already read in @sec-kmo-bartlett.
 - *Communalities*: how much of each item's variance the factor accounts for (*Extraction*). `mm01` is at 0.66, the two reverse-coded items at around 0.44.
 - *Total Variance Explained*: the eigenvalues of all six possible components and the explained variance. The one extracted factor explains 54.7%; 40–60% is typical for one-factor scales that work well.
-- *Component Matrix*: one column `PC1` with each item's degree of connection to the factor, sorted by size, from 0.81 (`mm01`) to 0.66 (`mm05r`). mariposa would hide loadings below 0.4 (argument `blank`) to keep the table readable.
+- *Component Matrix*: one column `PC1` with the strength of the relationship between item and factor for each item, sorted by size, from 0.81 (`mm01`) to 0.66 (`mm05r`). mariposa would hide loadings below 0.4 (argument `blank`) to keep the table readable.
 
 ### Visualising the loadings
 
@@ -367,7 +368,7 @@ efa_1$loadings |>
        caption = "Vertical lines: thresholds for usable (0.5) and high (0.7)")
 ```
 
-**Interpretation.** Items above 0.7 are core indicators of the construct; anything between 0.5 and 0.7 is usable; anything below 0.5 you would keep on theoretical grounds or remove on empirical grounds. The bar chart also works as a screening of the items: if an item is *clearly* out of line (for example < 0.3 or with the opposite sign), this points to a reverse-coding error or an item on a different topic.
+**Interpretation.** Items above 0.7 are core indicators of the construct; anything between 0.5 and 0.7 is usable; anything below 0.5 you would keep on theoretical grounds or remove on empirical grounds. The bar chart also serves as a quick check of the items: if an item is *clearly* out of line (for example < 0.3 or with the opposite sign), this points to a reverse-coding error or an item on a different topic.
 
 ## Two-factor solution with rotation {#sec-efa-2}
 
@@ -418,7 +419,7 @@ baseplot(items_rot, "After varimax rotation",
          "Each item loads clearly on one axis")
 ```
 
-**Interpretation.** On the left, no axis clearly describes a factor; the items hang at an angle in mid-air. On the right, the rotation has attached the items either *almost only* to factor 1 (on the right) or *almost only* to factor 2 (at the top). This is what makes the interpretation readable: *“F1 = this group of items, F2 = that group of items.”*
+**Interpretation.** On the left, no axis clearly describes a factor; the items lie between the axes. On the right, the rotation has attached the items either *almost only* to factor 1 or *almost only* to factor 2 (at the top). This is what makes the interpretation readable: *“F1 = this group of items, F2 = that group of items.”*
 
 ```{r efa-2}
 allbus |>
@@ -429,8 +430,8 @@ allbus |>
 
 **Interpretation.** The *Rotated Component Matrix* now has two columns, `PC1` and `PC2`; loadings below 0.4 are hidden. Look at each row: does the item load *clearly* on one factor or *evenly* on both? The result is revealing, though it differs from what the research debate would suggest:
 
-- `PC1` bundles `mm04`, `mm03` and `mm06` (loadings 0.78–0.83): monitoring, conflict, fanatics.
-- `PC2` bundles exactly the two *reverse-coded* items, `mm05r` (0.84) and `mm02r` (0.79).
+- `mm04`, `mm03` and `mm06` load on `PC1` (loadings 0.78–0.83): monitoring, conflict, fanatics.
+- `PC2` contains exactly the two *reverse-coded* items, `mm05r` (0.84) and `mm02r` (0.79).
 - `mm01` loads on both factors (0.63 and 0.51) and cannot be clearly assigned to either.
 
 So the second factor separates the two positively worded items from the four negatively worded ones, and the distinction between “cognitive, stereotyping” and “politically restrictive” does not appear. This is the typical picture of a **method factor**: it reflects the direction of the wording rather than a second substantive dimension (more on method effects in @sec-cfa). The *Total Variance Explained* fits this: at 0.83, the eigenvalue of the second factor lies below the Kaiser threshold of 1. Both point to the one-factor solution, which is *more parsimonious* and clearer in content. The principle of parsimony (Occam's razor) is a strong anchor when you choose a model.
@@ -445,11 +446,11 @@ Rule of thumb: PCA for *reduction*, EFA for *exploration*, CFA for *confirmation
 
 ## Reliability: Cronbach's α {#sec-reliabilitaet}
 
-### The idea: an example with a walk
+### The idea: six friends and a walk
 
 Imagine you ask six friends whether today is a good day for a walk. If all six say “yes, of course”, you know the judgement is *consistent*: they probably measure the same thing (weather, free time, mood). If three say “yes” and three say “no”, the scale probably measures different things; perhaps three of them looked out of the window and three at their calendar. Cronbach's α puts this idea into a number.
 
-While EFA tells you how many *dimensions* the items contain, reliability analysis answers a different question: *“If the items measure one dimension, how closely do they measure it?”* It is the second pillar of validity alongside the factor structure.
+While EFA tells you how many *dimensions* the items contain, reliability analysis answers a different question: *“If the items measure one dimension, how consistently do they measure it?”* It is the second pillar of validity alongside the factor structure.
 
 ### The formula and why it looks like this
 
@@ -520,6 +521,7 @@ rel_obj$item_total |>
   annotate("text", x = rel_obj$alpha, y = 0.6,
            label = sprintf("Overall α = %.2f", rel_obj$alpha),
            color = "grey30", size = 3, hjust = -0.05) +
+  expand_limits(x = 1) +
   labs(x = "α if this item is deleted", y = NULL,
        title = "Which item supports the scale, and which weakens it?",
        caption = "Dashed line: Cronbach's α of the full scale")
@@ -528,12 +530,12 @@ rel_obj$item_total |>
 **Interpretation.** A bar to the left of the dashed line means *“α would fall if I deleted this item”* → the item contributes to the scale; keep it. A bar to the right of the line means *“α would rise”* → a candidate for deletion. In a well-functioning scale, ideally all bars lie close together (and to the left of the line), with no item standing out.
 
 ::: {.callout-warning}
-**Caution: Cronbach's α is a lower bound.** α assumes that all items are tied *equally strongly* to the factor (*τ-equivalence*). If this is not the case, α underestimates the true reliability. In current methods literature, McDonald's ω is therefore considered the cleaner choice: ω is estimated from a one-factor model and lets each item have its own loading. `reliability()` reports ω as well: in the compact output, in the *Reliability Statistics* block and as the column *Omega if Deleted*. Here ω = 0.835 is almost exactly equal to α = 0.833, because the loadings do not differ enough to push α down noticeably. It is best to report both values in your methods section. Unlike α, ω has not yet been checked against SPSS output; the mariposa vignette [“SPSS Compatibility”](https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html) documents the current state.
+**Caution: Cronbach's α is a lower bound.** α assumes that all items are tied *equally strongly* to the factor (*τ-equivalence*). If this is not the case, α underestimates the true reliability. In the current methods literature, McDonald's ω is therefore considered the cleaner choice: ω is estimated from a one-factor model and lets each item have its own loading. `reliability()` reports ω as well: in the compact output, in the *Reliability Statistics* block and as the column *Omega if Deleted*. Here ω = 0.835 is almost exactly equal to α = 0.833, because the loadings do not differ enough to push α down noticeably. It is best to report both values in your methods section. Unlike α, ω has not yet been checked against SPSS output; the mariposa vignette [“SPSS Compatibility”](https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html) documents the current state.
 :::
 
 Besides α and ω, the methods report should include the item-total correlations and the α-if-deleted values of all items, as a table or as a bar chart like the one above. Readers can then judge for themselves whether your scale construction is methodologically consistent.
 
-## Confirmatory factor analysis as an outlook: `cfa()` and `semPaths()` {#sec-cfa}
+## Outlook: confirmatory factor analysis with `cfa()` and `semPaths()` {#sec-cfa}
 
 So far you have *explored* the factor structure. If you have a specific hypothesis, such as “the six items measure *one* latent factor”, and want to *test* it, you need a confirmatory factor analysis. mariposa is not designed for this. You use `lavaan`, the standard package for CFA and structural equation models, and you draw the path diagrams with `semPlot`.
 
@@ -544,7 +546,7 @@ install.packages(c("lavaan", "semPlot"))
 ```
 
 ::: {.callout-warning}
-**Caution: lavaan masks mariposa's `efa()`.** `lavaan` also contains a function called `efa()`. If you load the package with `library(lavaan)`, R reports *“The following object is masked from 'package:mariposa': efa”*. From then on, `efa()` calls the lavaan version, and the calls from this chapter stop with a cryptic error message. This is why the code below addresses lavaan with the package prefix (`lavaan::cfa()`) without loading it. If you have already run `library(lavaan)`, write `mariposa::efa()` explicitly for the mariposa function.
+**Caution: lavaan masks mariposa's `efa()`.** `lavaan` also contains a function called `efa()`. If you load the package with `library(lavaan)`, R reports *“The following object is masked from ‘package:mariposa’: efa”*. From then on, `efa()` calls the lavaan version, and the calls from this chapter stop with a cryptic error message. This is why the code below calls lavaan with the package prefix (`lavaan::cfa()`) without loading it. If you have already run `library(lavaan)`, write `mariposa::efa()` explicitly for the mariposa function.
 :::
 
 Before you set up the model, here is the lavaan model syntax in three operators:
@@ -568,8 +570,8 @@ summary(fit, fit.measures = TRUE, standardized = TRUE)
 
 A CFA tests whether your specified model fits the data. **Fit indices** measure how well it fits. Instead of a single figure, there are four standard measures that compare the model from *different* angles:
 
-- CFI / TLI (*Comparative Fit Index / Tucker-Lewis Index*): compare your model with a *null model* without any structure. Values approach 1; higher = better.
-- RMSEA (*Root Mean Square Error of Approximation*): *absolute* fit, corrected for model complexity. Values approach 0; lower = better.
+- CFI / TLI (*Comparative Fit Index / Tucker-Lewis Index*): compare your model with a *null model* without any structure. Values close to 1 indicate good fit; higher = better.
+- RMSEA (*Root Mean Square Error of Approximation*): *absolute* fit, corrected for model complexity. Values close to 0 indicate good fit; lower = better.
 - SRMR (*Standardized Root Mean Square Residual*): the average of the standardised residuals. Lower = better.
 
 `fit.measures = TRUE` gives you all four at once. Rules of thumb: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08. A good model meets *several* of these thresholds; a single figure never decides on its own.
@@ -599,6 +601,7 @@ tibble(
     labels = c(`FALSE` = "missed", `TRUE` = "threshold met"),
     name = NULL
   ) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.2))) +
   facet_wrap(~ direction, scales = "free_x", ncol = 2) +
   labs(x = "Value", y = NULL,
        title = "Fit indices as a traffic-light check",
@@ -661,7 +664,7 @@ allbus |>
 ::: {.callout-note title="Exercise 3 · Checking your own scale · Transfer"}
 Go back to the scale you built in the exercise at the end of @sec-datentransformation (your own construct). Check it: (a) correlation matrix, (b) EFA with one factor, (c) Cronbach's α. Write two or three sentences on whether the operationalisation is methodologically sound.
 
-*No model solution: this exercise trains the complete validation workflow.*
+*No model solution: this exercise practises the complete validation workflow.*
 :::
 
 ::: {.callout-note title="Exercise 4 · CFA with lavaan · Mini research question"}
@@ -704,13 +707,13 @@ The next chapter (@sec-erklaerung) moves from *structure* to *explanation*: you 
 | :-------------------- | :--------------------------------------------------------------------------------------- |
 | latent                | unobserved underlying variable that is measured indirectly through several items         |
 | manifest              | directly observed item (one column in the dataset)                                       |
-| loading               | degree of connection item ↔ factor; in a one-factor solution = correlation; ≥ 0.5 usable, ≥ 0.7 high |
-| eigenvalue (λ)        | how much standardised item variance a factor bundles; λ > 1 = more than a single item (Kaiser criterion) |
-| KMO                   | share of shared (not partial) item variance; ≥ 0.6 acceptable, ≥ 0.7 good, ≥ 0.8 very good |
+| loading               | strength of the item–factor relationship; in a one-factor solution = correlation; ≥ 0.5 usable, ≥ 0.7 high |
+| eigenvalue (λ)        | how much standardised item variance a factor accounts for; λ > 1 = more than a single item (Kaiser criterion) |
+| KMO                   | proportion of shared (not partial) item variance; ≥ 0.6 acceptable, ≥ 0.7 good, ≥ 0.8 very good |
 | Bartlett's test       | test of whether the correlation matrix differs significantly from the identity matrix; minimum condition for any EFA |
 | scree plot            | eigenvalues as a descending line; read off the number of factors at the “elbow” or at the Kaiser threshold |
 | rotation              | geometric turn of the factor axes for an interpretable solution (orthogonal: `varimax`; oblique: `oblimin`) |
-| Cronbach's α          | reliability measure: $\alpha = k\bar{r} / (1 + (k-1)\bar{r})$; acceptable from ≥ 0.7   |
+| Cronbach's α          | reliability measure: $\alpha = k\bar{r} / (1 + (k-1)\bar{r})$; ≥ 0.7 acceptable          |
 | McDonald's ω          | reliability measure from a one-factor model that lets each item have its own loading; usually ≥ α |
 | item-total correlation | relationship of an item with the sum of the remaining items; ≥ 0.3 usable              |
 | α-if-deleted          | how α changes if an item is deleted; diagnosis for items that do not belong to the scale |
