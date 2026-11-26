@@ -344,15 +344,16 @@ def kiste(s, x, y, faecher, h, name=None, size=10.5, kopf=0.34, mehr=None):
     return out
 
 
-def referenz(s, x, ym, size=10.5, h=0.28):
+def referenz(s, x, ym, size=10.5, h=0.28, wort="Referenz"):
     """Markiert die Referenzkategorie eines Faktors (k03-faktor, k09-dummy): weißes Schild „Referenz“
-    mit dunkler Kante und Spitze nach links; die Spitze liegt bei (x, ym). Gibt die rechte Kante zurück."""
+    mit dunkler Kante und Spitze nach links; die Spitze liegt bei (x, ym). Gibt die rechte Kante zurück.
+    wort: Beschriftung des Schilds (englisch „Reference“, vom Aufrufer über tr() übersetzt)."""
     sp = 0.1
-    tw = text_width("Referenz", SANS, size, True) + 0.16
+    tw = text_width(wort, SANS, size, True) + 0.16
     pts = [(x, ym), (x + sp, ym - h / 2), (x + sp + tw, ym - h / 2), (x + sp + tw, ym + h / 2), (x + sp, ym + h / 2)]
     s.add('<polygon points="' + " ".join(f"{_u(a)},{_u(b)}" for a, b in pts) + f'" fill="{WHITE}" '
           f'stroke="{INK}" stroke-width="{1.0 * PT:.2f}"/>')
-    text(s, x + sp, ym - h / 2, tw, h, [P(R("Referenz", size=size, bold=True, color=INK), align=C)], anchor="middle")
+    text(s, x + sp, ym - h / 2, tw, h, [P(R(wort, size=size, bold=True, color=INK), align=C)], anchor="middle")
     return x + sp + tw
 
 

@@ -55,12 +55,13 @@ class SpracheTest(unittest.TestCase):
     def test_build_en_baut_nur_sprachfaehige_module(self):
         import kap01
         import kap02
+        import kap03
         import kap04
-        namen = {**kap01.FIGUREN, **kap02.FIGUREN, **kap04.FIGUREN}     # sprachfähige Module
+        namen = {**kap01.FIGUREN, **kap02.FIGUREN, **kap03.FIGUREN, **kap04.FIGUREN}     # sprachfähige Module
         with tempfile.TemporaryDirectory() as tmp:
             self.assertEqual(build.main(["--en"], ziel=tmp), 0)
             self.assertEqual(sorted(os.listdir(tmp)), sorted(f"{n}.svg" for n in namen))
-        for modul in (kap01, kap02, kap04):
+        for modul in (kap01, kap02, kap03, kap04):
             self.assertTrue(modul.SPRACHFAEHIG)
         self.assertEqual(sprache.aktuell(), "de")
 

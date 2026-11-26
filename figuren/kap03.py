@@ -2,6 +2,10 @@
 from lego import (Canvas, R, P, text, rect, card, eyebrow, label_box, tok, tokens, stein, schild, turm, arrow,
                   outline, numdot, codebox, hline, vline, kiste, referenz, text_width, INK, GRAY, GREEN, ORANGE,
                   CARDLINE, DARKORANGE, WHITE, MONO, C, RT)
+import sprache
+from sprache import t as tr
+
+SPRACHFAEHIG = True  # alle Texte laufen über tr(); build.py --en baut dieses Modul
 
 
 def mono(t, size=11, color=INK, bold=True, align=C):
@@ -19,41 +23,41 @@ def platte(s, x, base, w):
 # 3.5 Legende der Bildsprache -------------------------------------------------------------------
 def legende():
     s = Canvas(7.8, 4.55)
-    eyebrow(s, 0.15, 0.12, 2.6, "WERT = STEIN")
-    zeilen = [("num", "1", "Zahl", "numeric", None), ("txt", '"Anna"', "Text", "character", None),
-              ("log", "TRUE", "Wahrheitswert", "logical", None), ("na", "", "fehlender Wert", "NA", None),
-              ("num", "1", "mit Wertelabel", "Aufkleber", "MANN")]
+    eyebrow(s, 0.15, 0.12, 2.6, tr("WERT = STEIN"))
+    zeilen = [("num", "1", tr("Zahl"), "numeric", None), ("txt", '"Anna"', tr("Text"), "character", None),
+              ("log", "TRUE", tr("Wahrheitswert"), "logical", None), ("na", "", tr("fehlender Wert"), "NA", None),
+              ("num", "1", tr("mit Wertelabel"), tr("Aufkleber"), tr("MANN"))]
     for k, (kind, v, lab, typ, tag) in enumerate(zeilen):
         y = 0.62 + k * 0.62
         stein(s, 0.15, y, 1.2, 0.4, kind, v, tag=tag, size=11)
         text(s, 1.5, y - 0.03, 1.7, 0.25, [P(R(lab, size=11.5, bold=True))])
         text(s, 1.5, y + 0.2, 1.7, 0.22, mono(typ, size=10, color=GRAY, bold=False, align="start"))
 
-    eyebrow(s, 3.3, 0.12, 1.6, "VEKTOR = TURM")
-    schild(s, 3.35, 0.45, "zahlen", w=1.0)
-    text(s, 3.05, 0.85, 1.6, 0.25, notiz("Name", size=10.5))
+    eyebrow(s, 3.3, 0.12, 1.6, tr("VEKTOR = TURM"))
+    schild(s, 3.35, 0.45, tr("zahlen"), w=1.0)
+    text(s, 3.05, 0.85, 1.6, 0.25, notiz(tr("Name"), size=10.5))
     turm(s, 3.35, 2.45, 1.0, 0.34, "num", ["3", "2", "1"])
     platte(s, 3.25, 2.45, 1.2)
-    text(s, 3.05, 2.6, 1.6, 0.25, notiz("ein Datentyp", size=10.5))
+    text(s, 3.05, 2.6, 1.6, 0.25, notiz(tr("ein Datentyp"), size=10.5))
 
-    eyebrow(s, 4.9, 0.12, 2.9, "DATENSATZ = BAUPLATTE")
-    text(s, 4.9, 0.55, 1.3, 0.25, mono("geschlecht", size=10.5))
-    text(s, 6.3, 0.55, 1.1, 0.25, mono("alter", size=10.5))
-    for i, (g, a) in enumerate([("Mann", "34"), ("Frau", "41"), ("Divers", "52")]):
+    eyebrow(s, 4.9, 0.12, 2.9, tr("DATENSATZ = BAUPLATTE"))
+    text(s, 4.9, 0.55, 1.3, 0.25, mono(tr("geschlecht"), size=10.5))
+    text(s, 6.3, 0.55, 1.1, 0.25, mono(tr("alter"), size=10.5))
+    for i, (g, a) in enumerate([(tr("Mann"), "34"), (tr("Frau"), "41"), (tr("Divers"), "52")]):
         y = 0.92 + i * 0.47
         stein(s, 5.0, y, 1.1, 0.36, "txt", g, size=10.5)
         stein(s, 6.3, y, 1.0, 0.36, "num", a, size=10.5)
     platte(s, 4.9, 2.27, 2.5)
     outline(s, 4.92, 1.32, 2.46, 0.48, color=ORANGE, lw=1.75)
-    text(s, 4.85, 2.4, 2.65, 0.25, notiz("eine Reihe = ein Fall", size=10.5, color=DARKORANGE))
-    text(s, 4.85, 2.65, 2.65, 0.25, notiz("ein Turm = eine Variable", size=10.5))
+    text(s, 4.85, 2.4, 2.65, 0.25, notiz(tr("eine Reihe = ein Fall"), size=10.5, color=DARKORANGE))
+    text(s, 4.85, 2.65, 2.65, 0.25, notiz(tr("ein Turm = eine Variable"), size=10.5))
 
     rect(s, 0.15, 3.68, 7.5, 0.01, CARDLINE)
-    eyebrow(s, 0.15, 3.82, 2.0, "CODE-FARBEN")
-    mids, _ = tokens(s, 2.0, 3.77, [("zahlen", "obj"), ("|>", "sym"), ("round", "fun"), ("(", "sym"),
+    eyebrow(s, 0.15, 3.82, 2.0, tr("CODE-FARBEN"))
+    mids, _ = tokens(s, 2.0, 3.77, [(tr("zahlen"), "obj"), ("|>", "sym"), ("round", "fun"), ("(", "sym"),
                                      ("digits = 1", "arg"), (")", "sym")], size=12, h=0.34)
     for i, lab in [(0, "Objekt"), (2, "Funktion"), (4, "Argument")]:
-        text(s, mids[i] - 0.7, 4.16, 1.4, 0.25, notiz(lab, size=10.5))
+        text(s, mids[i] - 0.7, 4.16, 1.4, 0.25, notiz(tr(lab), size=10.5))
     return s
 
 
@@ -62,8 +66,8 @@ def turm_fig():
     s = Canvas(6.0, 3.15)
     base, h = 2.75, 0.34
     oben = base - 5 * (h + 0.07) - 0.5
-    spalten = [(0.35, 1.0, "zahlen", "num", ["5", "4", "3", "2", "1"], "numeric"),
-               (2.3, 1.35, "namen", "txt", ['"Carla"', '"Boris"', '"Anna"'], "character"),
+    spalten = [(0.35, 1.0, tr("zahlen"), "num", ["5", "4", "3", "2", "1"], "numeric"),
+               (2.3, 1.35, tr("namen"), "txt", ['"Carla"', '"Boris"', '"Anna"'], "character"),
                (4.4, 1.2, "flags", lambda i: ["na", "log", "log"][i], ["", "FALSE", "TRUE"], "logical")]
     for x, w, name, kind, werte, typ in spalten:
         schild(s, x, oben, name, w=w)
@@ -91,7 +95,7 @@ def rangfolge():
         text(s, x - 0.05, base + 0.4, 2.95, 0.25, mono(out, size=10.5, color=GREEN))
         label_box(s, x + 1.67, 0.2, 1.1, 0.27, typ, GREEN, size=10)
     card(s, 5.95, 0.15, 1.75, 3.1)
-    eyebrow(s, 6.07, 0.24, 1.6, "RANGFOLGE")
+    eyebrow(s, 6.07, 0.24, 1.6, tr("RANGFOLGE"))
     for k, (kind, v, lab) in enumerate([("log", "TRUE", "logical"), ("num", "1", "numeric"), ("txt", '"1"', "character")]):
         y = 0.75 + k * 0.85
         stein(s, 6.07, y, 0.7, 0.34, kind, v, size=10.5)
@@ -105,14 +109,16 @@ def rangfolge():
 # 3.5.3 Tibble aus dem Chunk `tibble-create` --------------------------------------------------
 def tibble_fig():
     s = Canvas(7.4, 3.5)
-    schild(s, 0.15, 0.15, "befragte", w=1.25)
-    text(s, 1.55, 0.2, 1.6, 0.3, mono("4 × 2", size=11, color=GRAY, align="start"))
+    name = tr("befragte")
+    sw = max(1.25, text_width(name, MONO, 12.5, True) + 0.3)       # englisch: längerer Name
+    schild(s, 0.15, 0.15, name, w=sw)
+    text(s, 0.15 + sw + 0.15, 0.2, 1.6, 0.3, mono("4 × 2", size=11, color=GRAY, align="start"))
     xs, ws = [0.3, 1.85], [1.3, 1.1]
-    for x, w, n, typ in zip(xs, ws, ["geschlecht", "alter"], ["<fct>", "<dbl>"]):
+    for x, w, n, typ in zip(xs, ws, [tr("geschlecht"), tr("alter")], ["<fct>", "<dbl>"]):
         text(s, x - 0.1, 0.62, w + 0.2, 0.25, mono(n, size=11))
         text(s, x - 0.1, 0.84, w + 0.2, 0.22, mono(typ, size=10, color=GRAY, bold=False))
     base, h = 3.05, 0.38
-    for i, (g, a) in enumerate([("Mann", "34"), ("Frau", "41"), ("Mann", "28"), ("Divers", "52")]):
+    for i, (g, a) in enumerate([(tr("Mann"), "34"), (tr("Frau"), "41"), (tr("Mann"), "28"), (tr("Divers"), "52")]):
         y = base - (4 - i) * (h + 0.07)
         stein(s, xs[0], y, ws[0], h, "txt", g, size=11)
         stein(s, xs[1], y, ws[1], h, "num", a, size=11)
@@ -121,11 +127,11 @@ def tibble_fig():
     outline(s, 0.2, y1 - 0.1, 2.9, h + 0.16, color=ORANGE, lw=1.75)
     outline(s, xs[1] - 0.07, base - 4 * (h + 0.07) - 0.11, ws[1] + 0.14, 4 * (h + 0.07) + 0.06, color=GREEN, lw=1.75)
     card(s, 3.55, 1.28, 3.7, 0.66)
-    text(s, 3.7, 1.35, 3.45, 0.6, [P(R("Eine Reihe ist ein Fall:", size=11.5, bold=True, color=DARKORANGE)),
-                                   P(R("die zweite befragte Person, Frau, 41 Jahre.", size=11), sb=2, ls=1.0)])
+    text(s, 3.7, 1.35, 3.45, 0.6, [P(R(tr("Eine Reihe ist ein Fall:"), size=11.5, bold=True, color=DARKORANGE)),
+                                   P(R(tr("die zweite befragte Person, Frau, 41 Jahre."), size=11), sb=2, ls=1.0)])
     card(s, 3.55, 2.12, 3.7, 0.93)
-    text(s, 3.7, 2.2, 3.45, 0.85, [P(R("Ein Turm ist eine Variable:", size=11.5, bold=True, color=GREEN)),
-                                    P(R("befragte$alter", font=MONO, size=10.5, bold=True), sb=3),
+    text(s, 3.7, 2.2, 3.45, 0.85, [P(R(tr("Ein Turm ist eine Variable:"), size=11.5, bold=True, color=GREEN)),
+                                    P(R(f"{name}${tr('alter')}", font=MONO, size=10.5, bold=True), sb=3),
                                     P(R("[1] 34 41 28 52", font=MONO, size=10.5, bold=True, color=GREEN), sb=1)])
     return s
 
@@ -165,17 +171,24 @@ def pipe():
         (3.65, None, ["1.6", "1.4", "1.3", "1.2", "1.1"], "head(", ", n = 3)", 5,
          ["1.3", "1.2", "1.1"], "head(round(zahlen, digits = 1), n = 3)"),
     ]
+    z = tr("zahlen")
     for k, (mitte, name, werte, fname, rest, n, ergebnis, aus) in enumerate(reihen):
+        aus = aus.replace("zahlen", z)
         base = mitte + 0.9
         numdot(s, 0.1, mitte - 0.55, k + 1, fill=GREEN, d=0.3, size=11)
         if name:
-            schild(s, 0.42, base - 5 * (h + 0.07) - 0.5, name, w=0.86)
+            schild(s, 0.42, base - 5 * (h + 0.07) - 0.5, z, w=max(0.86, text_width(z, MONO, 12.5, True) + 0.2))
         turm(s, 0.5, base, 0.7, h, "num", werte)
         platte(s, 0.45, base, 0.8)
         _pfeil_pipe(s, 1.35, mitte - 0.13)
         fx, fw, mw = _maschine(s, 1.9, mitte - 0.47, fname, rest)
         _mini_turm(s, fx + 0.12, mitte + 0.38, fw - 0.24, n)
-        text(s, 1.6, mitte + 0.55, mw + 0.6, 0.25, mono("= " + aus, size=10, color=GREEN))
+        if sprache.aktuell() == "de":
+            bx, bw = 1.6, mw + 0.6
+        else:                                   # englisch: längerer Name, die Zeile bleibt einzeilig und mittig
+            bw = max(mw + 0.6, text_width("= " + aus, MONO, 10, True) + 0.1)
+            bx = 1.9 + mw / 2 - bw / 2
+        text(s, bx, mitte + 0.55, bw, 0.25, mono("= " + aus, size=10, color=GREEN))
         ax = 1.9 + mw + 0.15
         arrow(s, ax, mitte - 0.13, w=0.4, h=0.26, color=GRAY)
         turm(s, ax + 0.55, base, 0.7, h, "num", ergebnis)
@@ -192,8 +205,8 @@ def _unter(s, mitte, y, t, w=1.3, color=GRAY):
 def name_inhalt():
     s = Canvas(5.85, 2.2)
     mids, ende = tokens(s, 0.15, 0.4, [("var1", "obj"), ("<-", "sym"), ("2 * 4", "sym")], size=15, h=0.46)
-    _unter(s, mids[0], 0.9, "Name", w=0.9)
-    _unter(s, mids[2], 0.9, "Ausdruck", w=0.9)
+    _unter(s, mids[0], 0.9, tr("Name"), w=0.9)
+    _unter(s, mids[2], 0.9, tr("Ausdruck"), w=0.9)
     w = tok(s, 0.15, 1.5, "var1", "obj", size=15, h=0.46)
     text(s, 0.15 + w + 0.2, 1.5, 1.2, 0.46, mono("[1] 8", size=15, color=GREEN, align="start"), anchor="middle")
     arrow(s, ende + 0.2, 0.48, w=0.7, h=0.3, color=ORANGE)
@@ -218,7 +231,7 @@ def reihenfolge():
     for k, objekte in enumerate(stand):
         x = 2.35 + k * 1.78
         card(s, x, oben, 1.68, 1.65)
-        eyebrow(s, x + 0.13, oben + 0.07, 1.5, f"NACH ZEILE {k + 1}", size=10)
+        eyebrow(s, x + 0.13, oben + 0.07, 1.5, f"{tr('NACH ZEILE')} {k + 1}", size=10)
         for j, (name, wert) in enumerate(objekte):
             y = 0.75 + j * 0.58
             schild(s, x + 0.15, y, name, w=0.5)
@@ -251,8 +264,8 @@ def funktion():
     links = mids[2] - (text_width("from = 1", MONO, 12) + 0.14) / 2
     rechts = mids[6] + (text_width("by = 2", MONO, 12) + 0.14) / 2
     hline(s, links, y + 0.44, rechts - links, color=GRAY, width=0.75)
-    _unter(s, mids[0], y + 0.48, "Funktion", w=1.0)
-    _unter(s, (links + rechts) / 2, y + 0.48, "Argumente", w=1.2)
+    _unter(s, mids[0], y + 0.48, tr("Funktion"), w=1.0)
+    _unter(s, (links + rechts) / 2, y + 0.48, tr("Argumente").capitalize(), w=1.2)
     return s
 
 
@@ -273,14 +286,14 @@ def argumente():
     text(s, 2.78, mitte - 0.18, 0.22, 0.36, mono("=", size=13), anchor="middle")
     rect(s, 3.05, fy, 0.75, fh, "#FAF7F1", GRAY, 1.0, dash=True)
     _mini_turm(s, 3.17, fy + fh - 0.11, 0.51, 3)
-    text(s, 3.95, mitte - 0.13, 1.6, 0.25, notiz("Pflichtfeld", size=10.5, align="start"))
+    text(s, 3.95, mitte - 0.13, 1.6, 0.25, notiz(tr("Pflichtfeld"), size=10.5, align="start"))
     # Feld digits: vorausgefüllt, hier mit 1 überschrieben
     dy = 1.92
     tok(s, 2.0, dy - 0.18, "digits", "arg", size=12, h=0.36)
     text(s, 2.78, dy - 0.18, 0.22, 0.36, mono("=", size=13), anchor="middle")
     rect(s, 3.05, dy - 0.2, 0.75, 0.4, WHITE, INK, 1.0)
     text(s, 3.05, dy - 0.2, 0.75, 0.4, mono("1", size=13), anchor="middle")
-    text(s, 3.95, dy - 0.13, 1.6, 0.25, notiz("vorausgefüllt mit 0", size=10.5, align="start"))
+    text(s, 3.95, dy - 0.13, 1.6, 0.25, notiz(tr("vorausgefüllt mit 0"), size=10.5, align="start"))
     arrow(s, 5.75, mitte - 0.14, w=0.45, h=0.28)
     turm(s, 6.35, base, 0.85, h, "num", ["4.0", "2.3", "1.2"])
     platte(s, 6.25, base, 1.05)
@@ -319,18 +332,26 @@ def _codezeile(t, size):
 
 
 def analyseplan():
-    s = Canvas(7.7, 3.2)
+    en = sprache.aktuell() == "en"          # englisch: eigener Schritt für set_na() nach read_spss()
+    ib = tr("islamophobie")
+    fett = dict(size=11.5, bold=True)
+    mm = dict(font=MONO, size=11, bold=True)
+    einlesen = (['allbus <- read_spss("ALLBUS2023.sav") |>'], [R(tr("Datensatz einlesen"), **fett)])
+    umpolen = (["  mutate(", '    mm02r = rec(mm02, rules = "rev"),', '    mm05r = rec(mm05, rules = "rev")', "  ) |>"],
+               [R("Reverse-code ", **fett), R("mm02", **mm), R(" and ", **fett), R("mm05", **mm)] if en else
+               [R("mm02", **mm), R(" und ", **fett), R("mm05", **mm), R(" umpolen", **fett)])
+    skala = (["  mutate(", f"    {ib} = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
+              " " * (len(ib) + 17) + "min_valid = 5)", "  )"], [R(tr("Skala bilden"), **fett)])
+    if en:
+        schritte = [(['allbus <- read_spss("ALLBUS2023.sav") |>'], einlesen[1]),
+                    (["  set_na(-56, …, -6) |>"], [R(tr("Missing-Codes setzen"), **fett)]), umpolen, skala]
+    else:
+        schritte = [einlesen, umpolen, skala]
+    s = Canvas(7.7, 3.2 + (len(schritte) - 3) * 0.45)
     size = 11
     lh = size * 1.45 / 72
-    schritte = [(['allbus <- read_spss("ALLBUS2023.sav") |>'], [R("Datensatz einlesen", size=11.5, bold=True)]),
-                (["  mutate(", '    mm02r = rec(mm02, rules = "rev"),', '    mm05r = rec(mm05, rules = "rev")',
-                  "  ) |>"],
-                 [R("mm02", font=MONO, size=11, bold=True), R(" und ", size=11.5, bold=True),
-                  R("mm05", font=MONO, size=11, bold=True), R(" umpolen", size=11.5, bold=True)]),
-                (["  mutate(", "    islamophobie = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06),",
-                  "                             min_valid = 5)", "  )"], [R("Skala bilden", size=11.5, bold=True)])]
-    eyebrow(s, 0.55, 0.12, 3.0, "DIE PIPE", size=10)
-    eyebrow(s, 5.2, 0.12, 2.4, "DER PLAN IN WORTEN", size=10, color=GREEN)
+    eyebrow(s, 0.55, 0.12, 3.0, tr("DIE PIPE"), size=10)
+    eyebrow(s, 5.2, 0.12, 2.4, tr("DER PLAN IN WORTEN"), size=10, color=GREEN)
     y = 0.5
     for k, (code, plan) in enumerate(schritte):
         bh = len(code) * lh + 0.16
@@ -374,16 +395,17 @@ def kopfzeile(s, mitte, y, t, w=1.6, size=11):
 # 3.4.3 Vergleich und & aus dem Chunk `operators-demo` (dritte Zeile) ----------------------------
 def vergleich():
     s = Canvas(6.2, 3.25)
+    a = tr("alter")
     alter = ["22", "45", "67", "18", "33"]
     ab18 = ["TRUE" if int(a) >= 18 else "FALSE" for a in alter]
     bis65 = ["TRUE" if int(a) <= 65 else "FALSE" for a in alter]
     beide = ["TRUE" if a == b == "TRUE" else "FALSE" for a, b in zip(ab18, bis65)]
     top, w = 0.7, 0.85
     xa, x1, x2, xe = 0.3, 1.6, 3.1, 4.95
-    schild(s, xa - 0.05, top - 0.52, "alter", w=0.85)
+    schild(s, xa - 0.05, top - 0.52, a, w=0.85)
     base = saeule(s, xa, top, 0.75, alter, "num")
     platte(s, xa - 0.1, base + 0.07, 0.95)
-    for x, werte, kopf in [(x1, ab18, "alter >= 18"), (x2, bis65, "alter <= 65")]:
+    for x, werte, kopf in [(x1, ab18, f"{a} >= 18"), (x2, bis65, f"{a} <= 65")]:
         kopfzeile(s, x + w / 2, top - 0.5, kopf)
         saeule(s, x, top, w, werte, ["log"] * 5)
         platte(s, x - 0.1, base + 0.07, w + 0.2)
@@ -392,7 +414,7 @@ def vergleich():
     saeule(s, xe, top, w, beide, ["log"] * 5)
     platte(s, xe - 0.1, base + 0.07, w + 0.2)
     outline(s, xa - 0.1, top + 2 * STEP - 0.1, xe + w + 0.1 - (xa - 0.1), 0.32 + 0.16, color=ORANGE, lw=1.75)
-    text(s, xa - 0.1, base + 0.22, 5.8, 0.28, mono("alter >= 18 & alter <= 65", size=11, align="start"))
+    text(s, xa - 0.1, base + 0.22, 5.8, 0.28, mono(f"{a} >= 18 & {a} <= 65", size=11, align="start"))
     text(s, xa - 0.1, base + 0.5, 5.8, 0.28, mono("[1]  TRUE  TRUE FALSE  TRUE  TRUE", size=11, color=GREEN,
                                                     align="start"))
     return s
@@ -401,12 +423,13 @@ def vergleich():
 # 3.5.1 Boolesche Indizierung aus dem Chunk `boolean-indexing` --------------------------------
 def index_fig():
     s = Canvas(5.9, 3.35)
+    z = tr("zahlen")
     zahlen = ["10", "20", "30", "40", "50"]
     maske = ["TRUE" if int(z) > 25 else "FALSE" for z in zahlen]
     top, xz, xm, xe = 0.7, 0.3, 1.4, 3.75
-    schild(s, xz - 0.05, top - 0.52, "zahlen", w=0.9)
+    schild(s, xz - 0.05, top - 0.52, z, w=max(0.9, text_width(z, MONO, 12.5, True) + 0.2))
     base = saeule(s, xz, top, 0.8, zahlen, ["num" if m == "TRUE" else "dim" for m in maske])
-    kopfzeile(s, xm + 0.45, top - 0.5, "zahlen > 25", w=1.3)
+    kopfzeile(s, xm + 0.45, top - 0.5, f"{z} > 25", w=1.3)
     saeule(s, xm, top, 0.9, maske, "log")
     platte(s, xz - 0.1, base + 0.07, xm + 0.9 + 0.1 - (xz - 0.1))
     bleibt = [z for z, m in zip(zahlen, maske) if m == "TRUE"]
@@ -414,8 +437,8 @@ def index_fig():
     arrow(s, 2.65, oben + (base - oben) / 2 - 0.14, w=0.75, h=0.28, color=GREEN)
     saeule(s, xe, oben, 0.8, bleibt, "num")
     platte(s, xe - 0.1, base + 0.07, 1.0)
-    for k, (code, aus) in enumerate([("zahlen > 25", "[1] FALSE FALSE  TRUE  TRUE  TRUE"),
-                                     ("zahlen[zahlen > 25]", "[1] 30 40 50")]):
+    for k, (code, aus) in enumerate([(f"{z} > 25", "[1] FALSE FALSE  TRUE  TRUE  TRUE"),
+                                     (f"{z}[{z} > 25]", "[1] 30 40 50")]):
         y = base + 0.22 + k * 0.28
         text(s, xz - 0.1, y, 2.1, 0.28, mono(code, size=11, align="start"))
         text(s, 2.3, y, 3.5, 0.28, mono(aus, size=11, color=GREEN, align="start"))
@@ -425,9 +448,10 @@ def index_fig():
 # 3.5.1 Recycling (Kasten „Vektorisierung“, Chunk `recycling`; zahlen aus `boolean-indexing`) -----
 def recycling():
     s = Canvas(7.3, 3.1)
+    z = tr("zahlen")
     top5 = 0.62
     base = top5 + 5 * STEP - 0.07
-    beispiele = [(0.15, "zahlen * 2", "*", ["10", "20", "30", "40", "50"], ["2"] * 5,
+    beispiele = [(0.15, f"{z} * 2", "*", ["10", "20", "30", "40", "50"], ["2"] * 5,
                   [False, True, True, True, True], "[1]  20  40  60  80 100", 0.8),
                  (3.85, "c(1, 2, 3, 4) + c(10, 20)", "+", ["1", "2", "3", "4"], ["10", "20", "10", "20"],
                   [False, False, True, True], "[1] 11 22 13 24", 0.7)]
@@ -450,29 +474,35 @@ def recycling():
 
 # 3.5.2 Faktor aus dem Chunk `factors` ---------------------------------------------------------
 def faktor_fig():
-    s = Canvas(6.4, 3.15)
-    werte, stufen = ["Mann", "Frau", "Mann", "Divers"], ["Mann", "Frau", "Divers"]
+    g = tr("geschlecht")
+    stufen = [tr("Mann"), tr("Frau"), tr("Divers")]
+    werte = [stufen[0], stufen[1], stufen[0], stufen[2]]
     codes = [str(stufen.index(w) + 1) for w in werte]
+    ausgabe = "[1] " + " ".join(f'"{x}"'.ljust(max(len(f'"{y}"') for y in stufen)) for x in stufen).rstrip()
+    zeile1 = f'{g} <- factor(c(' + ", ".join(f'"{w}"' for w in werte) + "),"
+    zeile2 = " " * (len(g) + 11) + "levels = c(" + ", ".join(f'"{x}"' for x in stufen) + "))"
+    sw = max(1.1, text_width(max(stufen, key=len), MONO, 12, True) + 0.2)       # Steinbreite; englisch breiter
+    d = sw - 1.1
+    cx = 2.75 + d
+    cw = max(3.5, text_width(ausgabe, MONO, 11, True) + 0.3)
+    s = Canvas(max(6.4, cx + cw + 0.15, text_width(zeile2, MONO, 10.5, True) + 0.3), 3.15)
     top = 0.7
-    schild(s, 0.25, top - 0.52, "geschlecht", w=1.35)
-    base = saeule(s, 0.3, top, 1.1, werte, "txt")
-    text(s, 1.55, top - 0.47, 0.8, 0.25, notiz("intern", size=10.5))
-    saeule(s, 1.7, top, 0.5, codes, "num")
-    platte(s, 0.2, base + 0.07, 2.1)
-    cx, cw = 2.75, 3.5
+    schild(s, 0.25, top - 0.52, g, w=1.35)
+    base = saeule(s, 0.3, top, sw, werte, "txt")
+    text(s, 1.55 + d, top - 0.47, 0.8, 0.25, notiz(tr("intern"), size=10.5))
+    saeule(s, 1.7 + d, top, 0.5, codes, "num")
+    platte(s, 0.2, base + 0.07, 2.1 + d)
     card(s, cx, 0.12, cw, base + 0.15 - 0.12)
-    text(s, cx + 0.15, 0.2, cw - 0.3, 0.28, mono("levels(geschlecht)", size=11, align="start"))
+    text(s, cx + 0.15, 0.2, cw - 0.3, 0.28, mono(f"levels({g})", size=11, align="start"))
     for i, st in enumerate(stufen):
         y = 0.62 + i * 0.47
         stein(s, cx + 0.2, y, 0.5, 0.32, "num", str(i + 1), size=12)
-        stein(s, cx + 0.85, y, 1.1, 0.32, "txt", st, size=12)
+        stein(s, cx + 0.85, y, sw, 0.32, "txt", st, size=12)
         if i == 0:
-            referenz(s, cx + 2.05, y + 0.16)
-    text(s, cx + 0.15, 0.62 + 3 * 0.47 - 0.05, cw - 0.3, 0.28,
-         mono('[1] "Mann"   "Frau"   "Divers"', size=11, color=GREEN, align="start"))
-    for k, zeile in enumerate(['geschlecht <- factor(c("Mann", "Frau", "Mann", "Divers"),',
-                               '                     levels = c("Mann", "Frau", "Divers"))']):
-        text(s, 0.15, base + 0.3 + k * 0.27, 6.2, 0.27, mono(zeile, size=10.5, align="start"))
+            referenz(s, cx + 0.85 + sw + 0.1, y + 0.16, wort=tr("Referenz"))
+    text(s, cx + 0.15, 0.62 + 3 * 0.47 - 0.05, cw - 0.3, 0.28, mono(ausgabe, size=11, color=GREEN, align="start"))
+    for k, zeile in enumerate([zeile1, zeile2]):
+        text(s, 0.15, base + 0.3 + k * 0.27, s.w - 0.2, 0.27, mono(zeile, size=10.5, align="start"))
     return s
 
 
@@ -480,8 +510,8 @@ def faktor_fig():
 def liste_fig():
     s = Canvas(7.7, 2.6)
     h = 0.32
-    faecher = kiste(s, 0.15, 0.12, [("koeffizient", 1.17), ("p_wert", 0.85), ("konfidenz", 1.0), ("modell", 0.8)],
-                    h=1.42, name="ergebnis")
+    faecher = kiste(s, 0.15, 0.12, [(tr("koeffizient"), 1.17), (tr("p_wert"), 0.85), (tr("konfidenz"), 1.0),
+                                    (tr("modell"), 0.8)], h=1.42, name=tr("ergebnis"))
     boden = faecher[0][3] - 0.1
     inhalte = [(["0.42"], "num"), (["0.001"], "num"), (["0.31", "0.53"], "num"), (['"lm"'], "txt")]
     for (fx, _, fb, _), (werte, kind) in zip(faecher, inhalte):
@@ -493,7 +523,7 @@ def liste_fig():
     rechts = faecher[-1][0] + faecher[-1][2]
     mitte = boden - STEP
     xt = 5.4                                                   # herausgenommener Turm
-    for k, (x, w, t) in enumerate([(rechts + 0.15, xt - 0.15 - rechts - 0.15, "$konfidenz"), (6.33, 0.4, "[1]")]):
+    for k, (x, w, t) in enumerate([(rechts + 0.15, xt - 0.15 - rechts - 0.15, "$" + tr("konfidenz")), (6.33, 0.4, "[1]")]):
         arrow(s, x, mitte - 0.14, w=w, h=0.28, color=GREEN)
         tw = text_width(t, MONO, 11, True)
         lx = x + w / 2 - (tw + 0.32) / 2
@@ -502,7 +532,7 @@ def liste_fig():
     saeule(s, xt, oben, 0.78, ["0.31", "0.53"], "num")
     platte(s, xt - 0.1, boden + 0.07, 0.98)
     stein(s, 6.85, boden - h, 0.75, h, "num", "0.31", size=12)
-    text(s, 0.15, boden + 0.3, 3.0, 0.28, mono("ergebnis$konfidenz[1]", size=11, align="start"))
+    text(s, 0.15, boden + 0.3, 3.0, 0.28, mono(f"{tr('ergebnis')}${tr('konfidenz')}[1]", size=11, align="start"))
     text(s, 2.4, boden + 0.3, 2.0, 0.28, mono("[1] 0.31", size=11, color=GREEN, align="start"))
     return s
 
