@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>3&nbsp; The R programming language – R Workshop – Social Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04-Datenimport.html" rel="next">
+<link href="./02-Quarto.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-82443109d096e9951f1ccbbd29bb67fd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f4b4164fcb985c7be955057c9bf53d61.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><style>html{ scroll-behavior: smooth; }</style>
+</head>
+<body class="docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-ProgrammierspracheR.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Workshop – Social Sciences</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/RLoesung/RWorkshop" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">0&nbsp; Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-RStudio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto and reproducible research</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-ProgrammierspracheR.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Datenimport.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Datentransformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transforming data and building scales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Grafiken-Grundlagen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Visualisation basics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Uni-Bivariate-Analyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Univariate and bivariate analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Latente-Strukturen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Erklaerungsmodelle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Explanatory models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-KI-Assistenten.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Working with AI assistants</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#what-this-chapter-is-about" id="toc-what-this-chapter-is-about" class="nav-link active" data-scroll-target="#what-this-chapter-is-about"><span class="header-section-number">3.1</span> What this chapter is about</a></li>
+  <li><a href="#what-you-will-be-able-to-do-after-this-chapter" id="toc-what-you-will-be-able-to-do-after-this-chapter" class="nav-link" data-scroll-target="#what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</a></li>
+  <li>
+<a href="#sec-variablen" id="toc-sec-variablen" class="nav-link" data-scroll-target="#sec-variablen"><span class="header-section-number">3.2</span> Defining variables with <code>&lt;-</code></a>
+  <ul>
+<li><a href="#variable-names" id="toc-variable-names" class="nav-link" data-scroll-target="#variable-names"><span class="header-section-number">3.2.1</span> Variable names</a></li>
+  <li><a href="#comments-with" id="toc-comments-with" class="nav-link" data-scroll-target="#comments-with"><span class="header-section-number">3.2.2</span> Comments with <code>#</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-funktionen" id="toc-sec-funktionen" class="nav-link" data-scroll-target="#sec-funktionen"><span class="header-section-number">3.3</span> Calling functions</a>
+  <ul>
+<li><a href="#basic-functions-to-start-with-c-seq-and-round" id="toc-basic-functions-to-start-with-c-seq-and-round" class="nav-link" data-scroll-target="#basic-functions-to-start-with-c-seq-and-round"><span class="header-section-number">3.3.1</span> Basic functions to start with: <code>c()</code>, <code>seq()</code> and <code>round()</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-operatoren" id="toc-sec-operatoren" class="nav-link" data-scroll-target="#sec-operatoren"><span class="header-section-number">3.4</span> Operators</a>
+  <ul>
+<li><a href="#arithmetic-operators---and" id="toc-arithmetic-operators---and" class="nav-link" data-scroll-target="#arithmetic-operators---and"><span class="header-section-number">3.4.1</span> Arithmetic operators <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code> and <code>%%</code></a></li>
+  <li><a href="#comparison-operators-and-in" id="toc-comparison-operators-and-in" class="nav-link" data-scroll-target="#comparison-operators-and-in"><span class="header-section-number">3.4.2</span> Comparison operators <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code> and <code>%in%</code></a></li>
+  <li><a href="#logical-operators-and" id="toc-logical-operators-and" class="nav-link" data-scroll-target="#logical-operators-and"><span class="header-section-number">3.4.3</span> Logical operators <code>&amp;</code>, <code>|</code> and <code>!</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-datentypen" id="toc-sec-datentypen" class="nav-link" data-scroll-target="#sec-datentypen"><span class="header-section-number">3.5</span> Objects and data types</a>
+  <ul>
+<li><a href="#vectors-and-indexing-with" id="toc-vectors-and-indexing-with" class="nav-link" data-scroll-target="#vectors-and-indexing-with"><span class="header-section-number">3.5.1</span> Vectors and indexing with <code>[ ]</code></a></li>
+  <li><a href="#factors-with-factor-levels-and-fct_relevel" id="toc-factors-with-factor-levels-and-fct_relevel" class="nav-link" data-scroll-target="#factors-with-factor-levels-and-fct_relevel"><span class="header-section-number">3.5.2</span> Factors with <code>factor()</code>, <code>levels()</code> and <code>fct_relevel()</code></a></li>
+  <li><a href="#datasets-tibbles-with-tibble-and" id="toc-datasets-tibbles-with-tibble-and" class="nav-link" data-scroll-target="#datasets-tibbles-with-tibble-and"><span class="header-section-number">3.5.3</span> Datasets (tibbles) with <code>tibble()</code>, <code>$</code> and <code>[[ ]]</code></a></li>
+  <li><a href="#lists-with-list" id="toc-lists-with-list" class="nav-link" data-scroll-target="#lists-with-list"><span class="header-section-number">3.5.4</span> Lists with <code>list()</code></a></li>
+  </ul>
+</li>
+  <li><a href="#sec-na" id="toc-sec-na" class="nav-link" data-scroll-target="#sec-na"><span class="header-section-number">3.6</span> Missing values: <code>NA</code>, <code>is.na()</code> and <code>na.rm</code></a></li>
+  <li>
+<a href="#sec-pipes" id="toc-sec-pipes" class="nav-link" data-scroll-target="#sec-pipes"><span class="header-section-number">3.7</span> Pipe operators</a>
+  <ul>
+<li><a href="#native-pipe" id="toc-native-pipe" class="nav-link" data-scroll-target="#native-pipe"><span class="header-section-number">3.7.1</span> Native pipe <code>|&gt;</code></a></li>
+  <li><a href="#the-older-from-magrittr" id="toc-the-older-from-magrittr" class="nav-link" data-scroll-target="#the-older-from-magrittr"><span class="header-section-number">3.7.2</span> The older <code>%&gt;%</code> from magrittr</a></li>
+  <li><a href="#pipes-in-practice" id="toc-pipes-in-practice" class="nav-link" data-scroll-target="#pipes-in-practice"><span class="header-section-number">3.7.3</span> Pipes in practice</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-top-fehler" id="toc-sec-top-fehler" class="nav-link" data-scroll-target="#sec-top-fehler"><span class="header-section-number">3.8</span> Three typical beginner mistakes</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#what-you-know-now" id="toc-what-you-know-now" class="nav-link" data-scroll-target="#what-you-know-now">What you know now</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/03-ProgrammierspracheR.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/03-ProgrammierspracheR.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-r-grundlagen" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="what-this-chapter-is-about" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="what-this-chapter-is-about">
+<span class="header-section-number">3.1</span> What this chapter is about</h2>
+<p>In Chapter 1 you set up RStudio, and in Chapter 2 you built your first Quarto document. Now you turn to the language in which you write everything in this book: R. Variables, functions, data types and the pipe operator are the building blocks you use in the following chapters to import, transform, analyse and visualise datasets.</p>
+<p>SPSS syntax is essentially a command language with a fixed vocabulary. In R, you write functions yourself, combine values into vectors and vectors into datasets. This takes a little effort at the start, and it pays off later: you use the same building blocks from your first steps through to your final thesis.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Research journal: Where are you in your mini study?</strong> You set up the IDE in <a href="01-RStudio.html" class="quarto-xref"><span>Chapter 1</span></a> and learned the reporting workflow in <a href="02-Quarto.html" class="quarto-xref"><span>Chapter 2</span></a>. Now you learn the elements of the language that you will soon use to recode survey items, build scales and fit models. The examples in this chapter are deliberately taken from the social and political sciences. From <a href="04-Datenimport.html" class="quarto-xref"><span>Chapter 4</span></a> onwards you apply the same operations to real variables from the German General Social Survey (ALLBUS).</p>
+</div>
+</div>
+</section><section id="what-you-will-be-able-to-do-after-this-chapter" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</h2>
+<ul>
+<li>Create and name variables and assign values to them.</li>
+<li>Keep your code understandable for your future self with <code>#</code> comments.</li>
+<li>Call functions with arguments and understand what they return.</li>
+<li>Use arithmetic, comparison and logical operators (<code>==</code>, <code>&amp;</code>, <code>%in%</code>, …).</li>
+<li>Distinguish the most important R data types: vector, factor, dataset (tibble), list.</li>
+<li>Handle missing values (<code>NA</code>) and exclude them from calculations.</li>
+<li>Read and write the native pipe operator <code>|&gt;</code>.</li>
+<li>Explain the difference between <code>|&gt;</code> and the older <code>%&gt;%</code> from <code>magrittr</code>.</li>
+<li>Use pipes to structure code in a readable, linear way.</li>
+</ul></section><section id="sec-variablen" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="sec-variablen">
+<span class="header-section-number">3.2</span> Defining variables with <code>&lt;-</code>
+</h2>
+<p>A <strong>variable</strong> stores a value. In R, you assign values with the assignment arrow <code>&lt;-</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">var1</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="op">*</span> <span class="fl">4</span></span>
+<span><span class="va">var1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<p><code>var1</code> (left) is the variable name; <code>2 * 4</code> (right) is the expression whose result (<code>8</code>) is stored.</p>
+<p>So R first calculates <code>2 * 4</code> and stores the result under the name <code>var1</code> in the <code>Environment</code> (<a href="#fig-name-inhalt" class="quarto-xref">Figure&nbsp;<span>3.1</span></a>). Wherever <code>var1</code> appears after that, R uses the value 8. In the figures, a value is a brick and a name is a dark name tag; <a href="#sec-datentypen" class="quarto-xref"><span>Section 3.5</span></a> explains this visual language.</p>
+<div id="fig-name-inhalt" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the code line var1 <- 2 * 4; var1 is dark and labelled Name, 2 * 4 is labelled Expression. An orange arrow leads to a box Environment with a dark name tag var1 next to a blue brick with 8. Below, the second code line var1 with the output [1] 8.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-name-inhalt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-name-inhalt.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;3.1: var1 <- 2 * 4 stores the result 8 under the name var1 in the environment. After that, var1 prints the value 8."><img src="Bilder/figuren/en/k03-name-inhalt.svg" class="img-fluid figure-img" alt="On the left the code line var1 <- 2 * 4; var1 is dark and labelled Name, 2 * 4 is labelled Expression. An orange arrow leads to a box Environment with a dark name tag var1 next to a blue brick with 8. Below, the second code line var1 with the output [1] 8."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-name-inhalt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: <code>var1 &lt;- 2 * 4</code> stores the result 8 under the name <code>var1</code> in the environment. After that, <code>var1</code> prints the value 8.
+</figcaption></figure>
+</div>
+<p>If you put the assignment in brackets, R also prints the result in the console:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span><span class="va">var2</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: <code>&lt;-</code> instead of <code>=</code>.</strong> You may know <code>=</code> as the assignment operator from other programming languages. R accepts it in many contexts, but the idiomatic operator is <code>&lt;-</code>. The reason is that R uses <code>=</code> <em>inside</em> function calls for arguments (<code>mean(x = data)</code>). If you keep <code>&lt;-</code> strictly for assignment and <code>=</code> for arguments, you avoid subtle errors.</p>
+<p>Keyboard shortcut for <code>&lt;-</code>: <code>option</code> + <code>-</code> (macOS) or <code>alt</code> + <code>-</code> (Windows/Linux).</p>
+</div>
+</div>
+<p>R runs code from top to bottom, line by line. What a variable contains therefore depends on which lines have run before:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">2</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="va">y</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7</code></pre>
+</div>
+</div>
+<p><code>y</code> is 7, although <code>x</code> is 10 at the end. In line 2, R calculates <code>x + 2</code> with the value that <code>x</code> has at that moment and stores the result 7 under <code>y</code>. R does not remember the calculation itself, so line 3 does not change <code>y</code> (<a href="#fig-reihenfolge" class="quarto-xref">Figure&nbsp;<span>3.2</span></a>). The chunks of a Quarto document also run from top to bottom when you render it.</p>
+<div id="fig-reihenfolge" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the chunk with the numbered lines 1 to 4: x <- 5, y <- x + 2, x <- 10, y, below it the output [1] 7. On the right three boxes. After line 1: name tag x with the blue brick 5. After line 2: x with 5 and y with 7. After line 3: x with 10, outlined in orange, and y still with 7.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-reihenfolge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-reihenfolge.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;3.2: The environment after each line of the chunk. Line 3 changes only x; y keeps the value 7."><img src="Bilder/figuren/en/k03-reihenfolge.svg" class="img-fluid figure-img" alt="On the left the chunk with the numbered lines 1 to 4: x <- 5, y <- x + 2, x <- 10, y, below it the output [1] 7. On the right three boxes. After line 1: name tag x with the blue brick 5. After line 2: x with 5 and y with 7. After line 3: x with 10, outlined in orange, and y still with 7."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-reihenfolge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: The environment after each line of the chunk. Line 3 changes only <code>x</code>; <code>y</code> keeps the value 7.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> What value does <code>a</code> have after these three lines: <code>a &lt;- 3</code>, <code>a &lt;- a + 1</code>, <code>a &lt;- a * 2</code>?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">a</span> <span class="op">*</span> <span class="fl">2</span></span>
+<span><span class="va">a</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<p><code>a</code> is 3 at first, 4 after the second line and 8 after the third. To the right of the arrow, R uses the value that <code>a</code> has at that moment; on the left, it stores the result under the same name and so replaces the old value.</p>
+</div>
+</div>
+</div>
+<section id="variable-names" class="level3" data-number="3.2.1"><h3 data-number="3.2.1" class="anchored" data-anchor-id="variable-names">
+<span class="header-section-number">3.2.1</span> Variable names</h3>
+<p>A variable name must start with a letter and may then contain letters, numbers, dots (<code>.</code>) and underscores (<code>_</code>). Spaces are not allowed.</p>
+<p>For readable code, social scientists usually follow one of two conventions:</p>
+<ol type="1">
+<li>
+<code>snake_case</code>: everything in lower case, words joined by underscores, as in <code>mean_age</code>. This is the tidyverse standard.</li>
+<li>
+<code>camelCase</code>: the first word in lower case, each further word starting with a capital letter, as in <code>meanAge</code>. Common in Stata and JavaScript.</li>
+</ol>
+<p>Choose one and stick to it. This book uses <code>snake_case</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Good</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mean_age</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>factor_scale</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>islamophobia_scale</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Bad (inconsistent)</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>Mean.age</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>meanAge_new</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Not allowed (space)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>mean age</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="comments-with" class="level3" data-number="3.2.2"><h3 data-number="3.2.2" class="anchored" data-anchor-id="comments-with">
+<span class="header-section-number">3.2.2</span> Comments with <code>#</code>
+</h3>
+<p>R ignores everything after a <code>#</code>. You use this to explain your code:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Sample size of the mini study</span></span>
+<span><span class="va">n_respondents</span> <span class="op">&lt;-</span> <span class="fl">5246</span>      <span class="co"># ALLBUS 2023, total</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Comments help your future self (or reviewers) understand the code again three weeks from now. Use them to explain <em>why</em> you did something. You do not need to repeat what the code itself already says.</p>
+</section></section><section id="sec-funktionen" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="sec-funktionen">
+<span class="header-section-number">3.3</span> Calling functions</h2>
+<blockquote class="blockquote">
+<p>“Everything that exists is an object. Everything that happens is a function call.” — John Chambers</p>
+</blockquote>
+<p>A function is a named tool that you pass <strong>arguments</strong> to and that returns a result. A generic function call looks like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">function_name</span><span class="op">(</span>arg1 <span class="op">=</span> <span class="va">value1</span>, arg2 <span class="op">=</span> <span class="va">value2</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>
+<code>function_name</code>: what the function does.</li>
+<li>
+<code>arg1</code>, <code>arg2</code>: settings that control how it does its work.</li>
+<li>You can pass values by name (<code>arg1 = value1</code>) or by position.</li>
+</ul>
+<p>Some arguments have <strong>default values</strong>: you do not need to specify them, because the most common value is already set.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>   <span class="co"># by name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 3 5 7 9</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">2</span><span class="op">)</span>                    <span class="co"># by position, same result</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 3 5 7 9</code></pre>
+</div>
+</div>
+<p>Both calls return the same five numbers. <a href="#fig-funktion" class="quarto-xref">Figure&nbsp;<span>3.3</span></a> shows the first one: the values of the three arguments go into <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code>, and out come the numbers 1, 3, 5, 7 and 9. In the figures, functions are marked in green and arguments in orange.</p>
+<div id="fig-funktion" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="At the top three blue bricks 1, 10 and 2, labelled with the orange argument names from, to and by. An arrow leads into a green box seq(), another arrow to a tower of five blue bricks 1, 3, 5, 7 and 9. Below, the call as code blocks: seq in green, labelled Function; from = 1, to = 10 and by = 2 in orange, labelled Arguments; next to it the output [1] 1 3 5 7 9.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-funktion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-funktion.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3.3: The first call from the chunk: seq() receives three arguments and returns five numbers."><img src="Bilder/figuren/en/k03-funktion.svg" class="img-fluid figure-img" alt="At the top three blue bricks 1, 10 and 2, labelled with the orange argument names from, to and by. An arrow leads into a green box seq(), another arrow to a tower of five blue bricks 1, 3, 5, 7 and 9. Below, the call as code blocks: seq in green, labelled Function; from = 1, to = 10 and by = 2 in orange, labelled Arguments; next to it the output [1] 1 3 5 7 9."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-funktion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: The first call from the chunk: <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code> receives three arguments and returns five numbers.
+</figcaption></figure>
+</div>
+<p>If you have forgotten the arguments of a function, <code>?function_name</code> (for example <code><a href="https://rdrr.io/r/base/seq.html">?seq</a></code>) opens its help page in RStudio. Inside the brackets, <code>Tab</code> opens a drop-down list of all arguments.</p>
+<section id="basic-functions-to-start-with-c-seq-and-round" class="level3" data-number="3.3.1"><h3 data-number="3.3.1" class="anchored" data-anchor-id="basic-functions-to-start-with-c-seq-and-round">
+<span class="header-section-number">3.3.1</span> Basic functions to start with: <code>c()</code>, <code>seq()</code> and <code>round()</code>
+</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 69%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>c(...)</code></td>
+<td>creates a vector from the arguments (<em>combine</em>)</td>
+</tr>
+<tr class="even">
+<td><code>seq(from, to, by)</code></td>
+<td>creates a sequence</td>
+</tr>
+<tr class="odd">
+<td><code>1:5</code></td>
+<td>regular sequence (1, 2, 3, 4, 5)</td>
+</tr>
+<tr class="even">
+<td><code>rep(x, times, each)</code></td>
+<td>repeats <code>x</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>head(x, n)</code></td>
+<td>the first <code>n</code> elements</td>
+</tr>
+<tr class="even">
+<td><code>tail(x, n)</code></td>
+<td>the last <code>n</code> elements</td>
+</tr>
+<tr class="odd">
+<td><code>length(x)</code></td>
+<td>number of elements</td>
+</tr>
+<tr class="even">
+<td><code>round(x, digits)</code></td>
+<td>rounds numbers</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">numbers</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 3 5 7 9</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 0 0 0 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.222</span>, <span class="fl">2.345</span>, <span class="fl">3.987</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.2 2.3 4.0</code></pre>
+</div>
+</div>
+<p>In the last line, <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> receives two arguments (<a href="#fig-argumente" class="quarto-xref">Figure&nbsp;<span>3.4</span></a>). <code>x</code> is a required field: without <code>x</code>, <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> does not know what to round. <code>digits</code> has the default value 0, so if you leave it out, <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> rounds to whole numbers. Here you set <code>digits</code> to 1.</p>
+<div id="fig-argumente" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left a tower of three blue bricks 1.222, 2.345 and 3.987. A green arrow leads to a form round(): the dashed field x, labelled required, takes the tower; the field digits contains 1, labelled default: 0. An arrow leads to the result, a tower of 1.2, 2.3 and 4.0. Below, the call round(c(1.222, 2.345, 3.987), digits = 1) and the output [1] 1.2 2.3 4.0.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-argumente-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-argumente.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;3.4: The arguments of round() as the fields of a form: x must be filled in, digits is prefilled with 0 and is overwritten with 1 here."><img src="Bilder/figuren/en/k03-argumente.svg" class="img-fluid figure-img" alt="On the left a tower of three blue bricks 1.222, 2.345 and 3.987. A green arrow leads to a form round(): the dashed field x, labelled required, takes the tower; the field digits contains 1, labelled default: 0. An arrow leads to the result, a tower of 1.2, 2.3 and 4.0. Below, the call round(c(1.222, 2.345, 3.987), digits = 1) and the output [1] 1.2 2.3 4.0."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-argumente-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.4: The arguments of <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> as the fields of a form: <code>x</code> must be filled in, <code>digits</code> is prefilled with 0 and is overwritten with 1 here.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> What do <code>round(digits = 1, x = 1.222)</code> and <code>round(1, 1.222)</code> return?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span>, x <span class="op">=</span> <span class="fl">1.222</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.222</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>With names, the order does not matter: R puts 1.222 into the field <code>x</code> and 1 into <code>digits</code>, and the result is 1.2. Without names, the position counts. In the second call, 1 ends up in the first field, <code>x</code>, and 1.222 in <code>digits</code>, so R rounds the number 1 and returns 1.</p>
+</div>
+</div>
+</div>
+</section></section><section id="sec-operatoren" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="sec-operatoren">
+<span class="header-section-number">3.4</span> Operators</h2>
+<p>You will need three groups of operators again and again.</p>
+<section id="arithmetic-operators---and" class="level3" data-number="3.4.1"><h3 data-number="3.4.1" class="anchored" data-anchor-id="arithmetic-operators---and">
+<span class="header-section-number">3.4.1</span> Arithmetic operators <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>^</code> and <code>%%</code>
+</h3>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>Operator</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>+</code></td>
+<td>addition</td>
+</tr>
+<tr class="even">
+<td><code>-</code></td>
+<td>subtraction</td>
+</tr>
+<tr class="odd">
+<td><code>*</code></td>
+<td>multiplication</td>
+</tr>
+<tr class="even">
+<td><code>/</code></td>
+<td>division</td>
+</tr>
+<tr class="odd">
+<td><code>^</code></td>
+<td>exponentiation</td>
+</tr>
+<tr class="even">
+<td><code>%%</code></td>
+<td>modulo (remainder)</td>
+</tr>
+</tbody>
+</table></section><section id="comparison-operators-and-in" class="level3" data-number="3.4.2"><h3 data-number="3.4.2" class="anchored" data-anchor-id="comparison-operators-and-in">
+<span class="header-section-number">3.4.2</span> Comparison operators <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code> and <code>%in%</code>
+</h3>
+<p>They return a logical value, <code>TRUE</code> or <code>FALSE</code>.</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>Operator</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>==</code></td>
+<td>equal</td>
+</tr>
+<tr class="even">
+<td><code>!=</code></td>
+<td>not equal</td>
+</tr>
+<tr class="odd">
+<td>
+<code>&lt;</code>, <code>&lt;=</code>
+</td>
+<td>less than (or equal)</td>
+</tr>
+<tr class="even">
+<td>
+<code>&gt;</code>, <code>&gt;=</code>
+</td>
+<td>greater than (or equal)</td>
+</tr>
+<tr class="odd">
+<td><code>%in%</code></td>
+<td>contained in a set</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: <code>==</code> is not <code>=</code>.</strong> For comparisons you always use <code>==</code> (a double equals sign). A single <code>=</code> is reserved for function arguments: <code>mean(x = data)</code> sets <code>x</code> and does not compare anything.</p>
+</div>
+</div>
+</section><section id="logical-operators-and" class="level3" data-number="3.4.3"><h3 data-number="3.4.3" class="anchored" data-anchor-id="logical-operators-and">
+<span class="header-section-number">3.4.3</span> Logical operators <code>&amp;</code>, <code>|</code> and <code>!</code>
+</h3>
+<p>They combine logical values.</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>Operator</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>&amp;</code></td>
+<td>AND</td>
+</tr>
+<tr class="even">
+<td><code>|</code></td>
+<td>OR</td>
+</tr>
+<tr class="odd">
+<td><code>!</code></td>
+<td>NOT</td>
+</tr>
+</tbody>
+</table>
+<p>A small example:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">45</span>, <span class="fl">67</span>, <span class="fl">18</span>, <span class="fl">33</span><span class="op">)</span></span>
+<span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">30</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE  TRUE  TRUE FALSE  TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">18</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">65</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE  TRUE FALSE  TRUE  TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">age</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">33</span>, <span class="fl">44</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE FALSE FALSE FALSE  TRUE</code></pre>
+</div>
+</div>
+<p><a href="#fig-vergleich" class="quarto-xref">Figure&nbsp;<span>3.5</span></a> shows the third line brick by brick. <code>age &gt;= 18</code> is <code>TRUE</code> for all five values, <code>age &lt;= 65</code> for all except 67. <code>&amp;</code> combines the two towers of logical values row by row and gives <code>TRUE</code> only where both bricks are <code>TRUE</code>.</p>
+<div id="fig-vergleich" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the name tag age above a tower of the blue bricks 22, 45, 67, 18 and 33. Next to it two pink towers: age >= 18 with TRUE five times and age <= 65 with TRUE, TRUE, FALSE, TRUE, TRUE. Between the two pink towers there is an &amp; in each row, and an arrow leads from each row to the result tower TRUE, TRUE, FALSE, TRUE, TRUE. The row with 67 is outlined in orange. Below, the code age >= 18 &amp; age <= 65 and the output [1] TRUE TRUE FALSE TRUE TRUE.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-vergleich-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-vergleich.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;3.5: The third line from the chunk: each condition gives a tower of logical values, and &amp; combines the two towers row by row."><img src="Bilder/figuren/en/k03-vergleich.svg" class="img-fluid figure-img" alt="On the left the name tag age above a tower of the blue bricks 22, 45, 67, 18 and 33. Next to it two pink towers: age >= 18 with TRUE five times and age <= 65 with TRUE, TRUE, FALSE, TRUE, TRUE. Between the two pink towers there is an &amp; in each row, and an arrow leads from each row to the result tower TRUE, TRUE, FALSE, TRUE, TRUE. The row with 67 is outlined in orange. Below, the code age >= 18 &amp; age <= 65 and the output [1] TRUE TRUE FALSE TRUE TRUE."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vergleich-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: The third line from the chunk: each condition gives a tower of logical values, and <code>&amp;</code> combines the two towers row by row.
+</figcaption></figure>
+</div>
+<p>You will need these operators all the time in Chapter 4, when you select cases with <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>.</p>
+</section></section><section id="sec-datentypen" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="sec-datentypen">
+<span class="header-section-number">3.5</span> Objects and data types</h2>
+<p>In R, everything is an object: a value, a dataset, a statistical model, even a function. The following sections introduce the data types you need most for social science work.</p>
+<p>To show you what R does with your data, the figures present data as building blocks (<a href="#fig-legende" class="quarto-xref">Figure&nbsp;<span>3.6</span></a>). A single value is a brick, and its colour shows the data type. Several bricks stacked on top of each other form a vector, that is, a tower; towers of equal height side by side on a baseplate form a dataset. An empty, dashed brick stands for a missing value, and a yellow sticker for a value label (<a href="04-Datenimport.html" class="quarto-xref"><span>Chapter 4</span></a>). In the code, objects are dark, functions green and arguments orange.</p>
+<div id="fig-legende" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Legend of the visual language. A blue brick with 1 stands for a number (numeric), a purple brick with “Anna” for text (character), a pink brick with TRUE for a logical value (logical), an empty dashed brick for a missing value (NA), and a blue brick with a yellow sticker MALE for a number with a value label. A tower of three blue bricks with the name tag numbers, labelled Name, is a vector. Two towers, gender and age, on a baseplate are a dataset; a marked row is a case, a tower is a variable. Below, code blocks: numbers dark as Object, round green as Function, digits = 1 orange as Argument.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-legende-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-legende.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;3.6: The building blocks at a glance: values, vectors, datasets and the colours in the code."><img src="Bilder/figuren/en/k03-legende.svg" class="img-fluid figure-img" alt="Legend of the visual language. A blue brick with 1 stands for a number (numeric), a purple brick with “Anna” for text (character), a pink brick with TRUE for a logical value (logical), an empty dashed brick for a missing value (NA), and a blue brick with a yellow sticker MALE for a number with a value label. A tower of three blue bricks with the name tag numbers, labelled Name, is a vector. Two towers, gender and age, on a baseplate are a dataset; a marked row is a case, a tower is a variable. Below, code blocks: numbers dark as Object, round green as Function, digits = 1 orange as Argument."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-legende-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: The building blocks at a glance: values, vectors, datasets and the colours in the code.
+</figcaption></figure>
+</div>
+<section id="vectors-and-indexing-with" class="level3" data-number="3.5.1"><h3 data-number="3.5.1" class="anchored" data-anchor-id="vectors-and-indexing-with">
+<span class="header-section-number">3.5.1</span> Vectors and indexing with <code>[ ]</code>
+</h3>
+<p>A <strong>vector</strong> is a one-dimensional collection of values of the same data type. You will see three types most often:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span>              <span class="co"># numeric</span></span>
+<span><span class="va">first_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Anna"</span>, <span class="st">"Boris"</span>, <span class="st">"Carla"</span><span class="op">)</span>   <span class="co"># character</span></span>
+<span><span class="va">flags</span>       <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">NA</span><span class="op">)</span>            <span class="co"># logical</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><a href="#fig-turm" class="quarto-xref">Figure&nbsp;<span>3.7</span></a> shows the three vectors as towers. Each tower has only one colour, because a vector contains values of a single data type. The first value is at the top; the missing value in <code>flags</code> is an empty brick.</p>
+<div id="fig-turm" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Three towers with name tags. numbers: five blue bricks with 1 to 5, below it numeric. first_names: three purple bricks with “Anna”, “Boris” and “Carla”, below it character. flags: two pink bricks TRUE and FALSE and an empty dashed brick NA, below it logical.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-turm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-turm.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;3.7: The three vectors from the chunk as towers. The colour shows the data type, and the first value is at the top."><img src="Bilder/figuren/en/k03-turm.svg" class="img-fluid figure-img" alt="Three towers with name tags. numbers: five blue bricks with 1 to 5, below it numeric. first_names: three purple bricks with “Anna”, “Boris” and “Carla”, below it character. flags: two pink bricks TRUE and FALSE and an empty dashed brick NA, below it logical."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-turm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: The three vectors from the chunk as towers. The colour shows the data type, and the first value is at the top.
+</figcaption></figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: Use <code>TRUE</code>/<code>FALSE</code> instead of <code>T</code>/<code>F</code>.</strong> The short forms work, but they can be overwritten, which makes them error-prone in practice. Always write <code>TRUE</code> and <code>FALSE</code> in full.</p>
+</div>
+</div>
+<p>With indices you access individual elements:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>      <span class="co"># first element</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>    <span class="co"># second to fourth</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 3 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>     <span class="co"># all except the first</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 3 4 5</code></pre>
+</div>
+</div>
+<p>Instead of positions, you can also index with <em>conditions</em>. With this <strong>Boolean indexing</strong>, you pass a logical vector (<code>TRUE</code>/<code>FALSE</code>) of the same length, and R keeps only the <code>TRUE</code> positions:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="va">numbers</span> <span class="op">&gt;</span> <span class="fl">25</span>                   <span class="co"># returns a TRUE/FALSE vector</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE  TRUE  TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span><span class="op">[</span><span class="va">numbers</span> <span class="op">&gt;</span> <span class="fl">25</span><span class="op">]</span>          <span class="co"># keeps only values &gt; 25</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30 40 50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">numbers</span><span class="op">)</span><span class="op">]</span>       <span class="co"># keeps only non-NA values</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10 20 30 40 50</code></pre>
+</div>
+</div>
+<p><code>numbers &gt; 25</code> gives a tower of logical values that is as tall as <code>numbers</code>. In <code>numbers[numbers &gt; 25]</code>, R places it next to <code>numbers</code> like a stencil and keeps only the bricks next to a <code>TRUE</code> (<a href="#fig-index" class="quarto-xref">Figure&nbsp;<span>3.8</span></a>).</p>
+<div id="fig-index" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the name tag numbers above a tower of 10, 20, 30, 40 and 50; the bricks 10 and 20 are grey, the others blue. Next to it the pink tower numbers > 25 with FALSE, FALSE, TRUE, TRUE, TRUE. A green arrow leads to the result, a blue tower of 30, 40 and 50. Below, numbers > 25 with the output [1] FALSE FALSE TRUE TRUE TRUE and numbers[numbers > 25] with the output [1] 30 40 50.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-index-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-index.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;3.8: Boolean indexing: the logical tower numbers > 25 selects the bricks. The grey bricks next to FALSE are dropped."><img src="Bilder/figuren/en/k03-index.svg" class="img-fluid figure-img" alt="On the left the name tag numbers above a tower of 10, 20, 30, 40 and 50; the bricks 10 and 20 are grey, the others blue. Next to it the pink tower numbers > 25 with FALSE, FALSE, TRUE, TRUE, TRUE. A green arrow leads to the result, a blue tower of 30, 40 and 50. Below, numbers > 25 with the output [1] FALSE FALSE TRUE TRUE TRUE and numbers[numbers > 25] with the output [1] 30 40 50."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-index-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: Boolean indexing: the logical tower <code>numbers &gt; 25</code> selects the bricks. The grey bricks next to <code>FALSE</code> are dropped.
+</figcaption></figure>
+</div>
+<p>This logic is <em>exactly</em> what tidyverse functions such as <code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code> (Chapter 4) do internally. Once you are confident with it, you will understand <code>filter(allbus, age &gt; 30)</code> straight away.</p>
+<p>If you write <code>numbers * 2</code> in R, the operation is applied to <em>each element</em>, and you get <code>c(20, 40, 60, 80, 100)</code> back. This is called <strong>vectorisation</strong> and is one of R’s most useful features. You hardly ever need to write a <code>for</code> loop to apply an operation to many values.</p>
+<p>If you combine two vectors of different lengths, R silently <em>repeats</em> the shorter one (<strong>recycling</strong>):</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>   <span class="co"># gives 11, 22, 13, 24, not 11, 22!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11 22 13 24</code></pre>
+</div>
+</div>
+<p><a href="#fig-recycling" class="quarto-xref">Figure&nbsp;<span>3.9</span></a> shows which values R repeats: for <code>numbers * 2</code>, R uses the same 2 for each of the five bricks; for <code>c(1, 2, 3, 4) + c(10, 20)</code>, it uses 10 and 20 a second time.</p>
+<div id="fig-recycling" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Two examples. On the left numbers * 2: a tower with 10, 20, 30, 40 and 50, next to it a * and a brick 2 in each row; the top 2 is bright blue, the four below are pale. Arrows lead to the result 20, 40, 60, 80, 100, below it the output [1] 20 40 60 80 100. On the right c(1, 2, 3, 4) + c(10, 20): the tower 1, 2, 3, 4, next to it a + in each row and the bricks 10 and 20, below them, pale, 10 and 20 again. The result is 11, 22, 13, 24, below it the output [1] 11 22 13 24.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-recycling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-recycling.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;3.9: Recycling: R repeats the shorter vector until it is as long as the longer one. Pale bricks are repeated values."><img src="Bilder/figuren/en/k03-recycling.svg" class="img-fluid figure-img" alt="Two examples. On the left numbers * 2: a tower with 10, 20, 30, 40 and 50, next to it a * and a brick 2 in each row; the top 2 is bright blue, the four below are pale. Arrows lead to the result 20, 40, 60, 80, 100, below it the output [1] 20 40 60 80 100. On the right c(1, 2, 3, 4) + c(10, 20): the tower 1, 2, 3, 4, next to it a + in each row and the bricks 10 and 20, below them, pale, 10 and 20 again. The result is 11, 22, 13, 24, below it the output [1] 11 22 13 24."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-recycling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.9: Recycling: R repeats the shorter vector until it is as long as the longer one. Pale bricks are repeated values.
+</figcaption></figure>
+</div>
+<p>R does this on purpose, but it is a typical beginners’ trap that leads to wrong results. If you are not sure, use <code><a href="https://rdrr.io/r/base/length.html">length()</a></code> to check that both vectors have the same length.</p>
+<p>What happens if you mix different data types in <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>? R then converts all values to a common type. This <strong>coercion</strong> happens without a warning:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 1 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"Anna"</span>, <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "1"    "Anna" "TRUE"</code></pre>
+</div>
+</div>
+<p>In the first vector, <code>TRUE</code> becomes 1 and <code>FALSE</code> becomes 0; the result is numeric. In the second, everything becomes text, including the number and the logical value. R always chooses the type that can hold all values, in the order logical, numeric, character (<a href="#fig-rangfolge" class="quarto-xref">Figure&nbsp;<span>3.10</span></a>). It does not work the other way round: <code>"Anna"</code> cannot be converted into a number. Because every column of a dataset is a vector, each column also has exactly one data type.</p>
+<div id="fig-rangfolge" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Two examples. On the left a mixed tower of 1, TRUE and FALSE; after an arrow a blue tower of 1, 1 and 0, labelled numeric, below it c(1, TRUE, FALSE) and the output [1] 1 1 0. On the right a mixed tower of 1, “Anna” and TRUE; after an arrow a purple tower of “1”, “Anna” and “TRUE”, labelled character, below it c(1, “Anna”, TRUE) and the output [1] “1” “Anna” “TRUE”. Next to it, under the heading Type order, the order from top to bottom: logical, arrow, numeric, arrow, character.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-rangfolge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-rangfolge.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;3.10: When you mix types, R converts all values to a common type. On the right, the order: logical becomes numeric, numeric becomes character."><img src="Bilder/figuren/en/k03-rangfolge.svg" class="img-fluid figure-img" alt="Two examples. On the left a mixed tower of 1, TRUE and FALSE; after an arrow a blue tower of 1, 1 and 0, labelled numeric, below it c(1, TRUE, FALSE) and the output [1] 1 1 0. On the right a mixed tower of 1, “Anna” and TRUE; after an arrow a purple tower of “1”, “Anna” and “TRUE”, labelled character, below it c(1, “Anna”, TRUE) and the output [1] “1” “Anna” “TRUE”. Next to it, under the heading Type order, the order from top to bottom: logical, arrow, numeric, arrow, character."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rangfolge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.10: When you mix types, R converts all values to a common type. On the right, the order: logical becomes numeric, numeric becomes character.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> What does <code>c(TRUE, "yes")</code> return, and what data type does the result have?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="st">"yes"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "TRUE" "yes" </code></pre>
+</div>
+</div>
+<p>Both values become text, <code>"TRUE"</code> and <code>"yes"</code>. The vector is character, because character comes after logical in the order.</p>
+</div>
+</div>
+</div>
+</section><section id="factors-with-factor-levels-and-fct_relevel" class="level3" data-number="3.5.2"><h3 data-number="3.5.2" class="anchored" data-anchor-id="factors-with-factor-levels-and-fct_relevel">
+<span class="header-section-number">3.5.2</span> Factors with <code>factor()</code>, <code>levels()</code> and <code>fct_relevel()</code>
+</h3>
+<p>A <strong>factor</strong> is a vector with a fixed set of categories, its <strong>levels</strong>, set with the argument <code>levels</code>. You use factors for categorical variables such as gender or education. Why not simply use a character vector? There are three reasons:</p>
+<ol type="1">
+<li>Fixed order: for an education variable, you want <em>“low”</em> to come before <em>“high”</em>, even though alphabetically it is the other way round. Factors let you enforce the order.</li>
+<li>Reference category for models: regressions need a <em>comparison category</em>, and factors provide it automatically (the first level).</li>
+<li>Memory efficiency: instead of storing each entry as text, R internally keeps a small number for each value.</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gender</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span>, <span class="st">"male"</span>, <span class="st">"non-binary"</span><span class="op">)</span>,</span>
+<span>                 levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span>, <span class="st">"non-binary"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gender</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] male       female     male       non-binary
+Levels: male female non-binary</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">gender</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "male"       "female"     "non-binary"</code></pre>
+</div>
+</div>
+<p><a href="#fig-faktor" class="quarto-xref">Figure&nbsp;<span>3.11</span></a> shows what is inside <code>gender</code>: internally, R stores a number for each value, here 1, 2, 1, 3, and <code>levels</code> defines which category each number stands for. The first level, <code>male</code>, is the reference category.</p>
+<div id="fig-faktor" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the name tag gender above a purple tower of male, female, male and non-binary; next to it, labelled internal, a blue tower of 1, 2, 1 and 3. On the right a box levels(gender) with three rows: 1 male, 2 female, 3 non-binary; next to male a tag Reference. At the bottom of the box the output [1] “male” “female” “non-binary”. Below, the code gender <- factor(c(“male”, “female”, “male”, “non-binary”), levels = c(“male”, “female”, “non-binary”)).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-faktor.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;3.11: The factor gender: internally, R stores the numbers 1 to 3, and levels assigns the categories to them in a fixed order. The first level is the reference."><img src="Bilder/figuren/en/k03-faktor.svg" class="img-fluid figure-img" alt="On the left the name tag gender above a purple tower of male, female, male and non-binary; next to it, labelled internal, a blue tower of 1, 2, 1 and 3. On the right a box levels(gender) with three rows: 1 male, 2 female, 3 non-binary; next to male a tag Reference. At the bottom of the box the output [1] “male” “female” “non-binary”. Below, the code gender <- factor(c(“male”, “female”, “male”, “non-binary”), levels = c(“male”, “female”, “non-binary”))."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.11: The factor <code>gender</code>: internally, R stores the numbers 1 to 3, and <code>levels</code> assigns the categories to them in a fixed order. The first level is the reference.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> How does R order the levels of <code>factor(c("low", "high", "medium"))</code> if you leave out <code>levels</code>?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"high"</span>, <span class="st">"medium"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] low    high   medium
+Levels: high low medium</code></pre>
+</div>
+</div>
+<p>Without <code>levels</code>, R sorts the levels alphabetically: <code>high</code>, <code>low</code>, <code>medium</code>. The reference category would then be <code>high</code>. You set the substantive order with <code>levels = c("low", "medium", "high")</code>.</p>
+</div>
+</div>
+</div>
+<p>With <code><a href="https://rdrr.io/r/stats/relevel.html">relevel()</a></code> (base R) or <code><a href="https://forcats.tidyverse.org/reference/fct_relevel.html">forcats::fct_relevel()</a></code> (tidyverse) you change the order afterwards. <code>forcats</code> is part of the tidyverse and provides a whole set of tools for factors (<code>fct_recode()</code>, <code>fct_lump()</code>, <code>fct_reorder()</code>); you will use them for the graphics in Chapter 6.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: <code>haven_labelled</code> vs.&nbsp;factor
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When you import data from SPSS (Chapter 4), you get columns of type <code>&lt;haven_labelled&gt;</code>. Such a column is a numeric vector that carries the labels as additional information; R does <em>not</em> treat it as a factor. With <code>to_label()</code> (mariposa) you convert it into a classic factor when you need one.</p>
+</div>
+</div>
+</div>
+</section><section id="datasets-tibbles-with-tibble-and" class="level3" data-number="3.5.3"><h3 data-number="3.5.3" class="anchored" data-anchor-id="datasets-tibbles-with-tibble-and">
+<span class="header-section-number">3.5.3</span> Datasets (tibbles) with <code>tibble()</code>, <code>$</code> and <code>[[ ]]</code>
+</h3>
+<p>A <strong>tibble</strong> is the tidyverse’s modern form of the data frame: a table with rows (cases) and columns (variables). You create one with <code>tibble()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">respondents</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  gender <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span>, <span class="st">"male"</span>, <span class="st">"non-binary"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  age    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">34</span>, <span class="fl">41</span>, <span class="fl">28</span>, <span class="fl">52</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">respondents</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  gender       age
+  &lt;fct&gt;      &lt;dbl&gt;
+1 male          34
+2 female        41
+3 male          28
+4 non-binary    52</code></pre>
+</div>
+</div>
+<p>A tibble is a baseplate with towers of equal height (<a href="#fig-tibble" class="quarto-xref">Figure&nbsp;<span>3.12</span></a>). Each column is a tower with one data type, and each row is a case, here one respondent.</p>
+<div id="fig-tibble" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Baseplate with the name tag respondents, 4 × 2. Two towers: gender (fct) with the purple bricks male, female, male, non-binary and age (dbl) with the blue bricks 34, 41, 28, 52. The second row with female and 41 is outlined in orange: a row is a case, the second respondent, female, 41 years old. The tower age is outlined in green: a tower is a variable, respondents$age gives [1] 34 41 28 52.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tibble-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-tibble.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;3.12: The tibble respondents as a baseplate: two towers (variables) and four rows (cases)."><img src="Bilder/figuren/en/k03-tibble.svg" class="img-fluid figure-img" alt="Baseplate with the name tag respondents, 4 × 2. Two towers: gender (fct) with the purple bricks male, female, male, non-binary and age (dbl) with the blue bricks 34, 41, 28, 52. The second row with female and 41 is outlined in orange: a row is a case, the second respondent, female, 41 years old. The tower age is outlined in green: a tower is a variable, respondents$age gives [1] 34 41 28 52."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tibble-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.12: The tibble <code>respondents</code> as a baseplate: two towers (variables) and four rows (cases).
+</figcaption></figure>
+</div>
+<p>You access a single column with <code>$</code> or <code>[[]]</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">respondents</span><span class="op">$</span><span class="va">age</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 34 41 28 52</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">respondents</span><span class="op">[[</span><span class="st">"age"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 34 41 28 52</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">respondents</span><span class="op">[</span><span class="fl">1</span>, <span class="st">"age"</span><span class="op">]</span>   <span class="co"># first row, column "age"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+    age
+  &lt;dbl&gt;
+1    34</code></pre>
+</div>
+</div>
+<p><code>$</code> and <code>[[ ]]</code> return the same column. The difference lies in how you use them:</p>
+<ul>
+<li>
+<code>$age</code> is more compact and ideal for the interactive console and for scripts.</li>
+<li>
+<code>[["age"]]</code> accepts the column name as a <em>string</em>. You need this when the column name is stored in a variable (<code>column &lt;- "age"; respondents[[column]]</code>).</li>
+</ul>
+<p>In practice, you import ready-made datasets from SPSS, Stata or Excel files (see Chapter 4). You will rarely build a tibble yourself, except for small demonstrations.</p>
+</section><section id="lists-with-list" class="level3" data-number="3.5.4"><h3 data-number="3.5.4" class="anchored" data-anchor-id="lists-with-list">
+<span class="header-section-number">3.5.4</span> Lists with <code>list()</code>
+</h3>
+<p>A <strong>list</strong> can hold objects of different types and different lengths. In R, the results of statistical analyses are usually lists: a regression result contains coefficients, residuals, model fit and so on. You will rarely need to create lists yourself, but you will often need to read them:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>  coefficient <span class="op">=</span> <span class="fl">0.42</span>,</span>
+<span>  p_value     <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  conf_int    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.31</span>, <span class="fl">0.53</span><span class="op">)</span>,</span>
+<span>  model       <span class="op">=</span> <span class="st">"lm"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">result</span><span class="op">$</span><span class="va">coefficient</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.42</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">conf_int</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.31</code></pre>
+</div>
+</div>
+<p>A list is a box with compartments (<a href="#fig-liste" class="quarto-xref">Figure&nbsp;<span>3.13</span></a>). Each compartment has a name and can hold values of a different type and length. <code>result$conf_int[1]</code> accesses the value in two steps: <code>$conf_int</code> takes the tower out of its compartment, and <code>[1]</code> takes the first brick from that tower.</p>
+<div id="fig-liste" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A dark name tag result above a box with four compartments: $coefficient with the blue brick 0.42, $p_value with 0.001, $conf_int with a tower of 0.31 and 0.53 outlined in green, $model with the purple brick “lm”. Step 1, $conf_int: an arrow leads to the tower of 0.31 and 0.53. Step 2, [1]: an arrow leads to the brick 0.31. Below, the code result$conf_int[1] and the output [1] 0.31.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-liste-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-liste.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;3.13: The list result as a box with four compartments. result$conf_int[1] first takes the tower out of the compartment conf_int and then its first value."><img src="Bilder/figuren/en/k03-liste.svg" class="img-fluid figure-img" alt="A dark name tag result above a box with four compartments: $coefficient with the blue brick 0.42, $p_value with 0.001, $conf_int with a tower of 0.31 and 0.53 outlined in green, $model with the purple brick “lm”. Step 1, $conf_int: an arrow leads to the tower of 0.31 and 0.53. Step 2, [1]: an arrow leads to the brick 0.31. Below, the code result$conf_int[1] and the output [1] 0.31."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-liste-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.13: The list <code>result</code> as a box with four compartments. <code>result$conf_int[1]</code> first takes the tower out of the compartment <code>conf_int</code> and then its first value.
+</figcaption></figure>
+</div>
+</section></section><section id="sec-na" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="sec-na">
+<span class="header-section-number">3.6</span> Missing values: <code>NA</code>, <code>is.na()</code> and <code>na.rm</code>
+</h2>
+<p>In real datasets, individual values are often missing: a respondent skipped a question, a measurement was invalid, someone refused to answer. R codes this with a special value: <strong><code>NA</code></strong> (<em>not available</em>).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1  2 NA  4  5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>              <span class="co"># which elements are NA?</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE FALSE FALSE</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: Several kinds of missing values
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>SPSS distinguishes <em>system-missing</em> (an empty field) from <em>user-missing</em> (for example “no answer” as the code <code>-9</code>). By default, R has only a generic <code>NA</code>. When you import an SPSS file, however, mariposa keeps the <em>user-missing</em> codes as tagged NA, so you can look up the reason a value is missing at any time. The English edition of the ALLBUS does not declare these codes in the file, so you declare them with <code>set_na()</code> when you read it in (<a href="04-Datenimport.html" class="quarto-xref"><span>Chapter 4</span></a>).</p>
+</div>
+</div>
+</div>
+<p>Calculations with <code>NA</code> give <code>NA</code>. This is intended: the mean of “1, 2, ?, 4, 5” is in fact unknown.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="cn">NA</span> <span class="op">+</span> <span class="fl">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+<p>To make functions such as <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> and <code><a href="https://rdrr.io/r/stats/sd.html">sd()</a></code> calculate a result anyway, you pass <code>na.rm = TRUE</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb83"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+<p><a href="#fig-na" class="quarto-xref">Figure&nbsp;<span>3.14</span></a> shows the two calls to <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>. With the empty brick in the tower, <code>mean(x)</code> itself returns <code>NA</code>. With <code>na.rm = TRUE</code>, <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> leaves out the missing value and averages the remaining four: (1 + 2 + 4 + 5) / 4 = 3.</p>
+<div id="fig-na" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the tower x of five bricks: blue 1 and 2, an empty dashed brick NA, blue 4 and 5. An arrow leads to mean(x); the result is an empty brick NA with the output [1] NA. A second arrow leads to mean(x, na.rm = TRUE), with na.rm = TRUE marked in orange; the result is a blue brick 3 with the output [1] 3.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-na.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;3.14: The vector x with one missing value. mean(x) gives NA, mean(x, na.rm = TRUE) gives the mean of the four values that are present."><img src="Bilder/figuren/en/k03-na.svg" class="img-fluid figure-img" alt="On the left the tower x of five bricks: blue 1 and 2, an empty dashed brick NA, blue 4 and 5. An arrow leads to mean(x); the result is an empty brick NA with the output [1] NA. A second arrow leads to mean(x, na.rm = TRUE), with na.rm = TRUE marked in orange; the result is a blue brick 3 with the output [1] 3."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.14: The vector <code>x</code> with one missing value. <code>mean(x)</code> gives <code>NA</code>, <code>mean(x, na.rm = TRUE)</code> gives the mean of the four values that are present.
+</figcaption></figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: <code>NA</code> as a result is not an error.</strong> If <code>mean(data$age)</code> suddenly returns <code>NA</code>, R gives <em>no</em> error message. It simply goes on calculating and prints <code>NA</code>. Among beginners, this is the most common “my output looks strange” problem. Two checks help:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb85"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">age</span><span class="op">)</span><span class="op">)</span>   <span class="co"># how many NAs does the variable have?</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">age</span><span class="op">)</span>      <span class="co"># shows "NA's: 47" at the bottom if there are any</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The fix: add <code>na.rm = TRUE</code> to the calculation, or exclude the missing cases explicitly with <code>filter(!is.na(age))</code>.</p>
+</div>
+</div>
+</section><section id="sec-pipes" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="sec-pipes">
+<span class="header-section-number">3.7</span> Pipe operators</h2>
+<p>R lets you nest functions inside each other, so that the output of one function becomes the input of the next:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb86"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This works, but the more steps you nest, the harder the code is to read. You have to read it from the <em>inside out</em>, the opposite of the way you normally read. The <strong>pipe operator</strong> solves this problem. A pipe chains function calls one after the other instead of nesting them. R has two variants; this book uses the <em>native</em> pipe <code>|&gt;</code>.</p>
+<section id="native-pipe" class="level3" data-number="3.7.1"><h3 data-number="3.7.1" class="anchored" data-anchor-id="native-pipe">
+<span class="header-section-number">3.7.1</span> Native pipe <code>|&gt;</code>
+</h3>
+<p>With the native pipe, you write the same pipeline step by step, from left to right instead of from the inside out:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb87"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.11</span>, <span class="fl">1.22</span>, <span class="fl">1.33</span>, <span class="fl">1.44</span>, <span class="fl">1.55</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">numbers</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.1 1.2 1.3</code></pre>
+</div>
+</div>
+<p>Read it like a sentence: “Take <code>numbers</code>, <em>then</em> round to 1 decimal place, <em>then</em> show the first 3.”</p>
+<p><a href="#fig-pipe" class="quarto-xref">Figure&nbsp;<span>3.15</span></a> shows what happens: the pipe puts the result on the left into the first field of the function on the right. <code>numbers</code> ends up in the first argument of <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code>, and the result of <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> in the first argument of <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code>. The other arguments, <code>digits = 1</code> and <code>n = 3</code>, stay in the brackets.</p>
+<div id="fig-pipe" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Two steps. Step 1: the tower numbers with 1.11, 1.22, 1.33, 1.44 and 1.55 moves through the pipe into the dashed first field of round( , digits = 1); below it is = round(numbers, digits = 1); the result is the tower 1.1, 1.2, 1.3, 1.4, 1.6. Step 2: this tower moves into the first field of head( , n = 3); below it is = head(round(numbers, digits = 1), n = 3); the result is the tower 1.1, 1.2, 1.3.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-pipe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-pipe.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;3.15: The pipe from the chunk in two steps: each time, the result on the left goes into the first field of the next function."><img src="Bilder/figuren/en/k03-pipe.svg" class="img-fluid figure-img" alt="Two steps. Step 1: the tower numbers with 1.11, 1.22, 1.33, 1.44 and 1.55 moves through the pipe into the dashed first field of round( , digits = 1); below it is = round(numbers, digits = 1); the result is the tower 1.1, 1.2, 1.3, 1.4, 1.6. Step 2: this tower moves into the first field of head( , n = 3); below it is = head(round(numbers, digits = 1), n = 3); the result is the tower 1.1, 1.2, 1.3."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.15: The pipe from the chunk in two steps: each time, the result on the left goes into the first field of the next function.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> How do you write <code>sqrt(sum(c(9, 16)))</code> as a pipe?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb89"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">16</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<p>Nested code is read from the inside out: first <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>, then <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code>, then <code><a href="https://rdrr.io/r/base/MathFun.html">sqrt()</a></code>. With the pipe, the steps appear in exactly this order from left to right. 9 + 16 makes 25, and its square root is 5.</p>
+</div>
+</div>
+</div>
+<p>The keyboard shortcut for the pipe is <code>cmd</code>/<code>ctrl</code> + <code>shift</code> + <code>M</code>. In RStudio, tick <em>Use native pipe operator</em> under <code>Tools</code> → <code>Global Options</code> → <code>Code</code> so that the shortcut inserts <code>|&gt;</code> instead of <code>%&gt;%</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: Passing the value to another argument
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By default, <code>|&gt;</code> passes the value as the first argument of the next function. If it should go somewhere <em>else</em>, you use the placeholder <code>_</code>, available since R 4.2. It must be used as a named argument:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb91"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">islamophobia</span> <span class="op">~</span> <span class="va">age</span>, data <span class="op">=</span> <span class="va">_</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Most tidyverse functions do not need this, because they take the dataset as their first argument anyway.</p>
+</div>
+</div>
+</div>
+</section><section id="the-older-from-magrittr" class="level3" data-number="3.7.2"><h3 data-number="3.7.2" class="anchored" data-anchor-id="the-older-from-magrittr">
+<span class="header-section-number">3.7.2</span> The older <code>%&gt;%</code> from magrittr</h3>
+<p>You will see the pipe <code>%&gt;%</code> (from the tidyverse package <code>magrittr</code>) everywhere in the R world: in tutorials, in Stack Overflow answers and inside many R packages. <code>%&gt;%</code> and <code>|&gt;</code> work almost identically:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb92"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">numbers</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Both work in tidyverse code and give the same results. This book uses <code>|&gt;</code> throughout, because it is part of the language itself (no package needed) and slightly faster. If you see <code>%&gt;%</code> in other people’s code, that is no problem.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: Where <code>%&gt;%</code> is different
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The magrittr pipe has a placeholder <code>.</code> that you can put in any position: <code>x %&gt;% lm(y ~ ., data = .)</code>. Here only the dot after <code>data =</code> is the placeholder; the dot in <code>y ~ .</code> belongs to the formula and stands for all other variables in the dataset. The native <code>_</code> must be named. With most tidyverse functions you do not need a placeholder, because the first argument is always the dataset.</p>
+<p><code>magrittr</code> also provides further operators: <code>%$%</code>, <code>%T&gt;%</code> and <code>%&lt;&gt;%</code>. They used to be needed now and then (for example to pass pipes through plotting functions). This book does not use them <em>anywhere</em>; mariposa functions all take the data as their first argument and work well with pipes.</p>
+</div>
+</div>
+</div>
+</section><section id="pipes-in-practice" class="level3" data-number="3.7.3"><h3 data-number="3.7.3" class="anchored" data-anchor-id="pipes-in-practice">
+<span class="header-section-number">3.7.3</span> Pipes in practice</h3>
+<p>Here is an excerpt from the actual data preparation pipeline in Chapter 5 (<a href="05-Datentransformation.html#sec-pipeline" class="quarto-xref"><span>Section 5.9</span></a>). It shows what pipes are really useful for:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb93"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu">read_spss</span><span class="op">(</span><span class="st">"ALLBUS2023.sav"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">set_na</span><span class="op">(</span><span class="op">-</span><span class="fl">56</span>, <span class="op">-</span><span class="fl">55</span>, <span class="op">-</span><span class="fl">54</span>, <span class="op">-</span><span class="fl">53</span>, <span class="op">-</span><span class="fl">51</span>, <span class="op">-</span><span class="fl">50</span>, <span class="op">-</span><span class="fl">42</span>, <span class="op">-</span><span class="fl">41</span>,</span>
+<span>         <span class="op">-</span><span class="fl">33</span>, <span class="op">-</span><span class="fl">32</span>, <span class="op">-</span><span class="fl">15</span>, <span class="op">-</span><span class="fl">11</span>, <span class="op">-</span><span class="fl">10</span>, <span class="op">-</span><span class="fl">9</span>, <span class="op">-</span><span class="fl">8</span>, <span class="op">-</span><span class="fl">7</span>, <span class="op">-</span><span class="fl">6</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    mm02r <span class="op">=</span> <span class="fu">rec</span><span class="op">(</span><span class="va">mm02</span>, rules <span class="op">=</span> <span class="st">"rev"</span><span class="op">)</span>,</span>
+<span>    mm05r <span class="op">=</span> <span class="fu">rec</span><span class="op">(</span><span class="va">mm05</span>, rules <span class="op">=</span> <span class="st">"rev"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    islamophobia <span class="op">=</span> <span class="fu">row_means</span><span class="op">(</span><span class="fu">pick</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span><span class="op">)</span>,</span>
+<span>                             min_valid <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In words: read in the dataset → set the missing-value codes to <code>NA</code> → reverse-code <code>mm02</code> and <code>mm05</code> → build the scale. Without the pipe, this would be a nested expression that is hard to follow because you have to read it backwards.</p>
+<p>In <a href="#fig-analyseplan" class="quarto-xref">Figure&nbsp;<span>3.16</span></a>, each step stands next to the lines of code that carry it out. From the second step onwards, each function receives the dataset from the step before through <code>|&gt;</code>.</p>
+<div id="fig-analyseplan" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Four numbered steps. 1: allbus <- read_spss(“ALLBUS2023.sav”) |>, on the right Read in the dataset. 2: set_na(-56, …, -6) |>, on the right Set missing codes to NA. 3: mutate( mm02r = rec(mm02, rules = “rev”), mm05r = rec(mm05, rules = “rev”) ) |>, on the right Reverse-code mm02 and mm05. 4: mutate( islamophobia = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5) ), on the right Build the scale. The pipe symbols |> are green.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-analyseplan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k03-analyseplan.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;3.16: The pipe from the chunk, step by step: on the left the code, on the right the plan in words."><img src="Bilder/figuren/en/k03-analyseplan.svg" class="img-fluid figure-img" alt="Four numbered steps. 1: allbus <- read_spss(“ALLBUS2023.sav”) |>, on the right Read in the dataset. 2: set_na(-56, …, -6) |>, on the right Set missing codes to NA. 3: mutate( mm02r = rec(mm02, rules = “rev”), mm05r = rec(mm05, rules = “rev”) ) |>, on the right Reverse-code mm02 and mm05. 4: mutate( islamophobia = row_means(pick(mm01, mm02r, mm03, mm04, mm05r, mm06), min_valid = 5) ), on the right Build the scale. The pipe symbols |> are green."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-analyseplan-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.16: The pipe from the chunk, step by step: on the left the code, on the right the plan in words.
+</figcaption></figure>
+</div>
+</section></section><section id="sec-top-fehler" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="sec-top-fehler">
+<span class="header-section-number">3.8</span> Three typical beginner mistakes</h2>
+<p>Before you work through the exercises, here are three pitfalls that almost everyone runs into at some point. If you know them, you save yourself hours of frustration at the start:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 33%">
+<col style="width: 35%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Mistake</th>
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Fix</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">
+<code>var = 5</code> instead of <code>var &lt;- 5</code>
+</td>
+<td style="text-align: left;">seems to work, but breaks in function arguments</td>
+<td style="text-align: left;">Always use <code>&lt;-</code> for assignment (shortcut: <code>option</code>/<code>alt</code> + <code>-</code>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">
+<code>T</code> / <code>F</code> instead of <code>TRUE</code> / <code>FALSE</code>
+</td>
+<td style="text-align: left;">works until someone sets <code>T &lt;- 1</code>
+</td>
+<td style="text-align: left;">Always write them in full</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">
+<code>mean(x)</code> returns <code>NA</code> for no apparent reason</td>
+<td style="text-align: left;">the variable has missing values</td>
+<td style="text-align: left;">
+<code>mean(x, na.rm = TRUE)</code>, or check <code>sum(is.na(x))</code> first</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: Typographic quotation marks.</strong> If you copy code from Word or PowerPoint, straight quotation marks (<code>"</code>) turn into typographic ones (<code>“</code> or <code>”</code>). R treats them as a syntax error. If you get the error message <em>“unexpected input”</em> or <em>“unexpected string constant”</em>, check the quotation marks.</p>
+</div>
+</div>
+</section><section id="exercises" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="exercises">Exercises</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 1 · Variables and vectors · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 1 · Variables and vectors · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a vector with the numbers 10 to 20, round each number to one decimal place (even if it is already a whole number) and calculate the mean. Write this once nested and once with a pipe.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb94"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Nested</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># With a pipe</span></span>
+<span><span class="fl">10</span><span class="op">:</span><span class="fl">20</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 2 · Building a tibble · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 2 · Building a tibble · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a tibble with two variables: <code>id</code> (1 to 5) and <code>value</code> (random numbers; <code>runif(5, 0, 10)</code> is one option). Then access the third row.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb95"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  id    <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">demo</span></span>
+<span><span class="va">demo</span><span class="op">[</span><span class="fl">3</span>, <span class="op">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 3 · Factor and reference category · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 3 · Factor and reference category · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Build a factor <code>education</code> with the levels <code>"low"</code>, <code>"medium"</code>, <code>"high"</code>. Set <code>"medium"</code> as the reference category. Hint: <code>levels =</code> sets the order in <code><a href="https://rdrr.io/r/base/factor.html">factor()</a></code>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb96"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">education</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"high"</span>, <span class="st">"low"</span>, <span class="st">"medium"</span>, <span class="st">"medium"</span>, <span class="st">"high"</span><span class="op">)</span>,</span>
+<span>                    levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"medium"</span>, <span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">education</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 4 · Operators and NA with typical survey data · Transfer">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 4 · Operators and NA with typical survey data · Transfer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Imagine you have asked seven respondents in a small survey how much they trust the Bundestag, the German federal parliament, on a scale from 0 (no trust) to 10 (complete trust): <code>trust &lt;- c(3, 8, NA, 7, 5, NA, 9)</code>. (NA = “no answer”.) Determine (a) the mean without missing values, (b) how many respondents reported high trust (&gt; 5), (c) whether at least one person skipped the question.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb97"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">trust</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>            <span class="co"># (a)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">trust</span> <span class="op">&gt;</span> <span class="fl">5</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>         <span class="co"># (b) TRUE counts as 1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">trust</span><span class="op">)</span><span class="op">)</span>                    <span class="co"># (c)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 5 · Pipeline on a survey vector · Mini research question">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 5 · Pipeline on a survey vector · Mini research question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the trust exercise you have just calculated individual statistics. Now write <em>one</em> pipeline: filter out all <code>NA</code> values, keep only values ≥ 5 (high trust) and calculate the mean. Write the solution both nested and with a pipe. Which version do you find easier to read?</p>
+<p>Imagine you later applied the same pipeline to the ALLBUS vector <code>pt03</code> (trust in the Bundestag, about 5000 cases). The code would be the same.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb98"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trust</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">8</span>, <span class="cn">NA</span>, <span class="fl">7</span>, <span class="fl">5</span>, <span class="cn">NA</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Nested</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">trust</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">trust</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">trust</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># With a pipe (easier to read)</span></span>
+<span><span class="va">trust</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">trust</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">trust</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><em>Looking ahead:</em> In the following chapters you carry out exactly these operations with tidyverse verbs (<code><a href="https://rdrr.io/r/stats/filter.html">filter()</a></code>, <code>summarise()</code>), and the <code>|&gt;</code> pipe stays the same.</p>
+</div>
+</div>
+</div>
+</section><section id="what-you-know-now" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-know-now">What you know now</h2>
+<ul>
+<li>You assign values to variables with <code>&lt;-</code> and know the <code>snake_case</code> convention.</li>
+<li>You comment code with <code>#</code> for your future self and for reviewers.</li>
+<li>You call functions with named arguments and look up help with <code>?</code>.</li>
+<li>You use arithmetic, comparison and logical operators, including <code>%in%</code>.</li>
+<li>You recognise and create vectors, factors, tibbles and lists.</li>
+<li>You handle <code>NA</code> with confidence and use <code>na.rm = TRUE</code> in calculation functions.</li>
+<li>You use the native pipe <code>|&gt;</code> for readable, linear code.</li>
+<li>You understand how it differs from <code>%&gt;%</code> and know that <code>|&gt;</code> is the current standard.</li>
+</ul>
+<p>In the next chapter you work with real data from ALLBUS 2023.</p>
+</section><section id="further-reading" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="further-reading">Further reading</h2>
+<ul>
+<li>Hadley Wickham, <a href="https://adv-r.hadley.nz/">Advanced R</a>, <em>the</em> reference on R as a programming language.</li>
+<li>
+<a href="https://style.tidyverse.org/">The Tidyverse Style Guide</a>, conventions for readable tidyverse code.</li>
+<li>Bruno Rodrigues, <a href="https://b-rodrigues.github.io/modern_R/">Modern R with the Tidyverse</a>, a free online course on the tidyverse as a programming environment.</li>
+</ul>
+
+
+</section></main><!-- /main --><script>
+/* Variante H: Seitenaufbau. Läuft am Ende von <body>, ändert nur die Darstellung. */
+(function () {
+  var main = document.querySelector("main.content");
+  if (!main) return;
+
+  // Sprache der Seite (aus <html lang>, Quarto-Profile de/en); alle Wörter, die das Skript erkennt oder setzt
+  var lang = document.documentElement.lang === "en" ? "en" : "de";
+  var WORT = {
+    de: {
+      typen: [["Hintergrund", "hintergrund"], ["Forschungshintergrund", "hintergrund"], ["Konzept", "hintergrund"],
+        ["Forschungsjournal", "journal"], ["Reviewer-Hinweis", "reviewer"], ["SPSS → R", "spss"],
+        ["mariposa-Tipp", "mariposa"], ["Vorsicht", "vorsicht"], ["Tipp", "tipp"], ["Faustregel", "tipp"]],
+      uebung: "Übung", loesung: "Lösung",
+      nachdenken: "Kurz überlegen", aufloesung: "Auflösung",
+      lernziele: "Was du nach diesem (Kapitel|Buch) kannst", selbstcheck: "Was du jetzt weißt", weiter: "Weiterführend",
+      kapitel: "Kapitel", umschalter: "English", umschalterTitel: "Read this page in English"
+    },
+    en: {
+      typen: [["Background", "hintergrund"], ["Caution", "vorsicht"], ["mariposa tip", "mariposa"],
+        ["SPSS → R", "spss"], ["Research journal", "journal"]],
+      uebung: "Exercise", loesung: "Solution",
+      nachdenken: "Stop and think", aufloesung: "Answer",
+      lernziele: "What you will be able to do after this (chapter|book)", selbstcheck: "What you know now", weiter: "Further reading",
+      kapitel: "Chapters", umschalter: "Deutsch", umschalterTitel: "Diese Seite auf Deutsch lesen"
+    }
+  }[lang];
+  function regexWort(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
+  var num = main.querySelector("h1 .chapter-number");
+  var kap = num ? num.textContent.trim() : "0";
+  document.body.dataset.kapitel = kap;
+  var header = document.getElementById("title-block-header");
+  var start = !!(header && header.querySelector(".subtitle"));
+  if (start) document.body.classList.add("startseite");
+
+  // Titel an „ – “ auf zwei Zeilen setzen
+  function zweizeilig(el, klasseEins) {
+    if (!el) return;
+    var t = el.textContent.trim();
+    var i = t.indexOf(" – ");
+    if (i < 0) return;
+    el.innerHTML = '<span class="' + klasseEins + '">' + t.slice(0, i) + '</span><span class="titel-zwei">' + t.slice(i + 3) + "</span>";
+  }
+  zweizeilig(document.querySelector(".sidebar-title a") || document.querySelector(".sidebar-title"), "titel-eins");
+  if (start) {
+    zweizeilig(header.querySelector("h1.title"), "titel-eins");
+    var cover = main.querySelector(".quarto-cover-image");
+    if (cover) {
+      var hülle = document.createElement("div");
+      hülle.className = "start-cover";
+      var alt = cover.parentElement;
+      hülle.appendChild(cover);
+      header.appendChild(hülle);
+      if (alt && alt.tagName === "P" && !alt.textContent.trim() && !alt.children.length) alt.remove();
+    }
+  }
+
+  // Vorwort in der Seitenleiste: Nummer als eigener Stein wie bei den Kapiteln
+  var erster = document.querySelector(".sidebar-menu-container ul > li:first-child .menu-text");
+  if (erster && !erster.querySelector(".chapter-number")) {
+    var m = erster.textContent.replace(/\u00a0/g, " ").trim().match(/^(\d+)\s+(.*)$/);
+    if (m) erster.innerHTML = '<span class="chapter-number">' + m[1] + '</span>&nbsp; <span class="chapter-title">' + m[2] + "</span>";
+  }
+
+  // Kapitelüberschriften ohne Titelblock (Vorwort): Text in eigenes Element
+  main.querySelectorAll("h1").forEach(function (h) {
+    var n = h.querySelector(".chapter-number");
+    if (!n || h.querySelector(".chapter-title")) return;
+    var rest = h.textContent.replace(n.textContent, "").replace(/ /g, " ").trim();
+    h.innerHTML = "";
+    h.appendChild(n);
+    var s = document.createElement("span");
+    s.className = "chapter-title";
+    s.textContent = rest;
+    h.appendChild(s);
+    h.classList.add("kapitelkopf");
+  });
+
+  // Abschnittsüberschriften: Text hinter dem Nummern-Stein in ein Element fassen (bricht dann sauber um)
+  main.querySelectorAll("h2 > .header-section-number").forEach(function (n) {
+    var h = n.parentElement;
+    var s = document.createElement("span");
+    s.className = "h-text";
+    while (n.nextSibling) s.appendChild(n.nextSibling);
+    h.appendChild(s);
+  });
+
+  // Bausteine-Leiste: ein Stein je Kapitel, der aktuelle steht vorne
+  if (!start && header && num) {
+    var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
+    var nav = document.createElement("nav");
+    nav.className = "leiste";
+    nav.setAttribute("aria-label", WORT.kapitel);
+    links.forEach(function (a, i) {
+      var b = document.createElement("a");
+      b.href = a.getAttribute("href");
+      b.className = "leiste-stein k" + i;
+      b.textContent = i;
+      b.title = a.textContent.replace(/\s+/g, " ").trim();
+      if (String(i) === kap) { b.classList.add("aktiv"); b.setAttribute("aria-current", "page"); }
+      nav.appendChild(b);
+    });
+    header.insertBefore(nav, header.firstChild);
+  }
+
+  // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
+  var TYPEN = WORT.typen.map(function (t) {
+    return [new RegExp("^" + regexWort(t[0]) + "\\b"), t[1], t[0]];
+  });
+  function führendeLeerzeichenWeg(p) {
+    if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
+  }
+  main.querySelectorAll(".callout").forEach(function (c) {
+    var titel = c.getAttribute("title") || "";
+    var kopf = c.querySelector(".callout-title-container");
+    if (new RegExp("^" + WORT.uebung).test(titel)) {
+      var teile = titel.split(" · ");
+      var nr = (teile[0].match(/\d+/) || [""])[0];
+      c.classList.add("kasten", "uebung");
+      if (kopf) kopf.innerHTML = '<span class="uebung-nr">' + nr + '</span><span class="kasten-titel">' + (teile[1] || "") + "</span>" +
+        (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
+      return;
+    }
+    if (new RegExp("^" + WORT.loesung).test(titel)) {
+      c.classList.add("loesung");
+      var vor = c.previousElementSibling;
+      if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
+      return;
+    }
+    // Kasten mit Überschrift als Titel, etwa zum Aufklappen: „Hintergrund: …“
+    // Quarto setzt davor ein verstecktes Wort für Screenreader („Hinweis“); das bleibt erhalten
+    var sr = kopf ? kopf.querySelector(".screen-reader-only") : null;
+    var kopfText = kopf ? kopf.textContent.replace(sr ? sr.textContent : "", "").replace(/\s+/g, " ").trim() : "";
+    for (var k = 0; k < TYPEN.length; k++) {
+      var wort = TYPEN[k][2];
+      if (kopfText.indexOf(wort + ":") !== 0) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[k][1]);
+      var h = kopf.innerHTML.replace(sr ? sr.outerHTML : "", "").trim();
+      var rest = h.slice(h.indexOf(wort) + wort.length).replace(/^\s*:\s*/, "");
+      kopf.innerHTML = (sr ? sr.outerHTML : "") + '<span class="kasten-label">' + wort + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      return;
+    }
+    if (titel) return;
+    var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
+    var st = p && p.firstElementChild;
+    if (!st || st.tagName !== "STRONG" || p.firstChild !== st) return;
+    var text = st.textContent.trim();
+    for (var i = 0; i < TYPEN.length; i++) {
+      if (!TYPEN[i][0].test(text)) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[i][1]);
+      var html = st.innerHTML.trim();
+      var rest = html.slice(html.indexOf(TYPEN[i][2]) + TYPEN[i][2].length)
+        .replace(/^\s*[:./–-]?\s*/, "").replace(/\.\s*$/, "");
+      if (kopf) kopf.innerHTML = '<span class="kasten-label">' + TYPEN[i][2] + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      st.remove();
+      führendeLeerzeichenWeg(p);
+      if (!p.textContent.trim() && !p.children.length) p.remove();
+      break;
+    }
+  });
+
+  // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
+  main.querySelectorAll("p > strong:first-child").forEach(function (st) {
+    if (st.textContent.trim() !== WORT.nachdenken + ".") return;
+    var p = st.parentElement;
+    if (p.firstChild !== st) return;
+    var nach = p.nextElementSibling;
+    var karte = document.createElement("div");
+    karte.className = "denkpause";
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">' + WORT.nachdenken + '</span></div>';
+    p.parentNode.insertBefore(karte, p);
+    st.remove();
+    führendeLeerzeichenWeg(p);
+    karte.appendChild(p);
+    if (nach && nach.classList.contains("callout") && new RegExp("^" + WORT.aufloesung).test(nach.getAttribute("title") || "")) {
+      nach.classList.add("aufloesung");
+      karte.appendChild(nach);
+    }
+  });
+
+  // Lernziele, Selbstcheck, Weiterführend als Karten
+  main.querySelectorAll("section.level2 > h2").forEach(function (h) {
+    var t = h.textContent.trim();
+    var s = h.parentElement;
+    if (new RegExp("^" + WORT.lernziele).test(t)) s.classList.add("karte", "lernziele");
+    else if (new RegExp("^" + regexWort(WORT.selbstcheck)).test(t)) s.classList.add("karte", "selbstcheck");
+    else if (new RegExp("^" + regexWort(WORT.weiter)).test(t)) s.classList.add("karte", "weiter");
+  });
+
+  // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
+  var schlüssel = "rw-selbstcheck:" + location.pathname;
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(schlüssel) || "{}"); } catch (e) { stand = {}; }
+  main.querySelectorAll("section.selbstcheck li").forEach(function (li, i) {
+    li.setAttribute("role", "checkbox");
+    li.tabIndex = 0;
+    function setze(an) { li.classList.toggle("erledigt", an); li.setAttribute("aria-checked", an ? "true" : "false"); }
+    setze(!!stand[i]);
+    function umschalten() {
+      stand[i] = !stand[i];
+      setze(stand[i]);
+      try { localStorage.setItem(schlüssel, JSON.stringify(stand)); } catch (e) {}
+    }
+    li.addEventListener("click", function (e) { if (!e.target.closest("a")) umschalten(); });
+    li.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); umschalten(); } });
+  });
+
+  // Lesefortschritt oben in der Kapitelfarbe
+  var balken = document.createElement("div");
+  balken.className = "lesefortschritt";
+  document.body.appendChild(balken);
+  function fortschritt() {
+    var d = document.documentElement, m = d.scrollHeight - d.clientHeight;
+    balken.style.width = (m > 0 ? d.scrollTop / m * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", fortschritt, { passive: true });
+  fortschritt();
+
+  // Sprachumschalter: dieselbe Seite in der anderen Sprache (…/X.html ↔ …/en/X.html, …/ ↔ …/en/).
+  // Knopf und <link rel="alternate"> entstehen erst, wenn die Gegenseite antwortet.
+  function gegenstueck(pfad, sprache) {
+    if (sprache === "en") {
+      var k = pfad.lastIndexOf("/en/");
+      return k < 0 ? null : pfad.slice(0, k) + "/" + pfad.slice(k + 4);
+    }
+    var l = pfad.lastIndexOf("/");
+    return pfad.slice(0, l + 1) + "en/" + pfad.slice(l + 1);
+  }
+  var ziel = gegenstueck(location.pathname, lang);
+  if (ziel && window.fetch) {
+    var andere = lang === "en" ? "de" : "en";
+    fetch(ziel, { method: "HEAD" }).then(function (r) {
+      if (!r.ok) return;
+      var alt = document.createElement("link");
+      alt.rel = "alternate";
+      alt.hreflang = andere;
+      alt.href = ziel;
+      document.head.appendChild(alt);
+      var a = document.createElement("a");
+      a.className = "sprachwahl";
+      a.href = ziel + location.search;
+      a.hreflang = andere;
+      a.lang = andere;
+      a.title = WORT.umschalterTitel;
+      a.textContent = WORT.umschalter;
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
+})();
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./02-Quarto.html" class="pagination-link" aria-label="Quarto and reproducible research">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto and reproducible research</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04-Datenimport.html" class="pagination-link" aria-label="Data import and inspection">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R Workshop – Social Sciences · Yannick Diehl and Daniel Moosdorf</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/03-ProgrammierspracheR.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/03-ProgrammierspracheR.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

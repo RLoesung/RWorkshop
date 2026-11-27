@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>4&nbsp; Data import and inspection – R Workshop – Social Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./05-Datentransformation.html" rel="next">
+<link href="./03-ProgrammierspracheR.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-82443109d096e9951f1ccbbd29bb67fd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f4b4164fcb985c7be955057c9bf53d61.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><style>html{ scroll-behavior: smooth; }</style>
+</head>
+<body class="docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-Datenimport.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Workshop – Social Sciences</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/RLoesung/RWorkshop" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">0&nbsp; Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-RStudio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto and reproducible research</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-ProgrammierspracheR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Datenimport.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Datentransformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transforming data and building scales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Grafiken-Grundlagen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Visualisation basics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Uni-Bivariate-Analyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Univariate and bivariate analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Latente-Strukturen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Erklaerungsmodelle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Explanatory models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-KI-Assistenten.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Working with AI assistants</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#what-this-chapter-is-about" id="toc-what-this-chapter-is-about" class="nav-link active" data-scroll-target="#what-this-chapter-is-about"><span class="header-section-number">4.1</span> What this chapter is about</a></li>
+  <li><a href="#what-you-will-be-able-to-do-after-this-chapter" id="toc-what-you-will-be-able-to-do-after-this-chapter" class="nav-link" data-scroll-target="#what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">4.2</span> Setup</a></li>
+  <li>
+<a href="#importing-the-dataset-with-read_spss" id="toc-importing-the-dataset-with-read_spss" class="nav-link" data-scroll-target="#importing-the-dataset-with-read_spss"><span class="header-section-number">4.3</span> Importing the dataset with <code>read_spss()</code></a>
+  <ul>
+<li><a href="#other-formats-and-export-with-read_stata-read_xlsx-and-write_spss" id="toc-other-formats-and-export-with-read_stata-read_xlsx-and-write_spss" class="nav-link" data-scroll-target="#other-formats-and-export-with-read_stata-read_xlsx-and-write_spss"><span class="header-section-number">4.3.1</span> Other formats and export with <code>read_stata()</code>, <code>read_xlsx()</code> and <code>write_spss()</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#a-first-look-at-the-dataset-with-glimpse-nrow-and-ncol" id="toc-a-first-look-at-the-dataset-with-glimpse-nrow-and-ncol" class="nav-link" data-scroll-target="#a-first-look-at-the-dataset-with-glimpse-nrow-and-ncol"><span class="header-section-number">4.4</span> A first look at the dataset with <code>glimpse()</code>, <code>nrow()</code> and <code>ncol()</code></a>
+  <ul>
+<li><a href="#finding-variables-with-find_var" id="toc-finding-variables-with-find_var" class="nav-link" data-scroll-target="#finding-variables-with-find_var"><span class="header-section-number">4.4.1</span> Finding variables with <code>find_var()</code></a></li>
+  <li><a href="#detailed-overview-with-codebook" id="toc-detailed-overview-with-codebook" class="nav-link" data-scroll-target="#detailed-overview-with-codebook"><span class="header-section-number">4.4.2</span> Detailed overview with <code>codebook()</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#selecting-variables-and-cases" id="toc-selecting-variables-and-cases" class="nav-link" data-scroll-target="#selecting-variables-and-cases"><span class="header-section-number">4.5</span> Selecting variables and cases</a>
+  <ul>
+<li>
+<a href="#selecting-variables-with-select" id="toc-selecting-variables-with-select" class="nav-link" data-scroll-target="#selecting-variables-with-select"><span class="header-section-number">4.5.1</span> Selecting variables with <code>select()</code></a>
+  <ul class="collapse">
+<li><a href="#tidyselect-helpers-such-as-starts_with-where-and-everything" id="toc-tidyselect-helpers-such-as-starts_with-where-and-everything" class="nav-link" data-scroll-target="#tidyselect-helpers-such-as-starts_with-where-and-everything"><span class="header-section-number">4.5.1.1</span> Tidyselect helpers such as <code>starts_with()</code>, <code>where()</code> and <code>everything()</code></a></li>
+  <li><a href="#extracting-and-reordering-columns-with-pull-and-relocate" id="toc-extracting-and-reordering-columns-with-pull-and-relocate" class="nav-link" data-scroll-target="#extracting-and-reordering-columns-with-pull-and-relocate"><span class="header-section-number">4.5.1.2</span> Extracting and reordering columns with <code>pull()</code> and <code>relocate()</code></a></li>
+  </ul>
+</li>
+  <li><a href="#filtering-cases-with-filter" id="toc-filtering-cases-with-filter" class="nav-link" data-scroll-target="#filtering-cases-with-filter"><span class="header-section-number">4.5.2</span> Filtering cases with <code>filter()</code></a></li>
+  <li><a href="#sorting-cases-with-arrange-and-desc" id="toc-sorting-cases-with-arrange-and-desc" class="nav-link" data-scroll-target="#sorting-cases-with-arrange-and-desc"><span class="header-section-number">4.5.3</span> Sorting cases with <code>arrange()</code> and <code>desc()</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-datentypen-verstehen" id="toc-sec-datentypen-verstehen" class="nav-link" data-scroll-target="#sec-datentypen-verstehen"><span class="header-section-number">4.6</span> Understanding data types with <code>class()</code></a>
+  <ul>
+<li><a href="#converting-labelled-variables-with-to_label-to_numeric-and-unlabel" id="toc-converting-labelled-variables-with-to_label-to_numeric-and-unlabel" class="nav-link" data-scroll-target="#converting-labelled-variables-with-to_label-to_numeric-and-unlabel"><span class="header-section-number">4.6.1</span> Converting labelled variables with <code>to_label()</code>, <code>to_numeric()</code> and <code>unlabel()</code></a></li>
+  </ul>
+</li>
+  <li><a href="#reading-and-setting-variable-and-value-labels-with-var_label-and-val_labels" id="toc-reading-and-setting-variable-and-value-labels-with-var_label-and-val_labels" class="nav-link" data-scroll-target="#reading-and-setting-variable-and-value-labels-with-var_label-and-val_labels"><span class="header-section-number">4.7</span> Reading and setting variable and value labels with <code>var_label()</code> and <code>val_labels()</code></a></li>
+  <li><a href="#sec-fehlende-werte" id="toc-sec-fehlende-werte" class="nav-link" data-scroll-target="#sec-fehlende-werte"><span class="header-section-number">4.8</span> Declaring missing values with <code>na_frequencies()</code>, <code>set_na()</code> and <code>drop_na()</code></a></li>
+  <li><a href="#if-something-looks-strange-a-diagnostic-cheat-sheet" id="toc-if-something-looks-strange-a-diagnostic-cheat-sheet" class="nav-link" data-scroll-target="#if-something-looks-strange-a-diagnostic-cheat-sheet">If something looks strange: a diagnostic cheat sheet</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#what-you-know-now" id="toc-what-you-know-now" class="nav-link" data-scroll-target="#what-you-know-now">What you know now</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/04-Datenimport.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/04-Datenimport.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-datenimport" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><blockquote class="blockquote">
+<p><em>Who holds Islamophobic attitudes in Germany in 2023?</em></p>
+</blockquote>
+<p>Before you can answer this question, you need the dataset on your computer, and you need to understand it well enough to pick out the right variables. This chapter takes you from importing the SPSS file through the first inspection steps to handling missing values properly. In <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a> you then build the two scales of the mini study on this basis.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Research journal: Where are you in your mini study?</strong> Your tools are set up (Chapters 1–3). Now the actual research work begins. At the end of this chapter you have an analysis dataset: 5246 respondents, your own set of variables, missing values declared. This is the raw state on which all further stages build.</p>
+</div>
+</div>
+<section id="what-this-chapter-is-about" class="level2" data-number="4.1"><h2 data-number="4.1" class="anchored" data-anchor-id="what-this-chapter-is-about">
+<span class="header-section-number">4.1</span> What this chapter is about</h2>
+<p>Imagine a colleague gives you a USB stick labelled <em>“ALLBUS 2023, have fun”</em>. You plug it in and open the file. What you see is not what you hoped for: 579 columns with names such as <code>mm01</code>, <code>pa29</code>, <code>pt06</code>, <code>wghtpew</code>. Negative numbers appear where you would expect answers: <code>-8</code>, <code>-9</code>, <code>-11</code>, <code>-42</code> and a dozen or so more. Some variables are stored as numbers although they are really categories (<code>sex = 1</code> means “male”). And the actual labels, the wording of what was asked, are hidden somewhere in the background.</p>
+<p>This is normal. Secondary datasets in quantitative social research always look like this. They are built so that many people can use them for many different questions, and that only works if the data stay raw at first. Your task is to turn this raw state into an analysis dataset that fits your research question.</p>
+<p>Take your time over these steps. They are the methodological core of any honest analysis: Which cases do you exclude? How do you handle missing values? How do you translate <code>mm01 = 7</code> into “this person strongly rejects Muslims”? Each of these decisions affects the result, and each belongs in a pipeline that you can reproduce at any time, as open science requires.</p>
+<p>Everything that follows builds on this chapter. Here you create the analysis dataset that you use to describe distributions in <a href="07-Uni-Bivariate-Analyse.html" class="quarto-xref"><span>Chapter 7</span></a>, check structures in <a href="08-Latente-Strukturen.html" class="quarto-xref"><span>Chapter 8</span></a> and model hypotheses in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Chapter 9</span></a>. Any error made here affects all later findings.</p>
+</section><section id="what-you-will-be-able-to-do-after-this-chapter" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</h2>
+<ul>
+<li>Import an SPSS dataset with <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code>, including all variable and value labels.</li>
+<li>Search for variables by name or label with <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code>.</li>
+<li>Create detailed codebooks for selected variables with <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code>.</li>
+<li>Select, filter, sort and reorder variables and cases (<code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate()</a></code>).</li>
+<li>Understand the <code>&lt;haven_labelled&gt;</code> data type and convert it to a factor or a number when needed.</li>
+<li>Read, extract and set variable labels and value labels.</li>
+<li>Declare missing values and handle them systematically with <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>, <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> and <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code>.</li>
+</ul></section><section id="setup" class="level2" data-number="4.2"><h2 data-number="4.2" class="anchored" data-anchor-id="setup">
+<span class="header-section-number">4.2</span> Setup</h2>
+<p>In every R session, you first load the packages you work with. Throughout this book there are only two:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://YannickDiehl.github.io/mariposa/">mariposa</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SPSS → R: Loading packages.</strong> In SPSS, all functions are available straight away. In R, you use <code><a href="https://rdrr.io/r/base/library.html">library()</a></code> to activate the tools you need. This keeps the set of function names manageable and makes each step traceable.</p>
+</div>
+</div>
+</section><section id="importing-the-dataset-with-read_spss" class="level2" data-number="4.3"><h2 data-number="4.3" class="anchored" data-anchor-id="importing-the-dataset-with-read_spss">
+<span class="header-section-number">4.3</span> Importing the dataset with <code>read_spss()</code>
+</h2>
+<p>The 2023 German General Social Survey (ALLBUS) is stored in your project folder as an SPSS file (<code>ALLBUS2023.sav</code>). You import it with <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> from mariposa. The English edition of the dataset stores the codes for missing values (“no answer”, “don’t know”, “not applicable” and others) as ordinary numbers, so you declare them as missing when you read the file. <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> without a variable name applies the codes to all numeric variables; <a href="#sec-fehlende-werte" class="quarto-xref"><span>Section 4.8</span></a> explains <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss</a></span><span class="op">(</span><span class="st">"ALLBUS2023.sav"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na</a></span><span class="op">(</span><span class="op">-</span><span class="fl">56</span>, <span class="op">-</span><span class="fl">55</span>, <span class="op">-</span><span class="fl">54</span>, <span class="op">-</span><span class="fl">53</span>, <span class="op">-</span><span class="fl">51</span>, <span class="op">-</span><span class="fl">50</span>, <span class="op">-</span><span class="fl">42</span>, <span class="op">-</span><span class="fl">41</span>,</span>
+<span>         <span class="op">-</span><span class="fl">33</span>, <span class="op">-</span><span class="fl">32</span>, <span class="op">-</span><span class="fl">15</span>, <span class="op">-</span><span class="fl">11</span>, <span class="op">-</span><span class="fl">10</span>, <span class="op">-</span><span class="fl">9</span>, <span class="op">-</span><span class="fl">8</span>, <span class="op">-</span><span class="fl">7</span>, <span class="op">-</span><span class="fl">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>allbus</code> is now a tibble, a modern data type in the tidyverse. Tibbles behave like classic data frames, but they print more compactly and keep their column types more reliably. This is what you have loaded:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,246 × 579
+   za_nr        doi   version respid substudy    mode    splt23_1    splt23_2   
+   &lt;dbl+lbl&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl+lbl&gt;   &lt;dbl+l&gt; &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;  
+ 1 8833 [ALLBU… http… v1.0.0…      1 NA(k) [NAP… 2 [CAP… NA(k) [NAP…     2 [SPL…
+ 2 8833 [ALLBU… http… v1.0.0…      2     1 [CON… 3 [CAW…     1 [SPL… NA(k) [NAP…
+ 3 8833 [ALLBU… http… v1.0.0…      3     1 [CON… 4 [MAI…     1 [SPL… NA(k) [NAP…
+ 4 8833 [ALLBU… http… v1.0.0…      4     1 [CON… 4 [MAI…     1 [SPL… NA(k) [NAP…
+ 5 8833 [ALLBU… http… v1.0.0…      5     2 [SEQ… 3 [CAW…     2 [SPL… NA(k) [NAP…
+ 6 8833 [ALLBU… http… v1.0.0…      6 NA(k) [NAP… 2 [CAP… NA(k) [NAP…     1 [SPL…
+ 7 8833 [ALLBU… http… v1.0.0…      7     1 [CON… 4 [MAI…     1 [SPL… NA(k) [NAP…
+ 8 8833 [ALLBU… http… v1.0.0…      8     1 [CON… 3 [CAW…     1 [SPL… NA(k) [NAP…
+ 9 8833 [ALLBU… http… v1.0.0…      9     2 [SEQ… 3 [CAW…     2 [SPL… NA(k) [NAP…
+10 8833 [ALLBU… http… v1.0.0…     10 NA(k) [NAP… 2 [CAP… NA(k) [NAP…     2 [SPL…
+# ℹ 5,236 more rows
+# ℹ 571 more variables: eastwest &lt;dbl+lbl&gt;, german &lt;dbl+lbl&gt;, ep01 &lt;dbl+lbl&gt;,
+#   ep03 &lt;dbl+lbl&gt;, ep04 &lt;dbl+lbl&gt;, ep06 &lt;dbl+lbl&gt;, xr19 &lt;dbl+lbl&gt;,
+#   xr20 &lt;dbl+lbl&gt;, lm27 &lt;dbl+lbl&gt;, lm28 &lt;dbl+lbl&gt;, lm29 &lt;dbl+lbl&gt;,
+#   lm30 &lt;dbl+lbl&gt;, lm31 &lt;dbl+lbl&gt;, lm32 &lt;dbl+lbl&gt;, lm33 &lt;dbl+lbl&gt;,
+#   lm34 &lt;dbl+lbl&gt;, la01 &lt;dbl+lbl&gt;, li01 &lt;dbl+lbl&gt;, li02 &lt;dbl+lbl&gt;,
+#   li03 &lt;dbl+lbl&gt;, li04 &lt;dbl+lbl&gt;, li05 &lt;dbl+lbl&gt;, li09 &lt;dbl+lbl&gt;, …</code></pre>
+</div>
+</div>
+<p>The header shows <code>5,246 × 579</code>: the dataset has 5246 cases and 579 variables. Below it you see a selection of the first columns with their data types.</p>
+<p><a href="#fig-einlesen" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> shows the path from the file to the object: <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> reads <code>ALLBUS2023.sav</code> from the project folder, and the result is stored under the name <code>allbus</code>. From now on you work with this object in R; the file on your hard drive stays unchanged.</p>
+<div id="fig-einlesen" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left a file tile ALLBUS2023.sav, labelled File in the project folder. An arrow leads to a green box read_spss(), labelled Function from mariposa. Another arrow leads to a baseplate with towers of blue and purple bricks under the dark name tag allbus, next to it 5,246 × 579, labelled Object in R. Below, the code as bricks on two lines: allbus <- read_spss(“ALLBUS2023.sav”) and, on the next line, |> set_na(-56, …, -6). allbus is dark, read_spss and set_na are green, the file name and the codes are orange.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-einlesen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-einlesen.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;4.1: read_spss() reads the SPSS file, set_na() turns the missing-value codes into NA, and the result is stored as the object allbus."><img src="Bilder/figuren/en/k04-einlesen.svg" class="img-fluid figure-img" alt="On the left a file tile ALLBUS2023.sav, labelled File in the project folder. An arrow leads to a green box read_spss(), labelled Function from mariposa. Another arrow leads to a baseplate with towers of blue and purple bricks under the dark name tag allbus, next to it 5,246 × 579, labelled Object in R. Below, the code as bricks on two lines: allbus <- read_spss(“ALLBUS2023.sav”) and, on the next line, |> set_na(-56, …, -6). allbus is dark, read_spss and set_na are green, the file name and the codes are orange."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-einlesen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.1: <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> reads the SPSS file, <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> turns the missing-value codes into <code>NA</code>, and the result is stored as the object <code>allbus</code>.
+</figcaption></figure>
+</div>
+<p>What do the small type markers under each column mean? Directly below each column name, the tibble prints a type tag in angle brackets. Here is a short glossary:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 42%">
+<col style="width: 41%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Tag</th>
+<th style="text-align: left;">Meaning</th>
+<th style="text-align: left;">Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;int&gt;</code></td>
+<td style="text-align: left;">whole number (integer)</td>
+<td style="text-align: left;">case ID, count</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;dbl&gt;</code></td>
+<td style="text-align: left;">decimal number (double)</td>
+<td style="text-align: left;">age, scale mean</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;chr&gt;</code></td>
+<td style="text-align: left;">text (character)</td>
+<td style="text-align: left;">variable with text responses</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;fct&gt;</code></td>
+<td style="text-align: left;">factor (category with levels)</td>
+<td style="text-align: left;">recoded education levels</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;dbl+lbl&gt;</code></td>
+<td style="text-align: left;">labelled double from SPSS</td>
+<td style="text-align: left;">typical ALLBUS variable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&lt;lgl&gt;</code></td>
+<td style="text-align: left;">logical (<code>TRUE</code>/<code>FALSE</code>)</td>
+<td style="text-align: left;">result of a condition</td>
+</tr>
+</tbody>
+</table>
+<p>You will see the <code>&lt;dbl+lbl&gt;</code> type everywhere in ALLBUS. It is created when you import the file. In the background, <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> uses the <code>haven</code> package and adds two properties you know from SPSS: <strong>variable labels</strong> (a descriptive label for each column) and <strong>value labels</strong> (a label for each value). Both are stored in the columns without being visible; you can retrieve them at any time or make them visible as a factor.</p>
+<p>Most variables therefore arrive as <code>&lt;haven_labelled&gt;</code> columns, printed as <code>&lt;dbl+lbl&gt;</code>. Such a column is not a factor. The values stay numeric, so you can still calculate with them, and in the background they keep their SPSS value labels (“1 = MALE, 2 = FEMALE, …”). For example:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;labelled&lt;double&gt;[5]&gt;: RESPONDENT: SEX
+[1] 1 1 2 1 2
+
+Labels:
+ value          label
+     1           MALE
+     2         FEMALE
+     3     NON-BINARY
+ NA(g) DATA ERROR: MR
+ NA(n)      NO ANSWER</code></pre>
+</div>
+</div>
+<p>At the top are the variable label and the first five values, below them the table of labels. The rows <code>NA(g)</code> and <code>NA(n)</code> are the variable’s missing codes. More on these in <a href="#sec-fehlende-werte" class="quarto-xref"><span>Section 4.8</span></a>.</p>
+<p>Three operations are common:</p>
+<ul>
+<li>Calculate with the variable (<code>mean(allbus$sex, na.rm = TRUE)</code>) → works directly, but usually gives meaningless values for categorical variables.</li>
+<li>Make it readable for plots (<code>allbus |&gt; to_label(sex)</code>) → converts it into a factor with the labels as levels.</li>
+<li>Keep the plain number (<code>allbus |&gt; to_numeric(sex)</code>) → removes the label layer.</li>
+</ul>
+<p>The details follow in <a href="#sec-datentypen-verstehen" class="quarto-xref"><span>Section 4.6</span></a>.</p>
+<section id="other-formats-and-export-with-read_stata-read_xlsx-and-write_spss" class="level3" data-number="4.3.1"><h3 data-number="4.3.1" class="anchored" data-anchor-id="other-formats-and-export-with-read_stata-read_xlsx-and-write_spss">
+<span class="header-section-number">4.3.1</span> Other formats and export with <code>read_stata()</code>, <code>read_xlsx()</code> and <code>write_spss()</code>
+</h3>
+<p>If you need data in other formats, there are matching functions:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_stata.html">read_stata</a></span><span class="op">(</span><span class="st">"file.dta"</span><span class="op">)</span>     <span class="co"># Stata</span></span>
+<span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_sas.html">read_sas</a></span><span class="op">(</span><span class="st">"file.sas7bdat"</span><span class="op">)</span>  <span class="co"># SAS</span></span>
+<span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/read_xlsx.html">read_xlsx</a></span><span class="op">(</span><span class="st">"file.xlsx"</span><span class="op">)</span>     <span class="co"># Excel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And if you want to export an edited dataset back to SPSS:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/write_spss.html">write_spss</a></span><span class="op">(</span><span class="va">allbus</span>, <span class="st">"allbus_edited.sav"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section><section id="a-first-look-at-the-dataset-with-glimpse-nrow-and-ncol" class="level2" data-number="4.4"><h2 data-number="4.4" class="anchored" data-anchor-id="a-first-look-at-the-dataset-with-glimpse-nrow-and-ncol">
+<span class="header-section-number">4.4</span> A first look at the dataset with <code>glimpse()</code>, <code>nrow()</code> and <code>ncol()</code>
+</h2>
+<p>With almost 600 variables, you cannot display everything in the console. Three tools help you find your way around:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>           <span class="co"># compact overview of the structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># number of cases</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">)</span>              <span class="co"># number of variables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> returns 5246 and <code><a href="https://rdrr.io/r/base/nrow.html">ncol()</a></code> returns 579. So <code>allbus</code> is a baseplate with 5246 rows and 579 towers (<a href="#fig-platte" class="quarto-xref">Figure&nbsp;<span>4.2</span></a>): each row is a respondent, each tower a variable. An empty brick means that there is no valid value for this person on this variable.</p>
+<div id="fig-platte" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Baseplate with the name tag allbus and three towers respid, age and mm01, next to them an ellipsis for further towers. respid shows 1 to 5, age 50, 51, 69, 72 and 18, mm01 the value 5, three empty dashed bricks and 2. The first row is outlined in orange, the tower age in green. On the right three boxes: A row is a case, nrow(allbus) gives [1] 5246. A tower is a variable, ncol(allbus) gives [1] 579. An empty brick is a missing value.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-platte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-platte.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;4.2: A section of allbus: the first five rows of the variables respid, age and mm01. For mm01, the value is missing in three rows."><img src="Bilder/figuren/en/k04-platte.svg" class="img-fluid figure-img" alt="Baseplate with the name tag allbus and three towers respid, age and mm01, next to them an ellipsis for further towers. respid shows 1 to 5, age 50, 51, 69, 72 and 18, mm01 the value 5, three empty dashed bricks and 2. The first row is outlined in orange, the tower age in green. On the right three boxes: A row is a case, nrow(allbus) gives [1] 5246. A tower is a variable, ncol(allbus) gives [1] 579. An empty brick is a missing value."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-platte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.2: A section of <code>allbus</code>: the first five rows of the variables <code>respid</code>, <code>age</code> and <code>mm01</code>. For <code>mm01</code>, the value is missing in three rows.
+</figcaption></figure>
+</div>
+<section id="finding-variables-with-find_var" class="level3" data-number="4.4.1"><h3 data-number="4.4.1" class="anchored" data-anchor-id="finding-variables-with-find_var">
+<span class="header-section-number">4.4.1</span> Finding variables with <code>find_var()</code>
+</h3>
+<p>The variable names in ALLBUS are cryptic (<code>mm01</code>, <code>pa29</code>, <code>wghtpew</code>). What is actually measured is given in the variable label. mariposa’s <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> searches both at the same time, name and label, and returns the matches as a small table:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"muslim"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  col name                                    label
+1 169 ma08 RELIG.INSTRUCTION FOR MUSLIMS IN SCHOOLS
+2 192 mm01 EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+3 194 mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+4 195 mm04    STATE SHLD MONITOR MUSLIM COMMUNITIES
+5 196 mm05   RESP. WOULD NOT OBJECT TO MUSLIM MAYOR
+6 197 mm06    THERE ARE MANY FANATICS AMONG MUSLIMS</code></pre>
+</div>
+</div>
+<p>For each match, the table shows the position of the variable in the dataset (<code>col</code>), its name and the full label; the search is not case-sensitive. There are six matches: five of the six items of our scale and <code>ma08</code>. The item <code>mm02</code> refers to “Islam” rather than “Muslims”. Because the search pattern is a <strong>regular expression</strong>, you can search for both terms at once; <code>|</code> means “or”:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"islam|muslim"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  col name                                    label
+1 169 ma08 RELIG.INSTRUCTION FOR MUSLIMS IN SCHOOLS
+2 192 mm01 EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+3 193 mm02        ISLAM FITS IN WITH GERMAN SOCIETY
+4 194 mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+5 195 mm04    STATE SHLD MONITOR MUSLIM COMMUNITIES
+6 196 mm05   RESP. WOULD NOT OBJECT TO MUSLIM MAYOR
+7 197 mm06    THERE ARE MANY FANATICS AMONG MUSLIMS</code></pre>
+</div>
+</div>
+<p>Now all six <code>mm</code> items for our Islamophobia scale are together (plus <code>ma08</code>, an item on religious instruction for Muslims in schools from a different question block). If, on the other hand, you are searching literally for characters that have a special meaning in regular expressions (such as the full stop in <code>RELIG.</code>), set <code>fixed = TRUE</code>. By default, <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> searches names and labels; with <code>search = "label"</code> you restrict the search to labels, with <code>search = "name"</code> to names:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"age"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   col    name                                    label
+1   56    vi10         IMPORTANCE: POLITICAL ENGAGEMENT
+2   93     age                          RESPONDENT: AGE
+3   94    agec             RESPONDENT: AGE, CATEGORIZED
+4  114    mp05 FOREIGN: HELP TO SECURE OLD AGE PENSIONS
+5  227    pe08 AVERAGE CITIZEN LITTLE POL.UNDERSTANDING
+6  311   dw12a       RESP.: AGE WHEN R. STOPPED WORKING
+7  333   scage                              SPOUSE: AGE
+8  334  scagec         PRESENT SPOUSE: AGE, CATEGORIZED
+9  367    page                             PARTNER: AGE
+10 368   pagec                PARTNER: AGE, CATEGORIZED
+11 400    df44    RESP.: LIVING WITH PARENTS AT AGE 15?
+12 434  hh2age               2.PERSON IN HOUSEHOLD: AGE
+13 439  hh3age               3.PERSON IN HOUSEHOLD: AGE
+14 444  hh4age               4.PERSON IN HOUSEHOLD: AGE
+15 449  hh5age               5.PERSON IN HOUSEHOLD: AGE
+16 454  hh6age               6.PERSON IN HOUSEHOLD: AGE
+17 459  hh7age               7.PERSON IN HOUSEHOLD: AGE
+18 464  hh8age               8.PERSON IN HOUSEHOLD: AGE
+19 471    dh17                AGE OF YOUNGEST HH-MEMBER
+20 480  kh1age                   CHILD 1 NOT IN HH: AGE
+21 483  kh2age                   CHILD 2 NOT IN HH: AGE
+22 486  kh3age                   CHILD 3 NOT IN HH: AGE
+23 489  kh4age                   CHILD 4 NOT IN HH: AGE
+24 492  kh5age                   CHILD 5 NOT IN HH: AGE
+25 495  kh6age                   CHILD 6 NOT IN HH: AGE
+26 498  kh7age                   CHILD 7 NOT IN HH: AGE
+27 501  kh8age                   CHILD 8 NOT IN HH: AGE
+28 504  kh9age                   CHILD 9 NOT IN HH: AGE
+29 507 kh10age                  CHILD 10 NOT IN HH: AGE
+30 522    pr04   REUNIFICATION MORE ADVANTAGES FOR WEST
+31 523    pr05   REUNIFICATION MORE ADVANTAGES FOR EAST
+32 573    xi03                         INTERVIEWER: AGE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^mm"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span>     <span class="co"># regex: all mm items</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  col name                                    label
+1 170 mm07  DO YOU SUPPORT THE BUILDING OF MOSQUES?
+2 192 mm01 EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+3 193 mm02        ISLAM FITS IN WITH GERMAN SOCIETY
+4 194 mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+5 195 mm04    STATE SHLD MONITOR MUSLIM COMMUNITIES
+6 196 mm05   RESP. WOULD NOT OBJECT TO MUSLIM MAYOR
+7 197 mm06    THERE ARE MANY FANATICS AMONG MUSLIMS</code></pre>
+</div>
+</div>
+</section><section id="detailed-overview-with-codebook" class="level3" data-number="4.4.2"><h3 data-number="4.4.2" class="anchored" data-anchor-id="detailed-overview-with-codebook">
+<span class="header-section-number">4.4.2</span> Detailed overview with <code>codebook()</code>
+</h3>
+<p>For a specific selection of variables, <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> from mariposa produces an HTML overview with labels, values and frequencies. It is the R equivalent of <code>DISPLAY DICTIONARY</code> in SPSS:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05</span>, <span class="va">mm06</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="mariposa-codebook">
+<style>.mariposa-codebook {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+      margin: 24px;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+.mariposa-codebook .cb-title {
+      margin: 0 0 2px 0;
+      color: #1a1a1a;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+.mariposa-codebook .subtitle {
+      color: #888;
+      margin: 0 0 16px 0;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+    }
+.mariposa-codebook table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+    }
+.mariposa-codebook thead th {
+      background: #3b3f51;
+      color: #fff;
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+.mariposa-codebook tbody td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+      color: #1a1a1a;
+    }
+.mariposa-codebook tbody tr:nth-child(even) { background: #f9f9fb; }
+.mariposa-codebook tbody tr:hover { background: #f0f0f5; }
+.mariposa-codebook .var-name {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      font-size: 12.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      color: #1a1a1a;
+    }
+.mariposa-codebook .var-label { color: #666; }
+.mariposa-codebook .type-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+.mariposa-codebook .type-num, .mariposa-codebook .type-fct, .mariposa-codebook .type-chr, .mariposa-codebook .type-lbl, .mariposa-codebook .type-lgl, .mariposa-codebook .type-date, .mariposa-codebook .type-other {
+      background: #ededf0;
+      color: #555;
+    }
+.mariposa-codebook .values-cell {
+      font-size: 12px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      white-space: nowrap;
+      color: #444;
+    }
+.mariposa-codebook .labels-cell { font-size: 12px; color: #666; white-space: nowrap; }
+.mariposa-codebook .values-cell > div, .mariposa-codebook .labels-cell > div, .mariposa-codebook .freq-cell > div {
+      min-height: 1.2em;
+    }
+.mariposa-codebook .freq-cell {
+      font-size: 12px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono',
+                   Menlo, monospace;
+      text-align: right;
+      color: #444;
+    }
+.mariposa-codebook .range-text { }
+.mariposa-codebook .num-col { text-align: right; color: #888; }
+.mariposa-codebook .truncated-note { color: #aaa; font-style: italic; font-size: 11px; }
+.mariposa-codebook .na-separator {
+      border-top: 1px solid #ddd;
+      margin-top: 3px;
+      padding-top: 3px;
+      height: 1px;
+    }
+.mariposa-codebook .na-value { color: #999; font-style: italic; }
+.mariposa-codebook .footer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #bbb;
+    }
+.mariposa-codebook { margin: 1em 0; overflow-x: auto; }
+.mariposa-codebook .cb-title { display: block; }</style>
+<div class="cb-title">Codebook: allbus</div>
+<p class="subtitle">5246 observations | 6 variables | 6 labelled | 6 with missing data</p>
+
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead><tr class="header">
+<th data-quarto-table-cell-role="th">ID</th>
+<th data-quarto-table-cell-role="th">Name</th>
+<th data-quarto-table-cell-role="th">Type</th>
+<th data-quarto-table-cell-role="th">Label</th>
+<th data-quarto-table-cell-role="th">Values</th>
+<th data-quarto-table-cell-role="th">Value Labels</th>
+<th data-quarto-table-cell-role="th">Freq.</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td class="num-col">192</td>
+<td class="var-name">mm01</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">EXERCISE OF MUSLIM FAITH SHLD BE LIMITED</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATA ERROR: MR
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+1022
+</div>
+<div>
+457
+</div>
+<div>
+295
+</div>
+<div>
+529
+</div>
+<div>
+319
+</div>
+<div>
+236
+</div>
+<div>
+543
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+73
+</div>
+<div class="na-value">
+123
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">193</td>
+<td class="var-name">mm02</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">ISLAM FITS IN WITH GERMAN SOCIETY</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATA ERROR: MR
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+954
+</div>
+<div>
+515
+</div>
+<div>
+494
+</div>
+<div>
+629
+</div>
+<div>
+350
+</div>
+<div>
+235
+</div>
+<div>
+227
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+72
+</div>
+<div class="na-value">
+121
+</div>
+</td>
+</tr>
+<tr class="odd">
+<td class="num-col">194</td>
+<td class="var-name">mm03</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">PRESENCE OF MUSLIMS LEADS TO CONFLICTS</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATA ERROR: MR
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+381
+</div>
+<div>
+434
+</div>
+<div>
+391
+</div>
+<div>
+700
+</div>
+<div>
+574
+</div>
+<div>
+411
+</div>
+<div>
+552
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+2
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+60
+</div>
+<div class="na-value">
+94
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">195</td>
+<td class="var-name">mm04</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">STATE SHLD MONITOR MUSLIM COMMUNITIES</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-42
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+DATA ERROR: MR
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+533
+</div>
+<div>
+473
+</div>
+<div>
+338
+</div>
+<div>
+596
+</div>
+<div>
+437
+</div>
+<div>
+397
+</div>
+<div>
+650
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+4
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+64
+</div>
+<div class="na-value">
+107
+</div>
+</td>
+</tr>
+<tr class="odd">
+<td class="num-col">196</td>
+<td class="var-name">mm05</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">RESP. WOULD NOT OBJECT TO MUSLIM MAYOR</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+819
+</div>
+<div>
+271
+</div>
+<div>
+221
+</div>
+<div>
+453
+</div>
+<div>
+334
+</div>
+<div>
+443
+</div>
+<div>
+868
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+72
+</div>
+<div class="na-value">
+118
+</div>
+</td>
+</tr>
+<tr class="even">
+<td class="num-col">197</td>
+<td class="var-name">mm06</td>
+<td><span class="type-badge type-lbl">lbl+dbl</span></td>
+<td class="var-label">THERE ARE MANY FANATICS AMONG MUSLIMS</td>
+<td class="values-cell">
+<div>
+1
+</div>
+<div>
+2
+</div>
+<div>
+3
+</div>
+<div>
+4
+</div>
+<div>
+5
+</div>
+<div>
+6
+</div>
+<div>
+7
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+-11
+</div>
+<div class="na-value">
+-9
+</div>
+<div class="na-value">
+-8
+</div>
+</td>
+<td class="labels-cell">
+<div>
+COMPLETELY DISAGREE
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+..
+</div>
+<div>
+COMPLETELY AGREE
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+NAP: SPLIT
+</div>
+<div class="na-value">
+NO ANSWER
+</div>
+<div class="na-value">
+DO NOT KNOW
+</div>
+</td>
+<td class="freq-cell">
+<div>
+328
+</div>
+<div>
+509
+</div>
+<div>
+369
+</div>
+<div>
+561
+</div>
+<div>
+475
+</div>
+<div>
+381
+</div>
+<div>
+686
+</div>
+<div class="na-separator">
+&nbsp;
+</div>
+<div class="na-value">
+1647
+</div>
+<div class="na-value">
+102
+</div>
+<div class="na-value">
+188
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="footer">Generated by mariposa 0.7.4 on 2026-11-26</p>
+</div>
+</div>
+</div>
+<p>In RStudio, the overview opens in the Viewer tab; in a Quarto document such as this book, mariposa embeds it directly in the report. To pass it on, save it as a separate HTML file with <code>codebook(..., file = "codebook.html")</code> or as an Excel spreadsheet with <code>write_xlsx(codebook(...), "codebook.xlsx")</code>.</p>
+<p>In a methods section, each scale needs a short codebook: item wording, response format, treatment of missing values, N per item. If you create this codebook with <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> and put it in the appendix of your report, you meet this requirement.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SPSS → R: Inspecting data.</strong> In SPSS, you use <code>DISPLAY DICTIONARY</code> for a complete overview. <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> is more targeted: you search for a keyword and immediately get the matching variables, even if you do not remember the cryptic names.</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th>SPSS</th>
+<th>R</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>FREQUENCIES VARIABLES=mm01.</code></td>
+<td><code>allbus |&gt; frequency(mm01)</code></td>
+</tr>
+<tr class="even">
+<td><code>DESCRIPTIVES VARIABLES=age.</code></td>
+<td><code>allbus |&gt; describe(age)</code></td>
+</tr>
+<tr class="odd">
+<td><code>DISPLAY DICTIONARY.</code></td>
+<td><code>allbus |&gt; codebook(...)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section></section><section id="selecting-variables-and-cases" class="level2" data-number="4.5"><h2 data-number="4.5" class="anchored" data-anchor-id="selecting-variables-and-cases">
+<span class="header-section-number">4.5</span> Selecting variables and cases</h2>
+<p>The <code>dplyr</code> functions <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code> are the tools you use every day to take what you need from a large dataset.</p>
+<section id="selecting-variables-with-select" class="level3" data-number="4.5.1"><h3 data-number="4.5.1" class="anchored" data-anchor-id="selecting-variables-with-select">
+<span class="header-section-number">4.5.1</span> Selecting variables with <code>select()</code>
+</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,246 × 3
+   mm01                        mm02                        mm03              
+   &lt;dbl+lbl&gt;                   &lt;dbl+lbl&gt;                   &lt;dbl+lbl&gt;         
+ 1     5 [..]                      3 [..]                      4 [..]        
+ 2 NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]
+ 3 NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]
+ 4 NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]
+ 5     2 [..]                      4 [..]                      4 [..]        
+ 6     3 [..]                      3 [..]                      3 [..]        
+ 7 NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]
+ 8 NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]          NA(l) [NAP: SPLIT]
+ 9     1 [COMPLETELY DISAGREE]     6 [..]                      2 [..]        
+10     7 [COMPLETELY AGREE]        1 [COMPLETELY DISAGREE]     3 [..]        
+# ℹ 5,236 more rows</code></pre>
+</div>
+</div>
+<p><code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> keeps only the towers you name; all 5246 rows stay on the baseplate (<a href="#fig-select" class="quarto-xref">Figure&nbsp;<span>4.3</span></a>).</p>
+<div id="fig-select" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the baseplate allbus, 5,246 × 579, with the towers respid, mm01, mm02, mm03 and mm04 and an ellipsis for further towers; the first five rows are shown. respid and mm04 are grey. mm01 to mm03 show 5, 3 and 4 at the top and 2, 4 and 4 at the bottom, with three empty bricks in between. A green arrow select() leads to a new baseplate, 5,246 × 3, with only the towers mm01, mm02 and mm03. Below, the code allbus |> select(mm01, mm02, mm03).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-select.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;4.3: select(mm01, mm02, mm03) keeps three towers. The towers that are dropped are grey; the number of rows stays at 5246."><img src="Bilder/figuren/en/k04-select.svg" class="img-fluid figure-img" alt="On the left the baseplate allbus, 5,246 × 579, with the towers respid, mm01, mm02, mm03 and mm04 and an ellipsis for further towers; the first five rows are shown. respid and mm04 are grey. mm01 to mm03 show 5, 3 and 4 at the top and 2, 4 and 4 at the bottom, with three empty bricks in between. A green arrow select() leads to a new baseplate, 5,246 × 3, with only the towers mm01, mm02 and mm03. Below, the code allbus |> select(mm01, mm02, mm03)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: <code>select(mm01, mm02, mm03)</code> keeps three towers. The towers that are dropped are grey; the number of rows stays at 5246.
+</figcaption></figure>
+</div>
+<p>You can specify ranges with <code>:</code> and exclude variables with <code>-</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,246 × 10
+   mm01              mm02        mm03        mm04        mm05        mm06       
+   &lt;dbl+lbl&gt;         &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;  
+ 1     5 [..]            3 [..]      4 [..]      2 [..]      6 [..]      2 [..] 
+ 2 NA(l) [NAP: SPLI… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP…
+ 3 NA(l) [NAP: SPLI… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP…
+ 4 NA(l) [NAP: SPLI… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP…
+ 5     2 [..]            4 [..]      4 [..]      3 [..]      3 [..]      6 [..] 
+ 6     3 [..]            3 [..]      3 [..]      7 [COM…     6 [..]      3 [..] 
+ 7 NA(l) [NAP: SPLI… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP…
+ 8 NA(l) [NAP: SPLI… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP… NA(l) [NAP…
+ 9     1 [COMPLETEL…     6 [..]      2 [..]      1 [COM…     7 [COM…     2 [..] 
+10     7 [COMPLETEL…     1 [COM…     3 [..]      6 [..]      1 [COM…     7 [COM…
+# ℹ 5,236 more rows
+# ℹ 4 more variables: eastwest &lt;dbl+lbl&gt;, sex &lt;dbl+lbl&gt;, age &lt;dbl+lbl&gt;,
+#   educ &lt;dbl+lbl&gt;</code></pre>
+</div>
+</div>
+<p>This selection, the six scale items plus demographics, is what you need for the mini study.</p>
+<p>In <a href="03-ProgrammierspracheR.html#sec-datentypen" class="quarto-xref"><span>Section 3.5</span></a> you extracted a single column with <code>$</code>. You can also do this with <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, but you get a different object back:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;labelled&lt;double&gt;[5]&gt;: RESPONDENT: AGE
+[1] 50 51 69 72 18
+
+Labels:
+ value               label
+ NA(j) CANNOT BE GENERATED</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 1
+  age      
+  &lt;dbl+lbl&gt;
+1 50       
+2 51       
+3 69       
+4 72       
+5 18       </code></pre>
+</div>
+</div>
+<p><code>allbus$age</code> returns a vector: the five numbers after <code>[1]</code>, with the table of labels below. <code>allbus |&gt; select(age)</code> returns a tibble with one column. On the left, <a href="#fig-dollar-select" class="quarto-xref">Figure&nbsp;<span>4.4</span></a> shows a single tower, on the right a baseplate with one tower. Which form you need depends on the next function: functions that calculate, such as <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>, expect a vector; dplyr functions such as <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> expect a dataset.</p>
+<div id="fig-dollar-select" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Two halves. On the left the code allbus$age |> head(5), below it a tower of five blue bricks 50, 51, 69, 72 and 18 on a short base, labelled Vector, next to it the output [1] 50 51 69 72 18. On the right the code allbus |> select(age) |> head(5), below it the dimensions 5 × 1 and the same tower with the column header age and the type dbl+lbl on a wide baseplate with room for further towers, labelled Tibble.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-dollar-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-dollar-select.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4.4: On the left, $ returns the values of age as a vector; on the right, select() returns a tibble with the column age. Both contain the same five values."><img src="Bilder/figuren/en/k04-dollar-select.svg" class="img-fluid figure-img" alt="Two halves. On the left the code allbus$age |> head(5), below it a tower of five blue bricks 50, 51, 69, 72 and 18 on a short base, labelled Vector, next to it the output [1] 50 51 69 72 18. On the right the code allbus |> select(age) |> head(5), below it the dimensions 5 × 1 and the same tower with the column header age and the type dbl+lbl on a wide baseplate with room for further towers, labelled Tibble."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dollar-select-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.4: On the left, <code>$</code> returns the values of <code>age</code> as a vector; on the right, <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> returns a tibble with the column <code>age</code>. Both contain the same five values.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> What does <code>allbus |&gt; select(age) |&gt; mean(na.rm = TRUE)</code> return?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in mean.default(select(allbus, age), na.rm = TRUE): argument is not
+numeric or logical: returning NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 52.51063</code></pre>
+</div>
+</div>
+<p>In the first call, <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> receives a baseplate instead of a tower. It cannot calculate with that: R issues a warning and returns <code>NA</code>. In the second call, <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> receives the tower <code>allbus$age</code> and calculates the mean age, about 52.5 years. In a pipe, you take the tower out with <code>pull(age)</code>.</p>
+</div>
+</div>
+</div>
+<section id="tidyselect-helpers-such-as-starts_with-where-and-everything" class="level4" data-number="4.5.1.1"><h4 data-number="4.5.1.1" class="anchored" data-anchor-id="tidyselect-helpers-such-as-starts_with-where-and-everything">
+<span class="header-section-number">4.5.1.1</span> Tidyselect helpers such as <code>starts_with()</code>, <code>where()</code> and <code>everything()</code>
+</h4>
+<p>With large datasets such as ALLBUS, you often want to select all variables that match a pattern. Instead of listing them one by one, you can use the following functions:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 45%">
+<col style="width: 34%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Helper</th>
+<th style="text-align: left;">Effect</th>
+<th style="text-align: left;">Example with ALLBUS</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>starts_with("pre")</code></td>
+<td style="text-align: left;">all variables whose name starts with <code>pre</code>
+</td>
+<td style="text-align: left;"><code>select(starts_with("mm0"))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ends_with("suffix")</code></td>
+<td style="text-align: left;">all variables whose name ends with <code>suffix</code>
+</td>
+<td style="text-align: left;">
+<code>select(ends_with("educ"))</code>: school-leaving certificate of respondent, partner and parents</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>contains("part")</code></td>
+<td style="text-align: left;">all variables whose name contains <code>part</code>
+</td>
+<td style="text-align: left;">
+<code>select(contains("wght"))</code>: the four weighting variables</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>matches("regex")</code></td>
+<td style="text-align: left;">all variables that match the regular expression</td>
+<td style="text-align: left;"><code>select(matches("^p[at]"))</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>where(is.numeric)</code></td>
+<td style="text-align: left;">all variables whose content meets a condition</td>
+<td style="text-align: left;"><code>select(where(is.numeric))</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code><a href="https://tidyselect.r-lib.org/reference/everything.html">everything()</a></code></td>
+<td style="text-align: left;">all remaining variables, typically in <code><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate()</a></code>
+</td>
+<td style="text-align: left;"><code>relocate(respid, .before = everything())</code></td>
+</tr>
+</tbody>
+</table>
+<p>These helpers work in the same way in <code>mutate(across(...))</code>, <code>summarise(across(...))</code> and in many mariposa functions. They are part of a vocabulary shared across the tidyverse.</p>
+</section><section id="extracting-and-reordering-columns-with-pull-and-relocate" class="level4" data-number="4.5.1.2"><h4 data-number="4.5.1.2" class="anchored" data-anchor-id="extracting-and-reordering-columns-with-pull-and-relocate">
+<span class="header-section-number">4.5.1.2</span> Extracting and reordering columns with <code>pull()</code> and <code>relocate()</code>
+</h4>
+<p>Two close relatives of <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>:</p>
+<ul>
+<li>
+<code>pull(var)</code> extracts a single column as a plain vector. This is useful when you want to pass the content of the column directly to a function that does not expect a tibble: <code>allbus |&gt; pull(age) |&gt; mean(na.rm = TRUE)</code>.</li>
+<li>
+<code>relocate(var, .before = X, .after = Y)</code> reorders columns without removing any. This is handy when you want the most important variables at the front: <code>allbus |&gt; relocate(mm01:mm06, eastwest, sex, age, educ, .before = everything())</code>.</li>
+</ul></section></section><section id="filtering-cases-with-filter" class="level3" data-number="4.5.2"><h3 data-number="4.5.2" class="anchored" data-anchor-id="filtering-cases-with-filter">
+<span class="header-section-number">4.5.2</span> Filtering cases with <code>filter()</code>
+</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2,672 × 3
+   sex        age       educ                    
+   &lt;dbl+lbl&gt;  &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;               
+ 1 2 [FEMALE] 69        4 [QUALI.UNIV.APPL.SCI.]
+ 2 2 [FEMALE] 18        5 [QUALI.FOR UNIVERSITY]
+ 3 2 [FEMALE] 45        5 [QUALI.FOR UNIVERSITY]
+ 4 2 [FEMALE] 26        3 [INTERMEDIARY LEVEL]  
+ 5 2 [FEMALE] 71        2 [LOWEST LEVEL]        
+ 6 2 [FEMALE] 66        2 [LOWEST LEVEL]        
+ 7 2 [FEMALE] 39        3 [INTERMEDIARY LEVEL]  
+ 8 2 [FEMALE] 51        3 [INTERMEDIARY LEVEL]  
+ 9 2 [FEMALE] 29        5 [QUALI.FOR UNIVERSITY]
+10 2 [FEMALE] 60        4 [QUALI.UNIV.APPL.SCI.]
+# ℹ 2,662 more rows</code></pre>
+</div>
+</div>
+<p><code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> checks the condition <code>sex == 2</code> for each row and keeps only the rows in which it is true. Code 2 stands for FEMALE; 2672 respondents remain (<a href="#fig-filter" class="quarto-xref">Figure&nbsp;<span>4.5</span></a>). <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> then keeps the three columns.</p>
+<div id="fig-filter" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the baseplate allbus, 5,246 × 579, with the towers sex, age and educ and an ellipsis for further towers; the first six rows are shown. The bricks of sex carry stickers: 1 MALE, 1 MALE, 2 FEMALE, 1 MALE, 2 FEMALE, 2 FEMALE. The three MALE rows with the ages 50, 51 and 72 are grey. A green arrow with sex == 2 leads to a new baseplate, 2,672 × 3, with the three FEMALE rows: ages 69, 18 and 45, educ 4, 5 and 5, below them an ellipsis. Below, the code allbus |> filter(sex == 2) |> select(sex, age, educ).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-filter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-filter.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;4.5: filter(sex == 2) keeps only the rows with code 2 (FEMALE). The rows that are dropped are grey; the first six rows are shown."><img src="Bilder/figuren/en/k04-filter.svg" class="img-fluid figure-img" alt="On the left the baseplate allbus, 5,246 × 579, with the towers sex, age and educ and an ellipsis for further towers; the first six rows are shown. The bricks of sex carry stickers: 1 MALE, 1 MALE, 2 FEMALE, 1 MALE, 2 FEMALE, 2 FEMALE. The three MALE rows with the ages 50, 51 and 72 are grey. A green arrow with sex == 2 leads to a new baseplate, 2,672 × 3, with the three FEMALE rows: ages 69, 18 and 45, educ 4, 5 and 5, below them an ellipsis. Below, the code allbus |> filter(sex == 2) |> select(sex, age, educ)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-filter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.5: <code>filter(sex == 2)</code> keeps only the rows with code 2 (FEMALE). The rows that are dropped are grey; the first six rows are shown.
+</figcaption></figure>
+</div>
+<p>The comparison and logical operators from <a href="03-ProgrammierspracheR.html#sec-operatoren" class="quarto-xref"><span>Section 3.4</span></a> (<code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>|</code>, <code>%in%</code>) are your vocabulary here. You can combine them freely into more complex filters:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">eastwest</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">30</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">eastwest</span>, <span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 825</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: Missing values.</strong> <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> automatically excludes cases with <code>NA</code> in the condition. This is usually what you want, but it can take you by surprise. Compare three variants:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>        <span class="co"># men only (NAs are excluded)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>      <span class="co"># only cases where sex is missing</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span>     <span class="co"># all cases where sex is present</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>sex == 1</code> compares each row separately (<a href="#fig-filter-na" class="quarto-xref">Figure&nbsp;<span>4.6</span></a>). In row 110, <code>sex</code> is missing (NO ANSWER). R cannot tell whether this value is 1, so the comparison also gives <code>NA</code>. <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> keeps only the rows with <code>TRUE</code>, so row 110 is dropped in the same way as the row with <code>FALSE</code>. <code>is.na(sex)</code> only asks whether the value is missing, and it always gives <code>TRUE</code> or <code>FALSE</code>.</p>
+<div id="fig-filter-na" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the tower sex, dbl+lbl, with the rows 1, 2, 3 and 110: 1 MALE, 1 MALE, 2 FEMALE in grey, an ellipsis and an empty dashed brick with the faded sticker NO ANSWER. Next to it the pink tower sex == 1 with TRUE, TRUE, FALSE and an empty dashed brick NA. A green arrow filter() leads to the tower sex with two bricks 1 MALE at the height of rows 1 and 2, below them an ellipsis. Below, the code allbus |> filter(sex == 1).">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-filter-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-filter-na.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;4.6: filter(sex == 1) keeps only the rows in which the comparison gives TRUE. Where sex is missing, the result of the comparison is also an empty brick, and the row is dropped."><img src="Bilder/figuren/en/k04-filter-na.svg" class="img-fluid figure-img" alt="On the left the tower sex, dbl+lbl, with the rows 1, 2, 3 and 110: 1 MALE, 1 MALE, 2 FEMALE in grey, an ellipsis and an empty dashed brick with the faded sticker NO ANSWER. Next to it the pink tower sex == 1 with TRUE, TRUE, FALSE and an empty dashed brick NA. A green arrow filter() leads to the tower sex with two bricks 1 MALE at the height of rows 1 and 2, below them an ellipsis. Below, the code allbus |> filter(sex == 1)."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-filter-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.6: <code>filter(sex == 1)</code> keeps only the rows in which the comparison gives <code>TRUE</code>. Where <code>sex</code> is missing, the result of the comparison is also an empty brick, and the row is dropped.
+</figcaption></figure>
+</div>
+<p>If your number of cases is suddenly smaller than you expected, the <code>NA</code> filtering is usually the reason.</p>
+</div>
+</div>
+<p><strong>Stop and think.</strong> <code>allbus |&gt; filter(sex == 1)</code> keeps 2546 rows, <code>filter(sex == 2)</code> keeps 2672 (<a href="#fig-filter" class="quarto-xref">Figure&nbsp;<span>4.5</span></a>). Together that makes 5218, but <code>allbus</code> has 5246 rows. Where are the other 28?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Frequency Analysis Results
+--------------------------
+
+sex (RESPONDENT: SEX)
+# total N=5246 valid N=5236 mean=1.52 sd=0.51 skewness=0.01
+
++-------+----------------+------+--------+---------+--------+
+| Value | Label          |    N |  Raw % | Valid % | Cum. % |
++-------+----------------+------+--------+---------+--------+
+|     1 | MALE           | 2546 |  48.53 |   48.62 |  48.62 |
+|     2 | FEMALE         | 2672 |  50.93 |   51.03 |  99.66 |
+|     3 | NON-BINARY     |   18 |   0.34 |    0.34 | 100.00 |
++-------+----------------+------+--------+---------+--------+
+| Total valid            | 5236 |  99.81 |  100.00 |        |
++-------+----------------+------+--------+---------+--------+
+|   -42 | DATA ERROR: MR |    1 |   0.02 |         |        |
+|    -9 | NO ANSWER      |    9 |   0.17 |         |        |
++-------+----------------+------+--------+---------+--------+
+| Total missing          |   10 |   0.19 |         |        |
++-------+----------------+------+--------+---------+--------+
+| Total                  | 5246 | 100.00 |         |        |
++-------+----------------+------+--------+---------+--------+</code></pre>
+</div>
+</div>
+<p>Eighteen respondents have code 3 (NON-BINARY) on <code>sex</code>; neither <code>sex == 1</code> nor <code>sex == 2</code> includes them. For the other 10, the value is missing (NO ANSWER nine times, DATA ERROR: MR once), and these rows are dropped by every comparison with <code>==</code>. <code>filter(is.na(sex))</code> gives you exactly these 10 rows.</p>
+</div>
+</div>
+</div>
+</section><section id="sorting-cases-with-arrange-and-desc" class="level3" data-number="4.5.3"><h3 data-number="4.5.3" class="anchored" data-anchor-id="sorting-cases-with-arrange-and-desc">
+<span class="header-section-number">4.5.3</span> Sorting cases with <code>arrange()</code> and <code>desc()</code>
+</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  age       educ                    
+  &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;               
+1 18        5 [QUALI.FOR UNIVERSITY]
+2 18        5 [QUALI.FOR UNIVERSITY]
+3 18        3 [INTERMEDIARY LEVEL]  
+4 18        1 [NO CERTIFICATE]      
+5 18        2 [LOWEST LEVEL]        </code></pre>
+</div>
+</div>
+<p>In descending order with <code><a href="https://dplyr.tidyverse.org/reference/desc.html">desc()</a></code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  age       educ                    
+  &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;               
+1 99        2 [LOWEST LEVEL]        
+2 97        5 [QUALI.FOR UNIVERSITY]
+3 97        5 [QUALI.FOR UNIVERSITY]
+4 94        2 [LOWEST LEVEL]        
+5 94        4 [QUALI.UNIV.APPL.SCI.]</code></pre>
+</div>
+</div>
+</section></section><section id="sec-datentypen-verstehen" class="level2" data-number="4.6"><h2 data-number="4.6" class="anchored" data-anchor-id="sec-datentypen-verstehen">
+<span class="header-section-number">4.6</span> Understanding data types with <code>class()</code>
+</h2>
+<p>When you work in SPSS, you rarely ask yourself which type a variable is. SPSS handles this in the background: a variable is “numeric” or “string”, and value labels (“1 = male, 2 = female”) are just a layer of labels on top. In R, this works a little differently, which can be confusing at first.</p>
+<p>R has a number of data types: plain numbers (<code>numeric</code>), text (<code>character</code>), logical values (<code>logical</code>) and categories with a fixed order (<code>factor</code>). When you import an SPSS dataset, there is one more type, which mariposa adopts from the haven package: <code>&lt;haven_labelled&gt;</code>. It is a kind of hybrid: the column behaves like a number, but in the background the values keep their SPSS value labels. This way the information “1 means male” is kept, and you do not have to look it up in the codebook.</p>
+<p><code><a href="https://rdrr.io/r/base/class.html">class()</a></code> shows you the type of a variable:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">age</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "haven_labelled" "vctrs_vctr"     "double"        </code></pre>
+</div>
+</div>
+<p>Both variables are <code>double</code>, that is, numbers, and at the same time <code>haven_labelled</code>. So a value of <code>sex</code> is a brick with a sticker, for example the number 1 with the value label MALE (<a href="#fig-dbl-lbl" class="quarto-xref">Figure&nbsp;<span>4.7</span></a>). The tibble shows this as the type tag <code>&lt;dbl+lbl&gt;</code>. For <code>age</code>, only the missing code has a label; that is enough to make the variable labelled.</p>
+<div id="fig-dbl-lbl" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="At the top sex and the type tag dbl+lbl in angle brackets, dbl dark blue, lbl orange. Below, a large blue brick with the number 1 and a yellow sticker MALE. Under the number it says Number and double, under the sticker Value label and haven_labelled. On the right the code class(allbus$sex) with the output [1] “haven_labelled” “vctrs_vctr” “double”.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-dbl-lbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-dbl-lbl.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;4.7: A value of sex: the number 1 with the sticker MALE. dbl stands for the number (double), lbl for the value label (haven_labelled)."><img src="Bilder/figuren/en/k04-dbl-lbl.svg" class="img-fluid figure-img" alt="At the top sex and the type tag dbl+lbl in angle brackets, dbl dark blue, lbl orange. Below, a large blue brick with the number 1 and a yellow sticker MALE. Under the number it says Number and double, under the sticker Value label and haven_labelled. On the right the code class(allbus$sex) with the output [1] “haven_labelled” “vctrs_vctr” “double”."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dbl-lbl-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.7: A value of <code>sex</code>: the number 1 with the sticker MALE. <code>dbl</code> stands for the number (<code>double</code>), <code>lbl</code> for the value label (<code>haven_labelled</code>).
+</figcaption></figure>
+</div>
+<section id="converting-labelled-variables-with-to_label-to_numeric-and-unlabel" class="level3" data-number="4.6.1"><h3 data-number="4.6.1" class="anchored" data-anchor-id="converting-labelled-variables-with-to_label-to_numeric-and-unlabel">
+<span class="header-section-number">4.6.1</span> Converting labelled variables with <code>to_label()</code>, <code>to_numeric()</code> and <code>unlabel()</code>
+</h3>
+<p>You will need three conversions again and again:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 77%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Effect</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>to_label(data, var)</code></td>
+<td>converts <code>&lt;haven_labelled&gt;</code> into a factor with the value labels as levels; the usual choice when you want readable labels on <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> axes</td>
+</tr>
+<tr class="even">
+<td><code>to_numeric(data, var)</code></td>
+<td>converts into a plain numeric vector; the labels are lost</td>
+</tr>
+<tr class="odd">
+<td><code>to_labelled(data, var, labels = ...)</code></td>
+<td>converts a factor back into a <code>&lt;haven_labelled&gt;</code>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">eastwest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  sex    eastwest          
+  &lt;fct&gt;  &lt;fct&gt;             
+1 MALE   OLD FEDERAL STATES
+2 MALE   OLD FEDERAL STATES
+3 FEMALE OLD FEDERAL STATES</code></pre>
+</div>
+</div>
+<p><code><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label()</a></code> turns the sticker into the value: the 1 with the label MALE becomes the factor level <code>MALE</code> (<a href="#fig-to-label" class="quarto-xref">Figure&nbsp;<span>4.8</span></a>). <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_numeric.html">to_numeric()</a></code> peels off the sticker and leaves the number 1.</p>
+<div id="fig-to-label" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left the tower sex, dbl+lbl, with three blue bricks 1, 1 and 2 and the yellow stickers MALE, MALE and FEMALE. A fork leads with to_label() to a purple tower sex, fct, with MALE, MALE and FEMALE, labelled Factor, and with to_numeric() to a blue tower sex, dbl, with 1, 1 and 2, labelled Number without label.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-to-label-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-to-label.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;4.8: The first three values of sex before and after conversion. to_label() gives a factor with the labels as values, to_numeric() gives the numbers without labels."><img src="Bilder/figuren/en/k04-to-label.svg" class="img-fluid figure-img" alt="On the left the tower sex, dbl+lbl, with three blue bricks 1, 1 and 2 and the yellow stickers MALE, MALE and FEMALE. A fork leads with to_label() to a purple tower sex, fct, with MALE, MALE and FEMALE, labelled Factor, and with to_numeric() to a blue tower sex, dbl, with 1, 1 and 2, labelled Number without label."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-to-label-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.8: The first three values of <code>sex</code> before and after conversion. <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label()</a></code> gives a factor with the labels as values, <code><a href="https://YannickDiehl.github.io/mariposa/reference/to_numeric.html">to_numeric()</a></code> gives the numbers without labels.
+</figcaption></figure>
+</div>
+<p>If you only want to strip off the labels (for example because a function cannot handle labelled vectors), use <code><a href="https://YannickDiehl.github.io/mariposa/reference/unlabel.html">unlabel()</a></code>: <code>allbus |&gt; unlabel(sex, age)</code>. You will rarely need it, but it is useful when another package will not accept labelled vectors.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: Why not just use a factor?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In SPSS, variables are either numeric or string. Value labels are an add-on. In R, factors (categories) and numeric vectors are separate types. <code>&lt;haven_labelled&gt;</code> is a bridge: you work with numbers, but the value labels travel with them. When to convert:</p>
+<ul>
+<li>
+<code><a href="https://YannickDiehl.github.io/mariposa/reference/to_label.html">to_label()</a></code> when you sort, group, cross-tabulate or plot; factors give readable output.</li>
+<li>
+<code><a href="https://YannickDiehl.github.io/mariposa/reference/to_numeric.html">to_numeric()</a></code> when you calculate or build scales, for example with Likert items that you treat as quasi-interval.</li>
+<li>Keep the original if the variable is not final yet and you will need the labels later.</li>
+</ul>
+</div>
+</div>
+</div>
+</section></section><section id="reading-and-setting-variable-and-value-labels-with-var_label-and-val_labels" class="level2" data-number="4.7"><h2 data-number="4.7" class="anchored" data-anchor-id="reading-and-setting-variable-and-value-labels-with-var_label-and-val_labels">
+<span class="header-section-number">4.7</span> Reading and setting variable and value labels with <code>var_label()</code> and <code>val_labels()</code>
+</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 57%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Effect</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>var_label(data)</code></td>
+<td>read variable labels</td>
+</tr>
+<tr class="even">
+<td><code>var_label(data$var) &lt;- "New label"</code></td>
+<td>set the variable label of one column</td>
+</tr>
+<tr class="odd">
+<td><code>var_label(data) &lt;- list(var = "New label")</code></td>
+<td>set the variable labels of several columns at once</td>
+</tr>
+<tr class="even">
+<td><code>val_labels(data)</code></td>
+<td>read value labels</td>
+</tr>
+<tr class="odd">
+<td><code>data &lt;- val_labels(data, var = c("value label 1" = 1, "value label 2" = 2))</code></td>
+<td>set value labels</td>
+</tr>
+<tr class="even">
+<td><code>data &lt;- val_labels(data, var = c("value label 1" = 1), .add = TRUE)</code></td>
+<td>change or add individual value labels and keep the others</td>
+</tr>
+<tr class="odd">
+<td><code>drop_labels(data)</code></td>
+<td>remove all value labels whose value does not occur in the data</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                      mm01 
+"EXERCISE OF MUSLIM FAITH SHLD BE LIMITED" 
+                                      mm02 
+       "ISLAM FITS IN WITH GERMAN SOCIETY" 
+                                      mm03 
+  "PRESENCE OF MUSLIMS LEADS TO CONFLICTS" </code></pre>
+</div>
+</div>
+<p>The result is a named character vector with the stored label for each variable. This tells you what a cryptic variable such as <code>mm01</code> means, so you do not have to look it up in the codebook.</p>
+<p>A variable such as <code>mm01</code> carries three labels (<a href="#fig-labels" class="quarto-xref">Figure&nbsp;<span>4.9</span></a>): the variable name you work with in R, the variable label that <code><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label()</a></code> reads, and the value labels that say what a number means. For <code>mm01</code>, only the end points 1 and 7 have a value label; for 2 to 6, <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> shows only <code>..</code>.</p>
+<div id="fig-labels" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="Three rows. First row: a dark name tag mm01, on the right Variable name. Second row: the text “EXERCISE OF MUSLIM FAITH SHLD BE LIMITED”, on the right Variable label and var_label(). Third row: a blue brick 1 with the sticker COMPLETELY DISAGREE, an ellipsis and a blue brick 7 with the sticker COMPLETELY AGREE, on the right Value labels and val_labels().">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-labels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-labels.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;4.9: The three labels of mm01: variable name, variable label and value labels. The value labels are stuck to the bricks as stickers."><img src="Bilder/figuren/en/k04-labels.svg" class="img-fluid figure-img" alt="Three rows. First row: a dark name tag mm01, on the right Variable name. Second row: the text “EXERCISE OF MUSLIM FAITH SHLD BE LIMITED”, on the right Variable label and var_label(). Third row: a blue brick 1 with the sticker COMPLETELY DISAGREE, an ellipsis and a blue brick 7 with the sticker COMPLETELY AGREE, on the right Value labels and val_labels()."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-labels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.9: The three labels of <code>mm01</code>: variable name, variable label and value labels. The value labels are stuck to the bricks as stickers.
+</figcaption></figure>
+</div>
+<p>When you create a new variable (for example a scale in <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a>), you can give it a descriptive label afterwards:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">islamophobia</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Islamophobia scale (6 items, 1–7)"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This label then appears automatically in <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code>, in the header of <code><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency()</a></code> and in many <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> outputs, wherever mariposa looks for labels. For several variables at once, you pass a list: <code>var_label(allbus) &lt;- list(islamophobia = "…", populism = "…")</code>.</p>
+<p>Value labels are not set with an arrow on the column. <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> takes pairs of a variable and a named vector (<code>"Label" = code</code>) and returns the changed dataset, which you assign back to <code>allbus</code>. A typical case: a 0/1 dummy you have built yourself, such as <code>islamophobia_high</code> in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Chapter 9</span></a>, should show readable values in <code><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency()</a></code> and <code><a href="https://YannickDiehl.github.io/mariposa/reference/crosstab.html">crosstab()</a></code> instead of bare zeros and ones:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, islamophobia_high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"low"</span> <span class="op">=</span> <span class="fl">0</span>, <span class="st">"high"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> replaces existing labels.</strong> By default, <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code> discards all existing value labels of the variable. For a newly built variable this does not matter. For an ALLBUS variable, however, the labels of the missing codes disappear as well: after <code>val_labels(allbus, mm01 = c("completely disagree" = 1, "completely agree" = 7))</code>, <code>frequency(mm01)</code> no longer shows <code>NAP: SPLIT</code> next to <code>-11</code>. If you only want to change or add individual labels, set <code>.add = TRUE</code>. All other labels are then kept:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels</a></span><span class="op">(</span><span class="va">allbus</span>, mm01 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"completely disagree"</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"completely agree"</span> <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>, .add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>val_labels(allbus, mm01 = NULL)</code> removes all value labels of a variable.</p>
+</div>
+</div>
+</section><section id="sec-fehlende-werte" class="level2" data-number="4.8"><h2 data-number="4.8" class="anchored" data-anchor-id="sec-fehlende-werte">
+<span class="header-section-number">4.8</span> Declaring missing values with <code>na_frequencies()</code>, <code>set_na()</code> and <code>drop_na()</code>
+</h2>
+<p>Missing values are normal in social research. Nobody answers every question in a survey: some people skip individual items, some simply do not know, and some are never asked certain questions because of a split design. And some answers were there originally but were lost through a data error.</p>
+<p>GESIS therefore distinguishes many kinds of missing values in ALLBUS and codes them with distinct negative numbers. ALLBUS 2023 has 17 different codes. Four of them occur in the six items of our Islamophobia scale (<code>mm01</code> to <code>mm06</code>):</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: right;">Code</th>
+<th>Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><code>-42</code></td>
+<td>DATA ERROR: MR (multiple responses)</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><code>-11</code></td>
+<td>NAP: SPLIT (not applicable / split module)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><code>-9</code></td>
+<td>NO ANSWER</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><code>-8</code></td>
+<td>DO NOT KNOW</td>
+</tr>
+</tbody>
+</table>
+<p>Other variables have further codes, such as <code>-10</code> NAP: SCREENED OUT (question skipped after a filter question), <code>-15</code> NAP: MODE (not asked in this survey mode), <code>-7</code> REFUSED, <code>-32</code> CANNOT BE GENERATED (for <code>age</code>) or <code>-33</code> CANNOT BE CODED and <code>-41</code> DATA ERROR (for the school-leaving certificate, <code>educ</code>). <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code> (see below) shows you which codes a particular variable has.</p>
+<p>The distinction matters substantively. A “don’t know” is methodologically different from a refused answer, and a “not applicable” (the person was never asked the question) is different again from a genuine data error. If you treat these codes as ordinary numbers, which is what happens when you simply include them in a mean, your results are worthless: an “average” life satisfaction of <code>-3.4</code> is obviously nonsense.</p>
+<p>After the import step, these codes are stored in <code>allbus</code> as <strong>tagged NAs</strong>. “Tagged” means that they count as <code>NA</code> (missing) in calculations, but in the background they keep the information about which type of missing value they are. So you can still tell them apart later, for example to show how many people chose “don’t know”.</p>
+<p>In ALLBUS, some item batteries are put to only part of the sample (split design); respondents who are not shown them get the code <code>-11</code> (NAP: SPLIT). This applies in particular to the <code>mm</code> items of our Islamophobia scale: about 1650 respondents, just under a third, did not see them. The valid N per item is therefore about 3300–3450 rather than 5246. This is intended and belongs in the methods section.</p>
+<p><code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code> shows you how many cases each missing code has in a particular variable:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  code          label    n         prc tag
+1  -42 DATA ERROR: MR    2  0.03812429   g
+2  -11     NAP: SPLIT 1647 31.39534884   l
+3   -9      NO ANSWER   73  1.39153641   n
+4   -8    DO NOT KNOW  123  2.34464354   o</code></pre>
+</div>
+</div>
+<p>You see in one call how many cases fall under each code. This is useful before you decide whether to keep certain codes as regular values or to treat them as missing for good.</p>
+<p>In <a href="#fig-missing-codes" class="quarto-xref">Figure&nbsp;<span>4.10</span></a>, each of these gaps is an empty brick with a sticker: the brick is empty because there is no valid value, and the sticker gives the reason. The tags <code>g</code>, <code>l</code>, <code>n</code> and <code>o</code> distinguish the four codes within <code>mm01</code>. Because the import step gives each of the 17 codes its own tag, a code has the same tag in every variable (for <code>mm05</code>, NAP: SPLIT also has the tag <code>l</code>). The largest block, 1647 cases with NAP: SPLIT, comes from the split design: these respondents were not asked any of the six <code>mm</code> items.</p>
+<div id="fig-missing-codes" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="At the top the call na_frequencies(allbus$mm01). Below it four rows with the columns code, label, n and tag, each with an empty dashed brick and a yellow sticker: -42 DATA ERROR: MR, n 2, NA(g); -11 NAP: SPLIT, n 1647, NA(l), outlined in orange; -9 NO ANSWER, n 73, NA(n); -8 DO NOT KNOW, n 123, NA(o). On the right under SPLIT DESIGN six towers mm01 to mm06, each with two blue bricks and one empty brick; the row of empty bricks is outlined in orange. Below: two thirds: questions asked; just under a third: NAP: SPLIT.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-missing-codes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-missing-codes.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;4.10: The four missing codes of mm01 from na_frequencies(). On the right, a diagram of the split design: just under a third of the respondents were not shown the mm items."><img src="Bilder/figuren/en/k04-missing-codes.svg" class="img-fluid figure-img" alt="At the top the call na_frequencies(allbus$mm01). Below it four rows with the columns code, label, n and tag, each with an empty dashed brick and a yellow sticker: -42 DATA ERROR: MR, n 2, NA(g); -11 NAP: SPLIT, n 1647, NA(l), outlined in orange; -9 NO ANSWER, n 73, NA(n); -8 DO NOT KNOW, n 123, NA(o). On the right under SPLIT DESIGN six towers mm01 to mm06, each with two blue bricks and one empty brick; the row of empty bricks is outlined in orange. Below: two thirds: questions asked; just under a third: NAP: SPLIT."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-missing-codes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.10: The four missing codes of <code>mm01</code> from <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code>. On the right, a diagram of the split design: just under a third of the respondents were not shown the <code>mm</code> items.
+</figcaption></figure>
+</div>
+<p><strong>Stop and think.</strong> What does <code>sum(is.na(allbus$mm01))</code> return?</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">allbus</span><span class="op">$</span><span class="va">mm01</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1845</code></pre>
+</div>
+</div>
+<p><code><a href="https://rdrr.io/r/base/NA.html">is.na()</a></code> only checks whether a value is missing. All four codes therefore count as <code>NA</code>, whatever the reason: 2 + 1647 + 73 + 123 = 1845. <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code> shows how the gaps are distributed across the reasons.</p>
+</div>
+</div>
+</div>
+<p>If you want certain valid codes to count as missing in your analysis, you declare them with <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code>. An example: for the school-leaving certificate, <code>educ</code>, the categories OTHER SCHOOL CERTIF. (code 6) and STILL AT SCHOOL (code 7) cannot be assigned to any level of education. You give the variable as the name and the codes as values, <code>variable = c(code1, code2)</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/frequency.html">frequency</a></span><span class="op">(</span><span class="va">educ</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Converted 44 values to tagged NAs.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Frequency Analysis Results
+--------------------------
+
+educ (RESP: GENERAL SCHOOL LEAVING CERTIFICATE)
+# total N=5246 valid N=5093 mean=3.64 sd=1.18 skewness=-0.14
+
++-------+----------------------+------+--------+---------+--------+
+| Value | Label                |    N |  Raw % | Valid % | Cum. % |
++-------+----------------------+------+--------+---------+--------+
+|     1 | NO CERTIFICATE       |   77 |   1.47 |    1.51 |   1.51 |
+|     2 | LOWEST LEVEL         |  905 |  17.25 |   17.77 |  19.28 |
+|     3 | INTERMEDIARY LEVEL   | 1639 |  31.24 |   32.18 |  51.46 |
+|     4 | QUALI.UNIV.APPL.SCI. |  625 |  11.91 |   12.27 |  63.73 |
+|     5 | QUALI.FOR UNIVERSITY | 1847 |  35.21 |   36.27 | 100.00 |
++-------+----------------------+------+--------+---------+--------+
+| Total valid                  | 5093 |  97.08 |  100.00 |        |
++-------+----------------------+------+--------+---------+--------+
+|     6 | OTHER SCHOOL CERTIF. |   18 |   0.34 |         |        |
+|     7 | STILL AT SCHOOL      |   26 |   0.50 |         |        |
+|   -41 | DATA ERROR           |    1 |   0.02 |         |        |
+|   -33 | CANNOT BE CODED      |   54 |   1.03 |         |        |
+|    -9 | NO ANSWER            |   54 |   1.03 |         |        |
++-------+----------------------+------+--------+---------+--------+
+| Total missing                |  153 |   2.92 |         |        |
++-------+----------------------+------+--------+---------+--------+
+| Total                        | 5246 | 100.00 |         |        |
++-------+----------------------+------+--------+---------+--------+</code></pre>
+</div>
+</div>
+<p>With <code>verbose = TRUE</code>, mariposa tells you how many values became <code>NA</code>, so you can check the step. The two codes then appear with their labels in the missing block of the frequency table: they no longer count as valid, but they can still be told apart as separate missing types. If you leave out the variable name (<code>set_na(-99)</code>), the code applies to all numeric variables. The import step at the start of this chapter uses <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> in this way for the 17 ALLBUS codes.</p>
+<p><a href="#fig-set-na" class="quarto-xref">Figure&nbsp;<span>4.11</span></a> shows what happens: the bricks with 6 and 7 lose their value and become empty, but their stickers stay. This is why both codes appear in the missing block of the output, with 18 and 26 cases. The number of valid cases falls by these 44 to 5093.</p>
+<div id="fig-set-na" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left under VALID two blue bricks: 6 with the sticker OTHER SCHOOL CERTIF. and 7 with the sticker STILL AT SCHOOL. Above them the call set_na(educ = c(6, 7)) as code bricks. Green arrows lead to the right under MISSING to two empty dashed bricks with the same stickers, next to them N 18 and 26. Below, the output # total N=5246 valid N=5093 and 18 + 26 = 44 fewer valid values.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-set-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-set-na.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;4.11: set_na() declares the valid codes 6 and 7 of educ as missing values. The bricks become empty, the stickers stay."><img src="Bilder/figuren/en/k04-set-na.svg" class="img-fluid figure-img" alt="On the left under VALID two blue bricks: 6 with the sticker OTHER SCHOOL CERTIF. and 7 with the sticker STILL AT SCHOOL. Above them the call set_na(educ = c(6, 7)) as code bricks. Green arrows lead to the right under MISSING to two empty dashed bricks with the same stickers, next to them N 18 and 26. Below, the output # total N=5246 valid N=5093 and 18 + 26 = 44 fewer valid values."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-set-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.11: <code><a href="https://YannickDiehl.github.io/mariposa/reference/set_na.html">set_na()</a></code> declares the valid codes 6 and 7 of <code>educ</code> as missing values. The bricks become empty, the stickers stay.
+</figcaption></figure>
+</div>
+<p><code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> (from tidyr) removes cases with <code>NA</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02</span>, <span class="va">mm03</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3285</code></pre>
+</div>
+</div>
+<p><code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> keeps only the rows without a gap (<a href="#fig-drop-na" class="quarto-xref">Figure&nbsp;<span>4.12</span></a>). In row 53, only <code>mm02</code> is missing (NO ANSWER); the row is still dropped entirely, together with its valid answers 1 and 4. Of the 5246 rows, 3285 remain. In 1739 of the 1961 rows that are dropped, all three values are missing, mostly because of the split design; in the remaining 222, one or two values are missing.</p>
+<div id="fig-drop-na" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left three towers mm01, mm02 and mm03 with the rows 1, 2 and 53. Row 1: 5, 3 and 4. Row 2: three empty dashed bricks. After an ellipsis, row 53, outlined in orange and labelled one gap: 1 and 4 in grey, with an empty brick between them. A green arrow drop_na() leads to the same three towers with only the row 5, 3, 4, below it an ellipsis. Below, the code allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow() and the output [1] 3285.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-drop-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k04-drop-na.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;4.12: drop_na() removes every row in which at least one value is missing. Row 53 is dropped together with its valid values 1 and 4 (grey)."><img src="Bilder/figuren/en/k04-drop-na.svg" class="img-fluid figure-img" alt="On the left three towers mm01, mm02 and mm03 with the rows 1, 2 and 53. Row 1: 5, 3 and 4. Row 2: three empty dashed bricks. After an ellipsis, row 53, outlined in orange and labelled one gap: 1 and 4 in grey, with an empty brick between them. A green arrow drop_na() leads to the same three towers with only the row 5, 3, 4, below it an ellipsis. Below, the code allbus |> select(mm01, mm02, mm03) |> drop_na() |> nrow() and the output [1] 3285."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-drop-na-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.12: <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> removes every row in which at least one value is missing. Row 53 is dropped together with its valid values 1 and 4 (grey).
+</figcaption></figure>
+</div>
+<p>This approach is called <strong>listwise deletion</strong>: a case is dropped as soon as one of the selected variables is <code>NA</code>. If you call <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> in a large pipeline with many variables, your number of cases can shrink drastically. So apply <code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code> only to the variables you really need.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: MCAR, MAR, MNAR
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The methods literature distinguishes three missing-data mechanisms: missing completely at random (MCAR: random, no bias), missing at random (MAR: random conditional on observed variables, can be corrected by modelling) and missing not at random (MNAR: systematic, hard to correct). In survey data such as ALLBUS, MAR is the usual case; simple listwise deletion (<code><a href="https://tidyr.tidyverse.org/reference/drop_na.html">drop_na()</a></code>) is then a conservative but transparent way of dealing with it. Imputation methods (for example <code>mice</code>) are the next step, but they go beyond an introductory book.</p>
+</div>
+</div>
+</div>
+</section><section id="if-something-looks-strange-a-diagnostic-cheat-sheet" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="if-something-looks-strange-a-diagnostic-cheat-sheet">If something looks strange: a diagnostic cheat sheet</h2>
+<p>The most common problems beginners have with data import have three causes. The table gives a diagnosis for each:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 33%">
+<col style="width: 29%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Likely cause</th>
+<th style="text-align: left;">Diagnosis</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">
+<code>mean(allbus$age)</code> gives strange values (e.g.&nbsp;negative)</td>
+<td style="text-align: left;">missing codes (-9, -42, …) included as regular numbers</td>
+<td style="text-align: left;"><code>na_frequencies(allbus$age)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plot axis shows numbers (<code>1</code>, <code>2</code>) instead of labels</td>
+<td style="text-align: left;">variable is still <code>&lt;haven_labelled&gt;</code>, not a factor</td>
+<td style="text-align: left;"><code>allbus |&gt; to_label(var)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">number of cases after <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> much smaller than expected</td>
+<td style="text-align: left;">
+<code>NA</code> values are excluded automatically</td>
+<td style="text-align: left;"><code>sum(is.na(allbus$var))</code></td>
+</tr>
+</tbody>
+</table>
+<p>These three cover about 80% of all “why doesn’t this work?” moments.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Research journal: Where your mini study stands.</strong> You have imported ALLBUS 2023 and have the tools to find your way through 579 variables. You know what lies behind <code>mm01</code> to <code>mm06</code> (the six Islamophobia items), you know the GESIS missing codes, and you can put together your analysis subset. Next, in <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a>, you turn the raw items into two scales: Islamophobia and populism.</p>
+</div>
+</div>
+</section><section id="exercises" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="exercises">Exercises</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 1 · Finding variables · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 1 · Finding variables · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You want to build a scale on trust in institutions, but you do not know the variable names by heart. Use <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> to find (a) all variables with “trust” in the label and (b) all variables whose name starts with <code>st</code>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"trust"</span>, search <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var</a></span><span class="op">(</span><span class="st">"^st"</span>, search <span class="op">=</span> <span class="st">"name"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 2 · Codebook of the political trust items · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 2 · Codebook of the political trust items · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> for the items <code>pt01</code> to <code>pt08</code> (trust in various institutions). Look at the labels and value labels. <em>Tip: there is no item <code>pt05</code> in ALLBUS 2023; the range <code>pt01:pt08</code> simply selects all columns that lie between them in the dataset.</em></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">pt01</span><span class="op">:</span><span class="va">pt08</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 3 · Building an analysis subset · Transfer">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 3 · Building an analysis subset · Transfer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a dataset <code>analysis</code> that contains only the variables needed for the mini study (<code>mm01:mm06</code>, <code>pa29:pa35</code>, <code>eastwest</code>, <code>sex</code>, <code>age</code>, <code>educ</code>, <code>wghtpew</code>) and only cases in which at least five of the six <code>mm</code> items are valid. <em>Tip: use <code>rowSums(!is.na(across(mm01:mm06))) &gt;= 5</code> as the filter condition.</em></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span>, <span class="va">pa29</span><span class="op">:</span><span class="va">pa35</span>, <span class="va">eastwest</span>, <span class="va">sex</span>, <span class="va">age</span>, <span class="va">educ</span>, <span class="va">wghtpew</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html">across</a></span><span class="op">(</span><span class="va">mm01</span><span class="op">:</span><span class="va">mm06</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">analysis</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 4 · Your own research question · Mini research question">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 4 · Your own research question · Mini research question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Choose a topic in political science or sociology that interests you (migration, climate, gender roles, …). Use <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> to find two or three variables in ALLBUS 2023 that could shed light on your question. Create a <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code> for your selection. Describe in two or three sentences what you would investigate and which variable could serve as the independent and which as the dependent variable.</p>
+<p><em>There is no model solution here. The exercise is about finding and understanding variables.</em></p>
+</div>
+</div>
+</section><section id="what-you-know-now" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-know-now">What you know now</h2>
+<ul>
+<li>You import SPSS data with <code><a href="https://YannickDiehl.github.io/mariposa/reference/read_spss.html">read_spss()</a></code> and keep the variable and value labels.</li>
+<li>You find variables by name or label with <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code> and create detailed codebooks with <code><a href="https://YannickDiehl.github.io/mariposa/reference/codebook.html">codebook()</a></code>.</li>
+<li>You select variables and cases with <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code>, and reorder them with <code><a href="https://dplyr.tidyverse.org/reference/relocate.html">relocate()</a></code>.</li>
+<li>You understand the <code>&lt;haven_labelled&gt;</code> type and convert it to a factor or a number when needed.</li>
+<li>You read and set variable and value labels with <code><a href="https://YannickDiehl.github.io/mariposa/reference/var_label.html">var_label()</a></code> and <code><a href="https://YannickDiehl.github.io/mariposa/reference/val_labels.html">val_labels()</a></code>.</li>
+<li>You recognise the ALLBUS missing codes, check them with <code><a href="https://YannickDiehl.github.io/mariposa/reference/na_frequencies.html">na_frequencies()</a></code> and exclude cases deliberately.</li>
+</ul>
+<p>In the next chapter (<a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a>) you learn how to build the two scales of the mini study from these raw variables: Islamophobia and populism.</p>
+</section><section id="further-reading" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="further-reading">Further reading</h2>
+<ul>
+<li>mariposa vignettes <a href="https://yannickdiehl.github.io/mariposa/articles/data-io.html">“Data I/O”</a> and <a href="https://yannickdiehl.github.io/mariposa/articles/labels-and-missing-values.html">“Labels and Missing Values”</a>.</li>
+<li>Hadley Wickham, Mine Çetinkaya-Rundel &amp; Garrett Grolemund, <a href="https://r4ds.hadley.nz/data-import.html">R for Data Science (2nd edition), chapters “Data import” and “Data transformation”</a>.</li>
+<li>Joseph Larmarange, <a href="https://larmarange.github.io/labelled/">“labelled” vignettes</a>, a closer look at labelled data types.</li>
+<li>GESIS, <a href="https://search.gesis.org/research_data/ZA8833">study description of the German General Social Survey – ALLBUScompact 2023 (ZA8833)</a>, with methods report and codebook.</li>
+</ul>
+
+
+</section></main><!-- /main --><script>
+/* Variante H: Seitenaufbau. Läuft am Ende von <body>, ändert nur die Darstellung. */
+(function () {
+  var main = document.querySelector("main.content");
+  if (!main) return;
+
+  // Sprache der Seite (aus <html lang>, Quarto-Profile de/en); alle Wörter, die das Skript erkennt oder setzt
+  var lang = document.documentElement.lang === "en" ? "en" : "de";
+  var WORT = {
+    de: {
+      typen: [["Hintergrund", "hintergrund"], ["Forschungshintergrund", "hintergrund"], ["Konzept", "hintergrund"],
+        ["Forschungsjournal", "journal"], ["Reviewer-Hinweis", "reviewer"], ["SPSS → R", "spss"],
+        ["mariposa-Tipp", "mariposa"], ["Vorsicht", "vorsicht"], ["Tipp", "tipp"], ["Faustregel", "tipp"]],
+      uebung: "Übung", loesung: "Lösung",
+      nachdenken: "Kurz überlegen", aufloesung: "Auflösung",
+      lernziele: "Was du nach diesem (Kapitel|Buch) kannst", selbstcheck: "Was du jetzt weißt", weiter: "Weiterführend",
+      kapitel: "Kapitel", umschalter: "English", umschalterTitel: "Read this page in English"
+    },
+    en: {
+      typen: [["Background", "hintergrund"], ["Caution", "vorsicht"], ["mariposa tip", "mariposa"],
+        ["SPSS → R", "spss"], ["Research journal", "journal"]],
+      uebung: "Exercise", loesung: "Solution",
+      nachdenken: "Stop and think", aufloesung: "Answer",
+      lernziele: "What you will be able to do after this (chapter|book)", selbstcheck: "What you know now", weiter: "Further reading",
+      kapitel: "Chapters", umschalter: "Deutsch", umschalterTitel: "Diese Seite auf Deutsch lesen"
+    }
+  }[lang];
+  function regexWort(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
+  var num = main.querySelector("h1 .chapter-number");
+  var kap = num ? num.textContent.trim() : "0";
+  document.body.dataset.kapitel = kap;
+  var header = document.getElementById("title-block-header");
+  var start = !!(header && header.querySelector(".subtitle"));
+  if (start) document.body.classList.add("startseite");
+
+  // Titel an „ – “ auf zwei Zeilen setzen
+  function zweizeilig(el, klasseEins) {
+    if (!el) return;
+    var t = el.textContent.trim();
+    var i = t.indexOf(" – ");
+    if (i < 0) return;
+    el.innerHTML = '<span class="' + klasseEins + '">' + t.slice(0, i) + '</span><span class="titel-zwei">' + t.slice(i + 3) + "</span>";
+  }
+  zweizeilig(document.querySelector(".sidebar-title a") || document.querySelector(".sidebar-title"), "titel-eins");
+  if (start) {
+    zweizeilig(header.querySelector("h1.title"), "titel-eins");
+    var cover = main.querySelector(".quarto-cover-image");
+    if (cover) {
+      var hülle = document.createElement("div");
+      hülle.className = "start-cover";
+      var alt = cover.parentElement;
+      hülle.appendChild(cover);
+      header.appendChild(hülle);
+      if (alt && alt.tagName === "P" && !alt.textContent.trim() && !alt.children.length) alt.remove();
+    }
+  }
+
+  // Vorwort in der Seitenleiste: Nummer als eigener Stein wie bei den Kapiteln
+  var erster = document.querySelector(".sidebar-menu-container ul > li:first-child .menu-text");
+  if (erster && !erster.querySelector(".chapter-number")) {
+    var m = erster.textContent.replace(/\u00a0/g, " ").trim().match(/^(\d+)\s+(.*)$/);
+    if (m) erster.innerHTML = '<span class="chapter-number">' + m[1] + '</span>&nbsp; <span class="chapter-title">' + m[2] + "</span>";
+  }
+
+  // Kapitelüberschriften ohne Titelblock (Vorwort): Text in eigenes Element
+  main.querySelectorAll("h1").forEach(function (h) {
+    var n = h.querySelector(".chapter-number");
+    if (!n || h.querySelector(".chapter-title")) return;
+    var rest = h.textContent.replace(n.textContent, "").replace(/ /g, " ").trim();
+    h.innerHTML = "";
+    h.appendChild(n);
+    var s = document.createElement("span");
+    s.className = "chapter-title";
+    s.textContent = rest;
+    h.appendChild(s);
+    h.classList.add("kapitelkopf");
+  });
+
+  // Abschnittsüberschriften: Text hinter dem Nummern-Stein in ein Element fassen (bricht dann sauber um)
+  main.querySelectorAll("h2 > .header-section-number").forEach(function (n) {
+    var h = n.parentElement;
+    var s = document.createElement("span");
+    s.className = "h-text";
+    while (n.nextSibling) s.appendChild(n.nextSibling);
+    h.appendChild(s);
+  });
+
+  // Bausteine-Leiste: ein Stein je Kapitel, der aktuelle steht vorne
+  if (!start && header && num) {
+    var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
+    var nav = document.createElement("nav");
+    nav.className = "leiste";
+    nav.setAttribute("aria-label", WORT.kapitel);
+    links.forEach(function (a, i) {
+      var b = document.createElement("a");
+      b.href = a.getAttribute("href");
+      b.className = "leiste-stein k" + i;
+      b.textContent = i;
+      b.title = a.textContent.replace(/\s+/g, " ").trim();
+      if (String(i) === kap) { b.classList.add("aktiv"); b.setAttribute("aria-current", "page"); }
+      nav.appendChild(b);
+    });
+    header.insertBefore(nav, header.firstChild);
+  }
+
+  // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
+  var TYPEN = WORT.typen.map(function (t) {
+    return [new RegExp("^" + regexWort(t[0]) + "\\b"), t[1], t[0]];
+  });
+  function führendeLeerzeichenWeg(p) {
+    if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
+  }
+  main.querySelectorAll(".callout").forEach(function (c) {
+    var titel = c.getAttribute("title") || "";
+    var kopf = c.querySelector(".callout-title-container");
+    if (new RegExp("^" + WORT.uebung).test(titel)) {
+      var teile = titel.split(" · ");
+      var nr = (teile[0].match(/\d+/) || [""])[0];
+      c.classList.add("kasten", "uebung");
+      if (kopf) kopf.innerHTML = '<span class="uebung-nr">' + nr + '</span><span class="kasten-titel">' + (teile[1] || "") + "</span>" +
+        (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
+      return;
+    }
+    if (new RegExp("^" + WORT.loesung).test(titel)) {
+      c.classList.add("loesung");
+      var vor = c.previousElementSibling;
+      if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
+      return;
+    }
+    // Kasten mit Überschrift als Titel, etwa zum Aufklappen: „Hintergrund: …“
+    // Quarto setzt davor ein verstecktes Wort für Screenreader („Hinweis“); das bleibt erhalten
+    var sr = kopf ? kopf.querySelector(".screen-reader-only") : null;
+    var kopfText = kopf ? kopf.textContent.replace(sr ? sr.textContent : "", "").replace(/\s+/g, " ").trim() : "";
+    for (var k = 0; k < TYPEN.length; k++) {
+      var wort = TYPEN[k][2];
+      if (kopfText.indexOf(wort + ":") !== 0) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[k][1]);
+      var h = kopf.innerHTML.replace(sr ? sr.outerHTML : "", "").trim();
+      var rest = h.slice(h.indexOf(wort) + wort.length).replace(/^\s*:\s*/, "");
+      kopf.innerHTML = (sr ? sr.outerHTML : "") + '<span class="kasten-label">' + wort + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      return;
+    }
+    if (titel) return;
+    var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
+    var st = p && p.firstElementChild;
+    if (!st || st.tagName !== "STRONG" || p.firstChild !== st) return;
+    var text = st.textContent.trim();
+    for (var i = 0; i < TYPEN.length; i++) {
+      if (!TYPEN[i][0].test(text)) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[i][1]);
+      var html = st.innerHTML.trim();
+      var rest = html.slice(html.indexOf(TYPEN[i][2]) + TYPEN[i][2].length)
+        .replace(/^\s*[:./–-]?\s*/, "").replace(/\.\s*$/, "");
+      if (kopf) kopf.innerHTML = '<span class="kasten-label">' + TYPEN[i][2] + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      st.remove();
+      führendeLeerzeichenWeg(p);
+      if (!p.textContent.trim() && !p.children.length) p.remove();
+      break;
+    }
+  });
+
+  // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
+  main.querySelectorAll("p > strong:first-child").forEach(function (st) {
+    if (st.textContent.trim() !== WORT.nachdenken + ".") return;
+    var p = st.parentElement;
+    if (p.firstChild !== st) return;
+    var nach = p.nextElementSibling;
+    var karte = document.createElement("div");
+    karte.className = "denkpause";
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">' + WORT.nachdenken + '</span></div>';
+    p.parentNode.insertBefore(karte, p);
+    st.remove();
+    führendeLeerzeichenWeg(p);
+    karte.appendChild(p);
+    if (nach && nach.classList.contains("callout") && new RegExp("^" + WORT.aufloesung).test(nach.getAttribute("title") || "")) {
+      nach.classList.add("aufloesung");
+      karte.appendChild(nach);
+    }
+  });
+
+  // Lernziele, Selbstcheck, Weiterführend als Karten
+  main.querySelectorAll("section.level2 > h2").forEach(function (h) {
+    var t = h.textContent.trim();
+    var s = h.parentElement;
+    if (new RegExp("^" + WORT.lernziele).test(t)) s.classList.add("karte", "lernziele");
+    else if (new RegExp("^" + regexWort(WORT.selbstcheck)).test(t)) s.classList.add("karte", "selbstcheck");
+    else if (new RegExp("^" + regexWort(WORT.weiter)).test(t)) s.classList.add("karte", "weiter");
+  });
+
+  // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
+  var schlüssel = "rw-selbstcheck:" + location.pathname;
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(schlüssel) || "{}"); } catch (e) { stand = {}; }
+  main.querySelectorAll("section.selbstcheck li").forEach(function (li, i) {
+    li.setAttribute("role", "checkbox");
+    li.tabIndex = 0;
+    function setze(an) { li.classList.toggle("erledigt", an); li.setAttribute("aria-checked", an ? "true" : "false"); }
+    setze(!!stand[i]);
+    function umschalten() {
+      stand[i] = !stand[i];
+      setze(stand[i]);
+      try { localStorage.setItem(schlüssel, JSON.stringify(stand)); } catch (e) {}
+    }
+    li.addEventListener("click", function (e) { if (!e.target.closest("a")) umschalten(); });
+    li.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); umschalten(); } });
+  });
+
+  // Lesefortschritt oben in der Kapitelfarbe
+  var balken = document.createElement("div");
+  balken.className = "lesefortschritt";
+  document.body.appendChild(balken);
+  function fortschritt() {
+    var d = document.documentElement, m = d.scrollHeight - d.clientHeight;
+    balken.style.width = (m > 0 ? d.scrollTop / m * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", fortschritt, { passive: true });
+  fortschritt();
+
+  // Sprachumschalter: dieselbe Seite in der anderen Sprache (…/X.html ↔ …/en/X.html, …/ ↔ …/en/).
+  // Knopf und <link rel="alternate"> entstehen erst, wenn die Gegenseite antwortet.
+  function gegenstueck(pfad, sprache) {
+    if (sprache === "en") {
+      var k = pfad.lastIndexOf("/en/");
+      return k < 0 ? null : pfad.slice(0, k) + "/" + pfad.slice(k + 4);
+    }
+    var l = pfad.lastIndexOf("/");
+    return pfad.slice(0, l + 1) + "en/" + pfad.slice(l + 1);
+  }
+  var ziel = gegenstueck(location.pathname, lang);
+  if (ziel && window.fetch) {
+    var andere = lang === "en" ? "de" : "en";
+    fetch(ziel, { method: "HEAD" }).then(function (r) {
+      if (!r.ok) return;
+      var alt = document.createElement("link");
+      alt.rel = "alternate";
+      alt.hreflang = andere;
+      alt.href = ziel;
+      document.head.appendChild(alt);
+      var a = document.createElement("a");
+      a.className = "sprachwahl";
+      a.href = ziel + location.search;
+      a.hreflang = andere;
+      a.lang = andere;
+      a.title = WORT.umschalterTitel;
+      a.textContent = WORT.umschalter;
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
+})();
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./03-ProgrammierspracheR.html" class="pagination-link" aria-label="The R programming language">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./05-Datentransformation.html" class="pagination-link" aria-label="Transforming data and building scales">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transforming data and building scales</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R Workshop – Social Sciences · Yannick Diehl and Daniel Moosdorf</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/04-Datenimport.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/04-Datenimport.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

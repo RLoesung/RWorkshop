@@ -2,12 +2,17 @@
 
 Neueste Änderungen stehen oben. Die Online-Fassung unter <https://rloesung.github.io/RWorkshop/> entspricht immer dem Stand von `main`.
 
-## 26. November 2026 — Korrekturen und englische Fassung vorbereitet
+## 27. November 2026 — Englische Fassung
+
+- Das Buch gibt es jetzt auch auf Englisch: <https://rloesung.github.io/RWorkshop/en/>. Alle elf Seiten, Abbildungen, Übungen und Lösungen sind übersetzt. Auf jeder Seite führt ein Knopf zur selben Seite in der anderen Sprache.
+- Die englischen Kapitel rechnen mit der englischsprachigen Ausgabe des Datensatzes (GESIS ZA8833, „German General Social Survey – ALLBUScompact 2023“). Sie hat dieselben Fälle und Werte wie ZA8831, erklärt die negativen Codes aber nicht zu fehlenden Werten; die englischen Kapitel deklarieren sie deshalb beim Einlesen mit `set_na()`. Alle Zahlen stimmen mit der deutschen Fassung überein.
+- Technisch: Die englischen Kapitel liegen als `*.en.qmd` neben den deutschen, gebaut mit dem Quarto-Profil `en` nach `docs/en/`. `./render.sh` baut beide Sprachen; ein schlichtes `quarto render` leert `docs/en/`. Die Regeln für die englische Fassung und die Checklisten zum Übersetzen und Ändern stehen in `STYLE.md` § 13.
+
+## 26. November 2026 — Korrekturen
 
 - Die Studiennummer des ALLBUS 2023 ist ZA8831, nicht ZA8830 und nicht ZA8901. Die Literaturangaben zu *R for Data Science* nennen jetzt auch Mine Çetinkaya-Rundel als Autorin (auch in Kap. 5).
 - Kap. 2: Die Chunk-Option für Bildunterschriften heißt `fig.cap` (im `#|`-Stil `fig-cap`); die Beispiele mit Inline-R-Code im Quelltext werden als Text gezeigt und nicht ausgewertet; in der Übung steht der Dateiname ohne Formatierung im Titel.
 - Kap. 7, 8, 9: Kleine Korrekturen an Abbildungen und Tabellen, etwa Achsenränder, ein zentrierter Titel, Beschriftungen mit Zeilenumbruch und die Tabelle der Ladungen in Kap. 8. In Kap. 8 stand in der Legende „verfehlt“ bei erfüllten Schwellen; jetzt stimmt die Beschriftung. In Kap. 9 nennt der Text die Spalte `B` statt `Estimate`, die Lesart nennt für hohe Bildung OR = 0,33 statt 0,34, und der Titel der Koeffizientengrafik steht vollständig im Bild. Die R-Ausgaben sind unverändert.
-- Eine englische Fassung des Buchs ist vorbereitet, aber noch nicht veröffentlicht. `./render.sh` baut beide Sprachen; die englischen Seiten entstehen lokal unter `docs/en/`. Die Kapitelkarten im englischen Vorwort erzeugt `python3 figuren/kapitelkarten.py --en`, und `figuren/pruefe_kaesten.py` prüft jetzt auch englische Kapitel.
 
 ## 26. November 2026 — Neues Kap. 10: Mit KI-Assistenten arbeiten
 

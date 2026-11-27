@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>8&nbsp; Latent structures – R Workshop – Social Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./09-Erklaerungsmodelle.html" rel="next">
+<link href="./07-Uni-Bivariate-Analyse.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-82443109d096e9951f1ccbbd29bb67fd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f4b4164fcb985c7be955057c9bf53d61.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+</head>
+<body class="docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-Latente-Strukturen.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Workshop – Social Sciences</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/RLoesung/RWorkshop" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">0&nbsp; Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-RStudio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto and reproducible research</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-ProgrammierspracheR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Datenimport.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Datentransformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transforming data and building scales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Grafiken-Grundlagen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Visualisation basics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Uni-Bivariate-Analyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Univariate and bivariate analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Latente-Strukturen.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Erklaerungsmodelle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Explanatory models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-KI-Assistenten.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Working with AI assistants</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#what-this-chapter-is-about" id="toc-what-this-chapter-is-about" class="nav-link active" data-scroll-target="#what-this-chapter-is-about"><span class="header-section-number">8.1</span> What this chapter is about</a></li>
+  <li><a href="#what-you-will-be-able-to-do-after-this-chapter" id="toc-what-you-will-be-able-to-do-after-this-chapter" class="nav-link" data-scroll-target="#what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</a></li>
+  <li>
+<a href="#sec-korrelationsmatrix" id="toc-sec-korrelationsmatrix" class="nav-link" data-scroll-target="#sec-korrelationsmatrix"><span class="header-section-number">8.2</span> Inter-item correlations</a>
+  <ul>
+<li><a href="#the-preliminary-check-before-any-factor-analysis" id="toc-the-preliminary-check-before-any-factor-analysis" class="nav-link" data-scroll-target="#the-preliminary-check-before-any-factor-analysis"><span class="header-section-number">8.2.1</span> The preliminary check before any factor analysis</a></li>
+  <li><a href="#computing-the-matrix-with-pearson_cor" id="toc-computing-the-matrix-with-pearson_cor" class="nav-link" data-scroll-target="#computing-the-matrix-with-pearson_cor"><span class="header-section-number">8.2.2</span> Computing the matrix with <code>pearson_cor()</code></a></li>
+  <li><a href="#reading-the-thresholds" id="toc-reading-the-thresholds" class="nav-link" data-scroll-target="#reading-the-thresholds"><span class="header-section-number">8.2.3</span> Reading the thresholds</a></li>
+  <li><a href="#heatmap-with-ggplot2" id="toc-heatmap-with-ggplot2" class="nav-link" data-scroll-target="#heatmap-with-ggplot2"><span class="header-section-number">8.2.4</span> Heatmap with ggplot2</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-kmo-bartlett" id="toc-sec-kmo-bartlett" class="nav-link" data-scroll-target="#sec-kmo-bartlett"><span class="header-section-number">8.3</span> Checking the assumptions: KMO and Bartlett</a>
+  <ul>
+<li><a href="#kmo-how-much-shared-variance-is-there-at-all" id="toc-kmo-how-much-shared-variance-is-there-at-all" class="nav-link" data-scroll-target="#kmo-how-much-shared-variance-is-there-at-all"><span class="header-section-number">8.3.1</span> KMO: how much <em>shared</em> variance is there at all?</a></li>
+  <li><a href="#bartletts-test-are-the-correlations-different-from-zero-at-all" id="toc-bartletts-test-are-the-correlations-different-from-zero-at-all" class="nav-link" data-scroll-target="#bartletts-test-are-the-correlations-different-from-zero-at-all"><span class="header-section-number">8.3.2</span> Bartlett’s test: are the correlations different from zero at all?</a></li>
+  <li><a href="#three-diagnostic-levels-from-one-call-to-efa" id="toc-three-diagnostic-levels-from-one-call-to-efa" class="nav-link" data-scroll-target="#three-diagnostic-levels-from-one-call-to-efa"><span class="header-section-number">8.3.3</span> Three diagnostic levels from one call to <code>efa()</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-anzahl-faktoren" id="toc-sec-anzahl-faktoren" class="nav-link" data-scroll-target="#sec-anzahl-faktoren"><span class="header-section-number">8.4</span> Determining the number of factors</a>
+  <ul>
+<li><a href="#eigenvalue-how-much-information-does-a-factor-capture" id="toc-eigenvalue-how-much-information-does-a-factor-capture" class="nav-link" data-scroll-target="#eigenvalue-how-much-information-does-a-factor-capture"><span class="header-section-number">8.4.1</span> Eigenvalue: how much information does a factor capture?</a></li>
+  <li><a href="#three-criteria-for-deciding-on-the-number-of-factors" id="toc-three-criteria-for-deciding-on-the-number-of-factors" class="nav-link" data-scroll-target="#three-criteria-for-deciding-on-the-number-of-factors"><span class="header-section-number">8.4.2</span> Three criteria for deciding on the number of factors</a></li>
+  <li><a href="#scree-plot-finding-the-elbow" id="toc-scree-plot-finding-the-elbow" class="nav-link" data-scroll-target="#scree-plot-finding-the-elbow"><span class="header-section-number">8.4.3</span> Scree plot: finding the elbow</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-efa-1" id="toc-sec-efa-1" class="nav-link" data-scroll-target="#sec-efa-1"><span class="header-section-number">8.5</span> Extracting a one-factor solution</a>
+  <ul>
+<li><a href="#what-is-a-factor-loading" id="toc-what-is-a-factor-loading" class="nav-link" data-scroll-target="#what-is-a-factor-loading"><span class="header-section-number">8.5.1</span> What is a factor loading?</a></li>
+  <li><a href="#running-the-model-with-efa-and-reading-the-loadings" id="toc-running-the-model-with-efa-and-reading-the-loadings" class="nav-link" data-scroll-target="#running-the-model-with-efa-and-reading-the-loadings"><span class="header-section-number">8.5.2</span> Running the model with <code>efa()</code> and reading the loadings</a></li>
+  <li><a href="#visualising-the-loadings" id="toc-visualising-the-loadings" class="nav-link" data-scroll-target="#visualising-the-loadings"><span class="header-section-number">8.5.3</span> Visualising the loadings</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-efa-2" id="toc-sec-efa-2" class="nav-link" data-scroll-target="#sec-efa-2"><span class="header-section-number">8.6</span> Two-factor solution with rotation</a></li>
+  <li>
+<a href="#sec-reliabilitaet" id="toc-sec-reliabilitaet" class="nav-link" data-scroll-target="#sec-reliabilitaet"><span class="header-section-number">8.7</span> Reliability: Cronbach’s α</a>
+  <ul>
+<li><a href="#the-idea-six-friends-and-a-walk" id="toc-the-idea-six-friends-and-a-walk" class="nav-link" data-scroll-target="#the-idea-six-friends-and-a-walk"><span class="header-section-number">8.7.1</span> The idea: six friends and a walk</a></li>
+  <li><a href="#the-formula-and-why-it-looks-like-this" id="toc-the-formula-and-why-it-looks-like-this" class="nav-link" data-scroll-target="#the-formula-and-why-it-looks-like-this"><span class="header-section-number">8.7.2</span> The formula and why it looks like this</a></li>
+  <li><a href="#calculating-%CE%B1-with-reliability" id="toc-calculating-α-with-reliability" class="nav-link" data-scroll-target="#calculating-%CE%B1-with-reliability"><span class="header-section-number">8.7.3</span> Calculating α with <code>reliability()</code></a></li>
+  <li><a href="#reading-the-item-statistics" id="toc-reading-the-item-statistics" class="nav-link" data-scroll-target="#reading-the-item-statistics"><span class="header-section-number">8.7.4</span> Reading the item statistics</a></li>
+  <li><a href="#visualising-%CE%B1-if-deleted" id="toc-visualising-α-if-deleted" class="nav-link" data-scroll-target="#visualising-%CE%B1-if-deleted"><span class="header-section-number">8.7.5</span> Visualising α-if-deleted</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-cfa" id="toc-sec-cfa" class="nav-link" data-scroll-target="#sec-cfa"><span class="header-section-number">8.8</span> Outlook: confirmatory factor analysis with <code>cfa()</code> and <code>semPaths()</code></a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#what-you-know-now" id="toc-what-you-know-now" class="nav-link" data-scroll-target="#what-you-know-now">What you know now</a></li>
+  <li><a href="#mini-glossary-terms-for-latent-structures" id="toc-mini-glossary-terms-for-latent-structures" class="nav-link" data-scroll-target="#mini-glossary-terms-for-latent-structures">Mini glossary: terms for latent structures</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/08-Latente-Strukturen.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/08-Latente-Strukturen.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-latente" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><blockquote class="blockquote">
+<p><em>Do the six items really measure a single attitude, or do they contain several dimensions?</em></p>
+</blockquote>
+<p>In <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a> you combined several items into a scale. But is that actually legitimate? Does each item load <em>evenly</em> on the construct, or do some items stand apart? Does the scale measure <em>one</em> thing or <em>several</em>? And how consistent are the items with each other?</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Research journal: Where are you in your mini study?</strong> You have built scales and have your first bivariate findings. Now you check the measure itself: <em>Are the items dimensionally clean?</em> This is the validation step that decides whether your findings from <a href="07-Uni-Bivariate-Analyse.html" class="quarto-xref"><span>Chapter 7</span></a> and the modelling in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Chapter 9</span></a> rest on a methodologically defensible measure. If at the end of this chapter Cronbach’s α &gt; .7 and EFA and CFA give a consistent picture, you have <em>defended the operationalisation against reviewers</em>.</p>
+</div>
+</div>
+<section id="what-this-chapter-is-about" class="level2" data-number="8.1"><h2 data-number="8.1" class="anchored" data-anchor-id="what-this-chapter-is-about">
+<span class="header-section-number">8.1</span> What this chapter is about</h2>
+<p>Most of the constructs that social researchers are interested in cannot be measured <em>directly</em>; you can only infer them indirectly. Nobody can read “intelligence” off a thermometer, measure “satisfaction with democracy” with a ruler or record “Islamophobia” as a single value with a sensor. These are all <strong>latent</strong> (hidden) quantities. They only become visible when you ask people several concrete questions and combine the answers, like a detective who does not see the offender but works out who it is from the clues.</p>
+<p>When you do this, a follow-up question arises: how do you actually know that the six items <em>really</em> measure one construct together? Perhaps they measure two different things that you are wrongly lumping together. Or one of the items is out of line and measures something else entirely. Or the items are related so unreliably that your scale score is nothing but noise.</p>
+<p>This validation is the task of this chapter. Three tools are available for it, and they build on each other:</p>
+<ol type="1">
+<li>
+<strong>Correlation matrix</strong>: the simplest preliminary check. If the items do not even correlate strongly in pairs, there is nothing for them to measure together. Factor analysis is only worthwhile when the inter-item correlations are at least of medium strength.</li>
+<li>
+<strong>Exploratory factor analysis (EFA)</strong>: the statistical answer to the question <em>“How many invisible factors explain the pattern of the observed correlations?”</em> With EFA you check whether your items really measure <em>one</em> dimension or whether they split into several sub-dimensions.</li>
+<li>
+<strong>Reliability (Cronbach’s α)</strong>: the answer to <em>“Are the items that together form a factor internally consistent enough to serve as a common measure?”</em> Cronbach’s α has been the standard index for this since the 1950s.</li>
+</ol>
+<p>At the end you take a brief look at <strong>confirmatory factor analysis (CFA)</strong> with <code>lavaan</code>, the next step when you want to <em>test</em> a specific structural hypothesis instead of only <em>exploring</em> the data. EFA asks: “Which structure fits best?” CFA asks: “Does <em>this</em> specific structure, which I derive from theory, fit the data?”</p>
+<p><a href="#fig-latenter-faktor" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> shows what a latent variable is, using Islamophobia as the example. The six item towers hold the respondents’ answers. Nobody has measured Islamophobia itself; it is a factor without values of its own. The scale score <code>islamophobia</code> from <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a> is calculated from the items.</p>
+<div id="fig-latenter-faktor" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="At the top a dashed ellipse with the name Islamophobia, next to it not measured. Six arrows lead from it to the column names mm01, mm02r, mm03, mm04, mm05r and mm06. Below them a baseplate with six blue towers for the respid 1, 5 and 6: row 1 has 5, 5, 4, 2, 2 and 2, row 5 has 2, 4, 4, 3, 5 and 6, row 6 has 3, 5, 3, 7, 2 and 3. To the right of them, measured.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-latenter-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k08-latenter-faktor.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;8.1: The six items are measured, shown here with the answers of the first three respondents who answered all six. The factor Islamophobia has no values; an arrow leads from it to each item."><img src="Bilder/figuren/en/k08-latenter-faktor.svg" class="img-fluid figure-img" alt="At the top a dashed ellipse with the name Islamophobia, next to it not measured. Six arrows lead from it to the column names mm01, mm02r, mm03, mm04, mm05r and mm06. Below them a baseplate with six blue towers for the respid 1, 5 and 6: row 1 has 5, 5, 4, 2, 2 and 2, row 5 has 2, 4, 4, 3, 5 and 6, row 6 has 3, 5, 3, 7, 2 and 3. To the right of them, measured."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-latenter-faktor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.1: The six items are measured, shown here with the answers of the first three respondents who answered all six. The factor Islamophobia has no values; an arrow leads from it to each item.
+</figcaption></figure>
+</div>
+<p>The arrows run <em>from</em> the invisible factor <em>to</em> the observed items. The assumption is that <em>the factor produces the answers</em>. A person with a high level of Islamophobia therefore tends to choose high values on all six items. You will see the same direction of the arrows again in CFA path diagrams.</p>
+</section><section id="what-you-will-be-able-to-do-after-this-chapter" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-will-be-able-to-do-after-this-chapter">What you will be able to do after this chapter</h2>
+<ul>
+<li>Set up and read an inter-item correlation matrix and visualise it as a heatmap with ggplot2.</li>
+<li>Understand the KMO measure and Bartlett’s test as assumption checks and find them in the <code>efa()</code> output.</li>
+<li>Decide on the number of factors with the eigenvalue criterion and a scree plot drawn by hand.</li>
+<li>Run an exploratory factor analysis, read factor loadings and visualise them as a sorted bar chart.</li>
+<li>Explain the difference between PCA, EFA and CFA, and know when each method is appropriate.</li>
+<li>Choose a rotation (<code>varimax</code>, <code>oblimin</code>) deliberately.</li>
+<li>Calculate Cronbach’s α, read item statistics, identify problematic items, check α-if-deleted as a bar chart and compare α with McDonald’s ω.</li>
+<li>Set up a simple CFA model with <code>lavaan</code> and interpret fit indices.</li>
+</ul></section><section id="sec-korrelationsmatrix" class="level2" data-number="8.2"><h2 data-number="8.2" class="anchored" data-anchor-id="sec-korrelationsmatrix">
+<span class="header-section-number">8.2</span> Inter-item correlations</h2>
+<section id="the-preliminary-check-before-any-factor-analysis" class="level3" data-number="8.2.1"><h3 data-number="8.2.1" class="anchored" data-anchor-id="the-preliminary-check-before-any-factor-analysis">
+<span class="header-section-number">8.2.1</span> The preliminary check before any factor analysis</h3>
+<p>Imagine six reporters sending in their reports on the same situation. If five of them paint a similar picture and one describes something completely different, <em>you know before any analysis</em> that five probably measure the same thing and one measures something else. Inter-item correlations give you this preliminary diagnosis for your scale.</p>
+<p>They are the basic requirement for any meaningful factor analysis: if the items do <em>not</em> correlate with each other in pairs, there is nothing for them to measure together, and an EFA would find no factors because there are none.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: What does a correlation measure mathematically?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Pearson correlation <span class="math inline">\(r\)</span> is the <em>standardised covariance</em>. It measures how strongly two variables deviate <em>together</em> from their respective means, relative to their individual spread:</p>
+<p><span class="math display">\[r = \frac{\text{Cov}(x, y)}{\text{SD}(x) \cdot \text{SD}(y)}\]</span></p>
+<p>Read it as: <em>“how strongly x and y vary together, in units of each variable’s own typical variation.”</em> Because of the division, <span class="math inline">\(r\)</span> always lies between <span class="math inline">\(-1\)</span> (perfectly opposed) and <span class="math inline">\(+1\)</span> (perfectly in step). This is the number you get in the <code>pearson_cor()</code> output for each pair of items.</p>
+</div>
+</div>
+</div>
+</section><section id="computing-the-matrix-with-pearson_cor" class="level3" data-number="8.2.2"><h3 data-number="8.2.2" class="anchored" data-anchor-id="computing-the-matrix-with-pearson_cor">
+<span class="header-section-number">8.2.2</span> Computing the matrix with <code>pearson_cor()</code>
+</h3>
+<p><strong>Question:</strong> How strongly are the six Islamophobia items related to each other?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pearson Correlation: 6 variables [Weighted]
+  mm01 x mm02r:  r = 0.459, p &lt; 0.001 ***
+  mm01 x mm03:   r = 0.520, p &lt; 0.001 ***
+  mm01 x mm04:   r = 0.548, p &lt; 0.001 ***
+  mm01 x mm05r:  r = 0.488, p &lt; 0.001 ***
+  mm01 x mm06:   r = 0.536, p &lt; 0.001 ***
+  mm02r x mm03:  r = 0.368, p &lt; 0.001 ***
+  mm02r x mm04:  r = 0.361, p &lt; 0.001 ***
+  mm02r x mm05r: r = 0.450, p &lt; 0.001 ***
+  mm02r x mm06:  r = 0.381, p &lt; 0.001 ***
+  mm03 x mm04:   r = 0.548, p &lt; 0.001 ***
+  mm03 x mm05r:  r = 0.348, p &lt; 0.001 ***
+  mm03 x mm06:   r = 0.524, p &lt; 0.001 ***
+  mm04 x mm05r:  r = 0.341, p &lt; 0.001 ***
+  mm04 x mm06:   r = 0.564, p &lt; 0.001 ***
+  mm05r x mm06:  r = 0.363, p &lt; 0.001 ***
+  15/15 pairs significant (p &lt; .05), N = 3224-3366
+Use summary() for detailed output.</code></pre>
+</div>
+</div>
+</section><section id="reading-the-thresholds" class="level3" data-number="8.2.3"><h3 data-number="8.2.3" class="anchored" data-anchor-id="reading-the-thresholds">
+<span class="header-section-number">8.2.3</span> Reading the thresholds</h3>
+<p>The compact output lists all fifteen item pairs with Pearson’s <em>r</em> and the <em>p</em>-value. <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> gives you the classic square matrix, together with <em>p</em>-values, confidence intervals and <em>N</em> per cell. All pairs lie between 0.34 and 0.56. Three thresholds help you to classify such values straight away:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 82%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Inter-item <em>r</em>
+</th>
+<th style="text-align: left;">Interpretation</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.20</td>
+<td style="text-align: left;">item does not belong: probably measures something else</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.30 – 0.70</td>
+<td style="text-align: left;">healthy range: items are related, but not redundant</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&gt; 0.85</td>
+<td style="text-align: left;">redundancy: two items measure almost the same thing; one is almost superfluous</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: The correlation matrix in the appendix
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>An inter-item correlation matrix belongs in the appendix of an empirical paper that uses a scale of its own. It is the quickest sanity check for the operationalisation: anyone who sees a value close to 0 or above 0.85 there starts to worry.</p>
+</div>
+</div>
+</div>
+</section><section id="heatmap-with-ggplot2" class="level3" data-number="8.2.4"><h3 data-number="8.2.4" class="anchored" data-anchor-id="heatmap-with-ggplot2">
+<span class="header-section-number">8.2.4</span> Heatmap with ggplot2</h3>
+<p>A table of fifteen numbers is tedious to read. The same information as a heatmap can be read at a glance: dark cells mean a strong relationship. You build it by hand from the <code>pearson_cor()</code> output:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cor_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pearson_cor</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cor_obj</span><span class="op">$</span><span class="va">matrices</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">correlations</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"Item1"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">Item1</span>, names_to <span class="op">=</span> <span class="st">"Item2"</span>, values_to <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">Item1</span>, <span class="va">Item2</span>, fill <span class="op">=</span> <span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_tile</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%.2f"</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"white"</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_gradient2</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"#2166ac"</span>, mid <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"#b2182b"</span>,</span>
+<span>                       midpoint <span class="op">=</span> <span class="fl">0</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="st">"r"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Inter-item correlations of the six Islamophobia items"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, weighted with wghtpew"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_fixed</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/cor-heatmap-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> The diagonal is trivially 1.0 (each item correlates perfectly with itself). The off-diagonal cells are the interesting ones: all six items show values well above 0.3. The reporter from the example above who describes something else does not appear here; all items clearly point in the same direction. The preliminary check is passed, and the EFA can start.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>mariposa tip: The full matrix from the <code>pearson_cor()</code> object
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>pearson_cor()</code> returns more than the printed view: underneath is a structured list object. <code>cor_obj$matrices[[1]]$correlations</code> is the square correlation matrix (rownames = colnames = variable names). In the same way you get <code>$p_values</code>, <code>$ci_lower</code>, <code>$ci_upper</code> and <code>$n_obs</code> as parallel matrices. That is everything you need for your own visualisations, without calling <code><a href="https://rdrr.io/r/stats/cor.html">cor()</a></code> from base R separately. If you want to process the list of pairs as a table instead, <code>as_tibble(cor_obj)</code> returns it as a tibble; this works for every analysis result since mariposa 0.7.4.</p>
+</div>
+</div>
+</div>
+<p>The inter-item correlations give the green light: all items are related, and none of them is out of place. Now comes the actual factor analysis. It works like an X-ray of the correlations: it tries to infer how many <em>invisible</em> dimensions must lie behind the observed correlations to produce this pattern.</p>
+<p>Imagine that all six items are driven by a single underlying attitude. Then <em>all</em> items must correlate clearly with each other, since a person with high Islamophobia ticks high values everywhere. That would be a one-factor model. If <em>two</em> underlying attitudes are at work (such as “cognitive stereotypes” and a “politically restrictive stance”), some item pairs correlate more strongly than others, and the result is a two-factor model. The EFA checks which one fits.</p>
+<p>You take this step by step: first the assumptions (KMO, Bartlett), then the decision on the number of factors (eigenvalues, scree plot), then the final models (one factor or two factors) including rotation.</p>
+</section></section><section id="sec-kmo-bartlett" class="level2" data-number="8.3"><h2 data-number="8.3" class="anchored" data-anchor-id="sec-kmo-bartlett">
+<span class="header-section-number">8.3</span> Checking the assumptions: KMO and Bartlett</h2>
+<p>Before you start the EFA at all, two tests check whether it makes sense <em>technically</em>. Both appear automatically at the top of every <code>efa()</code> output. You do not have to compute them separately, but you need to be able to read them.</p>
+<section id="kmo-how-much-shared-variance-is-there-at-all" class="level3" data-number="8.3.1"><h3 data-number="8.3.1" class="anchored" data-anchor-id="kmo-how-much-shared-variance-is-there-at-all">
+<span class="header-section-number">8.3.1</span> KMO: how much <em>shared</em> variance is there at all?</h3>
+<p>Imagine you want to distil one editorial from six newspaper articles. If the articles overlap in content, that is no problem. But if each of them deals with a <em>completely different</em> topic, there is nothing common to extract. The <strong>Kaiser-Meyer-Olkin measure (KMO)</strong> quantifies this: what share of the item variance is still left as <em>partial</em> variance (that is, after controlling for all other items), and how much is <em>shared</em>?</p>
+<p>The core of the formula: <span class="math display">\[\text{KMO} = \frac{\sum r_{ij}^2}{\sum r_{ij}^2 + \sum a_{ij}^2}\]</span> with <span class="math inline">\(r_{ij}\)</span> = pairwise correlations and <span class="math inline">\(a_{ij}\)</span> = partial correlations (correlations after the influence of all other items has been removed).</p>
+<p>Read it as: <em>“what share of the relationships between the items cannot be explained away by other items, and can therefore really be traced back to a common underlying factor.”</em></p>
+<p>Conceptually, KMO is the average over all items: for each item, the <em>shared</em> part (good for factor analysis) is weighed against the <em>partial</em> part, and KMO itself is the aggregate of these parts. You will see the per-item values (officially <strong>MSA</strong>, <em>measure of sampling adequacy</em>) shortly in the diagnostic block, with actual values from our model and as a plot. The table of thresholds for practical use:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">KMO</th>
+<th style="text-align: left;">Sampling adequacy</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.90</td>
+<td style="text-align: left;">marvelous</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.80</td>
+<td style="text-align: left;">meritorious</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">middling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.60</td>
+<td style="text-align: left;">mediocre (lower limit)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.60</td>
+<td style="text-align: left;">factor analysis not recommended</td>
+</tr>
+</tbody>
+</table></section><section id="bartletts-test-are-the-correlations-different-from-zero-at-all" class="level3" data-number="8.3.2"><h3 data-number="8.3.2" class="anchored" data-anchor-id="bartletts-test-are-the-correlations-different-from-zero-at-all">
+<span class="header-section-number">8.3.2</span> Bartlett’s test: are the correlations different from zero at all?</h3>
+<p>Bartlett’s test of sphericity asks a basic minimum question: is the correlation matrix <em>significantly different</em> from an identity matrix at all (a matrix in which only the diagonal is 1 and all off-diagonal values are 0, that is, no correlation whatsoever)?</p>
+<p>If the test is significant (<span class="math inline">\(p &lt; .05\)</span>), this means: <em>“at least one correlation in the matrix is different from zero, so there is something to factor-analyse.”</em> With N &gt; 1000, Bartlett’s test is almost always significant; it is more of a <em>technical minimum check</em> than a substantive argument. KMO is the far more informative measure.</p>
+</section><section id="three-diagnostic-levels-from-one-call-to-efa" class="level3" data-number="8.3.3"><h3 data-number="8.3.3" class="anchored" data-anchor-id="three-diagnostic-levels-from-one-call-to-efa">
+<span class="header-section-number">8.3.3</span> Three diagnostic levels from one call to <code>efa()</code>
+</h3>
+<p>You call <code>efa()</code> once with <code>n_factors = 1</code> and store the result. The number of factors does not matter here; you are only interested in the values for the assumption checks. From the returned object you read <em>three</em> diagnostic levels.</p>
+<p>Level 1 is the overall KMO. The compact print shows it as the central number:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_check</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">efa_check</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Exploratory Factor Analysis: 6 items, 1 component (PCA/Unrotated) [Weighted]
+  KMO = 0.862 (Meritorious), Variance explained: 54.7%, N = 3224 (smallest pairwise)
+  Only one component was extracted. The solution cannot be rotated.
+Use summary() for detailed output.</code></pre>
+</div>
+</div>
+<p>Overall KMO ≈ 0.86: as a whole, the sample is “meritorious” (see the table of thresholds above).</p>
+<p><code>efa_check</code> is a list with 34 elements; the print shows only a few numbers from it. Like the list <code>result</code> in <a href="03-ProgrammierspracheR.html#fig-liste" class="quarto-xref">Figure&nbsp;<span>3.13</span></a>, it is a box with compartments (<a href="#fig-ergebnisobjekt" class="quarto-xref">Figure&nbsp;<span>8.2</span></a>): with <code>$</code> you take out one compartment, and because <code>$kmo</code> is itself a list, <code>efa_check$kmo$per_item</code> leads to the per-item values in two steps.</p>
+<div id="fig-ergebnisobjekt" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A dark name tag efa_check above a box with five compartments. $loadings holds a tower of 0.811, 0.664, 0.753, 0.769, 0.657 and 0.769 under PC1. $eigenvalues holds a tower of 3.281, 0.833, 0.555, 0.479, 0.439 and 0.412. $kmo holds a smaller box with the compartments $overall, containing the brick 0.862, and $per_item, containing a tower of 0.857, 0.876, 0.874, 0.849, 0.851 and 0.867 outlined in green. $bartlett holds a smaller box with the compartments $chi_sq with 6532.633, $df with 15 and $p_value with 0. The last compartment shows only grey ellipsis dots. Below it the code efa_check$kmo$per_item.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-ergebnisobjekt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k08-ergebnisobjekt.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;8.2: Four of the 34 elements of efa_check in their order in the list; the values come from the outputs in this section and from summary() in sec-efa-1. The compartment that efa_check$kmo$per_item takes out is outlined in green."><img src="Bilder/figuren/en/k08-ergebnisobjekt.svg" class="img-fluid figure-img" alt="A dark name tag efa_check above a box with five compartments. $loadings holds a tower of 0.811, 0.664, 0.753, 0.769, 0.657 and 0.769 under PC1. $eigenvalues holds a tower of 3.281, 0.833, 0.555, 0.479, 0.439 and 0.412. $kmo holds a smaller box with the compartments $overall, containing the brick 0.862, and $per_item, containing a tower of 0.857, 0.876, 0.874, 0.849, 0.851 and 0.867 outlined in green. $bartlett holds a smaller box with the compartments $chi_sq with 6532.633, $df with 15 and $p_value with 0. The last compartment shows only grey ellipsis dots. Below it the code efa_check$kmo$per_item."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ergebnisobjekt-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.2: Four of the 34 elements of <code>efa_check</code> in their order in the list; the values come from the outputs in this section and from <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> in <a href="#sec-efa-1" class="quarto-xref"><span>Section 8.5</span></a>. The compartment that <code>efa_check$kmo$per_item</code> takes out is outlined in green.
+</figcaption></figure>
+</div>
+<p>Level 2 is Bartlett’s test. You read it from the object slot <code>$bartlett</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_check</span><span class="op">$</span><span class="va">bartlett</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$chi_sq
+[1] 6532.633
+
+$df
+[1] 15
+
+$p_value
+[1] 0</code></pre>
+</div>
+</div>
+<p>χ² ≈ 6533 with df = 15 and <em>p</em> &lt; .001: the correlation matrix is clearly different from an identity matrix. The minimum requirement is met.</p>
+<p>Level 3 is the per-item KMO (MSA). This is the really interesting diagnostic step, because it shows whether <em>each individual item</em> fits into the common factor model. In the output object it is stored as a named numeric vector in <code>$kmo$per_item</code>; you put it into a tibble:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_check</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<span>       MSA  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">efa_check</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  item    MSA
+  &lt;chr&gt; &lt;dbl&gt;
+1 mm01  0.857
+2 mm02r 0.876
+3 mm03  0.874
+4 mm04  0.849
+5 mm05r 0.851
+6 mm06  0.867</code></pre>
+</div>
+</div>
+<p>Rule of thumb per item: an MSA ≥ 0.5 is acceptable, and a value below 0.5 suggests removing this item from the factor analysis. Here all six items lie between 0.85 and 0.88. These are clean values throughout, and no item needs to be removed.</p>
+<p>As a plot, with shared (blue) and partial (grey) variance per item and the MSA threshold of 0.5 as a dashed line:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span>item   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">efa_check</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span>,</span>
+<span>       shared <span class="op">=</span> <span class="va">efa_check</span><span class="op">$</span><span class="va">kmo</span><span class="op">$</span><span class="va">per_item</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>partial <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">shared</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">shared</span>, <span class="va">partial</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"share"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>share <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">share</span>, <span class="st">"shared"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span>   <span class="co"># shared part at the bottom</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">item</span>, y <span class="op">=</span> <span class="va">value</span>, fill <span class="op">=</span> <span class="va">share</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="fu">position_stack</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.5</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">6.4</span>, y <span class="op">=</span> <span class="fl">0.52</span>,</span>
+<span>           label <span class="op">=</span> <span class="st">"MSA threshold 0.5"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>shared <span class="op">=</span> <span class="st">"#1f77b4"</span>, partial <span class="op">=</span> <span class="st">"grey80"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"shared variance (MSA)"</span>, <span class="st">"partial variance"</span><span class="op">)</span>,</span>
+<span>    name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html">percent_format</a></span><span class="op">(</span>accuracy <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Share per item"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"How much shared variance does each item have?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Actual values from efa_check$kmo$per_item · ALLBUS 2023, weighted"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/kmo-msa-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In every bar the blue part reaches far above the 0.5 threshold. The plot confirms what the table above shows in numbers.</p>
+<p><strong>Overall interpretation.</strong> All three levels give the green light: overall KMO 0.86, Bartlett’s test significant, an MSA ≥ 0.85 for every single item. In the next section you decide on the number of factors.</p>
+</section></section><section id="sec-anzahl-faktoren" class="level2" data-number="8.4"><h2 data-number="8.4" class="anchored" data-anchor-id="sec-anzahl-faktoren">
+<span class="header-section-number">8.4</span> Determining the number of factors</h2>
+<section id="eigenvalue-how-much-information-does-a-factor-capture" class="level3" data-number="8.4.1"><h3 data-number="8.4.1" class="anchored" data-anchor-id="eigenvalue-how-much-information-does-a-factor-capture">
+<span class="header-section-number">8.4.1</span> Eigenvalue: how much information does a factor capture?</h3>
+<p>Imagine you squeeze the information from six items into <em>one</em> common underlying factor. How much of the total variation in the items fits into this one dimension? This is what the <strong>eigenvalue</strong> <span class="math inline">\(\lambda\)</span> measures.</p>
+<p>The intuitive rule of thumb is surprisingly simple: each item has a <em>standardised</em> variance of 1. So you can read eigenvalues “in item units”:</p>
+<ul>
+<li>
+<span class="math inline">\(\lambda = 1\)</span> → the factor captures as much information as <em>a single</em> item and adds nothing.</li>
+<li>
+<span class="math inline">\(\lambda = 3\)</span> → the factor captures as much as <em>three</em> items, a substantial gain.</li>
+<li>
+<span class="math inline">\(\lambda = 0.3\)</span> → the factor captures less than one item and picks up only noise.</li>
+</ul>
+<p>This gives the <strong>Kaiser criterion</strong>: keep all factors with <span class="math inline">\(\lambda &gt; 1\)</span>. It is simple and robust and has been the standard since the 1960s, even though newer methods (see below) refine it.</p>
+</section><section id="three-criteria-for-deciding-on-the-number-of-factors" class="level3" data-number="8.4.2"><h3 data-number="8.4.2" class="anchored" data-anchor-id="three-criteria-for-deciding-on-the-number-of-factors">
+<span class="header-section-number">8.4.2</span> Three criteria for deciding on the number of factors</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 49%">
+<col style="width: 34%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: left;">Decision rule</th>
+<th style="text-align: left;">Strength / weakness</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Kaiser</td>
+<td style="text-align: left;">all factors with <span class="math inline">\(\lambda &gt; 1\)</span>
+</td>
+<td style="text-align: left;">simple; tends to <em>overestimate</em>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Scree test</td>
+<td style="text-align: left;">number of factors at the “elbow” in the eigenvalue plot</td>
+<td style="text-align: left;">visually intuitive; subjective</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Parallel analysis</td>
+<td style="text-align: left;">comparison with eigenvalues of randomly generated data of the same size</td>
+<td style="text-align: left;">methodological gold standard; more effort</td>
+</tr>
+</tbody>
+</table>
+<p>Most methods textbooks now recommend parallel analysis (via <code><a href="https://rdrr.io/pkg/psych/man/fa.parallel.html">psych::fa.parallel()</a></code>). For this workshop, the combination of the Kaiser criterion and a visual scree plot is enough; you see both in the next step.</p>
+</section><section id="scree-plot-finding-the-elbow" class="level3" data-number="8.4.3"><h3 data-number="8.4.3" class="anchored" data-anchor-id="scree-plot-finding-the-elbow">
+<span class="header-section-number">8.4.3</span> Scree plot: finding the elbow</h3>
+<p>The <strong>scree plot</strong> (<em>scree</em> is the loose rock that collects on a mountain slope) shows the eigenvalues as a descending line. Imagine a mountain with large boulders at the top and fine scree at the bottom: the “real” factors are at the top, the noise factors at the bottom. You are looking for the point that separates them.</p>
+<p>You read the eigenvalues from the <code>efa()</code> object with <code>$eigenvalues</code> and plot them by hand:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  factor     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span><span class="op">)</span>,</span>
+<span>  eigenvalue <span class="op">=</span> <span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">factor</span>, y <span class="op">=</span> <span class="va">eigenvalue</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#1f77b4"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#1f77b4"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">5.5</span>, y <span class="op">=</span> <span class="fl">1.08</span>, label <span class="op">=</span> <span class="st">"Kaiser threshold (λ = 1)"</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey40"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">efa_obj</span><span class="op">$</span><span class="va">eigenvalues</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Factor"</span>, y <span class="op">=</span> <span class="st">"Eigenvalue (λ)"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Scree plot of the six Islamophobia items"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"ALLBUS 2023, weighted with wghtpew"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/scree-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> You are looking for two signals: (a) How many factors lie above the Kaiser line (<span class="math inline">\(\lambda &gt; 1\)</span>)? (b) Where is the clearest “elbow” in the line? A first eigenvalue that clearly stands out, followed by a flat rest, is the classic picture of a one-dimensional scale. Two clearly raised values point to a two-dimensional structure.</p>
+</section></section><section id="sec-efa-1" class="level2" data-number="8.5"><h2 data-number="8.5" class="anchored" data-anchor-id="sec-efa-1">
+<span class="header-section-number">8.5</span> Extracting a one-factor solution</h2>
+<p>You have checked the assumptions and decided on the number of factors. Now comes the actual model, with the focus on the factor loadings.</p>
+<section id="what-is-a-factor-loading" class="level3" data-number="8.5.1"><h3 data-number="8.5.1" class="anchored" data-anchor-id="what-is-a-factor-loading">
+<span class="header-section-number">8.5.1</span> What is a factor loading?</h3>
+<p>Think of an invisible <em>factor</em> as a dial. When the dial is turned up, people tick strongly agreeing answers on some items: the loading is high. On other items the answer hardly responds: the loading is low. The <strong>factor loading</strong> is the strength of the relationship between item and factor.</p>
+<p>Mathematically, in the one-factor solution the loading <em>equals the correlation</em> between item and factor. It ranges from <span class="math inline">\(-1\)</span> to <span class="math inline">\(+1\)</span>, with the usual thresholds:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">|Loading|</th>
+<th style="text-align: left;">Interpretation</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.30</td>
+<td style="text-align: left;">irrelevant</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.30 – 0.50</td>
+<td style="text-align: left;">moderate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0.50 – 0.70</td>
+<td style="text-align: left;">usable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">high (item is a core indicator)</td>
+</tr>
+</tbody>
+</table>
+<p>In the plot the factor sits in the middle and the items radiate outwards; the thickness of a line shows the strength of the loading. Items with a thick line are <em>strongly</em> tied to the factor, items with a thin line <em>less</em> strongly. The loadings already come from the actual one-factor solution (the <code>efa_obj</code> from the scree plot chunk); in the next section you look them up in the output table:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">factor_radial</span> <span class="op">&lt;-</span> <span class="va">efa_obj</span><span class="op">$</span><span class="va">loadings</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>loading <span class="op">=</span> <span class="va">PC1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>angle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">7</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>,</span>
+<span>         x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">cos</a></span><span class="op">(</span><span class="va">angle</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">angle</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">factor_radial</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_segment</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">x</span>, yend <span class="op">=</span> <span class="va">y</span>,</span>
+<span>                   linewidth <span class="op">=</span> <span class="va">loading</span><span class="op">)</span>,</span>
+<span>               color <span class="op">=</span> <span class="st">"#1f77b4"</span>, lineend <span class="op">=</span> <span class="st">"round"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_label</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">1.20</span>, y <span class="op">=</span> <span class="va">y</span> <span class="op">*</span> <span class="fl">1.20</span>,</span>
+<span>                 label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%s\nλ = %.2f"</span>, <span class="va">item</span>, <span class="va">loading</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>             size <span class="op">=</span> <span class="fl">3.2</span>, linewidth <span class="op">=</span> <span class="fl">0</span>, fill <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"point"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">16</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"#fbbf24"</span>, shape <span class="op">=</span> <span class="fl">21</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, label <span class="op">=</span> <span class="st">"Factor"</span>,</span>
+<span>           fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_linewidth_continuous</span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">3.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">coord_fixed</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Factor loading as strength of connection"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Line thickness = how strongly the item is tied to the factor."</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/faktorladung-radial-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> <code>mm01</code> (λ = 0.81) is the strongest core indicator; it responds most clearly when the factor “turns”. <code>mm03</code>, <code>mm04</code> and <code>mm06</code> follow close behind (each about 0.75–0.77). The two reverse-coded items <code>mm02r</code> and <code>mm05r</code> are tied somewhat less strongly to the factor at around 0.66, but still lie clearly in the usable range. There is no real peripheral indicator (λ &lt; 0.5).</p>
+</section><section id="running-the-model-with-efa-and-reading-the-loadings" class="level3" data-number="8.5.2"><h3 data-number="8.5.2" class="anchored" data-anchor-id="running-the-model-with-efa-and-reading-the-loadings">
+<span class="header-section-number">8.5.2</span> Running the model with <code>efa()</code> and reading the loadings</h3>
+<p>You already know the compact output from <a href="#sec-kmo-bartlett" class="quarto-xref"><span>Section 8.3</span></a>: KMO, explained variance, N. For the loadings you need the detailed version with <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, which is structured like the SPSS output of <code>FACTOR</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Weighted Exploratory Factor Analysis (PCA, Unrotated) Results
+-------------------------------------------------------------
+- Variables:
+    mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+    mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)
+    mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+    mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES
+    mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)
+    mm06   THERE ARE MANY FANATICS AMONG MUSLIMS
+- Extraction: Principal Component Analysis
+- Rotation: None (a single solution cannot be rotated)
+- N of Components: 1
+- Weights: wghtpew
+- N (smallest pairwise): 3224 (weighted)
+
+Descriptive Statistics</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  -----------------------------------------------------------------------------------------------------
+  Variable                                                  Mean  Std. Deviation  Analysis N  Missing N
+  -----------------------------------------------------------------------------------------------------
+  mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED          3.324           2.163        3401       1845
+  mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)       4.774           1.865        3400       1842
+  mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS            4.086           1.890        3438       1803
+  mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES             3.998           2.066        3422       1822
+  mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)  3.694           2.304        3408       1837
+  mm06   THERE ARE MANY FANATICS AMONG MUSLIMS             4.209           1.994        3317       1937
+  -----------------------------------------------------------------------------------------------------
+
+KMO and Bartlett's Test
+---------------------------------------- 
+  Kaiser-Meyer-Olkin Measure:     0.862
+  Bartlett's Chi-Square:          6532.633
+  df:                             15
+  Sig.:                           &lt;.001
+
+Communalities</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ----------------------------------------------------------------------------
+  Variable                                                 Initial  Extraction
+  ----------------------------------------------------------------------------
+  mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED            1.000       0.658
+  mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)         1.000       0.441
+  mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS              1.000       0.567
+  mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES               1.000       0.591
+  mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)    1.000       0.431
+  mm06   THERE ARE MANY FANATICS AMONG MUSLIMS               1.000       0.592
+  ----------------------------------------------------------------------------
+Extraction Method: Principal Component Analysis.
+
+Total Variance Explained
+  ----------------------------------------------------
+             Initial Eigenvalues   Extraction Sums
+  Component  Total % Var.  Cum. %  Total % Var. Cum. %
+  ----------------------------------------------------
+          1  3.281 54.689  54.689  3.281 54.689 54.689
+          2  0.833 13.890  68.580
+          3  0.555  9.258  77.838
+          4  0.479  7.980  85.818
+          5  0.439  7.315  93.132
+          6  0.412  6.868 100.000
+  ----------------------------------------------------
+Sums = sums of squared loadings.
+Extraction Method: Principal Component Analysis.
+
+Component Matrix (unrotated)
+---------------------------------------- </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                            PC1
+mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED           0.811
+mm06   THERE ARE MANY FANATICS AMONG MUSLIMS              0.769
+mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES              0.769
+mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS             0.753
+mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)        0.664
+mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)   0.657
+Extraction Method: Principal Component Analysis.
+
+Rotated Component Matrix
+---------------------------------------- 
+Only one component was extracted. The solution cannot be rotated.</code></pre>
+</div>
+</div>
+<p><strong>Interpretation.</strong> Four blocks matter to you:</p>
+<ul>
+<li>
+<em>KMO and Bartlett’s Test</em>: as already read in <a href="#sec-kmo-bartlett" class="quarto-xref"><span>Section 8.3</span></a>.</li>
+<li>
+<em>Communalities</em>: how much of each item’s variance the factor accounts for (<em>Extraction</em>). <code>mm01</code> is at 0.66, the two reverse-coded items at around 0.44.</li>
+<li>
+<em>Total Variance Explained</em>: the eigenvalues of all six possible components and the explained variance. The one extracted factor explains 54.7%; 40–60% is typical for one-factor scales that work well.</li>
+<li>
+<em>Component Matrix</em>: one column <code>PC1</code> with the strength of the relationship between item and factor for each item, sorted by size, from 0.81 (<code>mm01</code>) to 0.66 (<code>mm05r</code>). mariposa would hide loadings below 0.4 (argument <code>blank</code>) to keep the table readable.</li>
+</ul></section><section id="visualising-the-loadings" class="level3" data-number="8.5.3"><h3 data-number="8.5.3" class="anchored" data-anchor-id="visualising-the-loadings">
+<span class="header-section-number">8.5.3</span> Visualising the loadings</h3>
+<p>A table with six loadings is still easy to read. A sorted bar chart, however, shows at a glance which items are most strongly tied to the construct and which are more peripheral indicators. You build this by hand from the <code>efa()</code> object as well:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">efa_1</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">efa_1</span><span class="op">$</span><span class="va">loadings</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"item"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>loading <span class="op">=</span> <span class="va">PC1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">loading</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">item</span>, <span class="va">loading</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Factor loading"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"How strongly is each item tied to the latent factor?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Vertical lines: thresholds for usable (0.5) and high (0.7)"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/loadings-bar-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> Items above 0.7 are core indicators of the construct; anything between 0.5 and 0.7 is usable; anything below 0.5 you would keep on theoretical grounds or remove on empirical grounds. The bar chart also serves as a quick check of the items: if an item is <em>clearly</em> out of line (for example &lt; 0.3 or with the opposite sign), this points to a reverse-coding error or an item on a different topic.</p>
+</section></section><section id="sec-efa-2" class="level2" data-number="8.6"><h2 data-number="8.6" class="anchored" data-anchor-id="sec-efa-2">
+<span class="header-section-number">8.6</span> Two-factor solution with rotation</h2>
+<p>What if the scale is <em>not</em> one-dimensional? The research debate on Islamophobia sometimes distinguishes between a cognitive, stereotyping component (for example <code>mm06</code>, “fanatics”) and a politically restrictive component (for example <code>mm04</code>, “monitor”). You can try this out with two factors <em>and</em> rotation.</p>
+<p>When you extract more than one factor, the way the loadings are divided among the factors is mathematically <em>not unique</em>: many solutions are statistically equivalent. A <strong>rotation</strong> turns the factor axes geometrically and so enforces <em>one</em> interpretable solution: each item should load as highly as possible on <em>one</em> factor and low on the others.</p>
+<p>Three families of rotation:</p>
+<ul>
+<li>
+<code>"varimax"</code>: orthogonal, the factors stay uncorrelated. The standard choice if you later interpret the factors as independent constructs.</li>
+<li>
+<code>"oblimin"</code> / <code>"promax"</code>: oblique, the factors may be correlated. More realistic in the social sciences, where constructs are rarely completely independent.</li>
+<li>
+<code>"none"</code>: no rotation. Rare, only for pure data reduction.</li>
+</ul>
+<p>Rule of thumb: if theory makes it clear that the constructs are correlated (Islamophobia and populism are related), use <code>oblimin</code>; otherwise use <code>varimax</code>. mariposa computes all rotations itself with the algorithms of SPSS <code>FACTOR</code>. You need no additional package for this, and the rotated loadings match SPSS.</p>
+<p>What does a rotation do visually? The plot shows six items in a two-dimensional factor space, <em>before</em> and <em>after</em> a varimax rotation. Before the rotation the items load diffusely on both axes; after the rotation each of them is neatly aligned with <em>one</em> axis:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">items_unrot</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"mm0"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>,</span>
+<span>  F1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.55</span>, <span class="fl">0.50</span>, <span class="fl">0.40</span>, <span class="fl">0.45</span>, <span class="fl">0.35</span><span class="op">)</span>,</span>
+<span>  F2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.40</span>, <span class="op">-</span><span class="fl">0.50</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="op">-</span><span class="fl">0.45</span>, <span class="fl">0.50</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">items_rot</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  item <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"mm0"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>,</span>
+<span>  F1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.80</span>, <span class="fl">0.85</span>, <span class="fl">0.10</span>, <span class="fl">0.05</span>, <span class="fl">0.75</span>, <span class="fl">0.10</span><span class="op">)</span>,</span>
+<span>  F2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.85</span>, <span class="fl">0.80</span>, <span class="fl">0.10</span>, <span class="fl">0.80</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">baseplot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span>, <span class="va">ttl</span>, <span class="va">sub</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">d</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">F1</span>, <span class="va">F2</span>, label <span class="op">=</span> <span class="va">item</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, color <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_segment</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span>, xend <span class="op">=</span> <span class="va">F1</span>, yend <span class="op">=</span> <span class="va">F2</span><span class="op">)</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">"#1f77b4"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_text</span><span class="op">(</span>nudge_y <span class="op">=</span> <span class="fl">0.08</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">coord_fixed</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Factor 1"</span>, y <span class="op">=</span> <span class="st">"Factor 2"</span>,</span>
+<span>         title <span class="op">=</span> <span class="va">ttl</span>, subtitle <span class="op">=</span> <span class="va">sub</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">baseplot</span><span class="op">(</span><span class="va">items_unrot</span>, <span class="st">"Before rotation"</span>,</span>
+<span>         <span class="st">"Loadings are spread across both axes"</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu">baseplot</span><span class="op">(</span><span class="va">items_rot</span>, <span class="st">"After varimax rotation"</span>,</span>
+<span>         <span class="st">"Each item loads clearly on one axis"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/rotation-vor-nach-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> On the left, no axis clearly describes a factor; the items lie between the axes. On the right, the rotation has attached the items either <em>almost only</em> to factor 1 or <em>almost only</em> to factor 2 (at the top). This is what makes the interpretation readable: <em>“F1 = this group of items, F2 = that group of items.”</em></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>,</span>
+<span>      weights <span class="op">=</span> <span class="va">wghtpew</span>, n_factors <span class="op">=</span> <span class="fl">2</span>, rotation <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Weighted Exploratory Factor Analysis (PCA, Varimax) Results
+-----------------------------------------------------------
+- Variables:
+    mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+    mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)
+    mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+    mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES
+    mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)
+    mm06   THERE ARE MANY FANATICS AMONG MUSLIMS
+- Extraction: Principal Component Analysis
+- Rotation: Varimax with Kaiser Normalization
+- N of Components: 2
+- Weights: wghtpew
+- N (smallest pairwise): 3224 (weighted)
+
+Descriptive Statistics</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  -----------------------------------------------------------------------------------------------------
+  Variable                                                  Mean  Std. Deviation  Analysis N  Missing N
+  -----------------------------------------------------------------------------------------------------
+  mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED          3.324           2.163        3401       1845
+  mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)       4.774           1.865        3400       1842
+  mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS            4.086           1.890        3438       1803
+  mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES             3.998           2.066        3422       1822
+  mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)  3.694           2.304        3408       1837
+  mm06   THERE ARE MANY FANATICS AMONG MUSLIMS             4.209           1.994        3317       1937
+  -----------------------------------------------------------------------------------------------------
+
+KMO and Bartlett's Test
+---------------------------------------- 
+  Kaiser-Meyer-Olkin Measure:     0.862
+  Bartlett's Chi-Square:          6532.633
+  df:                             15
+  Sig.:                           &lt;.001
+
+Communalities</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ----------------------------------------------------------------------------
+  Variable                                                 Initial  Extraction
+  ----------------------------------------------------------------------------
+  mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED            1.000       0.659
+  mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)         1.000       0.677
+  mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS              1.000       0.660
+  mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES               1.000       0.714
+  mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)    1.000       0.737
+  mm06   THERE ARE MANY FANATICS AMONG MUSLIMS               1.000       0.668
+  ----------------------------------------------------------------------------
+Extraction Method: Principal Component Analysis.
+
+Total Variance Explained
+  -------------------------------------------------------------------------
+             Initial Eigenvalues   Extraction Sums      Rotation Sums
+  Component  Total % Var.  Cum. %  Total % Var. Cum. %  Total % Var. Cum. %
+  -------------------------------------------------------------------------
+          1  3.281 54.689  54.689  3.281 54.689 54.689  2.399 39.988 39.988
+          2  0.833 13.890  68.580  0.833 13.890 68.580  1.715 28.592 68.580
+          3  0.555  9.258  77.838
+          4  0.479  7.980  85.818
+          5  0.439  7.315  93.132
+          6  0.412  6.868 100.000
+  -------------------------------------------------------------------------
+Sums = sums of squared loadings.
+Extraction Method: Principal Component Analysis.
+
+Component Matrix (unrotated)
+---------------------------------------- </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                            PC1     PC2
+mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED           0.811        
+mm06   THERE ARE MANY FANATICS AMONG MUSLIMS              0.769        
+mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES              0.769        
+mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS             0.753        
+mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)        0.664   0.485
+mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)   0.657   0.553
+Extraction Method: Principal Component Analysis.
+
+Rotated Component Matrix
+---------------------------------------- </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                            PC1     PC2
+mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES              0.825        
+mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS             0.785        
+mm06   THERE ARE MANY FANATICS AMONG MUSLIMS              0.781        
+mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED           0.630   0.512
+mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)           0.837
+mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)                0.787
+Extraction Method: Principal Component Analysis.
+Rotation Method: Varimax with Kaiser Normalization.
+Rotation converged in 3 iterations.</code></pre>
+</div>
+</div>
+<p><strong>Interpretation.</strong> The <em>Rotated Component Matrix</em> now has two columns, <code>PC1</code> and <code>PC2</code>; loadings below 0.4 are hidden. Look at each row: does the item load <em>clearly</em> on one factor or <em>evenly</em> on both? The result is revealing, though it differs from what the research debate would suggest:</p>
+<ul>
+<li>
+<code>mm04</code>, <code>mm03</code> and <code>mm06</code> load on <code>PC1</code> (loadings 0.78–0.83): monitoring, conflict, fanatics.</li>
+<li>
+<code>PC2</code> contains exactly the two <em>reverse-coded</em> items, <code>mm05r</code> (0.84) and <code>mm02r</code> (0.79).</li>
+<li>
+<code>mm01</code> loads on both factors (0.63 and 0.51) and cannot be clearly assigned to either.</li>
+</ul>
+<p>So the second factor separates the two positively worded items from the four negatively worded ones, and the distinction between “cognitive, stereotyping” and “politically restrictive” does not appear. This is the typical picture of a <strong>method factor</strong>: it reflects the direction of the wording rather than a second substantive dimension (more on method effects in <a href="#sec-cfa" class="quarto-xref"><span>Section 8.8</span></a>). The <em>Total Variance Explained</em> fits this: at 0.83, the eigenvalue of the second factor lies below the Kaiser threshold of 1. Both point to the one-factor solution, which is <em>more parsimonious</em> and clearer in content. The principle of parsimony (Occam’s razor) is a strong anchor when you choose a model.</p>
+<p>The loading columns are called <code>PC1</code> and <code>PC2</code> because by default <code>efa()</code> runs a principal component analysis (PCA). PCA, EFA and CFA differ in their aims:</p>
+<ul>
+<li>PCA (<code>extraction = "pca"</code>) looks for <em>components</em> that explain as much variance as possible; good for data reduction.</li>
+<li>EFA (<code>extraction = "ml"</code>) models <em>latent factors</em> behind the items; good for building theory.</li>
+<li>CFA (with <code>lavaan</code>, see <a href="#sec-cfa" class="quarto-xref"><span>Section 8.8</span></a>) <em>tests</em> a factor model specified in advance; good for testing theory.</li>
+</ul>
+<p>Rule of thumb: PCA for <em>reduction</em>, EFA for <em>exploration</em>, CFA for <em>confirmation</em>.</p>
+</section><section id="sec-reliabilitaet" class="level2" data-number="8.7"><h2 data-number="8.7" class="anchored" data-anchor-id="sec-reliabilitaet">
+<span class="header-section-number">8.7</span> Reliability: Cronbach’s α</h2>
+<section id="the-idea-six-friends-and-a-walk" class="level3" data-number="8.7.1"><h3 data-number="8.7.1" class="anchored" data-anchor-id="the-idea-six-friends-and-a-walk">
+<span class="header-section-number">8.7.1</span> The idea: six friends and a walk</h3>
+<p>Imagine you ask six friends whether today is a good day for a walk. If all six say “yes, of course”, you know the judgement is <em>consistent</em>: they probably measure the same thing (weather, free time, mood). If three say “yes” and three say “no”, the scale probably measures different things; perhaps three of them looked out of the window and three at their calendar. Cronbach’s α puts this idea into a number.</p>
+<p>While EFA tells you how many <em>dimensions</em> the items contain, reliability analysis answers a different question: <em>“If the items measure one dimension, how consistently do they measure it?”</em> It is the second pillar of validity alongside the factor structure.</p>
+</section><section id="the-formula-and-why-it-looks-like-this" class="level3" data-number="8.7.2"><h3 data-number="8.7.2" class="anchored" data-anchor-id="the-formula-and-why-it-looks-like-this">
+<span class="header-section-number">8.7.2</span> The formula and why it looks like this</h3>
+<p>Cronbach’s α has existed since 1951 (named after Lee J. Cronbach). The formula looks unwieldy at first, but it is straightforward:</p>
+<p><span class="math display">\[\alpha = \frac{k \cdot \bar{r}}{1 + (k-1) \cdot \bar{r}}\]</span></p>
+<p>with <span class="math inline">\(k\)</span> = number of items and <span class="math inline">\(\bar{r}\)</span> = average inter-item correlation.</p>
+<p>Read it as: <em>“the more items there are, and the more strongly they are related on average, the higher α.”</em> Two worked examples make this concrete:</p>
+<ul>
+<li>
+<span class="math inline">\(k = 6\)</span> items with <span class="math inline">\(\bar{r} = 0.5\)</span> → <span class="math inline">\(\alpha = (6 \cdot 0.5) / (1 + 5 \cdot 0.5) = 3 / 3.5 ≈ 0.86\)</span>.</li>
+<li>
+<span class="math inline">\(k = 2\)</span> items with the same <span class="math inline">\(\bar{r} = 0.5\)</span> → <span class="math inline">\(\alpha = (2 \cdot 0.5) / (1 + 1 \cdot 0.5) = 1 / 1.5 ≈ 0.67\)</span>.</li>
+</ul>
+<p>This gives the central rule of thumb: more items buy reliability, even if no single item measures any better. This is also why established scales often have 8–12 items instead of only 3–4.</p>
+</section><section id="calculating-α-with-reliability" class="level3" data-number="8.7.3"><h3 data-number="8.7.3" class="anchored" data-anchor-id="calculating-α-with-reliability">
+<span class="header-section-number">8.7.3</span> Calculating α with <code>reliability()</code>
+</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span> <span class="op">&lt;-</span> <span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">mm01</span>, <span class="va">mm02r</span>, <span class="va">mm03</span>, <span class="va">mm04</span>, <span class="va">mm05r</span>, <span class="va">mm06</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span>
+<span><span class="va">rel_obj</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reliability Analysis: 6 items [Weighted]
+  Cronbach's Alpha = 0.833 (Good), McDonald's Omega = 0.835, N = 3071
+Use summary() for detailed output.</code></pre>
+</div>
+</div>
+<p><strong>Interpretation.</strong> The compact output gives Cronbach’s α with a classification, McDonald’s ω next to it (more on this shortly) and the <em>N</em> of cases that answered all six items. With α = 0.83 the scale has <em>good</em> reliability. Rules of thumb:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">α</th>
+<th style="text-align: left;">Rating</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.90</td>
+<td style="text-align: left;">excellent</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.80</td>
+<td style="text-align: left;">good</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">≥ 0.70</td>
+<td style="text-align: left;">acceptable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">≥ 0.60</td>
+<td style="text-align: left;">questionable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">&lt; 0.60</td>
+<td style="text-align: left;">unacceptable</td>
+</tr>
+</tbody>
+</table></section><section id="reading-the-item-statistics" class="level3" data-number="8.7.4"><h3 data-number="8.7.4" class="anchored" data-anchor-id="reading-the-item-statistics">
+<span class="header-section-number">8.7.4</span> Reading the item statistics</h3>
+<p><code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> gives you the item statistics, in the same tables as SPSS <code>RELIABILITY</code> (<em>Item Statistics</em>, <em>Inter-Item Correlation Matrix</em>, <em>Item-Total Statistics</em>):</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">rel_obj</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Weighted Reliability Analysis Results
+-------------------------------------
+- Items:
+    mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED
+    mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)
+    mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS
+    mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES
+    mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)
+    mm06   THERE ARE MANY FANATICS AMONG MUSLIMS
+- N of Items: 6
+- Weights: wghtpew
+
+Reliability Statistics
+---------------------------------------- 
+  Cronbach's Alpha:              0.833
+  Alpha (standardized):          0.834
+  McDonald's Omega:              0.835
+  Omega (standardized):          0.836
+  N of Items:                    6
+  N (listwise):                  3070.63 (weighted)
+
+Item Statistics</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ---------------------------------------------------------------------------------------
+  Item                                                      Mean  Std. Deviation        N
+  ---------------------------------------------------------------------------------------
+  mm01   EXERCISE OF MUSLIM FAITH SHLD BE LIMITED          3.360           2.173  3070.63
+  mm02r  ISLAM FITS IN WITH GERMAN SOCIETY (recoded)       4.757           1.867  3070.63
+  mm03   PRESENCE OF MUSLIMS LEADS TO CONFLICTS            4.118           1.887  3070.63
+  mm04   STATE SHLD MONITOR MUSLIM COMMUNITIES             4.020           2.059  3070.63
+  mm05r  RESP. WOULD NOT OBJECT TO MUSLIM MAYOR (recoded)  3.692           2.302  3070.63
+  mm06   THERE ARE MANY FANATICS AMONG MUSLIMS             4.202           1.991  3070.63
+  ---------------------------------------------------------------------------------------
+
+Inter-Item Correlation Matrix
+  ---------------------------------------------------
+               (1)    (2)    (3)    (4)    (5)    (6)
+  ---------------------------------------------------
+  (1) mm01   1.000  0.454  0.520  0.556  0.493  0.540
+  (2) mm02r  0.454  1.000  0.365  0.363  0.449  0.388
+  (3) mm03   0.520  0.365  1.000  0.556  0.346  0.537
+  (4) mm04   0.556  0.363  0.556  1.000  0.342  0.570
+  (5) mm05r  0.493  0.449  0.346  0.342  1.000  0.364
+  (6) mm06   0.540  0.388  0.537  0.570  0.364  1.000
+  ---------------------------------------------------
+
+Item-Total Statistics
+  -------------------------------------------------------------
+         Scale Mean  Scale Var.   Corrected  Alpha if  Omega if
+  Item   if Deleted  if Deleted  Item-Total   Deleted   Deleted
+  -------------------------------------------------------------
+  mm01       20.789      55.277       0.697     0.785     0.786
+  mm02r      19.392      63.254       0.532     0.819     0.822
+  mm03       20.031      60.767       0.619     0.803     0.807
+  mm04       20.129      58.286       0.636     0.799     0.803
+  mm05r      20.457      58.851       0.520     0.826     0.831
+  mm06       19.947      58.961       0.641     0.798     0.802
+  -------------------------------------------------------------</code></pre>
+</div>
+</div>
+<p>For the diagnosis, two columns of the <em>Item-Total Statistics</em> table matter most:</p>
+<ul>
+<li>
+<em>Corrected Item-Total</em> (corrected item-total correlation): how strongly is the single item related to the sum of the <em>other</em> items (with its own value left out)? Thresholds: ≥ 0.30 usable, ≥ 0.50 strong.</li>
+<li>
+<em>Alpha if Deleted</em>: how would α change if this item were removed?</li>
+</ul>
+<p>From these you can see straight away <em>which item</em> supports the scale and which tends to weaken it:</p>
+<ul>
+<li>α rises when the item is removed → the item does not fit the scale and is a candidate for deletion.</li>
+<li>α falls when the item is removed → the item contributes to reliability; keep it.</li>
+</ul>
+<p>In this scale, all corrected item-total correlations lie between 0.52 (<code>mm05r</code>) and 0.70 (<code>mm01</code>), which is <em>strong</em> throughout. And deleting any one item would not raise α above 0.83: all six support the scale.</p>
+<p>For <code>mm05r</code>, <code>reliability()</code> adds up the other five items in each row and correlates this sum with <code>mm05r</code> (<a href="#fig-item-total" class="quarto-xref">Figure&nbsp;<span>8.3</span></a>).</p>
+<div id="fig-item-total" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="On the left a baseplate with respid and the towers mm01, mm02r, mm03, mm04, mm05r and mm06 for the respid 1, 5 and 6: 5, 5, 4, 2, 2, 2; 2, 4, 4, 3, 5, 6; 3, 5, 3, 7, 2, 3. The bricks of mm05r are grey, below them it says not in the sum. A green arrow leads to a tower Sum without mm05r with 18, 19 and 21, next to it stands a blue tower mm05r with 2, 5 and 2. A bracket under both towers is labelled Corrected Item-Total 0.520.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-item-total-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="Bilder/figuren/en/k08-item-total.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;8.3: The corrected item-total correlation of mm05r: the other five items are added up per row, and mm05r does not count. Shown are the first three respondents who answered all six items; the correlation of 0.520 is weighted and calculated over all respondents with six answers."><img src="Bilder/figuren/en/k08-item-total.svg" class="img-fluid figure-img" alt="On the left a baseplate with respid and the towers mm01, mm02r, mm03, mm04, mm05r and mm06 for the respid 1, 5 and 6: 5, 5, 4, 2, 2, 2; 2, 4, 4, 3, 5, 6; 3, 5, 3, 7, 2, 3. The bricks of mm05r are grey, below them it says not in the sum. A green arrow leads to a tower Sum without mm05r with 18, 19 and 21, next to it stands a blue tower mm05r with 2, 5 and 2. A bracket under both towers is labelled Corrected Item-Total 0.520."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-item-total-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8.3: The corrected item-total correlation of <code>mm05r</code>: the other five items are added up per row, and <code>mm05r</code> does not count. Shown are the first three respondents who answered all six items; the correlation of 0.520 is weighted and calculated over all respondents with six answers.
+</figcaption></figure>
+</div>
+</section><section id="visualising-α-if-deleted" class="level3" data-number="8.7.5"><h3 data-number="8.7.5" class="anchored" data-anchor-id="visualising-α-if-deleted">
+<span class="header-section-number">8.7.5</span> Visualising α-if-deleted</h3>
+<p>Here too a bar chart lets you see the diagnosis at a glance. You extract <code>$item_total$alpha_if_deleted</code> from the mariposa object <code>rel_obj</code> above and add the overall α as a vertical reference line:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rel_obj</span><span class="op">$</span><span class="va">item_total</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">alpha_if_deleted</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">item</span>, <span class="va">alpha_if_deleted</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"#1f77b4"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span>, y <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>           label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Overall α = %.2f"</span>, <span class="va">rel_obj</span><span class="op">$</span><span class="va">alpha</span><span class="op">)</span>,</span>
+<span>           color <span class="op">=</span> <span class="st">"grey30"</span>, size <span class="op">=</span> <span class="fl">3</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.05</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">expand_limits</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"α if this item is deleted"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Which item supports the scale, and which weakens it?"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"Dashed line: Cronbach's α of the full scale"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/alpha-deleted-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> A bar to the left of the dashed line means <em>“α would fall if I deleted this item”</em> → the item contributes to the scale; keep it. A bar to the right of the line means <em>“α would rise”</em> → a candidate for deletion. In a well-functioning scale, ideally all bars lie close together (and to the left of the line), with no item standing out.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: Cronbach’s α is a lower bound.</strong> α assumes that all items are tied <em>equally strongly</em> to the factor (<em>τ-equivalence</em>). If this is not the case, α underestimates the true reliability. In the current methods literature, McDonald’s ω is therefore considered the cleaner choice: ω is estimated from a one-factor model and lets each item have its own loading. <code>reliability()</code> reports ω as well: in the compact output, in the <em>Reliability Statistics</em> block and as the column <em>Omega if Deleted</em>. Here ω = 0.835 is almost exactly equal to α = 0.833, because the loadings do not differ enough to push α down noticeably. It is best to report both values in your methods section. Unlike α, ω has not yet been checked against SPSS output; the mariposa vignette <a href="https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html">“SPSS Compatibility”</a> documents the current state.</p>
+</div>
+</div>
+<p>Besides α and ω, the methods report should include the item-total correlations and the α-if-deleted values of all items, as a table or as a bar chart like the one above. Readers can then judge for themselves whether your scale construction is methodologically consistent.</p>
+</section></section><section id="sec-cfa" class="level2" data-number="8.8"><h2 data-number="8.8" class="anchored" data-anchor-id="sec-cfa">
+<span class="header-section-number">8.8</span> Outlook: confirmatory factor analysis with <code>cfa()</code> and <code>semPaths()</code>
+</h2>
+<p>So far you have <em>explored</em> the factor structure. If you have a specific hypothesis, such as “the six items measure <em>one</em> latent factor”, and want to <em>test</em> it, you need a confirmatory factor analysis. mariposa is not designed for this. You use <code>lavaan</code>, the standard package for CFA and structural equation models, and you draw the path diagrams with <code>semPlot</code>.</p>
+<p>Install them once:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lavaan"</span>, <span class="st">"semPlot"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution: lavaan masks mariposa’s <code>efa()</code>.</strong> <code>lavaan</code> also contains a function called <code>efa()</code>. If you load the package with <code><a href="https://lavaan.ugent.be">library(lavaan)</a></code>, R reports <em>“The following object is masked from ‘package:mariposa’: efa”</em>. From then on, <code>efa()</code> calls the lavaan version, and the calls from this chapter stop with a cryptic error message. This is why the code below calls lavaan with the package prefix (<code><a href="https://rdrr.io/pkg/lavaan/man/cfa.html">lavaan::cfa()</a></code>) without loading it. If you have already run <code><a href="https://lavaan.ugent.be">library(lavaan)</a></code>, write <code><a href="https://YannickDiehl.github.io/mariposa/reference/efa.html">mariposa::efa()</a></code> explicitly for the mariposa function.</p>
+</div>
+</div>
+<p>Before you set up the model, here is the lavaan model syntax in three operators:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 36%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Operator</th>
+<th style="text-align: left;">Meaning</th>
+<th style="text-align: left;">Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>=~</code></td>
+<td style="text-align: left;">
+<em>“is measured by”</em>: factor → items</td>
+<td style="text-align: left;"><code>islam =~ mm01 + mm02r + mm03</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>~~</code></td>
+<td style="text-align: left;">
+<em>covariance</em>: two variables may correlate</td>
+<td style="text-align: left;"><code>mm02r ~~ mm05r</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>~</code></td>
+<td style="text-align: left;">
+<em>regression</em>: a variable is predicted by one or more others</td>
+<td style="text-align: left;"><code>islam ~ educ + age</code></td>
+</tr>
+</tbody>
+</table>
+<p>Set up and estimate the model:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model_cfa</span> <span class="op">&lt;-</span> <span class="st">"islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06"</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">lavaan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/cfa.html">cfa</a></span><span class="op">(</span><span class="va">model_cfa</span>, data <span class="op">=</span> <span class="va">allbus</span>,</span>
+<span>                   sampling.weights <span class="op">=</span> <span class="st">"wghtpew"</span>, estimator <span class="op">=</span> <span class="st">"MLR"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span>, fit.measures <span class="op">=</span> <span class="cn">TRUE</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A CFA tests whether your specified model fits the data. <strong>Fit indices</strong> measure how well it fits. Instead of a single figure, there are four standard measures that compare the model from <em>different</em> angles:</p>
+<ul>
+<li>CFI / TLI (<em>Comparative Fit Index / Tucker-Lewis Index</em>): compare your model with a <em>null model</em> without any structure. Values close to 1 indicate good fit; higher = better.</li>
+<li>RMSEA (<em>Root Mean Square Error of Approximation</em>): <em>absolute</em> fit, corrected for model complexity. Values close to 0 indicate good fit; lower = better.</li>
+<li>SRMR (<em>Standardized Root Mean Square Residual</em>): the average of the standardised residuals. Lower = better.</li>
+</ul>
+<p><code>fit.measures = TRUE</code> gives you all four at once. Rules of thumb: CFI/TLI ≥ 0.95, RMSEA ≤ 0.06, SRMR ≤ 0.08. A good model meets <em>several</em> of these thresholds; a single figure never decides on its own.</p>
+<p>A “traffic light” plot of the fit shows four indices at a glance, green = threshold met, red = missed (schematic example values for a well-fitting model):</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tibble</span><span class="op">(</span></span>
+<span>  index     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CFI"</span>, <span class="st">"TLI"</span>, <span class="st">"RMSEA"</span>, <span class="st">"SRMR"</span><span class="op">)</span>,</span>
+<span>  value     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.96</span>, <span class="fl">0.95</span>, <span class="fl">0.055</span>, <span class="fl">0.06</span><span class="op">)</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">0.95</span>, <span class="fl">0.06</span>, <span class="fl">0.08</span><span class="op">)</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"higher = better"</span>, <span class="st">"higher = better"</span>,</span>
+<span>                <span class="st">"lower = better"</span>, <span class="st">"lower = better"</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    met   <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"higher = better"</span>,</span>
+<span>                    <span class="va">value</span> <span class="op">&gt;=</span> <span class="va">threshold</span>, <span class="va">value</span> <span class="op">&lt;=</span> <span class="va">threshold</span><span class="op">)</span>,</span>
+<span>    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%.3f"</span>, <span class="va">value</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span>, y <span class="op">=</span> <span class="fu">fct_rev</span><span class="op">(</span><span class="va">index</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">met</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">threshold</span><span class="op">)</span>,</span>
+<span>             linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"grey40"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, size <span class="op">=</span> <span class="fl">3.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"#16a34a"</span>, `FALSE` <span class="op">=</span> <span class="st">"#d62728"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>`FALSE` <span class="op">=</span> <span class="st">"missed"</span>, `TRUE` <span class="op">=</span> <span class="st">"threshold met"</span><span class="op">)</span>,</span>
+<span>    name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">direction</span>, scales <span class="op">=</span> <span class="st">"free_x"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Value"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Fit indices as a traffic-light check"</span>,</span>
+<span>       caption <span class="op">=</span> <span class="st">"green = threshold met · dashed line = rule-of-thumb threshold"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="08-Latente-Strukturen.en_files/figure-html/fit-indizes-ampel-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretation.</strong> All four bars green → the model fits well. If one index just misses its threshold, that is no disaster; two or more missed indices are a warning sign.</p>
+<p>With <code>estimator = "MLR"</code> (maximum likelihood with robust standard errors) you are on the safe side if the items are not ideally normally distributed. For purely ordinal items, <code>"WLSMV"</code> would be the cleaner choice, but it is computationally more demanding.</p>
+<p>A path diagram:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">semPlot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/semPlot/man/semPaths.html">semPaths</a></span><span class="op">(</span><span class="va">fit</span>, whatLabels <span class="op">=</span> <span class="st">"std"</span>, layout <span class="op">=</span> <span class="st">"tree"</span>, edge.color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>With scales that have positively and negatively worded items (such as our Islamophobia scale), a strict one-factor CFA model often fits poorly, because the reverse-coded items correlate with each other even after controlling for the main factor. This is a method effect (acquiescence) and <em>not</em> a substantive sub-factor. In the two-factor solution in <a href="#sec-efa-2" class="quarto-xref"><span>Section 8.6</span></a> it appeared as a factor of its own. In CFA you deal with this by allowing residual covariances between the reverse-coded items (<code>mm02r ~~ mm05r</code>). This specification is methodologically sound and established in the literature.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: When to use CFA and when not
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A CFA makes sense if:</p>
+<ol type="1">
+<li>You have a <em>specific</em> theoretical hypothesis about the factor structure.</li>
+<li>Your sample is large enough (rule of thumb: N ≥ 200).</li>
+<li>You accept strict assumptions about distribution and estimation (MLR, WLSMV for ordinal items).</li>
+</ol>
+<p>If you simply want to combine items into a scale and are not testing a structural hypothesis, EFA and α are the more pragmatic route.</p>
+</div>
+</div>
+</div>
+</section><section id="exercises" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="exercises">Exercises</h2>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 1 · EFA of the pa items · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 1 · EFA of the pa items · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The research debate on populism discusses whether it is a <em>one-dimensional</em> attitude or consists of <em>three</em> components (anti-elitism, people-centrism, Manichaean worldview). Run an EFA of the seven reverse-coded <code>pa</code> items, first with <code>n_factors = 1</code>, then with <code>n_factors = 3</code> and varimax rotation. Which solution fits better?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
+<span>      n_factors <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">efa</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
+<span>      n_factors <span class="op">=</span> <span class="fl">3</span>, rotation <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 2 · Reliability of the populism scale · Reproduction">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 2 · Reliability of the populism scale · Reproduction
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calculate Cronbach’s α for the seven reverse-coded <code>pa</code> items. Which item has the weakest item-total correlation? Would deleting it improve reliability?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">reliability</span><span class="op">(</span><span class="va">pa29r</span>, <span class="va">pa30r</span>, <span class="va">pa31r</span>, <span class="va">pa32r</span>, <span class="va">pa33r</span>, <span class="va">pa34r</span>, <span class="va">pa35r</span>,</span>
+<span>              weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 3 · Checking your own scale · Transfer">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 3 · Checking your own scale · Transfer
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Go back to the scale you built in the exercise at the end of <a href="05-Datentransformation.html" class="quarto-xref"><span>Chapter 5</span></a> (your own construct). Check it: (a) correlation matrix, (b) EFA with one factor, (c) Cronbach’s α. Write two or three sentences on whether the operationalisation is methodologically sound.</p>
+<p><em>No model solution: this exercise practises the complete validation workflow.</em></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Exercise 4 · CFA with lavaan · Mini research question">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Exercise 4 · CFA with lavaan · Mini research question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you have installed <code>lavaan</code>: specify a one-factor CFA model for the six Islamophobia items, allow a residual covariance between <code>mm02r</code> and <code>mm05r</code> (see the note on method effects above), and check the fit indices. Does the model meet CFI ≥ 0.95, RMSEA ≤ 0.08, SRMR ≤ 0.08?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Solution sketch">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Solution sketch
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">'</span></span>
+<span><span class="st">  islam =~ mm01 + mm02r + mm03 + mm04 + mm05r + mm06</span></span>
+<span><span class="st">  mm02r ~~ mm05r</span></span>
+<span><span class="st">'</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">lavaan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/cfa.html">cfa</a></span><span class="op">(</span><span class="va">model</span>, data <span class="op">=</span> <span class="va">allbus</span>,</span>
+<span>                   sampling.weights <span class="op">=</span> <span class="st">"wghtpew"</span>, estimator <span class="op">=</span> <span class="st">"MLR"</span><span class="op">)</span></span>
+<span><span class="fu">lavaan</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/fitMeasures.html">fitMeasures</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"cfi"</span>, <span class="st">"tli"</span>, <span class="st">"rmsea"</span>, <span class="st">"srmr"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Research journal: Where your mini study stands.</strong> Your scales are methodologically validated: the Islamophobia scale has good reliability with α = .83 and ω = .84, the EFA confirms a parsimonious one-factor structure (the second factor would only be a method factor of the reverse-coded items), and the CFA (see Exercise 4) shows that a one-factor model fits well once the method effect of the reversed wording is allowed for. What comes next: in <a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Chapter 9</span></a> you take these scales and model them as dependent and independent variables in multivariate models.</p>
+</div>
+</div>
+</section><section id="what-you-know-now" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-know-now">What you know now</h2>
+<ul>
+<li>You create weighted inter-item correlation matrices with <code>pearson_cor()</code> and visualise them by hand as a heatmap in ggplot2 (source: <code>cor_obj$matrices[[1]]$correlations</code>).</li>
+<li>You read KMO and Bartlett’s test as assumption checks and understand what lies behind the formulas.</li>
+<li>You extract eigenvalues from the <code>efa()</code> object and decide on the number of factors with the Kaiser criterion and a scree plot drawn by hand.</li>
+<li>You run an EFA with <code>efa()</code>, read factor loadings and visualise them as a sorted bar chart.</li>
+<li>You choose a rotation (<code>varimax</code>, <code>oblimin</code>) deliberately, based on theoretical expectations.</li>
+<li>You know the difference between PCA (data reduction), EFA (exploratory) and CFA (confirmatory).</li>
+<li>You calculate Cronbach’s α and McDonald’s ω with <code>reliability()</code>, read the item statistics from <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, identify problematic items and show α-if-deleted as a bar chart.</li>
+<li>You recognise a method factor of reverse-coded items in a two-factor solution and know why <code><a href="https://lavaan.ugent.be">library(lavaan)</a></code> masks mariposa’s <code>efa()</code>.</li>
+<li>You know when CFA with <code>lavaan</code> makes sense and what a minimal specification including a method effect looks like.</li>
+</ul>
+<p>The next chapter (<a href="09-Erklaerungsmodelle.html" class="quarto-xref"><span>Chapter 9</span></a>) moves from <em>structure</em> to <em>explanation</em>: you model Islamophobia as a dependent variable and test which sociostructural and political predictors explain it best.</p>
+</section><section id="mini-glossary-terms-for-latent-structures" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="mini-glossary-terms-for-latent-structures">Mini glossary: terms for latent structures</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 80%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">Meaning in one sentence</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">latent</td>
+<td style="text-align: left;">unobserved underlying variable that is measured indirectly through several items</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">manifest</td>
+<td style="text-align: left;">directly observed item (one column in the dataset)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">loading</td>
+<td style="text-align: left;">strength of the item–factor relationship; in a one-factor solution = correlation; ≥ 0.5 usable, ≥ 0.7 high</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">eigenvalue (λ)</td>
+<td style="text-align: left;">how much standardised item variance a factor accounts for; λ &gt; 1 = more than a single item (Kaiser criterion)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KMO</td>
+<td style="text-align: left;">proportion of shared (not partial) item variance; ≥ 0.6 acceptable, ≥ 0.7 good, ≥ 0.8 very good</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bartlett’s test</td>
+<td style="text-align: left;">test of whether the correlation matrix differs significantly from the identity matrix; minimum condition for any EFA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">scree plot</td>
+<td style="text-align: left;">eigenvalues as a descending line; read off the number of factors at the “elbow” or at the Kaiser threshold</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rotation</td>
+<td style="text-align: left;">geometric turn of the factor axes for an interpretable solution (orthogonal: <code>varimax</code>; oblique: <code>oblimin</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cronbach’s α</td>
+<td style="text-align: left;">reliability measure: <span class="math inline">\(\alpha = k\bar{r} / (1 + (k-1)\bar{r})\)</span>; ≥ 0.7 acceptable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">McDonald’s ω</td>
+<td style="text-align: left;">reliability measure from a one-factor model that lets each item have its own loading; usually ≥ α</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item-total correlation</td>
+<td style="text-align: left;">relationship of an item with the sum of the remaining items; ≥ 0.3 usable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">α-if-deleted</td>
+<td style="text-align: left;">how α changes if an item is deleted; diagnosis for items that do not belong to the scale</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fit index</td>
+<td style="text-align: left;">measure of agreement between a CFA model and the data (CFI, TLI, RMSEA, SRMR)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">method effect</td>
+<td style="text-align: left;">systematic response tendency (e.g.&nbsp;acquiescence), not a substantive sub-dimension</td>
+</tr>
+</tbody>
+</table></section><section id="further-reading" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="further-reading">Further reading</h2>
+<ul>
+<li>mariposa vignette <a href="https://yannickdiehl.github.io/mariposa/articles/scale-analysis.html">“Scale Analysis”</a>.</li>
+<li>Yves Rosseel et al., <a href="https://lavaan.ugent.be/">lavaan documentation</a>: a very readable introduction to SEM with R.</li>
+<li>Andy Field et al., <em>Discovering Statistics Using R</em>, chapters on factor analysis and reliability.</li>
+<li>Brown, T. A. (2015). <em>Confirmatory Factor Analysis for Applied Research</em> (2nd ed.): the standard work on CFA in practice.</li>
+<li>Furr, R. M. (2017). <em>Psychometrics: An Introduction</em>: a readable introduction to reliability and validity.</li>
+</ul>
+
+
+</section></main><!-- /main --><script>
+/* Variante H: Seitenaufbau. Läuft am Ende von <body>, ändert nur die Darstellung. */
+(function () {
+  var main = document.querySelector("main.content");
+  if (!main) return;
+
+  // Sprache der Seite (aus <html lang>, Quarto-Profile de/en); alle Wörter, die das Skript erkennt oder setzt
+  var lang = document.documentElement.lang === "en" ? "en" : "de";
+  var WORT = {
+    de: {
+      typen: [["Hintergrund", "hintergrund"], ["Forschungshintergrund", "hintergrund"], ["Konzept", "hintergrund"],
+        ["Forschungsjournal", "journal"], ["Reviewer-Hinweis", "reviewer"], ["SPSS → R", "spss"],
+        ["mariposa-Tipp", "mariposa"], ["Vorsicht", "vorsicht"], ["Tipp", "tipp"], ["Faustregel", "tipp"]],
+      uebung: "Übung", loesung: "Lösung",
+      nachdenken: "Kurz überlegen", aufloesung: "Auflösung",
+      lernziele: "Was du nach diesem (Kapitel|Buch) kannst", selbstcheck: "Was du jetzt weißt", weiter: "Weiterführend",
+      kapitel: "Kapitel", umschalter: "English", umschalterTitel: "Read this page in English"
+    },
+    en: {
+      typen: [["Background", "hintergrund"], ["Caution", "vorsicht"], ["mariposa tip", "mariposa"],
+        ["SPSS → R", "spss"], ["Research journal", "journal"]],
+      uebung: "Exercise", loesung: "Solution",
+      nachdenken: "Stop and think", aufloesung: "Answer",
+      lernziele: "What you will be able to do after this (chapter|book)", selbstcheck: "What you know now", weiter: "Further reading",
+      kapitel: "Chapters", umschalter: "Deutsch", umschalterTitel: "Diese Seite auf Deutsch lesen"
+    }
+  }[lang];
+  function regexWort(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
+  var num = main.querySelector("h1 .chapter-number");
+  var kap = num ? num.textContent.trim() : "0";
+  document.body.dataset.kapitel = kap;
+  var header = document.getElementById("title-block-header");
+  var start = !!(header && header.querySelector(".subtitle"));
+  if (start) document.body.classList.add("startseite");
+
+  // Titel an „ – “ auf zwei Zeilen setzen
+  function zweizeilig(el, klasseEins) {
+    if (!el) return;
+    var t = el.textContent.trim();
+    var i = t.indexOf(" – ");
+    if (i < 0) return;
+    el.innerHTML = '<span class="' + klasseEins + '">' + t.slice(0, i) + '</span><span class="titel-zwei">' + t.slice(i + 3) + "</span>";
+  }
+  zweizeilig(document.querySelector(".sidebar-title a") || document.querySelector(".sidebar-title"), "titel-eins");
+  if (start) {
+    zweizeilig(header.querySelector("h1.title"), "titel-eins");
+    var cover = main.querySelector(".quarto-cover-image");
+    if (cover) {
+      var hülle = document.createElement("div");
+      hülle.className = "start-cover";
+      var alt = cover.parentElement;
+      hülle.appendChild(cover);
+      header.appendChild(hülle);
+      if (alt && alt.tagName === "P" && !alt.textContent.trim() && !alt.children.length) alt.remove();
+    }
+  }
+
+  // Vorwort in der Seitenleiste: Nummer als eigener Stein wie bei den Kapiteln
+  var erster = document.querySelector(".sidebar-menu-container ul > li:first-child .menu-text");
+  if (erster && !erster.querySelector(".chapter-number")) {
+    var m = erster.textContent.replace(/\u00a0/g, " ").trim().match(/^(\d+)\s+(.*)$/);
+    if (m) erster.innerHTML = '<span class="chapter-number">' + m[1] + '</span>&nbsp; <span class="chapter-title">' + m[2] + "</span>";
+  }
+
+  // Kapitelüberschriften ohne Titelblock (Vorwort): Text in eigenes Element
+  main.querySelectorAll("h1").forEach(function (h) {
+    var n = h.querySelector(".chapter-number");
+    if (!n || h.querySelector(".chapter-title")) return;
+    var rest = h.textContent.replace(n.textContent, "").replace(/ /g, " ").trim();
+    h.innerHTML = "";
+    h.appendChild(n);
+    var s = document.createElement("span");
+    s.className = "chapter-title";
+    s.textContent = rest;
+    h.appendChild(s);
+    h.classList.add("kapitelkopf");
+  });
+
+  // Abschnittsüberschriften: Text hinter dem Nummern-Stein in ein Element fassen (bricht dann sauber um)
+  main.querySelectorAll("h2 > .header-section-number").forEach(function (n) {
+    var h = n.parentElement;
+    var s = document.createElement("span");
+    s.className = "h-text";
+    while (n.nextSibling) s.appendChild(n.nextSibling);
+    h.appendChild(s);
+  });
+
+  // Bausteine-Leiste: ein Stein je Kapitel, der aktuelle steht vorne
+  if (!start && header && num) {
+    var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
+    var nav = document.createElement("nav");
+    nav.className = "leiste";
+    nav.setAttribute("aria-label", WORT.kapitel);
+    links.forEach(function (a, i) {
+      var b = document.createElement("a");
+      b.href = a.getAttribute("href");
+      b.className = "leiste-stein k" + i;
+      b.textContent = i;
+      b.title = a.textContent.replace(/\s+/g, " ").trim();
+      if (String(i) === kap) { b.classList.add("aktiv"); b.setAttribute("aria-current", "page"); }
+      nav.appendChild(b);
+    });
+    header.insertBefore(nav, header.firstChild);
+  }
+
+  // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
+  var TYPEN = WORT.typen.map(function (t) {
+    return [new RegExp("^" + regexWort(t[0]) + "\\b"), t[1], t[0]];
+  });
+  function führendeLeerzeichenWeg(p) {
+    if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
+  }
+  main.querySelectorAll(".callout").forEach(function (c) {
+    var titel = c.getAttribute("title") || "";
+    var kopf = c.querySelector(".callout-title-container");
+    if (new RegExp("^" + WORT.uebung).test(titel)) {
+      var teile = titel.split(" · ");
+      var nr = (teile[0].match(/\d+/) || [""])[0];
+      c.classList.add("kasten", "uebung");
+      if (kopf) kopf.innerHTML = '<span class="uebung-nr">' + nr + '</span><span class="kasten-titel">' + (teile[1] || "") + "</span>" +
+        (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
+      return;
+    }
+    if (new RegExp("^" + WORT.loesung).test(titel)) {
+      c.classList.add("loesung");
+      var vor = c.previousElementSibling;
+      if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
+      return;
+    }
+    // Kasten mit Überschrift als Titel, etwa zum Aufklappen: „Hintergrund: …“
+    // Quarto setzt davor ein verstecktes Wort für Screenreader („Hinweis“); das bleibt erhalten
+    var sr = kopf ? kopf.querySelector(".screen-reader-only") : null;
+    var kopfText = kopf ? kopf.textContent.replace(sr ? sr.textContent : "", "").replace(/\s+/g, " ").trim() : "";
+    for (var k = 0; k < TYPEN.length; k++) {
+      var wort = TYPEN[k][2];
+      if (kopfText.indexOf(wort + ":") !== 0) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[k][1]);
+      var h = kopf.innerHTML.replace(sr ? sr.outerHTML : "", "").trim();
+      var rest = h.slice(h.indexOf(wort) + wort.length).replace(/^\s*:\s*/, "");
+      kopf.innerHTML = (sr ? sr.outerHTML : "") + '<span class="kasten-label">' + wort + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      return;
+    }
+    if (titel) return;
+    var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
+    var st = p && p.firstElementChild;
+    if (!st || st.tagName !== "STRONG" || p.firstChild !== st) return;
+    var text = st.textContent.trim();
+    for (var i = 0; i < TYPEN.length; i++) {
+      if (!TYPEN[i][0].test(text)) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[i][1]);
+      var html = st.innerHTML.trim();
+      var rest = html.slice(html.indexOf(TYPEN[i][2]) + TYPEN[i][2].length)
+        .replace(/^\s*[:./–-]?\s*/, "").replace(/\.\s*$/, "");
+      if (kopf) kopf.innerHTML = '<span class="kasten-label">' + TYPEN[i][2] + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      st.remove();
+      führendeLeerzeichenWeg(p);
+      if (!p.textContent.trim() && !p.children.length) p.remove();
+      break;
+    }
+  });
+
+  // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
+  main.querySelectorAll("p > strong:first-child").forEach(function (st) {
+    if (st.textContent.trim() !== WORT.nachdenken + ".") return;
+    var p = st.parentElement;
+    if (p.firstChild !== st) return;
+    var nach = p.nextElementSibling;
+    var karte = document.createElement("div");
+    karte.className = "denkpause";
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">' + WORT.nachdenken + '</span></div>';
+    p.parentNode.insertBefore(karte, p);
+    st.remove();
+    führendeLeerzeichenWeg(p);
+    karte.appendChild(p);
+    if (nach && nach.classList.contains("callout") && new RegExp("^" + WORT.aufloesung).test(nach.getAttribute("title") || "")) {
+      nach.classList.add("aufloesung");
+      karte.appendChild(nach);
+    }
+  });
+
+  // Lernziele, Selbstcheck, Weiterführend als Karten
+  main.querySelectorAll("section.level2 > h2").forEach(function (h) {
+    var t = h.textContent.trim();
+    var s = h.parentElement;
+    if (new RegExp("^" + WORT.lernziele).test(t)) s.classList.add("karte", "lernziele");
+    else if (new RegExp("^" + regexWort(WORT.selbstcheck)).test(t)) s.classList.add("karte", "selbstcheck");
+    else if (new RegExp("^" + regexWort(WORT.weiter)).test(t)) s.classList.add("karte", "weiter");
+  });
+
+  // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
+  var schlüssel = "rw-selbstcheck:" + location.pathname;
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(schlüssel) || "{}"); } catch (e) { stand = {}; }
+  main.querySelectorAll("section.selbstcheck li").forEach(function (li, i) {
+    li.setAttribute("role", "checkbox");
+    li.tabIndex = 0;
+    function setze(an) { li.classList.toggle("erledigt", an); li.setAttribute("aria-checked", an ? "true" : "false"); }
+    setze(!!stand[i]);
+    function umschalten() {
+      stand[i] = !stand[i];
+      setze(stand[i]);
+      try { localStorage.setItem(schlüssel, JSON.stringify(stand)); } catch (e) {}
+    }
+    li.addEventListener("click", function (e) { if (!e.target.closest("a")) umschalten(); });
+    li.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); umschalten(); } });
+  });
+
+  // Lesefortschritt oben in der Kapitelfarbe
+  var balken = document.createElement("div");
+  balken.className = "lesefortschritt";
+  document.body.appendChild(balken);
+  function fortschritt() {
+    var d = document.documentElement, m = d.scrollHeight - d.clientHeight;
+    balken.style.width = (m > 0 ? d.scrollTop / m * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", fortschritt, { passive: true });
+  fortschritt();
+
+  // Sprachumschalter: dieselbe Seite in der anderen Sprache (…/X.html ↔ …/en/X.html, …/ ↔ …/en/).
+  // Knopf und <link rel="alternate"> entstehen erst, wenn die Gegenseite antwortet.
+  function gegenstueck(pfad, sprache) {
+    if (sprache === "en") {
+      var k = pfad.lastIndexOf("/en/");
+      return k < 0 ? null : pfad.slice(0, k) + "/" + pfad.slice(k + 4);
+    }
+    var l = pfad.lastIndexOf("/");
+    return pfad.slice(0, l + 1) + "en/" + pfad.slice(l + 1);
+  }
+  var ziel = gegenstueck(location.pathname, lang);
+  if (ziel && window.fetch) {
+    var andere = lang === "en" ? "de" : "en";
+    fetch(ziel, { method: "HEAD" }).then(function (r) {
+      if (!r.ok) return;
+      var alt = document.createElement("link");
+      alt.rel = "alternate";
+      alt.hreflang = andere;
+      alt.href = ziel;
+      document.head.appendChild(alt);
+      var a = document.createElement("a");
+      a.className = "sprachwahl";
+      a.href = ziel + location.search;
+      a.hreflang = andere;
+      a.lang = andere;
+      a.title = WORT.umschalterTitel;
+      a.textContent = WORT.umschalter;
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
+})();
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./07-Uni-Bivariate-Analyse.html" class="pagination-link" aria-label="Univariate and bivariate analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Univariate and bivariate analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./09-Erklaerungsmodelle.html" class="pagination-link" aria-label="Explanatory models">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Explanatory models</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R Workshop – Social Sciences · Yannick Diehl and Daniel Moosdorf</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/08-Latente-Strukturen.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/08-Latente-Strukturen.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

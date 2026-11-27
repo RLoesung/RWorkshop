@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Yannick Diehl">
+<meta name="author" content="Daniel Moosdorf">
+<meta name="dcterms.date" content="2026-11-27">
+<meta name="description" content="An introduction to statistical data analysis with R, tidyverse and mariposa for the social sciences, using the 2023 German General Social Survey (ALLBUS).">
+<title>R Workshop – Social Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./01-RStudio.html" rel="next">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-82443109d096e9951f1ccbbd29bb67fd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f4b4164fcb985c7be955057c9bf53d61.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><style>html{ scroll-behavior: smooth; }</style>
+</head>
+<body class="docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">0&nbsp; Preface</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Workshop – Social Sciences</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/RLoesung/RWorkshop" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">0&nbsp; Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-RStudio.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-Quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quarto and reproducible research</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-ProgrammierspracheR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The R programming language</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-Datenimport.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Data import and inspection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-Datentransformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Transforming data and building scales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-Grafiken-Grundlagen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Visualisation basics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-Uni-Bivariate-Analyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Univariate and bivariate analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-Latente-Strukturen.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Latent structures</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-Erklaerungsmodelle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Explanatory models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-KI-Assistenten.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Working with AI assistants</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li>
+<a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface"><span class="chapter-number">0</span>&nbsp;&nbsp;Preface</a>
+  <ul>
+<li><a href="#what-you-will-be-able-to-do-after-this-book" id="toc-what-you-will-be-able-to-do-after-this-book" class="nav-link" data-scroll-target="#what-you-will-be-able-to-do-after-this-book">What you will be able to do after this book</a></li>
+  <li><a href="#overview-of-the-chapters" id="toc-overview-of-the-chapters" class="nav-link" data-scroll-target="#overview-of-the-chapters">Overview of the chapters</a></li>
+  <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book">How to read this book</a></li>
+  <li><a href="#why-r" id="toc-why-r" class="nav-link" data-scroll-target="#why-r">Why R?</a></li>
+  <li><a href="#why-tidyverse-and-mariposa" id="toc-why-tidyverse-and-mariposa" class="nav-link" data-scroll-target="#why-tidyverse-and-mariposa">Why tidyverse and mariposa?</a></li>
+  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
+  <li><a href="#example-dataset-allbus-2023" id="toc-example-dataset-allbus-2023" class="nav-link" data-scroll-target="#example-dataset-allbus-2023">Example dataset: ALLBUS 2023</a></li>
+  <li><a href="#how-the-chapters-are-structured" id="toc-how-the-chapters-are-structured" class="nav-link" data-scroll-target="#how-the-chapters-are-structured">How the chapters are structured</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further reading</a></li>
+  <li><a href="#keyboard-shortcuts-at-a-glance" id="toc-keyboard-shortcuts-at-a-glance" class="nav-link" data-scroll-target="#keyboard-shortcuts-at-a-glance">Keyboard shortcuts at a glance</a></li>
+  </ul>
+</li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/index.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/index.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">R Workshop – Social Sciences</h1>
+<p class="subtitle lead">An introduction to statistical data analysis with tidyverse and mariposa</p>
+</div>
+
+<div>
+  <div class="description">
+    An introduction to statistical data analysis with R, tidyverse and mariposa for the social sciences, using the 2023 German General Social Survey (ALLBUS).
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Yannick Diehl </p>
+             <p>Daniel Moosdorf </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">27 November 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+<section id="preface" class="level1 unnumbered"><h1 class="unnumbered">
+<span class="chapter-number">0</span>&nbsp;&nbsp;Preface</h1><p><img src="Bilder/cover-en.svg" title="R Workshop – Social Sciences" class="quarto-cover-image nolightbox img-fluid" alt="Three towers of building blocks on a baseplate, next to them a companion figure"></p>
+<blockquote class="blockquote">
+<p><em>“Everything that exists is an object. Everything that happens is a function call.”</em> <span class="quelle">John Chambers</span></p>
+</blockquote>
+<p>Are Islamophobic attitudes more widespread in eastern Germany than in the West? Who holds them, and how are they related to political orientations? To answer such questions with data, you need two things: a clean dataset such as the 2023 German General Social Survey (ALLBUS), and a tool that can analyse it. This book is an introduction to that tool: R for statistical data analysis in the social sciences. It is written for students who are new to R, often with some experience of SPSS, and who are looking for a simple, modern introduction.</p>
+<p>You work your way from the first data import through descriptive and inferential statistics to factor analysis and regression. The toolkit is deliberately small: the <strong>tidyverse</strong> for data manipulation and visualisation, and <strong>mariposa</strong>, a package developed in Marburg, for statistical analysis. On top of that, you use <strong>Quarto</strong> to turn your code into a published report.</p>
+<p>The methods are intended for social science studies that meet scientific survey standards. You can use the same techniques for data collected without such standards, and survey weighting is included from the start.</p>
+<section id="what-you-will-be-able-to-do-after-this-book" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="what-you-will-be-able-to-do-after-this-book">What you will be able to do after this book</h2>
+<ul>
+<li>Import datasets from SPSS, Stata or Excel and handle labels and missing values.</li>
+<li>Transform and recode data and build scales from items.</li>
+<li>Carry out univariate, bivariate and multivariate analyses, with and without survey weights.</li>
+<li>Compute and interpret correlations, factor analyses, and linear and logistic regressions.</li>
+<li>Turn results into publication-ready graphics with ggplot2.</li>
+<li>Document an analysis so that it can be reproduced.</li>
+<li>Write and check R code with AI assistants without passing on research data.</li>
+</ul></section><section id="overview-of-the-chapters" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="overview-of-the-chapters">Overview of the chapters</h2>
+<div class="kapitel-raster">
+<a class="kapitel-karte" href="01-RStudio.html" style="--kk:#BFE3F7;--kk2:#86B9DE"><span class="nr">1</span><div class="titel">RStudio</div>
+<ul>
+<li>Install R and RStudio in the right order.</li>
+<li>Use the RStudio interface with confidence.</li>
+</ul></a><a class="kapitel-karte" href="02-Quarto.html" style="--kk:#CDEFD9;--kk2:#8FCBA6"><span class="nr">2</span><div class="titel">Quarto and reproducible research</div>
+<ul>
+<li>Explain the difference between an R script, R Markdown and Quarto.</li>
+<li>Create a <code>.qmd</code> document, render it and export it to HTML/PDF/Word.</li>
+</ul></a><a class="kapitel-karte" href="03-ProgrammierspracheR.html" style="--kk:#DCD6F8;--kk2:#A79FE2"><span class="nr">3</span><div class="titel">The R programming language</div>
+<ul>
+<li>Create and name variables and assign values to them.</li>
+<li>Keep your code understandable for your future self with <code>#</code> comments.</li>
+</ul></a><a class="kapitel-karte" href="04-Datenimport.html" style="--kk:#FFD2BC;--kk2:#F0A27E"><span class="nr">4</span><div class="titel">Data import and inspection</div>
+<ul>
+<li>Import an SPSS dataset with <code>read_spss()</code>, including all variable and value labels.</li>
+<li>Search for variables by name or label with <code>find_var()</code>.</li>
+</ul></a><a class="kapitel-karte" href="05-Datentransformation.html" style="--kk:#F7C9DA;--kk2:#E39AB6"><span class="nr">5</span><div class="titel">Transforming data and building scales</div>
+<ul>
+<li>Create new variables with <code>mutate()</code>.</li>
+<li>Write conditional logic with <code>case_when()</code>, <code>recode_values()</code> and <code>if_else()</code>.</li>
+</ul></a><a class="kapitel-karte" href="06-Grafiken-Grundlagen.html" style="--kk:#C6ECE8;--kk2:#86CBC3"><span class="nr">6</span><div class="titel">Visualisation basics</div>
+<ul>
+<li>Explain the grammar of graphics approach of ggplot2.</li>
+<li>Visualise frequencies, distributions and relationships with the appropriate <code>geom_*()</code> layers.</li>
+</ul></a><a class="kapitel-karte" href="07-Uni-Bivariate-Analyse.html" style="--kk:#FFE7A3;--kk2:#EFC867"><span class="nr">7</span><div class="titel">Univariate and bivariate analysis</div>
+<ul>
+<li>Report the frequency distribution of a variable, weighted and unweighted.</li>
+<li>Determine the mean, median, spread, IQR, skewness, kurtosis and standard error.</li>
+</ul></a><a class="kapitel-karte" href="08-Latente-Strukturen.html" style="--kk:#E6D3F2;--kk2:#BE9EDB"><span class="nr">8</span><div class="titel">Latent structures</div>
+<ul>
+<li>Set up and read an inter-item correlation matrix and visualise it as a heatmap with ggplot2.</li>
+<li>Understand the KMO measure and Bartlett's test as assumption checks and find them in the <code>efa()</code> output.</li>
+</ul></a><a class="kapitel-karte" href="09-Erklaerungsmodelle.html" style="--kk:#D8EBC4;--kk2:#A8CC85"><span class="nr">9</span><div class="titel">Explanatory models</div>
+<ul>
+<li>Run a simple linear regression with one predictor, draw the regression line by hand from the model coefficients in a scatter plot (<code>geom_abline()</code>) and follow the OLS logic (“least squares”).</li>
+<li>Run, weight and interpret a multiple linear regression: coefficients, Beta, R², model F.</li>
+</ul></a><a class="kapitel-karte" href="10-KI-Assistenten.html" style="--kk:#FFC9C2;--kk2:#EC9286"><span class="nr">10</span><div class="titel">Working with AI assistants</div>
+<ul>
+<li>Explain why an AI assistant may invent functions and arguments for mariposa.</li>
+<li>Write a request that gives context: goal, package versions, documentation, variables and error message.</li>
+</ul></a>
+</div>
+</section><section id="how-to-read-this-book" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="how-to-read-this-book">How to read this book</h2>
+<ul>
+<li>Read the chapters in order. They build on each other. Chapter 3 assumes the basics from Chapters 1–2, all methods chapters from Chapter 7 onwards assume the data preparation from Chapters 4–5, and Chapters 7–9 use the visualisation basics from Chapter 6 throughout.</li>
+<li>Run the code as you read. Keep RStudio open alongside the book and copy the chunks into your Quarto document. Copying and pasting is explicitly encouraged.</li>
+<li>Take the exercises seriously. Each chapter ends with four exercises: two reproduction exercises, one transfer exercise and one <strong>mini research question</strong> without a model solution. If you apply the mini research questions in the methods chapters consistently to <em>a question of your own</em>, you build up a small research project alongside the main ALLBUS study. Try each exercise yourself first.</li>
+<li>Get the dataset early. You need ALLBUS 2023 from Chapter 4 onwards; how to get the data is explained under <em>Example dataset</em>.</li>
+</ul>
+<p>A short roadmap through the six stages:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="index.en_files/figure-html/roadmap-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="why-r" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="why-r">Why R?</h2>
+<ul>
+<li>R is a programming language developed specifically for statistical computing and data visualisation.</li>
+<li>R is open source: there are no licence fees, and the add-on packages are free too.</li>
+<li>You can analyse and visualise data very flexibly. Small analyses and large pipelines follow the same coding style.</li>
+<li>Research organisations, companies and public authorities use R worldwide. R skills are in demand on the job market.</li>
+<li>R runs on all common platforms and can be integrated into any IT infrastructure.</li>
+</ul></section><section id="why-tidyverse-and-mariposa" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="why-tidyverse-and-mariposa">Why tidyverse and mariposa?</h2>
+<p>Instead of a long list of specialised packages, we work with the tidyverse ecosystem and the mariposa package.</p>
+<p><strong>Tidyverse.</strong> A collection of packages designed to work together (<code>dplyr</code>, <code>tidyr</code>, <code>ggplot2</code>, <code>readr</code>, <code>purrr</code>, <code>tibble</code>, <code>stringr</code>, <code>forcats</code>, <code>lubridate</code>) that share a common style for data manipulation and visualisation. Once you have understood the tidyverse, you can read almost any modern R script.</p>
+<p><strong>mariposa.</strong> A package developed in Marburg (Marburg Initiative for Political and Social Analysis) that provides the methods typical of social science analyses in a consistent syntax close to the tidyverse: data import from SPSS, handling of labels and missing values, descriptive statistics, t-tests, ANOVA, correlation, factor analysis, regression. The output follows the table layouts of SPSS, so if you are switching from SPSS you will recognise it. The results are checked against reference output from SPSS Statistics 29. The mariposa vignette <a href="https://yannickdiehl.github.io/mariposa/articles/spss-compatibility.html">“SPSS Compatibility”</a> shows which functions have been compared with SPSS and how thoroughly.</p>
+</section><section id="requirements" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="requirements">Requirements</h2>
+<p><strong>R</strong> (programming language, open source). You can find the current version at <a href="https://cran.r-project.org/">cran.r-project.org</a>. This book requires at least R 4.3; R 4.5 or later is recommended so that all functions shown here run without changes.</p>
+<p><strong>RStudio</strong> as the integrated development environment (IDE). The IDE itself is still called RStudio; the company behind it has been called <a href="https://posit.co/">Posit</a> since 2022. You need the desktop version: <a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a>. If you prefer not to install anything locally, you can use <a href="https://posit.cloud/">Posit Cloud</a> (formerly RStudio Cloud) in your browser instead.</p>
+<p><strong>Packages.</strong> At the start, we install the tidyverse ecosystem and the mariposa package once; we use them throughout the book. Both are available on CRAN, the official R package archive:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"mariposa"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This book was rendered with mariposa 0.7.4. To see which version you have, run <code>packageVersion("mariposa")</code>. Older versions (before 0.7.4) give different output in some places or do not yet have some of the arguments.</p>
+<p>Load both packages in every R session:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://YannickDiehl.github.io/mariposa/">mariposa</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Later, <code>patchwork</code> is added for combining plots in Chapter 9, and <code>lavaan</code> and <code>semPlot</code> for confirmatory factor analysis in Chapter 8. Apart from these, the book deliberately uses no other packages.</p>
+</section><section id="example-dataset-allbus-2023" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="example-dataset-allbus-2023">Example dataset: ALLBUS 2023</h2>
+<p>Throughout the book we work with the <a href="https://www.gesis.org/en/allbus">ALLBUS</a>, the German General Social Survey. The examples come from the 2023 wave with 5246 respondents and 579 variables.</p>
+<p><strong>How to get the data.</strong> You can find the English-language edition of the dataset, “German General Social Survey – ALLBUScompact 2023”, in the <a href="https://search.gesis.org/research_data/ZA8833">GESIS data catalogue under study number ZA8833</a>. You need a free GESIS account; after registering, you can download the SPSS version. Save the file in your project folder as <code>ALLBUS2023.sav</code>.</p>
+<p>As the common thread through the methods chapters, we use the question:</p>
+<blockquote class="blockquote">
+<p><em>Who holds Islamophobic attitudes in Germany in 2023, and how are they related to political orientations and social structure?</em></p>
+</blockquote>
+<p>The question runs through every chapter:</p>
+<ul>
+<li>Chapter 4: Data import and inspection. You import the ALLBUS, find variables with <code><a href="https://YannickDiehl.github.io/mariposa/reference/find_var.html">find_var()</a></code>, declare missing values and create your analysis subset.</li>
+<li>Chapter 5: Transforming data and building scales. From six ALLBUS items you build an Islamophobia scale, and alongside it a populism scale, including careful reverse coding, a minimum number of valid answers and POMPS for comparability.</li>
+<li>Chapter 6: Visualisation basics. You get to know the grammar of graphics behind ggplot2. You use these tools in the following chapters to illustrate each method.</li>
+<li>Chapter 7: Univariate and bivariate analysis. You describe the distribution of the scale, compare East and West, and test the relationship with populism.</li>
+<li>Chapter 8: Latent structures. You check the factor structure and reliability of the scales with EFA, Cronbach’s α and a first look at CFA.</li>
+<li>Chapter 9: Explanatory models. You ask <em>which</em> characteristics (education, age, region, populism) best explain Islamophobia, using factorial ANOVA and multiple and logistic regression, and present the results as a publication-ready coefficient plot with <code>patchwork</code>.</li>
+<li>Chapter 10: Working with AI assistants. You let an assistant help you with further steps of your analysis and check its suggestions. The assistant does not get to see the ALLBUS data.</li>
+</ul>
+<p>This way you see how the individual methods combine into a complete analysis.</p>
+</section><section id="how-the-chapters-are-structured" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="how-the-chapters-are-structured">How the chapters are structured</h2>
+<p>Every methods chapter follows the same structure: a <strong>question</strong> is answered in code, and the output is given an <strong>interpretation</strong>. Large parts of the chapters consist of R code in <strong>code chunks</strong>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/describe.html">describe</a></span><span class="op">(</span><span class="va">islamophobia</span>, weights <span class="op">=</span> <span class="va">wghtpew</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The result appears directly below, rendered into the book. You can copy the code into your own Quarto document at any time; copying and pasting is explicitly encouraged.</p>
+<p><strong>Pipe operator.</strong> Throughout the book you will see the native pipe <code>|&gt;</code>. It passes the result of one function on to the next and turns nested code into a readable sequence of steps:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">allbus</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">eastwest</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://YannickDiehl.github.io/mariposa/reference/describe.html">describe</a></span><span class="op">(</span><span class="va">ls01</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In older code you will often find <code>%&gt;%</code> (from the <code>magrittr</code> package). The two do almost the same thing; Chapter 3 briefly explains the difference.</p>
+<p><strong>Boxes.</strong> Four kinds of boxes appear throughout the book. Two of them are always open, because you need them at exactly that point:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SPSS → R.</strong> Direct translation help for people switching from SPSS: the SPSS command and its R equivalent.</p>
+</div>
+</div>
+<p>The second open box warns about mistakes that are easy to make and that you often notice only late:</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Caution.</strong> Common pitfalls and stumbling blocks.</p>
+</div>
+</div>
+<p>The other two contain additional knowledge and are therefore collapsed. You do not need them for the next step in the chapter; clicking the line opens them:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Background: theory behind a method
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Short notes that explain why a method works the way it does, where a scale comes from or what belongs in a methods report.</p>
+</div>
+</div>
+</div>
+<p>The notes on shortcuts that mariposa offers are collapsed too:</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>mariposa tip: more compact solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Places where mariposa offers a particularly compact solution.</p>
+</div>
+</div>
+</div>
+</section><section id="further-reading" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="further-reading">Further reading</h2>
+<p>If you want to go deeper:</p>
+<ul>
+<li>Hadley Wickham, Mine Çetinkaya-Rundel &amp; Garrett Grolemund, <a href="https://r4ds.hadley.nz/">R for Data Science (2nd edition)</a>, the standard work on the tidyverse, free online.</li>
+<li>Hadley Wickham, <a href="https://adv-r.hadley.nz/">Advanced R</a>, for anyone who wants to understand R as a programming language.</li>
+<li>mariposa documentation: <a href="https://yannickdiehl.github.io/mariposa/">yannickdiehl.github.io/mariposa</a>, with function reference and vignettes.</li>
+<li>Posit, <a href="https://quarto.org/">Quarto documentation</a>, the reference for books, reports and coursework written with Quarto (see Chapter 2).</li>
+</ul></section><section id="keyboard-shortcuts-at-a-glance" class="level2 unnumbered"><h2 class="unnumbered anchored" data-anchor-id="keyboard-shortcuts-at-a-glance">Keyboard shortcuts at a glance</h2>
+<p>These are the RStudio shortcuts you will need most often. The section <a href="01-RStudio.html#sec-tastenkuerzel" class="quarto-xref"><span>Useful keyboard shortcuts</span></a> in Chapter 1 explains when each shortcut is useful.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">macOS</th>
+<th style="text-align: left;">Windows</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Run current line</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>Enter</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>Enter</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Run whole chunk</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>shift</code> + <code>Enter</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>shift</code> + <code>Enter</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Run all chunks</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>option</code> + <code>R</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>alt</code> + <code>R</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Insert new chunk</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>option</code> + <code>I</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>alt</code> + <code>I</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Render document</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>shift</code> + <code>K</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>shift</code> + <code>K</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Save</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>S</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>S</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Assignment arrow <code>&lt;-</code>
+</td>
+<td style="text-align: left;">
+<code>option</code> + <code>-</code>
+</td>
+<td style="text-align: left;">
+<code>alt</code> + <code>-</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pipe <code>|&gt;</code>
+</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>shift</code> + <code>M</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>shift</code> + <code>M</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Comment or uncomment line</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>shift</code> + <code>C</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>shift</code> + <code>C</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reformat code</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>shift</code> + <code>A</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>shift</code> + <code>A</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Clear console</td>
+<td style="text-align: left;">
+<code>control</code> + <code>L</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>L</code>
+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Previous commands in the console</td>
+<td style="text-align: left;">
+<code>cmd</code> + <code>↑</code>
+</td>
+<td style="text-align: left;">
+<code>ctrl</code> + <code>↑</code>
+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Help for the function under the cursor</td>
+<td style="text-align: left;"><code>F1</code></td>
+<td style="text-align: left;"><code>F1</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Show all keyboard shortcuts</td>
+<td style="text-align: left;">
+<code>option</code> + <code>shift</code> + <code>K</code>
+</td>
+<td style="text-align: left;">
+<code>alt</code> + <code>shift</code> + <code>K</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The pipe shortcut inserts <code>|&gt;</code> only if the option <em>Use native pipe operator</em> is ticked under <code>Tools</code> → <code>Global Options</code> → <code>Code</code>. Otherwise you get the older pipe <code>%&gt;%</code>.</p>
+
+
+</section></section></main><!-- /main --><script>
+/* Variante H: Seitenaufbau. Läuft am Ende von <body>, ändert nur die Darstellung. */
+(function () {
+  var main = document.querySelector("main.content");
+  if (!main) return;
+
+  // Sprache der Seite (aus <html lang>, Quarto-Profile de/en); alle Wörter, die das Skript erkennt oder setzt
+  var lang = document.documentElement.lang === "en" ? "en" : "de";
+  var WORT = {
+    de: {
+      typen: [["Hintergrund", "hintergrund"], ["Forschungshintergrund", "hintergrund"], ["Konzept", "hintergrund"],
+        ["Forschungsjournal", "journal"], ["Reviewer-Hinweis", "reviewer"], ["SPSS → R", "spss"],
+        ["mariposa-Tipp", "mariposa"], ["Vorsicht", "vorsicht"], ["Tipp", "tipp"], ["Faustregel", "tipp"]],
+      uebung: "Übung", loesung: "Lösung",
+      nachdenken: "Kurz überlegen", aufloesung: "Auflösung",
+      lernziele: "Was du nach diesem (Kapitel|Buch) kannst", selbstcheck: "Was du jetzt weißt", weiter: "Weiterführend",
+      kapitel: "Kapitel", umschalter: "English", umschalterTitel: "Read this page in English"
+    },
+    en: {
+      typen: [["Background", "hintergrund"], ["Caution", "vorsicht"], ["mariposa tip", "mariposa"],
+        ["SPSS → R", "spss"], ["Research journal", "journal"]],
+      uebung: "Exercise", loesung: "Solution",
+      nachdenken: "Stop and think", aufloesung: "Answer",
+      lernziele: "What you will be able to do after this (chapter|book)", selbstcheck: "What you know now", weiter: "Further reading",
+      kapitel: "Chapters", umschalter: "Deutsch", umschalterTitel: "Diese Seite auf Deutsch lesen"
+    }
+  }[lang];
+  function regexWort(w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  // Kapitelnummer an <body> (wählt die Kapitelfarbe im Theme)
+  var num = main.querySelector("h1 .chapter-number");
+  var kap = num ? num.textContent.trim() : "0";
+  document.body.dataset.kapitel = kap;
+  var header = document.getElementById("title-block-header");
+  var start = !!(header && header.querySelector(".subtitle"));
+  if (start) document.body.classList.add("startseite");
+
+  // Titel an „ – “ auf zwei Zeilen setzen
+  function zweizeilig(el, klasseEins) {
+    if (!el) return;
+    var t = el.textContent.trim();
+    var i = t.indexOf(" – ");
+    if (i < 0) return;
+    el.innerHTML = '<span class="' + klasseEins + '">' + t.slice(0, i) + '</span><span class="titel-zwei">' + t.slice(i + 3) + "</span>";
+  }
+  zweizeilig(document.querySelector(".sidebar-title a") || document.querySelector(".sidebar-title"), "titel-eins");
+  if (start) {
+    zweizeilig(header.querySelector("h1.title"), "titel-eins");
+    var cover = main.querySelector(".quarto-cover-image");
+    if (cover) {
+      var hülle = document.createElement("div");
+      hülle.className = "start-cover";
+      var alt = cover.parentElement;
+      hülle.appendChild(cover);
+      header.appendChild(hülle);
+      if (alt && alt.tagName === "P" && !alt.textContent.trim() && !alt.children.length) alt.remove();
+    }
+  }
+
+  // Vorwort in der Seitenleiste: Nummer als eigener Stein wie bei den Kapiteln
+  var erster = document.querySelector(".sidebar-menu-container ul > li:first-child .menu-text");
+  if (erster && !erster.querySelector(".chapter-number")) {
+    var m = erster.textContent.replace(/\u00a0/g, " ").trim().match(/^(\d+)\s+(.*)$/);
+    if (m) erster.innerHTML = '<span class="chapter-number">' + m[1] + '</span>&nbsp; <span class="chapter-title">' + m[2] + "</span>";
+  }
+
+  // Kapitelüberschriften ohne Titelblock (Vorwort): Text in eigenes Element
+  main.querySelectorAll("h1").forEach(function (h) {
+    var n = h.querySelector(".chapter-number");
+    if (!n || h.querySelector(".chapter-title")) return;
+    var rest = h.textContent.replace(n.textContent, "").replace(/ /g, " ").trim();
+    h.innerHTML = "";
+    h.appendChild(n);
+    var s = document.createElement("span");
+    s.className = "chapter-title";
+    s.textContent = rest;
+    h.appendChild(s);
+    h.classList.add("kapitelkopf");
+  });
+
+  // Abschnittsüberschriften: Text hinter dem Nummern-Stein in ein Element fassen (bricht dann sauber um)
+  main.querySelectorAll("h2 > .header-section-number").forEach(function (n) {
+    var h = n.parentElement;
+    var s = document.createElement("span");
+    s.className = "h-text";
+    while (n.nextSibling) s.appendChild(n.nextSibling);
+    h.appendChild(s);
+  });
+
+  // Bausteine-Leiste: ein Stein je Kapitel, der aktuelle steht vorne
+  if (!start && header && num) {
+    var links = document.querySelectorAll(".sidebar-menu-container ul > li .sidebar-link");
+    var nav = document.createElement("nav");
+    nav.className = "leiste";
+    nav.setAttribute("aria-label", WORT.kapitel);
+    links.forEach(function (a, i) {
+      var b = document.createElement("a");
+      b.href = a.getAttribute("href");
+      b.className = "leiste-stein k" + i;
+      b.textContent = i;
+      b.title = a.textContent.replace(/\s+/g, " ").trim();
+      if (String(i) === kap) { b.classList.add("aktiv"); b.setAttribute("aria-current", "page"); }
+      nav.appendChild(b);
+    });
+    header.insertBefore(nav, header.firstChild);
+  }
+
+  // Kästen nach Typ (aus dem fetten Einstieg, siehe STYLE.md §4)
+  var TYPEN = WORT.typen.map(function (t) {
+    return [new RegExp("^" + regexWort(t[0]) + "\\b"), t[1], t[0]];
+  });
+  function führendeLeerzeichenWeg(p) {
+    if (p.firstChild && p.firstChild.nodeType === 3) p.firstChild.textContent = p.firstChild.textContent.replace(/^\s+/, "");
+  }
+  main.querySelectorAll(".callout").forEach(function (c) {
+    var titel = c.getAttribute("title") || "";
+    var kopf = c.querySelector(".callout-title-container");
+    if (new RegExp("^" + WORT.uebung).test(titel)) {
+      var teile = titel.split(" · ");
+      var nr = (teile[0].match(/\d+/) || [""])[0];
+      c.classList.add("kasten", "uebung");
+      if (kopf) kopf.innerHTML = '<span class="uebung-nr">' + nr + '</span><span class="kasten-titel">' + (teile[1] || "") + "</span>" +
+        (teile[2] ? '<span class="uebung-typ">' + teile[2] + "</span>" : "");
+      return;
+    }
+    if (new RegExp("^" + WORT.loesung).test(titel)) {
+      c.classList.add("loesung");
+      var vor = c.previousElementSibling;
+      if (vor && vor.classList.contains("uebung")) { vor.classList.add("mit-loesung"); c.classList.add("angehaengt"); }
+      return;
+    }
+    // Kasten mit Überschrift als Titel, etwa zum Aufklappen: „Hintergrund: …“
+    // Quarto setzt davor ein verstecktes Wort für Screenreader („Hinweis“); das bleibt erhalten
+    var sr = kopf ? kopf.querySelector(".screen-reader-only") : null;
+    var kopfText = kopf ? kopf.textContent.replace(sr ? sr.textContent : "", "").replace(/\s+/g, " ").trim() : "";
+    for (var k = 0; k < TYPEN.length; k++) {
+      var wort = TYPEN[k][2];
+      if (kopfText.indexOf(wort + ":") !== 0) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[k][1]);
+      var h = kopf.innerHTML.replace(sr ? sr.outerHTML : "", "").trim();
+      var rest = h.slice(h.indexOf(wort) + wort.length).replace(/^\s*:\s*/, "");
+      kopf.innerHTML = (sr ? sr.outerHTML : "") + '<span class="kasten-label">' + wort + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      return;
+    }
+    if (titel) return;
+    var p = c.querySelector(".callout-body > p:first-child, .callout-body-container > p:first-child");
+    var st = p && p.firstElementChild;
+    if (!st || st.tagName !== "STRONG" || p.firstChild !== st) return;
+    var text = st.textContent.trim();
+    for (var i = 0; i < TYPEN.length; i++) {
+      if (!TYPEN[i][0].test(text)) continue;
+      c.classList.add("kasten", "kasten-" + TYPEN[i][1]);
+      var html = st.innerHTML.trim();
+      var rest = html.slice(html.indexOf(TYPEN[i][2]) + TYPEN[i][2].length)
+        .replace(/^\s*[:./–-]?\s*/, "").replace(/\.\s*$/, "");
+      if (kopf) kopf.innerHTML = '<span class="kasten-label">' + TYPEN[i][2] + "</span>" +
+        (rest ? '<span class="kasten-titel">' + rest + "</span>" : "");
+      st.remove();
+      führendeLeerzeichenWeg(p);
+      if (!p.textContent.trim() && !p.children.length) p.remove();
+      break;
+    }
+  });
+
+  // „Kurz überlegen“: Absatz und eingeklappte Auflösung in eine Karte
+  main.querySelectorAll("p > strong:first-child").forEach(function (st) {
+    if (st.textContent.trim() !== WORT.nachdenken + ".") return;
+    var p = st.parentElement;
+    if (p.firstChild !== st) return;
+    var nach = p.nextElementSibling;
+    var karte = document.createElement("div");
+    karte.className = "denkpause";
+    karte.innerHTML = '<div class="denkpause-kopf"><span class="kasten-label">' + WORT.nachdenken + '</span></div>';
+    p.parentNode.insertBefore(karte, p);
+    st.remove();
+    führendeLeerzeichenWeg(p);
+    karte.appendChild(p);
+    if (nach && nach.classList.contains("callout") && new RegExp("^" + WORT.aufloesung).test(nach.getAttribute("title") || "")) {
+      nach.classList.add("aufloesung");
+      karte.appendChild(nach);
+    }
+  });
+
+  // Lernziele, Selbstcheck, Weiterführend als Karten
+  main.querySelectorAll("section.level2 > h2").forEach(function (h) {
+    var t = h.textContent.trim();
+    var s = h.parentElement;
+    if (new RegExp("^" + WORT.lernziele).test(t)) s.classList.add("karte", "lernziele");
+    else if (new RegExp("^" + regexWort(WORT.selbstcheck)).test(t)) s.classList.add("karte", "selbstcheck");
+    else if (new RegExp("^" + regexWort(WORT.weiter)).test(t)) s.classList.add("karte", "weiter");
+  });
+
+  // Selbstcheck zum Abhaken (bleibt im eigenen Browser gespeichert)
+  var schlüssel = "rw-selbstcheck:" + location.pathname;
+  var stand = {};
+  try { stand = JSON.parse(localStorage.getItem(schlüssel) || "{}"); } catch (e) { stand = {}; }
+  main.querySelectorAll("section.selbstcheck li").forEach(function (li, i) {
+    li.setAttribute("role", "checkbox");
+    li.tabIndex = 0;
+    function setze(an) { li.classList.toggle("erledigt", an); li.setAttribute("aria-checked", an ? "true" : "false"); }
+    setze(!!stand[i]);
+    function umschalten() {
+      stand[i] = !stand[i];
+      setze(stand[i]);
+      try { localStorage.setItem(schlüssel, JSON.stringify(stand)); } catch (e) {}
+    }
+    li.addEventListener("click", function (e) { if (!e.target.closest("a")) umschalten(); });
+    li.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); umschalten(); } });
+  });
+
+  // Lesefortschritt oben in der Kapitelfarbe
+  var balken = document.createElement("div");
+  balken.className = "lesefortschritt";
+  document.body.appendChild(balken);
+  function fortschritt() {
+    var d = document.documentElement, m = d.scrollHeight - d.clientHeight;
+    balken.style.width = (m > 0 ? d.scrollTop / m * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", fortschritt, { passive: true });
+  fortschritt();
+
+  // Sprachumschalter: dieselbe Seite in der anderen Sprache (…/X.html ↔ …/en/X.html, …/ ↔ …/en/).
+  // Knopf und <link rel="alternate"> entstehen erst, wenn die Gegenseite antwortet.
+  function gegenstueck(pfad, sprache) {
+    if (sprache === "en") {
+      var k = pfad.lastIndexOf("/en/");
+      return k < 0 ? null : pfad.slice(0, k) + "/" + pfad.slice(k + 4);
+    }
+    var l = pfad.lastIndexOf("/");
+    return pfad.slice(0, l + 1) + "en/" + pfad.slice(l + 1);
+  }
+  var ziel = gegenstueck(location.pathname, lang);
+  if (ziel && window.fetch) {
+    var andere = lang === "en" ? "de" : "en";
+    fetch(ziel, { method: "HEAD" }).then(function (r) {
+      if (!r.ok) return;
+      var alt = document.createElement("link");
+      alt.rel = "alternate";
+      alt.hreflang = andere;
+      alt.href = ziel;
+      document.head.appendChild(alt);
+      var a = document.createElement("a");
+      a.className = "sprachwahl";
+      a.href = ziel + location.search;
+      a.hreflang = andere;
+      a.lang = andere;
+      a.title = WORT.umschalterTitel;
+      a.textContent = WORT.umschalter;
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
+})();
+</script><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./01-RStudio.html" class="pagination-link" aria-label="RStudio">
+        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">RStudio</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R Workshop – Social Sciences · Yannick Diehl and Daniel Moosdorf</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/RLoesung/RWorkshop/edit/main/index.en.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/RLoesung/RWorkshop/blob/main/index.en.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/RLoesung/RWorkshop/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
